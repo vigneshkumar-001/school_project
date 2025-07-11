@@ -1,0 +1,32 @@
+import 'dart:ui';
+
+class AppColor {
+  static const white = Color(0xffFFFFFF);
+  static const blue = Color(0xff2880E5);
+  static const grey = Color(0xff777777);
+  static const linear = Color(0xFFE0F7FA);
+  static const lightGrey = Color(0xffF5F5F5);
+  static const lightBlack = Color(0xff252525);
+  static const lowGrey = Color(0xffACACAC);
+  static const blueG1 = Color(0xff2FAFFF);
+  static const blueG2 = Color(0xff2880E5);
+  static const orangeG1 = Color(0xffFFD993);
+  static const orangeG2 = Color(0xffFFE8BE);
+  static const orangeG3 = Color(0xffFFF7ED);
+  static const black = Color(0xff000000);
+  static const brown = Color(0xff221A0B);
+  static const yellow = Color(0xffFFAE00);
+  static const greenG1 = Color(0xffB2FFC9);
+  static const greenG2 = Color(0xffD9FDE4);
+  static const greenG3 = Color(0xffE7F8EC);
+  static const greenG4 = Color(0xff3AD87C);
+  static const lightBlue = Color(0xffD8F1FA);
+  static const textBlue = Color(0xff298AE9);
+  static const blueCG1 = Color(0xff98E4FF);
+  static const blueCG2 = Color(0xffBDEEFF);
+  static const blueCG3 = Color(0xffE5F3F8);
+  static const lowLightBlue = Color(0xffEDF8FF);
+  static const lowLightYellow = Color(0xffFFF5E8);
+  static const lowLightNavi = Color(0xffF4F7FF);
+  static const lowLightPink = Color(0xffFFF2F0);
+}
