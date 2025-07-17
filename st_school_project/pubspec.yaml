@@ -36,6 +36,10 @@ dependencies:
   cupertino_icons: ^1.0.8
   carousel_slider: ^5.1.1
   google_fonts: any
+  table_calendar: ^3.2.0
+  intl: ^0.20.2
+  month_picker_dialog: ^0.4.0
+
 
 dev_dependencies:
   flutter_test:

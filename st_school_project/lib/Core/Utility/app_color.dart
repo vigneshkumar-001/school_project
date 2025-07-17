@@ -29,4 +29,15 @@ class AppColor {
   static const lowLightYellow = Color(0xffFFF5E8);
   static const lowLightNavi = Color(0xffF4F7FF);
   static const lowLightPink = Color(0xffFFF2F0);
+  static const drakeBlueG1 = Color(0xff101E27);
+  static const drakeBlueG2 = Color(0xff16222A);
+  static const lightRed = Color(0xffF5465C);
+  static const orange = Color(0xffFF9B0F);
+  static const grayop = Color(0xffC8C8C8);
+  static const red01G1 = Color(0xffFF3C3C);
+  static const orange01G2 = Color(0xffF6AD25);
+  static const green01G3 = Color(0xff43DD5F);
+  static const lightWhite = Color(0xffF9F9F9);
+  static const lowWhite = Color(0xffF4FBFF);
+  static const greenMore1 = Color(0xff1BB35A);
 }

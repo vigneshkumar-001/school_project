@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../Presentation/Onboarding/Screens/home_screen.dart' show HomeScreen;
-import '../../Presentation/Onboarding/Screens/task_screen.dart' show TaskScreen;
+import '../../Presentation/Onboarding/Screens/Home Screen/home_screen.dart'
+    show HomeScreen;
+import '../../Presentation/Onboarding/Screens/Task Screen/task_screen.dart'
+    show TaskScreen;
 import '../Utility/app_color.dart' show AppColor;
 import '../Utility/app_images.dart' show AppImages;
 
@@ -21,10 +23,10 @@ class CommonBottomNavigationBar extends StatefulWidget {
 }
 
 class _CommonBottomNavigationBarState extends State<CommonBottomNavigationBar> {
+
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-
       backgroundColor: AppColor.white,
       type: BottomNavigationBarType.fixed,
       currentIndex: widget.currentIndex,
@@ -39,29 +41,29 @@ class _CommonBottomNavigationBarState extends State<CommonBottomNavigationBar> {
       ),
       items: [
         BottomNavigationBarItem(
-          icon: const Icon(Icons.home_sharp, size: 26),
-          activeIcon: Icon(Icons.task_alt, color: AppColor.blue),
+          icon: Image.asset(AppImages.bottum0, height: 26),
+          activeIcon: Image.asset(AppImages.bottum0select, height: 30),
           label: 'Home',
         ),
         BottomNavigationBarItem(
           icon: Image.asset(AppImages.bottum3, height: 26),
-          activeIcon: Icon(Icons.task_alt, color: AppColor.blue),
+          activeIcon: Image.asset(AppImages.bottum3select, height: 30),
           label: 'Announcements',
         ),
         BottomNavigationBarItem(
           icon: Image.asset(AppImages.bottum1, height: 26),
-          activeIcon: Icon(Icons.task_alt, color: AppColor.blue),
+          activeIcon: Image.asset(AppImages.bottum1select, height: 30),
           label: 'Tasks',
         ),
         BottomNavigationBarItem(
           icon: Image.asset(AppImages.bottum2, height: 26),
-          activeIcon: Icon(Icons.task_alt, color: AppColor.blue),
+          activeIcon: Image.asset(AppImages.bottum2select, height: 30),
           label: 'Attendance',
         ),
 
         BottomNavigationBarItem(
           icon: Image.asset(AppImages.bottum4, height: 26),
-          activeIcon: Icon(Icons.task_alt, color: AppColor.blue),
+          activeIcon: Image.asset(AppImages.bottum4, height: 30),
           label: 'More',
         ),
       ],

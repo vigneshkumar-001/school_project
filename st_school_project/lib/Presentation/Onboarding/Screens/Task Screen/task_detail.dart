@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:st_school_project/Core/Utility/app_images.dart';
-import 'package:st_school_project/Presentation/Onboarding/Screens/task_screen.dart'
+import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_screen.dart'
     show TaskScreen;
 
-import '../../../Core/Utility/app_color.dart' show AppColor;
+import '../../../../Core/Utility/app_color.dart' show AppColor;
+import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 
 class TaskDetail extends StatefulWidget {
   const TaskDetail({super.key});
@@ -36,12 +38,7 @@ class _TaskDetailState extends State<TaskDetail> {
                       ),
                       child: IconButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TaskScreen(),
-                            ),
-                          );
+                          Navigator.pop(context);
                         },
                         icon: Icon(
                           color: AppColor.grey,
@@ -52,7 +49,7 @@ class _TaskDetailState extends State<TaskDetail> {
                     SizedBox(width: 15),
                     Text(
                       'Homework Details',
-                      style: TextStyle(
+                      style: GoogleFont.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: AppColor.lightBlack,
@@ -80,40 +77,50 @@ class _TaskDetailState extends State<TaskDetail> {
                     borderRadius: BorderRadius.circular(25),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 30,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 55),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Image.asset(AppImages.tdhs1),
-                        SizedBox(height: 20),
-                        Image.asset(AppImages.tdhs2),
-                        SizedBox(height: 20),
-                        Text(
-                          'Draw Single cell',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 24,
-                            color: AppColor.lightBlack,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 30,
+
                           ),
-                        ),
-                        SizedBox(height: 15),
-                        Text(
-                          'Vestibulum non ipsum risus. Quisque et sem eu \nvelit varius pellentesque et sit amet diam. Phasellus \neros libero, finibus eu magna vel, viverra pharetra \nvelit. Nullam congue sapien neque, dapibus \ndignissim magna elementum at. Class aptent taciti \nsociosqu ad litora torquent per conubia nostra, per \ninceptos himenaeos.',
-                          style: TextStyle(fontSize: 12, color: AppColor.grey),
-                        ),
-                        SizedBox(height: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Image.asset(AppImages.tdhs1),
+                              SizedBox(height: 20),
+                              Image.asset(AppImages.tdhs2),
+                              SizedBox(height: 20),
+                              Text(
+                                'Draw Single cell',
+                                style: GoogleFont.inter(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 24,
+                                  color: AppColor.lightBlack,
+                                ),
+                              ),
+                              SizedBox(height: 15),
+                              Text(
+                                'Vestibulum non ipsum risus. Quisque et sem eu \nvelit varius pellentesque et sit amet diam. Phasellus \neros libero, finibus eu magna vel, viverra pharetra \nvelit. Nullam congue sapien neque, dapibus \ndignissim magna elementum at. Class aptent taciti \nsociosqu ad litora torquent per conubia nostra, per \ninceptos himenaeos.',
+                                style: GoogleFont.inter(
+                                  fontSize: 12,
+                                  color: AppColor.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),SizedBox(height: 20,),
+
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 25),
                             child: Row(
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: AppColor.black.withOpacity(0.1),
+                                    color: AppColor.black.withOpacity(0.05),
                                     borderRadius: BorderRadius.circular(50),
                                   ),
                                   child: Padding(
@@ -126,7 +133,7 @@ class _TaskDetailState extends State<TaskDetail> {
                                         SizedBox(width: 10),
                                         Text(
                                           'Science Homework',
-                                          style: TextStyle(
+                                          style: GoogleFont.inter(
                                             fontSize: 12,
                                             color: AppColor.lightBlack,
                                           ),
@@ -139,7 +146,7 @@ class _TaskDetailState extends State<TaskDetail> {
                                 SizedBox(width: 20),
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: AppColor.black.withOpacity(0.1),
+                                    color: AppColor.black.withOpacity(0.05),
                                     borderRadius: BorderRadius.circular(50),
                                   ),
                                   child: Padding(
@@ -149,13 +156,14 @@ class _TaskDetailState extends State<TaskDetail> {
                                         Icon(
                                           CupertinoIcons.clock_fill,
                                           size: 35,
-                                          color: AppColor.lightBlack
-                                              .withOpacity(0.3),
+                                          color: AppColor.lightBlack.withOpacity(
+                                            0.3,
+                                          ),
                                         ),
                                         SizedBox(width: 10),
                                         Text(
                                           '4.30Pm',
-                                          style: TextStyle(
+                                          style: GoogleFont.inter(
                                             fontSize: 12,
                                             color: AppColor.lightBlack,
                                           ),
@@ -163,7 +171,7 @@ class _TaskDetailState extends State<TaskDetail> {
                                         SizedBox(width: 10),
                                         Text(
                                           '18.Jul.25',
-                                          style: TextStyle(
+                                          style: GoogleFont.inter(
                                             fontSize: 12,
                                             color: AppColor.grey,
                                           ),
@@ -196,28 +204,59 @@ class _TaskDetailState extends State<TaskDetail> {
                         children: [
                           IconButton(
                             onPressed: () {},
-                            icon: Row(
-                              children: [
-                                Icon(
-                                  color: AppColor.grey,
-                                  CupertinoIcons.left_chevron,
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  'English',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
+                            icon: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15,
+                                vertical: 7,
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
                                     color: AppColor.grey,
+                                    CupertinoIcons.left_chevron,
+                                    size: 20,
                                   ),
-                                ),
-                              ],
+                                  SizedBox(width: 20),
+                                  Text(
+                                    'English',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColor.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(width: 15),
+                    SizedBox(width: 30),
+                    OutlinedButton(
+                      onPressed: () {},
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Mathematics',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.black,
+                              ),
+                            ),
+                            SizedBox(width: 30),
+                            Icon(
+                              color: AppColor.grey,
+                              CupertinoIcons.right_chevron,
+                              size: 20,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ],

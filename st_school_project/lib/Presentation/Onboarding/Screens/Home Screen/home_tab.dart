@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
-import 'package:st_school_project/Presentation/Onboarding/Screens/task_screen.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_screen.dart';
 
-import '../../../Core/Widgets/common_bottom_navigation_bar.dart'
+import '../../../../Core/Utility/google_font.dart' show GoogleFont;
+import '../../../../Core/Widgets/common_bottom_navigation_bar.dart'
     show CommonBottomNavigationBar;
-import '../../../Core/Widgets/custom_container.dart';
+import '../../../../Core/Widgets/custom_container.dart';
 
 class HomeTab extends StatefulWidget {
   final VoidCallback? onBackPressed;
@@ -16,6 +18,9 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeTab> {
+  String selectedDay = 'Today';
+  DateTime selectedDate = DateTime.now();
+
   int index = 0;
 
   String selectedSubject = 'All'; // default selected
@@ -27,9 +32,79 @@ class _HomeScreenState extends State<HomeTab> {
     'Social Science',
     'Maths',
   ];
+  final List<Map<String, dynamic>> tasks = [
+    {
+      'subject': 'Science',
+      'title': 'Science Homework',
+      'description':
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit \nMaecenas laoreet ullamcorper nulla...',
+      'assignedBy': 'Flora',
+      'time': '4.35PM | 18.7.25',
+    },
+    {
+      'subject': 'Maths',
+      'title': 'Maths Homework',
+      'description':
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit \nMaecenas laoreet ullamcorper nulla...',
+      'assignedBy': 'Mr. Singh',
+      'time': '3.15PM | 18.7.25',
+    },
+    {
+      'subject': 'English',
+      'title': 'English Homework',
+      'description':
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit \nMaecenas laoreet ullamcorper nulla...',
+      'assignedBy': 'Mrs. Daisy',
+      'time': '2.45PM | 18.7.25',
+    },
+    {
+      'subject': 'Social Science',
+      'title': 'Social Science Homework',
+      'description':
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit \nMaecenas laoreet ullamcorper nulla...',
+      'assignedBy': 'Mrs. Daisy',
+      'time': '2.45PM | 18.7.25',
+    },
+    {
+      'subject': 'Maths',
+      'title': 'Maths Homework',
+      'description':
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit \nMaecenas laoreet ullamcorper nulla...',
+      'assignedBy': 'Mrs. Daisy',
+      'time': '2.45PM | 18.7.25',
+    },
+  ];
+
+  PopupMenuItem<String> _buildMenuItem(String value) {
+    final isSelected = value == selectedDay;
+    return PopupMenuItem<String>(
+      value: value,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColor.lightBlue : null,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          value,
+          style: GoogleFont.ibmPlexSans(
+            fontWeight: FontWeight.w500,
+            color: isSelected ? Colors.blue : Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final filteredTasks =
+        selectedSubject == 'All'
+            ? tasks
+            : tasks
+                .where((task) => task['subject'] == selectedSubject)
+                .toList();
+
     return Scaffold(
       backgroundColor: AppColor.white,
       body: SafeArea(
@@ -48,21 +123,21 @@ class _HomeScreenState extends State<HomeTab> {
               ListTile(
                 title: RichText(
                   text: TextSpan(
-                    style: TextStyle(
+                    style: GoogleFont.ibmPlexSans(
                       fontSize: 28,
-                      color: Colors.black,
-                    ), // Add color!
+                      color: AppColor.black,
+                    ),
                     text: 'Hi ',
                     children: [
                       TextSpan(
                         text: 'Jelastin',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w800,
-                        ), // Optional
+                        style: GoogleFont.ibmPlexSans(
+                          fontWeight: FontWeight.w800,fontSize: 28,
+                        ),
                       ),
                       TextSpan(
                         text: '!',
-                        style: TextStyle(
+                        style: GoogleFont.ibmPlexSans(
                           fontSize: 28,
                           fontWeight: FontWeight.w800,
                           color: AppColor.blue,
@@ -79,16 +154,19 @@ class _HomeScreenState extends State<HomeTab> {
                     RichText(
                       text: TextSpan(
                         text: '7',
-                        style: TextStyle(
+                        style: GoogleFont.ibmPlexSans(
                           fontSize: 14,
                           color: AppColor.grey,
                           fontWeight: FontWeight.w800,
                         ),
                         children: [
-                          TextSpan(text: 'th ', style: TextStyle(fontSize: 10)),
+                          TextSpan(
+                            text: 'th ',
+                            style: GoogleFont.ibmPlexSans(fontSize: 10),
+                          ),
                           TextSpan(
                             text: 'Grade - ',
-                            style: TextStyle(
+                            style: GoogleFont.ibmPlexSans(
                               fontSize: 14,
                               color: AppColor.grey,
                               fontWeight: FontWeight.w700,
@@ -96,7 +174,7 @@ class _HomeScreenState extends State<HomeTab> {
                           ),
                           TextSpan(
                             text: 'C ',
-                            style: TextStyle(
+                            style: GoogleFont.ibmPlexSans(
                               fontSize: 14,
                               color: AppColor.grey,
                               fontWeight: FontWeight.w800,
@@ -104,7 +182,9 @@ class _HomeScreenState extends State<HomeTab> {
                           ),
                           TextSpan(
                             text: 'Section',
-                            style: TextStyle(fontWeight: FontWeight.normal),
+                            style: GoogleFont.ibmPlexSans(
+                              fontWeight: FontWeight.normal,
+                            ),
                           ),
                         ],
                       ),
@@ -122,10 +202,10 @@ class _HomeScreenState extends State<HomeTab> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
-                    end: Alignment.bottomRight,
+                    end: Alignment.bottomCenter,
                     colors: [
                       AppColor.white, // light blue
-                      AppColor.linear, // cyan
+                      AppColor.lightWhite, // cyan
                     ],
                   ),
                 ),
@@ -152,7 +232,7 @@ class _HomeScreenState extends State<HomeTab> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 12,
-                              vertical: 15,
+                              vertical: 12,
                             ),
                             child: Stack(
                               children: [
@@ -167,7 +247,7 @@ class _HomeScreenState extends State<HomeTab> {
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 15,
-                                          vertical: 20,
+                                          vertical: 15,
                                         ),
                                         child: Row(
                                           children: [
@@ -180,7 +260,7 @@ class _HomeScreenState extends State<HomeTab> {
                                                 SizedBox(height: 3),
                                                 Text(
                                                   'Morning',
-                                                  style: TextStyle(
+                                                  style: GoogleFont.ibmPlexSans(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w700,
                                                     color: AppColor.white,
@@ -205,9 +285,13 @@ class _HomeScreenState extends State<HomeTab> {
                                                       gradient: LinearGradient(
                                                         colors: [
                                                           AppColor.lightGrey
-                                                              .withOpacity(0.2),
+                                                              .withOpacity(
+                                                                0.05,
+                                                              ),
                                                           AppColor.white
-                                                              .withOpacity(0.2),
+                                                              .withOpacity(
+                                                                0.05,
+                                                              ),
                                                         ], // gradient top to bottom
                                                         begin:
                                                             Alignment.topCenter,
@@ -230,7 +314,7 @@ class _HomeScreenState extends State<HomeTab> {
                                                 SizedBox(height: 3),
                                                 Text(
                                                   'Afternon',
-                                                  style: TextStyle(
+                                                  style: GoogleFont.ibmPlexSans(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w700,
                                                     color: AppColor.white,
@@ -254,15 +338,15 @@ class _HomeScreenState extends State<HomeTab> {
                                         children: [
                                           Text(
                                             'Today',
-                                            style: TextStyle(
+                                            style: GoogleFont.ibmPlexSans(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
                                               color: AppColor.white,
                                             ),
                                           ),
                                           Text(
-                                            '---',
-                                            style: TextStyle(
+                                            'Attendence',
+                                            style: GoogleFont.ibmPlexSans(
                                               fontSize: 18,
                                               color: AppColor.white,
                                               fontWeight: FontWeight.bold,
@@ -298,22 +382,21 @@ class _HomeScreenState extends State<HomeTab> {
                                     ),
 
                                     TextButton(
-                                      onPressed: () {
-                                      },
+                                      onPressed: () {},
                                       child: Row(
                                         children: [
                                           Text(
                                             'View All',
-                                            style: TextStyle(
+                                            style: GoogleFont.ibmPlexSans(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                               color: AppColor.lightGrey,
                                             ),
                                           ),
-                                          SizedBox(width: 7),
+                                          SizedBox(width: 2),
                                           Image.asset(
                                             AppImages.rightArrow,
-                                            height: 11,
+                                            height: 9,
                                             color: AppColor.lightGrey,
                                           ),
                                         ],
@@ -361,10 +444,10 @@ class _HomeScreenState extends State<HomeTab> {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                  top: 95,
+                                  top: 70,
                                   right: 10,
                                   left: 10,
-                                  bottom: 10,
+                                  bottom: 15,
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -377,9 +460,9 @@ class _HomeScreenState extends State<HomeTab> {
                                       child: Padding(
                                         padding: const EdgeInsets.only(
                                           top: 50,
-                                          right: 20,
+                                          right: 25,
                                           left: 20,
-                                          bottom: 10,
+                                          bottom: 20,
                                         ),
                                         child: Column(
                                           crossAxisAlignment:
@@ -387,7 +470,7 @@ class _HomeScreenState extends State<HomeTab> {
                                           children: [
                                             Text(
                                               'Prepare for',
-                                              style: TextStyle(
+                                              style: GoogleFont.ibmPlexSans(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
                                                 color: AppColor.lightBlack,
@@ -395,16 +478,16 @@ class _HomeScreenState extends State<HomeTab> {
                                             ),
                                             Text(
                                               'Examinations',
-                                              style: TextStyle(
+                                              style: GoogleFont.ibmPlexSans(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
                                                 color: AppColor.black,
                                               ),
                                             ),
-                                            SizedBox(height: 11),
+                                            SizedBox(height: 15),
                                             Text(
-                                              'First Term Exam will \nbe nconducted on \n11.Jun.25 ',
-                                              style: TextStyle(
+                                              'First Term Exam will \nbe conducted on \n11.Jun.25 ',
+                                              style: GoogleFont.ibmPlexSans(
                                                 color: AppColor.grey,
                                                 fontSize: 12,
                                               ),
@@ -420,28 +503,50 @@ class _HomeScreenState extends State<HomeTab> {
                             Positioned(
                               child: Image.asset(AppImages.clock, height: 90),
                               left: 15,
-                              top: 40,
+                              top: 20,
                             ),
                             Positioned(
-                              child: TextButton(
-                                style: ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll(
-                                    AppColor.brown,
-                                  ),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 2,
                                 ),
-                                onPressed: () {},
+                                decoration: BoxDecoration(
+                                  color: AppColor.brown,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
                                 child: Text(
                                   'Jun 11',
-                                  style: TextStyle(
-                                    fontSize: 12,
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 13,
                                     color: AppColor.yellow,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
                               right: 25,
-                              top: 70,
+                              top: 60,
                             ),
+                            // Positioned(
+                            //   child: TextButton(
+                            //     style: ButtonStyle(
+                            //       backgroundColor: WidgetStatePropertyAll(
+                            //         AppColor.brown,
+                            //       ),
+                            //     ),
+                            //     onPressed: () {},
+                            //     child: Text(
+                            //       'Jun 11',
+                            //       style: TextStyle(
+                            //         fontSize: 12,
+                            //         color: AppColor.yellow,
+                            //         fontWeight: FontWeight.bold,
+                            //       ),
+                            //     ),
+                            //   ),
+                            //   right: 25,
+                            //   top: 70,
+                            // ),
                           ],
                         ),
 
@@ -453,8 +558,8 @@ class _HomeScreenState extends State<HomeTab> {
                               end: Alignment.bottomRight,
                               colors: [
                                 AppColor.greenG4.withOpacity(0.05),
-                                AppColor.greenG2.withOpacity(0.5),
-                                AppColor.greenG1,
+                                AppColor.greenG2.withOpacity(0.3),
+                                AppColor.greenG1.withOpacity(0.2),
                                 AppColor.greenG4.withOpacity(0.6),
                               ],
                             ),
@@ -480,6 +585,10 @@ class _HomeScreenState extends State<HomeTab> {
                                           end: Alignment.bottomRight,
                                           colors: [
                                             AppColor.white,
+                                            AppColor.white,
+                                            AppColor.white,
+                                            AppColor.white,
+                                            AppColor.white,
                                             AppColor.white.withOpacity(0.1),
                                           ],
                                         ),
@@ -492,7 +601,7 @@ class _HomeScreenState extends State<HomeTab> {
                                           top: 15,
                                           left: 15,
                                           right: 15,
-                                          bottom: 60,
+                                          bottom: 55,
                                         ),
                                         child: Column(
                                           crossAxisAlignment:
@@ -500,7 +609,7 @@ class _HomeScreenState extends State<HomeTab> {
                                           children: [
                                             Text(
                                               'Upcoming Saturday\nHalf day School',
-                                              style: TextStyle(
+                                              style: GoogleFont.ibmPlexSans(
                                                 fontSize: 14,
                                                 color: AppColor.black,
                                               ),
@@ -509,12 +618,12 @@ class _HomeScreenState extends State<HomeTab> {
                                             Text(
                                               textAlign: TextAlign.start,
                                               '16-Jun-25',
-                                              style: TextStyle(
+                                              style: GoogleFont.ibmPlexSans(
                                                 fontSize: 14,
                                                 color: AppColor.grey,
                                               ),
                                             ),
-                                            SizedBox(height: 15),
+                                            SizedBox(height: 20),
                                             IconButton(
                                               padding: EdgeInsets.symmetric(
                                                 horizontal: 55,
@@ -529,10 +638,10 @@ class _HomeScreenState extends State<HomeTab> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 25),
+                                    SizedBox(height: 20),
                                     Text(
                                       'Notice Board',
-                                      style: TextStyle(
+                                      style: GoogleFont.ibmPlexSans(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
                                         color: AppColor.lightBlack,
@@ -569,7 +678,7 @@ class _HomeScreenState extends State<HomeTab> {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                  top: 65,
+                                  top: 70,
                                   right: 10,
                                   left: 10,
                                   bottom: 8,
@@ -583,7 +692,7 @@ class _HomeScreenState extends State<HomeTab> {
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.only(
-                                          top: 30,
+                                          top: 40,
                                           right: 20,
                                           left: 15,
                                           bottom: 8,
@@ -592,50 +701,49 @@ class _HomeScreenState extends State<HomeTab> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            TextButton(
-                                              style: ButtonStyle(
-                                                backgroundColor:
-                                                    WidgetStatePropertyAll(
-                                                      AppColor.lightBlue,
-                                                    ),
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 15,
+                                                vertical: 3,
                                               ),
-                                              onPressed: () {},
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 5,
-                                                    ),
-                                                child: Text(
-                                                  'Jun 11',
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: AppColor.textBlue,
-                                                    fontWeight: FontWeight.w800,
-                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: AppColor.lightBlue,
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                              ),
+                                              child: Text(
+                                                'Jun 11',
+                                                style: GoogleFont.ibmPlexSans(
+                                                  fontSize: 13,
+                                                  color: AppColor.textBlue,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
                                             SizedBox(height: 10),
                                             Text(
                                               'Second-Term \nFees',
-                                              style: TextStyle(
+                                              style: GoogleFont.ibmPlexSans(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
                                                 color: AppColor.black,
                                               ),
                                             ),
+                                            SizedBox(height: 10),
                                             TextButton(
                                               onPressed: () {},
                                               child: Row(
                                                 children: [
                                                   Text(
                                                     'Know More',
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: AppColor.blueG2,
-                                                    ),
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color:
+                                                              AppColor.blueG2,
+                                                        ),
                                                   ),
                                                   SizedBox(width: 7),
                                                   Image.asset(
@@ -671,49 +779,105 @@ class _HomeScreenState extends State<HomeTab> {
                   gradient: LinearGradient(
                     begin: Alignment.bottomRight,
                     end: Alignment.centerRight,
-                    colors: [AppColor.lightGrey, AppColor.white],
+                    colors: [
+                      AppColor.lightGrey,
+                      AppColor.lightGrey,
+                      AppColor.lightGrey,
+                      AppColor.white,
+                    ],
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            'Your Tasks',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Your Tasks',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
                             ),
-                          ),
-                          Spacer(),
-                          TextButton(
-                            onPressed: () {},
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Today',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
-                                  ),
+                            Spacer(),
+                            PopupMenuButton<String>(
+                              onSelected: (value) async {
+                                setState(() {
+                                  selectedDay = value;
+                                });
+
+                                if (value == 'Today') {
+                                  setState(() {
+                                    selectedDate = DateTime.now();
+                                  });
+                                } else if (value == 'Yesterday') {
+                                  setState(() {
+                                    selectedDate = DateTime.now().subtract(
+                                      Duration(days: 1),
+                                    );
+                                  });
+                                } else if (value == 'Custom Date') {
+                                  DateTime? picked = await showDatePicker(
+                                    context: context,
+                                    initialDate: selectedDate,
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime(2100),
+                                  );
+
+                                  if (picked != null) {
+                                    setState(() {
+                                      selectedDate = picked;
+                                    });
+                                  }
+                                }
+                              },
+
+                              itemBuilder:
+                                  (context) => [
+                                    _buildMenuItem('Today'),
+                                    _buildMenuItem('Yesterday'),
+                                    _buildMenuItem('Custom Date'),
+                                  ],
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4.0),
-                                  child: Icon(
-                                    Icons.keyboard_arrow_down_outlined,
-                                    size: 20,
-                                    color: Colors.black,
-                                  ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
-                              ],
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      selectedDay,
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    const Icon(
+                                      Icons.keyboard_arrow_down_outlined,
+                                      size: 20,
+                                      color: Colors.black,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       SizedBox(height: 20),
                       SingleChildScrollView(
@@ -756,7 +920,7 @@ class _HomeScreenState extends State<HomeTab> {
                                     },
                                     child: Text(
                                       subject,
-                                      style: TextStyle(
+                                      style: GoogleFont.ibmPlexSans(
                                         color:
                                             isSelected
                                                 ? AppColor.blue
@@ -769,29 +933,110 @@ class _HomeScreenState extends State<HomeTab> {
                               }).toList(),
                         ),
                       ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20, top: 20),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black12),
-                            color: AppColor.white,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: CustomContainer.homeScreen(),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black12),
-                            color: AppColor.white,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: CustomContainer.homeScreen(),
-                        ),
-                      ),
+                      SizedBox(height: 25),
+                      ...tasks
+                          .where((task) {
+                            return selectedSubject == 'All' ||
+                                task['subject'] == selectedSubject;
+                          })
+                          .map((task) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: AppColor.white,
+                                  border: Border.all(
+                                    color: AppColor.grey.withOpacity(0.1),
+                                  ),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 20,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            task['title'],
+                                            style: GoogleFont.ibmPlexSans(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          Spacer(),
+                                          TextButton(
+                                            onPressed: () {
+                                              // You can push to a TaskDetail screen here
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  'View',
+                                                  style: GoogleFont.ibmPlexSans(
+                                                    fontWeight: FontWeight.w500,
+                                                    color: AppColor.blue,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 5),
+                                                Icon(
+                                                  Icons
+                                                      .arrow_forward_ios_outlined,
+                                                  color: AppColor.blue,
+                                                  size: 11,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Text(
+                                        task['description'],
+                                        style: GoogleFont.ibmPlexSans(
+                                          fontSize: 12,
+                                          color: AppColor.grey,
+                                        ),
+                                      ),
+                                      SizedBox(height: 10),
+                                      Divider(),
+                                      SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Assigned By',
+                                            style: GoogleFont.ibmPlexSans(
+                                              fontSize: 12,
+                                              color: AppColor.grey,
+                                            ),
+                                          ),
+                                          SizedBox(width: 4),
+                                          Text(
+                                            task['assignedBy'],
+                                            style: GoogleFont.ibmPlexSans(
+                                              fontSize: 12,
+                                              color: Colors.black87,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Spacer(),
+                                          Text(
+                                            task['time'],
+                                            style: GoogleFont.ibmPlexSans(
+                                              color: AppColor.lowGrey,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          })
+                          .toList(),
                     ],
                   ),
                 ),

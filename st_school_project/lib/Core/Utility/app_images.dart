@@ -21,5 +21,22 @@ class AppImages {
   static String jbg = 'assets/images/jbg.png';
   static String tdhs1 = 'assets/images/TDHS1.png';
   static String tdhs2 = 'assets/images/TDHS2.png';
-
+  static String amorning1 = 'assets/images/Amorning1.png';
+  static String aafternoon2 = 'assets/images/Aafternoon2.png';
+  static String attendence1 = 'assets/images/Attendence 1.png';
+  static String bottum0 = 'assets/images/Bottum0.png';
+  static String bottum0select = 'assets/images/Bottum0select.png';
+  static String bottum1select = 'assets/images/Bottum1select.png';
+  static String bottum2select = 'assets/images/Bottum2select.png';
+  static String bottum3select = 'assets/images/Bottum3select.png';
+  static String announcement1 = 'assets/images/Announcement1.png';
+  static String announcement2 = 'assets/images/Announcement2.png';
+  static String announcement3 = 'assets/images/Announcement3.png';
+  static String announcement4 = 'assets/images/Announcement4.png';
+  static String announcement5 = 'assets/images/Announcement5.png';
+  static String moreStopImage = 'assets/images/MoreStopImage.png';
+  static String moreSimage1 = 'assets/images/MoreSimage1.png';
+  static String moreSimage2 = 'assets/images/MoreSimage2.png';
+  static String moreSbackImage = 'assets/images/MoreSbackImage.png';
+  static String moreSnumberAdd = 'assets/images/MoreSnumberAdd.png';
 }
