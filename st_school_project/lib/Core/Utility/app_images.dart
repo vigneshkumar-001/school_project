@@ -39,4 +39,8 @@ class AppImages {
   static String moreSimage2 = 'assets/images/MoreSimage2.png';
   static String moreSbackImage = 'assets/images/MoreSbackImage.png';
   static String moreSnumberAdd = 'assets/images/MoreSnumberAdd.png';
+  static String teacher1 = 'assets/images/Teacher1.png';
+  static String teacher2 = 'assets/images/Teacher2.png';
+  static String teacher3 = 'assets/images/Teacher3.png';
+  static String teacher4 = 'assets/images/Teacher4.png';
 }

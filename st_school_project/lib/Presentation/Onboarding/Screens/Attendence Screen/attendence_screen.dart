@@ -436,7 +436,7 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                   color: AppColor.lightBlack,
                                 ),
                               ),
-                              SizedBox(width: 85),
+                              Spacer(),
                               Text(
                                 'Average',
                                 style: GoogleFont.ibmPlexSans(

@@ -308,5 +308,202 @@ class CustomContainer {
     );
   }
 
+  static moreScreen({
+    required String termTitle,
+    required String timeDate,
+    required String amount,
+    bool isPaid = true,
+    VoidCallback? onDetailsTap,
+  }) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 20), // spacing between items
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColor.grey.withOpacity(0.2)),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child:
+          isPaid
+              ? ListTile(
+                title: Text(
+                  'Paid for',
+                  style: GoogleFont.ibmPlexSans(
+                    fontSize: 12,
+                    color: AppColor.lowGrey,
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 7),
+                    Text(
+                      termTitle,
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 16,
+                        color: AppColor.black,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    SizedBox(height: 7),
+                    Text(
+                      timeDate,
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 12,
+                        color: AppColor.grey,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        TextButton(
+                          onPressed: onDetailsTap,
+                          child: Row(
+                            children: [
+                              Text(
+                                'Details',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 10,
+                                  color: AppColor.lowGrey,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              SizedBox(width: 1),
+                              Icon(
+                                CupertinoIcons.right_chevron,
+                                size: 10,
+                                color: AppColor.lowGrey,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                trailing: Text(
+                  amount,
+                  style: GoogleFont.ibmPlexSans(
+                    fontSize: 20,
+                    color: AppColor.greenMore1,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              )
+              : Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      termTitle,
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          amount,
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.blue,
+                          ),
+                        ),
+                        Spacer(),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [AppColor.blueG1, AppColor.blueG2],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: TextButton(
+                            onPressed: onDetailsTap,
+                            child: Text(
+                              'Pay Now',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: AppColor.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 7),
+                    RichText(
+                      text: TextSpan(
+                        text: 'Due Date',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.grey,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: ' $timeDate',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: AppColor.lightBlack,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+    );
+  }
 
+  static teacherTab({
+    required String teachresName,
+    required String classTitle,
+    required String teacherImage,
+  }) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColor.grey.withOpacity(0.1)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Text(
+                      teachresName,
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.black,
+                      ),
+                    ),
+                    Text(
+                      classTitle,
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.blue,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Image.asset(teacherImage, height: 133),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 }
