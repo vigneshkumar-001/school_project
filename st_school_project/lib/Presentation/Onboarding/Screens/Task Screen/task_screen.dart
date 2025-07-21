@@ -155,7 +155,7 @@ class _TaskScreenState extends State<TaskScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF2880E5),
+      backgroundColor: AppColor.white,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -224,8 +224,8 @@ class _TaskScreenState extends State<TaskScreen> {
                               });
                             },
                             child: Container(
-                              width: 49,
-                              margin: const EdgeInsets.symmetric(horizontal: 6),
+                              width: 57,
+                              margin: const EdgeInsets.symmetric(horizontal: 0),
                               decoration:
                                   isSelected
                                       ? BoxDecoration(

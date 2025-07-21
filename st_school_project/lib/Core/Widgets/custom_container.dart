@@ -351,30 +351,27 @@ class CustomContainer {
                         color: AppColor.grey,
                       ),
                     ),
-                    Row(
-                      children: [
-                        TextButton(
-                          onPressed: onDetailsTap,
-                          child: Row(
-                            children: [
-                              Text(
-                                'Details',
-                                style: GoogleFont.ibmPlexSans(
-                                  fontSize: 10,
-                                  color: AppColor.lowGrey,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(width: 1),
-                              Icon(
-                                CupertinoIcons.right_chevron,
-                                size: 10,
-                                color: AppColor.lowGrey,
-                              ),
-                            ],
+                    SizedBox(height: 7),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Row(
+                        children: [
+                          Text(
+                            'Details',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 10,
+                              color: AppColor.lowGrey,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                      ],
+                          SizedBox(width: 1),
+                          Icon(
+                            CupertinoIcons.right_chevron,
+                            size: 10,
+                            color: AppColor.lowGrey,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -410,18 +407,21 @@ class CustomContainer {
                           ),
                         ),
                         Spacer(),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [AppColor.blueG1, AppColor.blueG2],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 4,
                             ),
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: TextButton(
-                            onPressed: onDetailsTap,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [AppColor.blueG1, AppColor.blueG2],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
                             child: Text(
                               'Pay Now',
                               style: GoogleFont.ibmPlexSans(
@@ -504,6 +504,38 @@ class CustomContainer {
           ],
         ),
       ],
+    );
+  }
+
+  static checkMark({required VoidCallback onTap}) {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ButtonStyle(
+          padding: MaterialStateProperty.all(EdgeInsets.zero),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          ),
+          elevation: MaterialStateProperty.all(0),
+          backgroundColor: MaterialStateProperty.all(Colors.transparent),
+        ),
+        child: InkWell(  onTap: onTap,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColor.blueG1, AppColor.blueG2],
+                begin: Alignment.topRight,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Icon(Icons.check, size: 30, color: AppColor.white),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

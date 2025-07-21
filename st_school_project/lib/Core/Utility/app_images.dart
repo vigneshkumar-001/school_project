@@ -43,4 +43,5 @@ class AppImages {
   static String teacher2 = 'assets/images/Teacher2.png';
   static String teacher3 = 'assets/images/Teacher3.png';
   static String teacher4 = 'assets/images/Teacher4.png';
+  static String phoneIcon = 'assets/images/PhoneIcon.png';
 }

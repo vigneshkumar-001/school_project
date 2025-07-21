@@ -29,9 +29,129 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  void _showDraggableSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.30,
+          minChildSize: 0.20,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(16),
+                ),
+              ),
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                children: [
+                  SizedBox(height: 16),
+                  Column(
+                    children: [
+                      ListTile(
+                        leading: Container(
+                          padding: EdgeInsets.all(17),
+                          decoration: BoxDecoration(
+                            color: AppColor.lightGrey,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Image.asset(AppImages.phoneIcon, height: 24),
+                        ),
+                        title: Row(
+                          children: [
+                            Column(crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Change Mobile Number',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: AppColor.grey,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  '+91 900 000 0000',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20,
+                                    color: AppColor.lightBlack,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Spacer(),
+                            InkWell(
+                              onTap: () {},
+                              child: Image.asset(
+                                AppImages.rightArrow,
+                                height: 16,
+                                width: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      ListTile(
+                        leading: Image.asset(AppImages.moreSimage1, height: 58),
+                        title: Row(
+                          children: [
+                            Column(crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Change',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: AppColor.grey,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Profile Picture',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20,
+                                    color: AppColor.lightBlack,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Spacer(),
+                            InkWell(
+                              onTap: () {},
+                              child: Image.asset(
+                                AppImages.rightArrow,
+                                height: 16,
+                                width: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -42,7 +162,7 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                     image: DecorationImage(
                       image: AssetImage(AppImages.moreSbackImage),
                       fit: BoxFit.cover,
-                      alignment: Alignment(-10, -0.8),
+                      alignment: Alignment(-6, -0.8),
                     ),
                     gradient: LinearGradient(
                       begin: Alignment.topRight,
@@ -52,7 +172,11 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                   ),
                   child: SafeArea(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      padding: const EdgeInsets.only(
+                        right: 15,
+                        left: 15,
+                        bottom: 25,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -77,13 +201,14 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => ChangeMobileNumber(),
-                                      ),
-                                    );
+                                    _showDraggableSheet(context);
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder:
+                                    //         (context) => ChangeMobileNumber(),
+                                    //   ),
+                                    // );
                                   },
                                   child: Row(
                                     children: [
@@ -95,8 +220,12 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                                           color: AppColor.lightBlack,
                                         ),
                                       ),
-                                      SizedBox(width: 15),
+                                      SizedBox(width: 5),
                                       Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 12,
+                                        ),
                                         decoration: BoxDecoration(
                                           color: AppColor.white,
                                           borderRadius: BorderRadius.circular(
@@ -169,12 +298,12 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                 ),
                 Positioned(
                   right: 70,
-                  bottom: 1,
+                  bottom: 32.5,
                   child: Image.asset(AppImages.moreSimage1, height: 90),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 15),
             DefaultTabController(
               length: 3,
               child: Column(
@@ -190,9 +319,11 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                     unselectedLabelColor: AppColor.grey,
                     indicatorColor: AppColor.lightBlack,
                     labelStyle: GoogleFont.ibmPlexSans(
+                      fontSize: 12.5,
                       fontWeight: FontWeight.w600,
                     ),
                     unselectedLabelStyle: GoogleFont.ibmPlexSans(
+                      fontSize: 12.5,
                       fontWeight: FontWeight.w600,
                     ),
                     dividerColor: Colors.transparent,
@@ -201,7 +332,7 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
               ),
             ),
             SizedBox(
-              height: 600,
+              height: 500,
               child: TabBarView(
                 controller: _tabController,
                 children: [

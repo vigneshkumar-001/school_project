@@ -18,7 +18,7 @@ class TaskDetail extends StatefulWidget {
 class _TaskDetailState extends State<TaskDetail> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(backgroundColor: AppColor.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

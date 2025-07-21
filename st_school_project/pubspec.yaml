@@ -39,7 +39,8 @@ dependencies:
   table_calendar: any
   intl: any
   month_picker_dialog: any
-
+  flutter_otp_text_field: ^1.5.1+1
+  pin_code_fields: any
 
 dev_dependencies:
   flutter_test:

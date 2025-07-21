@@ -132,7 +132,8 @@ class _HomeScreenState extends State<HomeTab> {
                       TextSpan(
                         text: 'Jelastin',
                         style: GoogleFont.ibmPlexSans(
-                          fontWeight: FontWeight.w800,fontSize: 28,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 28,
                         ),
                       ),
                       TextSpan(
@@ -804,11 +805,12 @@ class _HomeScreenState extends State<HomeTab> {
                               style: GoogleFont.ibmPlexSans(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                                color: AppColor.black,
                               ),
                             ),
                             Spacer(),
                             PopupMenuButton<String>(
+                              color: AppColor.white,
                               onSelected: (value) async {
                                 setState(() {
                                   selectedDay = value;
@@ -852,7 +854,7 @@ class _HomeScreenState extends State<HomeTab> {
                                   vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: AppColor.white,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Row(
@@ -863,14 +865,14 @@ class _HomeScreenState extends State<HomeTab> {
                                       style: GoogleFont.ibmPlexSans(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.black,
+                                        color: AppColor.black,
                                       ),
                                     ),
                                     const SizedBox(width: 4),
                                     const Icon(
                                       Icons.keyboard_arrow_down_outlined,
                                       size: 20,
-                                      color: Colors.black,
+                                      color: AppColor.black,
                                     ),
                                   ],
                                 ),

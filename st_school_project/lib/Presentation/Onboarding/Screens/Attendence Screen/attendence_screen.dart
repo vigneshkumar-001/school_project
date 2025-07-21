@@ -30,6 +30,7 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
     final targetProgress = current / total;
     final progressWidth = screenWidth * targetProgress;
     return Scaffold(
+      backgroundColor: AppColor.white,
       body: SafeArea(
         child: Stack(
           children: [
