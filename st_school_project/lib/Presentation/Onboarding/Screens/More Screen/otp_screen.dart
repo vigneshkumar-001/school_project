@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/quiz_screen.dart';
 
 import '../../../../Core/Utility/app_color.dart';
 import '../../../../Core/Utility/google_font.dart';
@@ -148,7 +149,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ProfileScreen()),
+                    MaterialPageRoute(builder: (context) => QuizScreen()),
                   );
                 },
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen.dart';
 
 import '../../../../Core/Utility/app_color.dart' show AppColor;
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
@@ -45,7 +46,7 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
               decoration: BoxDecoration(
                 color: AppColor.white,
                 borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
+                  top: Radius.circular(20),
                 ),
               ),
               child: ListView(
@@ -64,40 +65,58 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                           ),
                           child: Image.asset(AppImages.phoneIcon, height: 24),
                         ),
-                        title: Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Change Mobile Number',
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                    color: AppColor.grey,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  '+91 900 000 0000',
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 20,
-                                    color: AppColor.lightBlack,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Spacer(),
-                            InkWell(
-                              onTap: () {},
-                              child: Image.asset(
-                                AppImages.rightArrow,
-                                height: 16,
-                                width: 16,
+                        title: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChangeMobileNumber(),
                               ),
-                            ),
-                          ],
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Change Mobile Number',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
+                                      color: AppColor.grey,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '+91 900 000 0000',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 20,
+                                      color: AppColor.lightBlack,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Spacer(),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => ChangeMobileNumber(),
+                                    ),
+                                  );
+                                },
+                                child: Image.asset(
+                                  AppImages.rightArrow,
+                                  height: 16,
+                                  width: 16,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 20),
@@ -129,7 +148,14 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                             ),
                             Spacer(),
                             InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProfileScreen(),
+                                  ),
+                                );
+                              },
                               child: Image.asset(
                                 AppImages.rightArrow,
                                 height: 16,
@@ -399,24 +425,21 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                         ),
                         Row(
                           children: [
-                            Column(
-                              children: [
-                                CustomContainer.teacherTab(
-                                  teachresName: 'Kumari',
-                                  classTitle: 'Maths',
-                                  teacherImage: AppImages.teacher3,
-                                ),
-                              ],
+                            Expanded(
+                              child: CustomContainer.teacherTab(
+                                teachresName: 'Kumari',
+                                classTitle: 'Maths',
+                                teacherImage: AppImages.teacher3,
+                              ),
                             ),
+
                             SizedBox(width: 17),
-                            Column(
-                              children: [
-                                CustomContainer.teacherTab(
-                                  teachresName: 'Ponnamma',
-                                  classTitle: 'Science',
-                                  teacherImage: AppImages.teacher4,
-                                ),
-                              ],
+                            Expanded(
+                              child: CustomContainer.teacherTab(
+                                teachresName: 'Ponnamma',
+                                classTitle: 'Science',
+                                teacherImage: AppImages.teacher4,
+                              ),
                             ),
                           ],
                         ),

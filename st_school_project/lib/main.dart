@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'Presentation/Onboarding/Screens/Home Screen/home_screen.dart';
 
 void main() {
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.white, // White background for status bar
+      statusBarIconBrightness: Brightness.dark, // Black icons on status bar
+      statusBarBrightness: Brightness.light, // For iOS (inverted logic)
+      systemNavigationBarColor: Colors.white, // White background for nav bar
+      systemNavigationBarIconBrightness:
+          Brightness.dark, // Black icons on nav bar
+    ),
+  );
+
   runApp(const MyApp());
 }
 
@@ -13,8 +25,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-      home: HomeScreen()
+      theme: ThemeData(scaffoldBackgroundColor: Colors.white),
+      debugShowCheckedModeBanner: false,
+      home: HomeScreen(),
     );
   }
 }
