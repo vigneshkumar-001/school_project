@@ -382,7 +382,7 @@ class _MoreScreenState extends State<MoreScreen>
                                       TextSpan(
                                         text: 'vicky===',
                                         style: GoogleFont.ibmPlexSans(
-                                          fontSize: 12,
+                                          fontSize: 13,
                                           fontWeight: FontWeight.normal,
                                         ),
                                       ),
