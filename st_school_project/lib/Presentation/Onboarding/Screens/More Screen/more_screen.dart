@@ -66,7 +66,8 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                         ),
                         title: Row(
                           children: [
-                            Column(crossAxisAlignment: CrossAxisAlignment.start,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'Change Mobile Number',
@@ -104,7 +105,8 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                         leading: Image.asset(AppImages.moreSimage1, height: 58),
                         title: Row(
                           children: [
-                            Column(crossAxisAlignment: CrossAxisAlignment.start,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'Change',
