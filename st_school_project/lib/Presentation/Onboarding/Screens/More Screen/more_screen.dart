@@ -380,7 +380,7 @@ class _MoreScreenState extends State<MoreScreen>
                                         ),
                                       ),
                                       TextSpan(
-                                        text: 'Section',
+                                        text: 'Sectionggg',
                                         style: GoogleFont.ibmPlexSans(
                                           fontSize: 12,
                                           fontWeight: FontWeight.normal,
