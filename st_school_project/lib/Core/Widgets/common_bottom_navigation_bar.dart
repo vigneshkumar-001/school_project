@@ -23,7 +23,6 @@ class CommonBottomNavigationBar extends StatefulWidget {
 }
 
 class _CommonBottomNavigationBarState extends State<CommonBottomNavigationBar> {
-
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
@@ -62,8 +61,8 @@ class _CommonBottomNavigationBarState extends State<CommonBottomNavigationBar> {
         ),
 
         BottomNavigationBarItem(
-          icon: Image.asset(AppImages.bottum4, height: 26),
-          activeIcon: Image.asset(AppImages.bottum4, height: 30),
+          icon: Image.asset(AppImages.moreSimage1, height: 26),
+          activeIcon: Image.asset(AppImages.moreSimage1, height: 30),
           label: 'More',
         ),
       ],

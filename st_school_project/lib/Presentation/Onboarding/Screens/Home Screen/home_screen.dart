@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../Announcements Screen/announcements_screen.dart' show AnnouncementsScreen;
-import '../Attendence Screen/attendence_screen.dart' show AttendenceScreen;
-import '../More Screen/more_screen.dart' show MoreScreen;
+import '../Announcements Screen/announcements_screen.dart';
+import '../Attendence Screen/attendence_screen.dart';
+import '../More Screen/more_screen.dart';
 import 'home_tab.dart';
 import '../Task Screen/task_screen.dart';
 import '../../../../Core/Widgets/common_bottom_navigation_bar.dart';
@@ -26,9 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    setState(() => _currentIndex = index);
     _pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 400),
@@ -37,11 +35,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView(
         controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(), // Disable swipe
         children: _screens,
       ),
       bottomNavigationBar: CommonBottomNavigationBar(

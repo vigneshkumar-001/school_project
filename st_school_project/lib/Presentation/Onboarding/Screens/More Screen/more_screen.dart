@@ -17,15 +17,34 @@ class MoreScreen extends StatefulWidget {
 
 class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
   late TabController _tabController;
+  int _lastValidTabIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(_handleTabChange);
   }
+  void _handleTabChange() {
 
+    if (_tabController.index == 2 && _tabController.indexIsChanging) {
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _showContactSchoolSheet(context);
+
+        _tabController.index = _lastValidTabIndex;
+      });
+    } else {
+
+      if (_tabController.index < 2) {
+        _lastValidTabIndex = _tabController.index;
+      }
+    }
+  }
   @override
   void dispose() {
+    _tabController.removeListener(_handleTabChange);
     _tabController.dispose();
     super.dispose();
   }
@@ -65,12 +84,53 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                           ),
                           child: Image.asset(AppImages.phoneIcon, height: 24),
                         ),
+<<<<<<< Updated upstream
                         title: GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ChangeMobileNumber(),
+=======
+                        title: Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Change Mobile Number',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: AppColor.grey,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  '+91 900 000 0000',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20,
+                                    color: AppColor.lightBlack,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Spacer(),
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ChangeMobileNumber(),
+                                  ),
+                                );
+                              },
+                              child: Image.asset(
+                                AppImages.rightArrow,
+                                height: 16,
+                                width: 16,
+>>>>>>> Stashed changes
                               ),
                             );
                           },
@@ -176,252 +236,360 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(AppImages.moreSbackImage),
-                      fit: BoxFit.cover,
-                      alignment: Alignment(-6, -0.8),
-                    ),
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [AppColor.white, AppColor.lowWhite],
-                    ),
-                  ),
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        right: 15,
-                        left: 15,
-                        bottom: 25,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Image.asset(
-                            AppImages.moreStopImage,
-                            fit: BoxFit.cover,
+  void showDraggableSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.30,
+          minChildSize: 0.20,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+              ),
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                children: [
+                  SizedBox(height: 16),
+                  Column(
+                    children: [
+                      ListTile(
+                        leading: Container(
+                          padding: EdgeInsets.all(17),
+                          decoration: BoxDecoration(
+                            color: AppColor.lightGrey,
+                            borderRadius: BorderRadius.circular(15),
                           ),
-                          SizedBox(height: 20),
-                          ListTile(
-                            title: RichText(
-                              text: TextSpan(
-                                text: 'Jelastin',
-                                style: GoogleFont.ibmPlexSans(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 24,
-                                  color: AppColor.black,
-                                ),
-                              ),
-                            ),
-                            subtitle: Column(
+                          child: Image.asset(AppImages.phoneIcon, height: 24),
+                        ),
+                        title: Row(
+                          children: [
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    _showDraggableSheet(context);
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder:
-                                    //         (context) => ChangeMobileNumber(),
-                                    //   ),
-                                    // );
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        '+91 900 000 0000',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16,
-                                          color: AppColor.lightBlack,
-                                        ),
-                                      ),
-                                      SizedBox(width: 5),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 12,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: AppColor.white,
-                                          borderRadius: BorderRadius.circular(
-                                            50,
-                                          ),
-                                        ),
-                                        child: Image.asset(
-                                          AppImages.moreSnumberAdd,
-                                          height: 13,
-                                        ),
-                                      ),
-                                    ],
+                                Text(
+                                  'Call Landline Number',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: AppColor.grey,
                                   ),
                                 ),
-                                SizedBox(height: 5),
-                                RichText(
-                                  text: TextSpan(
-                                    text: '7',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontSize: 12,
-                                      color: AppColor.grey,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                        text: 'th ',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontSize: 8,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: 'Grade - ',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontSize: 12,
-                                          color: AppColor.grey,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: 'C ',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontSize: 12,
-                                          color: AppColor.grey,
-                                          fontWeight: FontWeight.w800,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: 'Section',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
-                                    ],
+                                SizedBox(height: 4),
+                                Text(
+                                  '045 6000 0000 00',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20,
+                                    color: AppColor.lightBlack,
                                   ),
                                 ),
                               ],
                             ),
-                            trailing: Image.asset(
-                              AppImages.moreSimage2,
-                              height: 60,
-                              width: 80,
+                            Spacer(),
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ChangeMobileNumber(),
+                                  ),
+                                );
+                              },
+                              child: Image.asset(
+                                AppImages.phoneGreenIcon,
+                                height: 58,
+                                width: 58,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColor.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(AppImages.moreSbackImage),
+                        fit: BoxFit.cover,
+                        alignment: Alignment(-6, -0.8),
+                      ),
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [AppColor.white, AppColor.lowWhite],
+                      ),
+                    ),
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          right: 15,
+                          left: 15,
+                          bottom: 25,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Image.asset(
+                              AppImages.moreStopImage,
                               fit: BoxFit.cover,
                             ),
+                            SizedBox(height: 20),
+                            ListTile(
+                              title: RichText(
+                                text: TextSpan(
+                                  text: 'Jelastin',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 24,
+                                    color: AppColor.black,
+                                  ),
+                                ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      _showDraggableSheet(context);
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          '+91 900 000 0000',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                            color: AppColor.lightBlack,
+                                          ),
+                                        ),
+                                        SizedBox(width: 5),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 12,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: AppColor.white,
+                                            borderRadius: BorderRadius.circular(
+                                              50,
+                                            ),
+                                          ),
+                                          child: Image.asset(
+                                            AppImages.moreSnumberAdd,
+                                            height: 13,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  RichText(
+                                    text: TextSpan(
+                                      text: '7',
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontSize: 12,
+                                        color: AppColor.grey,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                          text: 'th ',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 8,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: 'Grade - ',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 12,
+                                            color: AppColor.grey,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: 'C ',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 12,
+                                            color: AppColor.grey,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: 'Section',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              trailing: Image.asset(
+                                AppImages.moreSimage2,
+                                height: 60,
+                                width: 80,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 70,
+                    bottom: 32.5,
+                    child: Image.asset(AppImages.moreSimage1, height: 90),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15),
+              DefaultTabController(
+                length: 2,
+                child: Column(
+                  children: [
+                    TabBar(
+                      tabs: [
+                        Tab(text: 'Payment History'),
+                        Tab(text: 'Teachers'),
+                        Tab(text: 'Contact School'),
+                      ],
+                      controller: _tabController,
+                      labelColor: AppColor.lightBlack,
+                      unselectedLabelColor: AppColor.grey,
+                      indicatorColor: AppColor.lightBlack,
+                      labelStyle: GoogleFont.ibmPlexSans(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      unselectedLabelStyle: GoogleFont.ibmPlexSans(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      dividerColor: Colors.transparent,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 500,
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20),
+                          CustomContainer.moreScreen(
+                            termTitle: 'Third-Term Fees',
+                            timeDate: '8 Jan 26',
+                            amount: 'Rs. 15000',
+                            isPaid: false,
+                            onDetailsTap: () {},
+                          ),
+
+                          CustomContainer.moreScreen(
+                            termTitle: 'Second-Term Fees',
+                            timeDate: '12.30Pm - 8 Dec 25',
+                            amount: 'Rs. 15000',
+                            isPaid: true,
+                            onDetailsTap: () {},
+                          ),
+                          CustomContainer.moreScreen(
+                            termTitle: 'First-Term Fees',
+                            timeDate: '12.30Pm - 2 Jun 25',
+                            amount: 'Rs. 15000',
+                            isPaid: true,
+                            onDetailsTap: () {},
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ),
-                Positioned(
-                  right: 70,
-                  bottom: 32.5,
-                  child: Image.asset(AppImages.moreSimage1, height: 90),
-                ),
-              ],
-            ),
-            SizedBox(height: 15),
-            DefaultTabController(
-              length: 3,
-              child: Column(
-                children: [
-                  TabBar(
-                    tabs: [
-                      Tab(text: 'Payment History'),
-                      Tab(text: 'Teachers'),
-                      Tab(text: 'Contact School'),
-                    ],
-                    controller: _tabController,
-                    labelColor: AppColor.lightBlack,
-                    unselectedLabelColor: AppColor.grey,
-                    indicatorColor: AppColor.lightBlack,
-                    labelStyle: GoogleFont.ibmPlexSans(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    unselectedLabelStyle: GoogleFont.ibmPlexSans(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    dividerColor: Colors.transparent,
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 500,
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Column(
-                      children: [
-                        SizedBox(height: 20),
-                        CustomContainer.moreScreen(
-                          termTitle: 'Third-Term Fees',
-                          timeDate: '8 Jan 26',
-                          amount: 'Rs. 15000',
-                          isPaid: false,
-                          onDetailsTap: () {},
-                        ),
-
-                        CustomContainer.moreScreen(
-                          termTitle: 'Second-Term Fees',
-                          timeDate: '12.30Pm - 8 Dec 25',
-                          amount: 'Rs. 15000',
-                          isPaid: true,
-                          onDetailsTap: () {},
-                        ),
-                        CustomContainer.moreScreen(
-                          termTitle: 'First-Term Fees',
-                          timeDate: '12.30Pm - 2 Jun 25',
-                          amount: 'Rs. 15000',
-                          isPaid: true,
-                          onDetailsTap: () {},
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 17,
-                    ),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: Row(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 17,
+                      ),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            child: Row(
+                              children: [
+                                CustomContainer.teacherTab(
+                                  teachresName: 'Vasanth',
+                                  classTitle: 'Tamil - Class Teacher',
+                                  teacherImage: AppImages.teacher1,
+                                ),
+                                SizedBox(width: 17),
+                                Column(
+                                  children: [
+                                    CustomContainer.teacherTab(
+                                      teachresName: 'Abishiek',
+                                      classTitle: 'English',
+                                      teacherImage: AppImages.teacher2,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Row(
                             children: [
-                              CustomContainer.teacherTab(
-                                teachresName: 'Vasanth',
-                                classTitle: 'Tamil - Class Teacher',
-                                teacherImage: AppImages.teacher1,
+                              Column(
+                                children: [
+                                  CustomContainer.teacherTab(
+                                    teachresName: 'Kumari',
+                                    classTitle: 'Maths',
+                                    teacherImage: AppImages.teacher3,
+                                  ),
+                                ],
                               ),
                               SizedBox(width: 17),
                               Column(
                                 children: [
                                   CustomContainer.teacherTab(
-                                    teachresName: 'Abishiek',
-                                    classTitle: 'English',
-                                    teacherImage: AppImages.teacher2,
+                                    teachresName: 'Ponnamma',
+                                    classTitle: 'Science',
+                                    teacherImage: AppImages.teacher4,
                                   ),
                                 ],
                               ),
                             ],
                           ),
+<<<<<<< Updated upstream
                         ),
                         Row(
                           children: [
@@ -444,13 +612,21 @@ class _MoreScreenState extends State<MoreScreen> with TickerProviderStateMixin {
                           ],
                         ),
                       ],
+=======
+                        ],
+                      ),
+>>>>>>> Stashed changes
                     ),
-                  ),
-                  Center(child: Text('Third Term Fees')),
-                ],
+                    InkWell(
+                      onTap: () {
+                        showDraggableSheet(context);
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
