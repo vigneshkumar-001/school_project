@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/announcements_screen.dart';
 
 import '../Utility/app_color.dart';
@@ -522,7 +523,8 @@ class CustomContainer {
           elevation: MaterialStateProperty.all(0),
           backgroundColor: MaterialStateProperty.all(Colors.transparent),
         ),
-        child: InkWell(  onTap: onTap,
+        child: InkWell(
+          onTap: onTap,
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -533,11 +535,200 @@ class CustomContainer {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Icon(Icons.check, size: 30, color: AppColor.white),
+              padding: const EdgeInsets.all(17.0),
+              child: Image.asset(AppImages.tick, height: 20, width: 20),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  static Widget quizContainer({
+    required String leftTextNumber,
+    required String leftValue,
+    required String rightTextNumber,
+    required String rightValue,
+    required bool leftSelected,
+    required bool rightSelected,
+    required bool isQuizCompleted,
+    VoidCallback? leftOnTap,
+    VoidCallback? rightOnTap,
+  }) {
+    return Row(
+      children: [
+        // Left Option
+        Expanded(
+          child: GestureDetector(
+            onTap: leftOnTap,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              decoration: BoxDecoration(
+                gradient:
+                    leftSelected
+                        ? const LinearGradient(
+                          colors: [Colors.white, AppColor.white],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        )
+                        : null,
+                color: leftSelected ? null : AppColor.lightGrey,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color:
+                      leftSelected
+                          ? (isQuizCompleted
+                              ? AppColor.greenMore1
+                              : AppColor.blue)
+                          : AppColor.lightGrey,
+                  width: leftSelected ? 3 : 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField.textWithSmall(text: leftTextNumber),
+                  ),
+                  Expanded(
+                    child: CustomTextField.textWithSmall(
+                      text: leftValue,
+                      fontWeight:
+                          leftSelected ? FontWeight.w800 : FontWeight.w500,
+                      // color: leftSelected ? AppColor.blue : AppColor.black,
+                      color:
+                          leftSelected
+                              ? (isQuizCompleted
+                                  ? AppColor.greenMore1
+                                  : AppColor.black)
+                              : AppColor.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        const SizedBox(width: 20),
+
+        // Right Option
+        Expanded(
+          child: GestureDetector(
+            onTap: rightOnTap,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              decoration: BoxDecoration(
+                gradient:
+                    rightSelected
+                        ? const LinearGradient(
+                          colors: [Colors.white, AppColor.white],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        )
+                        : null,
+                color: rightSelected ? null : AppColor.lightGrey,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color:
+                      rightSelected
+                          ? (isQuizCompleted
+                              ? AppColor.greenMore1
+                              : AppColor.blue)
+                          : AppColor.lightGrey,
+                  width: rightSelected ? 3 : 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField.textWithSmall(text: rightTextNumber),
+                  ),
+                  Expanded(
+                    child: CustomTextField.textWithSmall(
+                      text: rightValue,
+                      fontWeight:
+                          rightSelected ? FontWeight.w800 : FontWeight.w500,
+
+                      color:
+                          rightSelected
+                              ? (isQuizCompleted
+                                  ? AppColor.greenMore1
+                                  : AppColor.blue)
+                              : AppColor.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  static quizContainer1({
+    required String leftTextNumber,
+    required String leftValue,
+    required bool isSelected,
+    VoidCallback? onTap,
+    required bool isQuizCompleted,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              decoration: BoxDecoration(
+                color: isSelected ? AppColor.white : AppColor.lightGrey,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color:
+                      isSelected
+                          ? (isQuizCompleted
+                              ? AppColor.greenMore1
+                              : AppColor.blue)
+                          : AppColor.lightGrey,
+                  width: isSelected ? 3 : 1,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: CustomTextField.textWithSmall(
+                        text: leftTextNumber,
+
+                        color: AppColor.grayop,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 6,
+                      child: CustomTextField.textWithSmall(
+                        text: leftValue,
+
+                        color:
+                            isSelected
+                                ? (isQuizCompleted
+                                    ? AppColor.greenMore1
+                                    : AppColor.blue)
+                                : AppColor.black,
+                      ),
+                    ),
+
+                    // CustomTextField.textWithSmall(
+                    //   text: ' ',
+                    //   color: AppColor.black,
+                    // )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
