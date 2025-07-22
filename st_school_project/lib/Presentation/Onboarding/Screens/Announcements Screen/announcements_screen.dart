@@ -15,6 +15,160 @@ class AnnouncementsScreen extends StatefulWidget {
 }
 
 class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
+  void _feessSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.55,
+          minChildSize: 0.20,
+          maxChildSize: 0.55,
+          expand: false,
+          builder: (context, scrollController) {
+            final items = ['Shoes', 'Notebooks', 'Tuition Fees'];
+
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: AppColor.grayop,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+
+                  Image.asset(AppImages.announcement2),
+                  SizedBox(height: 20),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Third-Term Fees',
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.black,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            'Due date',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 12,
+                              color: AppColor.lowGrey,
+                            ),
+                          ),
+                          Text(
+                            '12-Dec-25',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 4),
+                      Icon(
+                        CupertinoIcons.clock_fill,
+                        size: 30,
+                        color: AppColor.grayop,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: List.generate(
+                      items.length,
+                      (index) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          '${index + 1}. ${items[index]}',
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 16,
+                            color: AppColor.lightBlack,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all(EdgeInsets.zero),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      elevation: MaterialStateProperty.all(0),
+                      backgroundColor: MaterialStateProperty.all(
+                        Colors.transparent,
+                      ),
+                    ),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppColor.blueG1, AppColor.blueG2],
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: 50,
+                        width: double.infinity,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Pay Rs.15,000',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: AppColor.white,
+                              ),
+                            ),
+                            SizedBox(width: 5),
+                            Icon(
+                              CupertinoIcons.right_chevron,
+                              size: 14,
+                              weight: 20,
+                              color: AppColor.white,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,6 +210,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                   verticalPadding: 6,
                   gradientStartColor: AppColor.black.withOpacity(0.1),
                   gradientEndColor: AppColor.black,
+                  onDetailsTap: () => _feessSheet(context),
                 ),
 
                 SizedBox(height: 20),

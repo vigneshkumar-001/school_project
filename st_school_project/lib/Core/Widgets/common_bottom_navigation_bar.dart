@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:st_school_project/Core/Utility/google_font.dart';
 
 import '../../Presentation/Onboarding/Screens/Home Screen/home_screen.dart'
     show HomeScreen;
@@ -25,53 +26,56 @@ class CommonBottomNavigationBar extends StatefulWidget {
 class _CommonBottomNavigationBarState extends State<CommonBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      backgroundColor: AppColor.white,
-      type: BottomNavigationBarType.fixed,
-      currentIndex: widget.currentIndex,
-      onTap: widget.onTabSelected,
-      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-      selectedFontSize: 15,
-      selectedItemColor: AppColor.blue,
-      unselectedItemColor: AppColor.grey,
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 10,
-        fontWeight: FontWeight.w700,
+    return Padding(
+      padding: const EdgeInsets.only(top: 6.0),
+      child: BottomNavigationBar(
+        backgroundColor: AppColor.white,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: widget.currentIndex,
+        onTap: widget.onTabSelected,
+        selectedLabelStyle: GoogleFont.ibmPlexSans(fontWeight: FontWeight.w700),
+        selectedFontSize: 12,
+        selectedItemColor: AppColor.blue,
+        unselectedItemColor: AppColor.lightBlack,
+        unselectedLabelStyle: GoogleFont.ibmPlexSans(
+          fontSize: 9,
+          fontWeight: FontWeight.w700,
+        ),
+        items: [
+          BottomNavigationBarItem(
+            icon: Image.asset(AppImages.bottum0, height: 26),
+            activeIcon: Image.asset(AppImages.bottum0select, height: 30),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(AppImages.bottum3, height: 26),
+            activeIcon: Image.asset(AppImages.bottum3select, height: 30),
+            label: 'Announcements',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(AppImages.bottum1, height: 26),
+            activeIcon: Image.asset(AppImages.bottum1select, height: 30),
+            label: 'Tasks',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(AppImages.bottum2, height: 26),
+            activeIcon: Image.asset(AppImages.bottum2select, height: 30),
+            label: 'Attendance',
+          ),
+
+          BottomNavigationBarItem(
+            icon: Image.asset(AppImages.moreSimage1, height: 26,width: 26,),
+            activeIcon: Image.asset(AppImages.moreSimage1, height: 30),
+            label: 'More',
+          ),
+        ],
+
+        // onTap: (currentIndex) {
+        //   setState(() {
+        //     index = currentIndex;
+        //   });
+        // },
       ),
-      items: [
-        BottomNavigationBarItem(
-          icon: Image.asset(AppImages.bottum0, height: 26),
-          activeIcon: Image.asset(AppImages.bottum0select, height: 30),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(AppImages.bottum3, height: 26),
-          activeIcon: Image.asset(AppImages.bottum3select, height: 30),
-          label: 'Announcements',
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(AppImages.bottum1, height: 26),
-          activeIcon: Image.asset(AppImages.bottum1select, height: 30),
-          label: 'Tasks',
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(AppImages.bottum2, height: 26),
-          activeIcon: Image.asset(AppImages.bottum2select, height: 30),
-          label: 'Attendance',
-        ),
-
-        BottomNavigationBarItem(
-          icon: Image.asset(AppImages.moreSimage1, height: 26),
-          activeIcon: Image.asset(AppImages.moreSimage1, height: 30),
-          label: 'More',
-        ),
-      ],
-
-      // onTap: (currentIndex) {
-      //   setState(() {
-      //     index = currentIndex;
-      //   });
-      // },
     );
   }
 }
