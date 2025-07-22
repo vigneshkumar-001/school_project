@@ -18,24 +18,22 @@ class MoreScreen extends StatefulWidget {
 class _MoreScreenState extends State<MoreScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
-  int _lastValidTabIndex = 0; // remember last good tab (0 or 1)
+  int _lastValidTabIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
 
-    // Listen for swipe attempts toward tab 3
     _tabController.addListener(_handleTabChange);
   }
 
   void _handleTabChange() {
-    // Called during animation; only intercept when contact tab is targeted
-    if (_tabController.index == 2 && _tabController.indexIsChanging) {
+    if (_tabController.index == 3 && _tabController.indexIsChanging) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         _showContactSchoolSheet(context);
-        // roll back to last valid tab
+
         _tabController.index = _lastValidTabIndex;
       });
     } else if (_tabController.index < 2) {
@@ -59,25 +57,29 @@ class _MoreScreenState extends State<MoreScreen>
         return DraggableScrollableSheet(
           initialChildSize: 0.30,
           minChildSize: 0.20,
-          maxChildSize: 0.95,
+          maxChildSize: 0.30,
           expand: false,
           builder: (context, scrollController) {
             return Container(
               decoration: BoxDecoration(
                 color: AppColor.white,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
-                ),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: ListView(
                 controller: scrollController,
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 children: [
-                  const SizedBox(height: 16),
-                  // Change Mobile Number
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: 30,
+                      decoration: BoxDecoration(color: AppColor.grayop),
+                    ),
+                  ),
+                  SizedBox(height: 20),
                   ListTile(
                     leading: Container(
-                      padding: const EdgeInsets.all(17),
+                      padding: EdgeInsets.all(17),
                       decoration: BoxDecoration(
                         color: AppColor.lightGrey,
                         borderRadius: BorderRadius.circular(15),
@@ -121,7 +123,7 @@ class _MoreScreenState extends State<MoreScreen>
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const ChangeMobileNumber(),
+                            builder: (_) => ChangeMobileNumber(),
                           ),
                         );
                       },
@@ -132,8 +134,8 @@ class _MoreScreenState extends State<MoreScreen>
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  // Change Profile Picture
+                  SizedBox(height: 20),
+
                   ListTile(
                     leading: Image.asset(AppImages.moreSimage1, height: 58),
                     title: Column(
@@ -147,7 +149,7 @@ class _MoreScreenState extends State<MoreScreen>
                             color: AppColor.grey,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4),
                         Text(
                           'Profile Picture',
                           style: GoogleFont.ibmPlexSans(
@@ -162,9 +164,7 @@ class _MoreScreenState extends State<MoreScreen>
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => const ProfileScreen(),
-                          ),
+                          MaterialPageRoute(builder: (_) => ProfileScreen()),
                         );
                       },
                       child: Image.asset(
@@ -183,9 +183,6 @@ class _MoreScreenState extends State<MoreScreen>
     );
   }
 
-  // -------------------------
-  // Sheet: Contact School
-  // -------------------------
   void _showContactSchoolSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -194,31 +191,29 @@ class _MoreScreenState extends State<MoreScreen>
       builder: (_) {
         return DraggableScrollableSheet(
           initialChildSize: 0.30,
-          minChildSize: 0.20,
-          maxChildSize: 0.95,
+          minChildSize: 0.15,
+          maxChildSize: 0.50,
           expand: false,
           builder: (context, scrollController) {
             return Container(
               decoration: BoxDecoration(
                 color: AppColor.white,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
-                ),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: ListView(
                 controller: scrollController,
-                padding: const EdgeInsets.all(16),
+                shrinkWrap: true,
+                padding: EdgeInsets.all(16),
                 children: [
-                  const SizedBox(height: 16),
-                  ListTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(17),
-                      decoration: BoxDecoration(
-                        color: AppColor.lightGrey,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Image.asset(AppImages.phoneIcon, height: 24),
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: 30,
+                      decoration: BoxDecoration(color: AppColor.grayop),
                     ),
+                  ),
+                  SizedBox(height: 20),
+                  ListTile(
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -230,12 +225,12 @@ class _MoreScreenState extends State<MoreScreen>
                             color: AppColor.grey,
                           ),
                         ),
-                        const SizedBox(height: 4),
+
                         Text(
                           '045 6000 0000 00',
                           style: GoogleFont.ibmPlexSans(
                             fontWeight: FontWeight.w500,
-                            fontSize: 20,
+                            fontSize: 24,
                             color: AppColor.lightBlack,
                           ),
                         ),
@@ -243,7 +238,6 @@ class _MoreScreenState extends State<MoreScreen>
                     ),
                     trailing: InkWell(
                       onTap: () {
-                        // TODO: call or open dialer
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -267,9 +261,160 @@ class _MoreScreenState extends State<MoreScreen>
     );
   }
 
-  // ------------------------------------------
-  // BUILD
-  // ------------------------------------------
+  void _feessSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.90,
+          minChildSize: 0.15,
+          maxChildSize: 0.70,
+          expand: false,
+          builder: (context, scrollController) {
+            final items = ['Shoes', 'Notebooks', 'Tuition Fees'];
+
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: AppColor.grayop,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+
+                  Image.asset(AppImages.announcement2),
+                  SizedBox(height: 20),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Third-Term Fees',
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.black,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            'Due date',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 12,
+                              color: AppColor.lowGrey,
+                            ),
+                          ),
+                          Text(
+                            '12-Dec-25',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 4),
+                      Icon(
+                        CupertinoIcons.clock_fill,
+                        size: 30,
+                        color: AppColor.grayop,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: List.generate(
+                      items.length,
+                      (index) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          '${index + 1}. ${items[index]}',
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 16,
+                            color: AppColor.lightBlack,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all(EdgeInsets.zero),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      elevation: MaterialStateProperty.all(0),
+                      backgroundColor: MaterialStateProperty.all(
+                        Colors.transparent,
+                      ),
+                    ),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppColor.blueG1, AppColor.blueG2],
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: 50,
+                        width: double.infinity,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Pay Rs.15,000',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: AppColor.white,
+                              ),
+                            ),
+                            SizedBox(width: 5),
+                            Icon(
+                              CupertinoIcons.right_chevron,
+                              size: 14,
+                              weight: 20,
+                              color: AppColor.white,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -278,7 +423,6 @@ class _MoreScreenState extends State<MoreScreen>
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // ---------------- Header ----------------
               Stack(
                 children: [
                   Container(
@@ -286,7 +430,7 @@ class _MoreScreenState extends State<MoreScreen>
                       image: DecorationImage(
                         image: AssetImage(AppImages.moreSbackImage),
                         fit: BoxFit.cover,
-                        alignment: const Alignment(-6, -0.8),
+                        alignment: Alignment(-6, -0.8),
                       ),
                       gradient: LinearGradient(
                         begin: Alignment.topRight,
@@ -295,11 +439,7 @@ class _MoreScreenState extends State<MoreScreen>
                       ),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                        right: 15,
-                        left: 15,
-                        bottom: 25,
-                      ),
+                      padding: EdgeInsets.only(right: 15, left: 15, bottom: 25),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -307,7 +447,7 @@ class _MoreScreenState extends State<MoreScreen>
                             AppImages.moreStopImage,
                             fit: BoxFit.cover,
                           ),
-                          const SizedBox(height: 20),
+                          SizedBox(height: 20),
                           ListTile(
                             title: RichText(
                               text: TextSpan(
@@ -334,9 +474,9 @@ class _MoreScreenState extends State<MoreScreen>
                                           color: AppColor.lightBlack,
                                         ),
                                       ),
-                                      const SizedBox(width: 5),
+                                      SizedBox(width: 5),
                                       Container(
-                                        padding: const EdgeInsets.symmetric(
+                                        padding: EdgeInsets.symmetric(
                                           horizontal: 12,
                                           vertical: 12,
                                         ),
@@ -354,7 +494,7 @@ class _MoreScreenState extends State<MoreScreen>
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 5),
+                                SizedBox(height: 5),
                                 RichText(
                                   text: TextSpan(
                                     text: '7',
@@ -389,7 +529,7 @@ class _MoreScreenState extends State<MoreScreen>
                                       TextSpan(
                                         text: 'Section',
                                         style: GoogleFont.ibmPlexSans(
-                                          fontSize: 12,
+                                          fontSize: 13,
                                           fontWeight: FontWeight.normal,
                                         ),
                                       ),
@@ -411,19 +551,18 @@ class _MoreScreenState extends State<MoreScreen>
                   ),
                   Positioned(
                     right: 70,
-                    bottom: 32.5,
+                    bottom: 33,
                     child: Image.asset(AppImages.moreSimage1, height: 90),
                   ),
                 ],
               ),
-              const SizedBox(height: 15),
+              SizedBox(height: 15),
 
-              // ---------------- Tabs ----------------
               Column(
                 children: [
                   TabBar(
                     controller: _tabController,
-                    tabs: const [
+                    tabs: [
                       Tab(text: 'Payment History'),
                       Tab(text: 'Teachers'),
                       Tab(text: 'Contact School'),
@@ -436,12 +575,11 @@ class _MoreScreenState extends State<MoreScreen>
                       fontWeight: FontWeight.w600,
                     ),
                     dividerColor: Colors.transparent,
-                    // Intercept taps immediately
+
                     onTap: (index) {
                       if (index == 2) {
-                        // user tapped Contact School
                         _showContactSchoolSheet(context);
-                        // keep showing last valid tab
+
                         _tabController.index = _lastValidTabIndex;
                       }
                     },
@@ -451,21 +589,19 @@ class _MoreScreenState extends State<MoreScreen>
                     height: 500,
                     child: TabBarView(
                       controller: _tabController,
-                      // allow swipe between Tab 1 and Tab 2 (optional)
-                      // physics: const NeverScrollableScrollPhysics(),
+
                       children: [
-                        // ------ Tab 1: Payment History ------
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          padding: EdgeInsets.symmetric(horizontal: 15),
                           child: Column(
                             children: [
-                              const SizedBox(height: 20),
+                              SizedBox(height: 20),
                               CustomContainer.moreScreen(
                                 termTitle: 'Third-Term Fees',
                                 timeDate: '8 Jan 26',
                                 amount: 'Rs. 15000',
                                 isPaid: false,
-                                onDetailsTap: () {},
+                                onDetailsTap: () => _feessSheet(context),
                               ),
                               CustomContainer.moreScreen(
                                 termTitle: 'Second-Term Fees',
@@ -485,9 +621,8 @@ class _MoreScreenState extends State<MoreScreen>
                           ),
                         ),
 
-                        // ------ Tab 2: Teachers ------
                         Padding(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             horizontal: 16.0,
                             vertical: 17,
                           ),
@@ -500,7 +635,7 @@ class _MoreScreenState extends State<MoreScreen>
                                     classTitle: 'Tamil - Class Teacher',
                                     teacherImage: AppImages.teacher1,
                                   ),
-                                  const SizedBox(width: 17),
+                                  SizedBox(width: 17),
                                   CustomContainer.teacherTab(
                                     teachresName: 'Abishiek',
                                     classTitle: 'English',
@@ -508,7 +643,7 @@ class _MoreScreenState extends State<MoreScreen>
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 20),
+                              SizedBox(height: 20),
                               Row(
                                 children: [
                                   CustomContainer.teacherTab(
@@ -516,7 +651,7 @@ class _MoreScreenState extends State<MoreScreen>
                                     classTitle: 'Maths',
                                     teacherImage: AppImages.teacher3,
                                   ),
-                                  const SizedBox(width: 17),
+                                  SizedBox(width: 17),
                                   CustomContainer.teacherTab(
                                     teachresName: 'Ponnamma',
                                     classTitle: 'Science',
@@ -528,8 +663,7 @@ class _MoreScreenState extends State<MoreScreen>
                           ),
                         ),
 
-                        // ------ Tab 3: Placeholder (never visible) ------
-                        const SizedBox.shrink(),
+                        SizedBox.shrink(),
                       ],
                     ),
                   ),

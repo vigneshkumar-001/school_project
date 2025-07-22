@@ -227,85 +227,88 @@ class CustomContainer {
     required String backRoundImage,
     required String additionalText1,
     required String additionalText2,
+    VoidCallback? onDetailsTap,
     IconData? iconData,
     double verticalPadding = 9,
     Color? gradientStartColor,
     Color? gradientEndColor,
   }) {
-    return Stack(
-      children: [
-        Image.asset(backRoundImage),
-        Positioned(
-          bottom: 0,
-          right: 0,
-          left: 0,
+    return InkWell(onTap: onDetailsTap,
+      child: Stack(
+        children: [
+          Image.asset(backRoundImage),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            left: 0,
 
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  gradientStartColor ?? AppColor.black.withOpacity(0.01),
-                  gradientEndColor ?? AppColor.black,
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    gradientStartColor ?? AppColor.black.withOpacity(0.01),
+                    gradientEndColor ?? AppColor.black,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(22),
+                  bottomRight: Radius.circular(22),
+                ),
               ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(22),
-                bottomRight: Radius.circular(22),
-              ),
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 25,
-                vertical: verticalPadding,
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        mainText,
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.white,
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 25,
+                  vertical: verticalPadding,
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          mainText,
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.white,
+                          ),
                         ),
-                      ),
-                      Spacer(),
-                      Icon(iconData, size: 22, color: AppColor.white),
-                      SizedBox(width: 8),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (additionalText1 != '')
+                        Spacer(),
+                        Icon(iconData, size: 22, color: AppColor.white),
+                        SizedBox(width: 8),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (additionalText1 != '')
+                              Text(
+                                additionalText1,
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 12,
+                                  color: AppColor.lightGrey,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             Text(
-                              additionalText1,
+                              additionalText2,
                               style: GoogleFont.ibmPlexSans(
-                                fontSize: 12,
-                                color: AppColor.lightGrey,
+                                fontSize: 14,
+                                color: AppColor.white,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          Text(
-                            additionalText2,
-                            style: GoogleFont.ibmPlexSans(
-                              fontSize: 14,
-                              color: AppColor.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-                ],
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -409,7 +412,7 @@ class CustomContainer {
                         ),
                         Spacer(),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: onDetailsTap,
                           child: Container(
                             padding: EdgeInsets.symmetric(
                               horizontal: 20,
