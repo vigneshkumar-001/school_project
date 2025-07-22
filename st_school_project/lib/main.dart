@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'Presentation/Admssion/Screens/student_info_screen.dart';
 import 'Presentation/Onboarding/Screens/Home Screen/home_screen.dart';
 
 void main() {
@@ -11,7 +12,7 @@ void main() {
       statusBarBrightness: Brightness.light, // For iOS (inverted logic)
       systemNavigationBarColor: Colors.white, // White background for nav bar
       systemNavigationBarIconBrightness:
-          Brightness.dark, // Black icons on nav bar
+          Brightness.dark, 
     ),
   );
 
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: Colors.white),
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: StudentInfoScreen(),
     );
   }
 }
