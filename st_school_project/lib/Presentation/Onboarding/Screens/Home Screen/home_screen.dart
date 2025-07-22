@@ -17,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
-  final List<Widget> _screens = const [
+  final List<Widget> _screens = [
     HomeTab(),
     AnnouncementsScreen(),
     TaskScreen(),
@@ -26,12 +26,21 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   void _onTabTapped(int index) {
+    if (index == _currentIndex) return;
+
+    final diff = (index - _currentIndex).abs();
+
+    if (diff == 1) {
+      _pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      _pageController.jumpToPage(index);
+    }
+
     setState(() => _currentIndex = index);
-    _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
-    );
   }
 
   @override
@@ -43,9 +52,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       body: PageView(
         controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(), // Disable swipe
+        physics: const NeverScrollableScrollPhysics(),
         children: _screens,
       ),
       bottomNavigationBar: CommonBottomNavigationBar(
@@ -55,3 +65,5 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+

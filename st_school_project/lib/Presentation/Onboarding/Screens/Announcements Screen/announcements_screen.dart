@@ -22,17 +22,13 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
       backgroundColor: Colors.transparent,
       builder: (_) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.30,
-          minChildSize: 0.15,
-          maxChildSize: 0.50,
+          initialChildSize: 0.55,
+          minChildSize: 0.20,
+          maxChildSize: 0.55,
           expand: false,
           builder: (context, scrollController) {
-            final items = [
-              'Shoes',
-              'Notebooks',
-              'Tuition Fees',
+            final items = ['Shoes', 'Notebooks', 'Tuition Fees'];
 
-            ];
 
             return Container(
               decoration: BoxDecoration(
@@ -102,7 +98,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: List.generate(
                       items.length,
-                          (index) => Padding(
+                      (index) => Padding(
                         padding: const EdgeInsets.only(bottom: 8),
                         child: Text(
                           '${index + 1}. ${items[index]}',
@@ -114,6 +110,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                       ),
                     ),
                   ),SizedBox(height: 15,),
+
                   ElevatedButton(
                     onPressed: () {},
                     style: ButtonStyle(

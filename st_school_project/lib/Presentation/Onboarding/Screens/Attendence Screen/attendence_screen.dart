@@ -460,7 +460,7 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                   gradient: const LinearGradient(
                                     colors: [
                                       AppColor.grayop,
-                                      AppColor.lightWhite,
+                                        AppColor.lightWhite,
                                       AppColor.lightWhite,
                                       AppColor.grayop,
                                     ],

@@ -57,7 +57,7 @@ class _MoreScreenState extends State<MoreScreen>
         return DraggableScrollableSheet(
           initialChildSize: 0.30,
           minChildSize: 0.20,
-          maxChildSize: 0.30,
+          maxChildSize: 0.50,
           expand: false,
           builder: (context, scrollController) {
             return Container(
@@ -268,9 +268,9 @@ class _MoreScreenState extends State<MoreScreen>
       backgroundColor: Colors.transparent,
       builder: (_) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.90,
-          minChildSize: 0.15,
-          maxChildSize: 0.70,
+          initialChildSize: 0.55,
+          minChildSize: 0.20,
+          maxChildSize: 0.55,
           expand: false,
           builder: (context, scrollController) {
             final items = ['Shoes', 'Notebooks', 'Tuition Fees'];
