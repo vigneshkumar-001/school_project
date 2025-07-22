@@ -50,9 +50,6 @@ class _MoreScreenState extends State<MoreScreen>
     super.dispose();
   }
 
-  // ------------------------------------------
-  // Sheet: Edit Profile / Change Mobile Number
-  // ------------------------------------------
   void _showEditProfileSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -87,27 +84,37 @@ class _MoreScreenState extends State<MoreScreen>
                       ),
                       child: Image.asset(AppImages.phoneIcon, height: 24),
                     ),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Change Mobile Number',
-                          style: GoogleFont.ibmPlexSans(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: AppColor.grey,
+                    title: GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ChangeMobileNumber(),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '+91 900 000 0000',
-                          style: GoogleFont.ibmPlexSans(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 20,
-                            color: AppColor.lightBlack,
+                        );
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Change Mobile Number',
+                            style: GoogleFont.ibmPlexSans(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: AppColor.grey,
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          Text(
+                            '+91 900 000 0000',
+                            style: GoogleFont.ibmPlexSans(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                              color: AppColor.lightBlack,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     trailing: InkWell(
                       onTap: () {
