@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
+import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
+import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen.dart';
 
 import '../../../../Core/Utility/app_color.dart' show AppColor;
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import 'change_mobile_number.dart' show ChangeMobileNumber;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_map/flutter_map.dart';
 
 class MoreScreen extends StatefulWidget {
   const MoreScreen({super.key});
@@ -19,6 +23,31 @@ class _MoreScreenState extends State<MoreScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   int _lastValidTabIndex = 0;
+  final double latitude = 9.91437026701036;
+  final double longitude = 78.12740990716632;
+
+  Future<void> _openGoogleMap() async {
+    final url = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude',
+    );
+
+    // Always check if it can launch
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch Google Maps');
+    }
+  }
+
+  Future<void> _openPhoneBook() async {
+    const phoneNumber = 'tel:+918248191110';
+    // CommonLogger.log.i(phoneNumber);
+    final Uri url = Uri.parse(phoneNumber);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      // Optionally show a toast/snackbar
+      print('Could not launch dialer');
+    }
+  }
 
   @override
   void initState() {
@@ -87,7 +116,7 @@ class _MoreScreenState extends State<MoreScreen>
                       child: Image.asset(AppImages.phoneIcon, height: 24),
                     ),
                     title: GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -190,9 +219,9 @@ class _MoreScreenState extends State<MoreScreen>
       backgroundColor: Colors.transparent,
       builder: (_) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.30,
+          initialChildSize: 0.32,
           minChildSize: 0.15,
-          maxChildSize: 0.50,
+          maxChildSize: 0.40,
           expand: false,
           builder: (context, scrollController) {
             return Container(
@@ -203,54 +232,148 @@ class _MoreScreenState extends State<MoreScreen>
               child: ListView(
                 controller: scrollController,
                 shrinkWrap: true,
-                padding: EdgeInsets.all(16),
+
                 children: [
+                  SizedBox(height: 15),
                   Center(
                     child: Container(
                       height: 4,
                       width: 30,
-                      decoration: BoxDecoration(color: AppColor.grayop),
+                      decoration: BoxDecoration(
+                        color: AppColor.grayop,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
                   SizedBox(height: 20),
-                  ListTile(
-                    title: Column(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 35),
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Call Landline Number',
-                          style: GoogleFont.ibmPlexSans(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: AppColor.grey,
-                          ),
+                        Column(
+                          spacing: 5,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomTextField.textWith600(
+                              color: AppColor.grey,
+                              text: 'Call Landline Number',
+                              fontSize: 14,
+                            ),
+                            CustomTextField.textWith600(
+                              text: '045 6000 0000 00',
+                              fontSize: 24,
+                            ),
+                          ],
                         ),
-
-                        Text(
-                          '045 6000 0000 00',
-                          style: GoogleFont.ibmPlexSans(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 24,
-                            color: AppColor.lightBlack,
+                        Spacer(),
+                        InkWell(
+                          onTap: () async {
+                            const phoneNumber = 'tel:+918248191110';
+                            // CommonLogger.log.i(phoneNumber);
+                            final Uri url = Uri.parse(phoneNumber);
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(
+                                url,
+                                mode: LaunchMode.externalApplication,
+                              );
+                            } else {
+                              print('Could not launch dialer');
+                            }
+                          },
+                          child: Image.asset(
+                            AppImages.phoneGreenIcon,
+                            height: 55,
+                            width: 55,
                           ),
                         ),
                       ],
                     ),
-                    trailing: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ChangeMobileNumber(),
+                  ),
+                  SizedBox(height: 10),
+                  Stack(
+                    children: [
+                      Card(
+                        margin: EdgeInsets.all(16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        elevation: 2,
+                        child: InkWell(
+                          onTap: _openGoogleMap,
+                          child: SizedBox(
+                            height: 122,
+
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: FlutterMap(
+                                options: MapOptions(
+                                  center: LatLng(
+                                    9.914366964318729,
+                                    78.12744008201622,
+                                  ),
+
+                                  zoom: 16,
+                                  onTap: (tapPosition, point) {
+                                    _openGoogleMap();
+                                  },
+                                ),
+                                children: [
+                                  TileLayer(
+                                    urlTemplate:
+                                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                    userAgentPackageName:
+                                        'com.fenizo.st_school_project.st_school_project',
+                                  ),
+                                  MarkerLayer(
+                                    markers: [
+                                      Marker(
+                                        point: LatLng(
+                                          9.914366964318729,
+                                          78.12744008201622,
+                                        ),
+                                        width: 50,
+                                        height: 50,
+                                        child: Icon(
+                                          Icons.location_pin,
+                                          color: Colors.red,
+                                          size: 40,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        );
-                      },
-                      child: Image.asset(
-                        AppImages.phoneGreenIcon,
-                        height: 58,
-                        width: 58,
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        top: 22,
+                        left: 25,
+                        child: InkWell(
+                          onTap: () => _openGoogleMap(),
+                          child: Card(
+                            elevation: 2,
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: AppColor.white,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Text(
+                                'View Large Map',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.blue,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
