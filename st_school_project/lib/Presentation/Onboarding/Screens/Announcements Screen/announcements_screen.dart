@@ -29,6 +29,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
           builder: (context, scrollController) {
             final items = ['Shoes', 'Notebooks', 'Tuition Fees'];
 
+
             return Container(
               decoration: BoxDecoration(
                 color: AppColor.white,
@@ -108,8 +109,8 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 15),
+                  ),SizedBox(height: 15,),
+
                   ElevatedButton(
                     onPressed: () {},
                     style: ButtonStyle(
