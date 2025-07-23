@@ -457,11 +457,11 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                 height: 30,
                                 width: double.infinity,
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
+                                  gradient:  LinearGradient(
                                     colors: [
                                       AppColor.grayop,
-                                        AppColor.lightWhite,
-                                      AppColor.lightWhite,
+                                        AppColor.lightWhite.withOpacity(0.2),
+                                      AppColor.lightWhite.withOpacity(0.2),
                                       AppColor.grayop,
                                     ],
                                     begin: Alignment.topRight,
@@ -499,9 +499,9 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                 left: progressWidth - 25,
                                 top: 3,
                                 child: Container(
-                                  width: 15,
+                                  width: 12,
                                   height: 24,
-                                  decoration: const BoxDecoration(
+                                  decoration:  BoxDecoration(
                                     color: AppColor.white,
                                     shape: BoxShape.circle,
                                     boxShadow: [
