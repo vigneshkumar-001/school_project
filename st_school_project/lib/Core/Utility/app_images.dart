@@ -49,7 +49,13 @@ class AppImages {
   static String phoneGreenIcon = 'assets/images/PhoneGreenIcon.png';
   static String tick = 'assets/images/tick.png';
   static String leftArrow = 'assets/images/leftArrow.png';
+
   static String admissionTop = 'assets/images/AdmissionTop.png';
   static String logOut = 'assets/images/LogOut.png';
   static String rightSaitArrow = 'assets/images/RightSaitArrow.png';
+
+  static String calender = 'assets/images/calender.png';
+  static String dropDown = 'assets/images/dropDown.png';
+  static String arrow = 'assets/images/arrow.png';
+
 }
