@@ -8,6 +8,7 @@ import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/common_bottom_navigation_bar.dart'
     show CommonBottomNavigationBar;
 import '../../../../Core/Widgets/custom_container.dart';
+import '../Attendence Screen/attendence_screen.dart';
 
 class HomeTab extends StatefulWidget {
   final VoidCallback? onBackPressed;
@@ -231,9 +232,10 @@ class _HomeScreenState extends State<HomeTab> {
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 12,
+                            padding: const EdgeInsets.only(
+                              right: 10,
+                              left: 10,
+                              top: 10,
                             ),
                             child: Stack(
                               children: [
@@ -246,8 +248,8 @@ class _HomeScreenState extends State<HomeTab> {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 15,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 20,
                                           vertical: 15,
                                         ),
                                         child: Row(
@@ -256,13 +258,14 @@ class _HomeScreenState extends State<HomeTab> {
                                               children: [
                                                 Image.asset(
                                                   AppImages.morning,
-                                                  height: 48,
+                                                  height: 39,
+                                                  width: 47.5,
                                                 ),
                                                 SizedBox(height: 3),
                                                 Text(
                                                   'Morning',
                                                   style: GoogleFont.ibmPlexSans(
-                                                    fontSize: 14,
+                                                    fontSize: 10,
                                                     fontWeight: FontWeight.w700,
                                                     color: AppColor.white,
                                                   ),
@@ -310,13 +313,14 @@ class _HomeScreenState extends State<HomeTab> {
                                               children: [
                                                 Image.asset(
                                                   AppImages.afternoon,
-                                                  height: 48,
+                                                  height: 39,
+                                                  width: 47.5,
                                                 ),
                                                 SizedBox(height: 3),
                                                 Text(
                                                   'Afternon',
                                                   style: GoogleFont.ibmPlexSans(
-                                                    fontSize: 14,
+                                                    fontSize: 10,
                                                     fontWeight: FontWeight.w700,
                                                     color: AppColor.white,
                                                   ),
@@ -329,9 +333,9 @@ class _HomeScreenState extends State<HomeTab> {
                                     ),
 
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                         horizontal: 10,
-                                        vertical: 20,
+                                        vertical: 15,
                                       ),
                                       child: Column(
                                         crossAxisAlignment:
@@ -341,7 +345,7 @@ class _HomeScreenState extends State<HomeTab> {
                                             'Today',
                                             style: GoogleFont.ibmPlexSans(
                                               fontSize: 18,
-                                              fontWeight: FontWeight.bold,
+                                              fontWeight: FontWeight.w700,
                                               color: AppColor.white,
                                             ),
                                           ),
@@ -350,7 +354,6 @@ class _HomeScreenState extends State<HomeTab> {
                                             style: GoogleFont.ibmPlexSans(
                                               fontSize: 18,
                                               color: AppColor.white,
-                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ],
@@ -383,13 +386,23 @@ class _HomeScreenState extends State<HomeTab> {
                                     ),
 
                                     TextButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) => CommonBottomNavigationBar(currentIndex: 3, onTabSelected: (index) {
+
+                                                },),
+                                          ),
+                                        );
+                                      },
                                       child: Row(
                                         children: [
                                           Text(
                                             'View All',
                                             style: GoogleFont.ibmPlexSans(
-                                              fontSize: 14,
+                                              fontSize: 12,
                                               fontWeight: FontWeight.bold,
                                               color: AppColor.lightGrey,
                                             ),
@@ -408,22 +421,234 @@ class _HomeScreenState extends State<HomeTab> {
                                 Positioned(
                                   child: Image.asset(
                                     AppImages.greenTick,
-                                    height: 20,
+                                    height: 18,
                                   ),
-                                  top: 100,
+                                  top: 90,
                                   left: 35,
                                 ),
                                 Positioned(
                                   child: Image.asset(
                                     AppImages.greenTick,
-                                    height: 20,
+                                    height: 18,
                                   ),
-                                  top: 100,
-                                  right: 35,
+                                  top: 90,
+                                  right: 32,
                                 ),
                               ],
                             ),
                           ),
+                        ),
+                        SizedBox(width: 15),
+                        Stack(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.centerRight,
+                                  colors: [
+                                    AppColor.lightBlueG1,
+                                    AppColor.lightBlueG1.withOpacity(0.5),
+                                    AppColor.lightBlueG2,
+                                  ],
+                                ),
+                                // border: Border.all(color: Colors.black12),
+                                // color: AppColor.white,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 70,
+                                  right: 8,
+                                  left: 8,
+                                  bottom: 8,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: AppColor.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          top: 26,
+                                          right: 50,
+                                          left: 15,
+                                          bottom: 15,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '2025-26 LKG',
+                                              style: GoogleFont.ibmPlexSans(
+                                                fontSize: 16,
+                                                color: AppColor.lightBlack,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+
+                                            Text(
+                                              'Admission \nStarted',
+                                              style: GoogleFont.ibmPlexSans(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColor.black,
+                                              ),
+                                            ),
+                                            SizedBox(height: 10),
+                                            Divider(color: AppColor.lightGrey),
+                                            SizedBox(height: 6),
+                                            InkWell(
+                                              onTap: () {},
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    'Open Now',
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color:
+                                                              AppColor.blueG2,
+                                                        ),
+                                                  ),
+                                                  SizedBox(width: 7),
+                                                  Image.asset(
+                                                    AppImages.rightArrow,
+                                                    height: 10,
+                                                    color: AppColor.blueG2,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              child: Image.asset(
+                                AppImages.homeScreenCont2,
+                                height: 67,
+                                width: 77.31,
+                              ),
+                              left: 20,
+                              top: 33,
+                            ),
+                          ],
+                        ),
+                        SizedBox(width: 15),
+                        Stack(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.centerRight,
+                                  colors: [
+                                    AppColor.lightBlueG1,
+                                    AppColor.lightBlueG1.withOpacity(0.5),
+                                    AppColor.lightBlueG2,
+                                  ],
+                                ),
+                                // border: Border.all(color: Colors.black12),
+                                // color: AppColor.white,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 60,
+                                  right: 8,
+                                  left: 8,
+                                  bottom: 8,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: AppColor.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          top: 38,
+                                          right: 50,
+                                          left: 15,
+                                          bottom: 15,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '2025-26 LKG',
+                                              style: GoogleFont.ibmPlexSans(
+                                                fontSize: 16,
+                                                color: AppColor.lightBlack,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+
+                                            Text(
+                                              'Admission \nStarted',
+                                              style: GoogleFont.ibmPlexSans(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColor.black,
+                                              ),
+                                            ),
+                                            SizedBox(height: 8),
+                                            Divider(color: AppColor.lightGrey),
+                                            SizedBox(height: 6),
+                                            InkWell(
+                                              onTap: () {},
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    'Check Now',
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color:
+                                                              AppColor.blueG2,
+                                                        ),
+                                                  ),
+                                                  SizedBox(width: 7),
+                                                  Image.asset(
+                                                    AppImages.rightArrow,
+                                                    height: 10,
+                                                    color: AppColor.blueG2,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              child: Image.asset(
+                                AppImages.homeScreenCont3,
+                                height: 75,
+                                width: 73.5,
+                              ),
+                              left: 20,
+                              top: 19,
+                            ),
+                          ],
                         ),
                         SizedBox(width: 15),
                         Stack(
@@ -445,7 +670,7 @@ class _HomeScreenState extends State<HomeTab> {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                  top: 70,
+                                  top: 60,
                                   right: 10,
                                   left: 10,
                                   bottom: 15,
@@ -460,8 +685,8 @@ class _HomeScreenState extends State<HomeTab> {
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.only(
-                                          top: 50,
-                                          right: 25,
+                                          top: 40,
+                                          right: 15,
                                           left: 20,
                                           bottom: 20,
                                         ),
@@ -472,20 +697,20 @@ class _HomeScreenState extends State<HomeTab> {
                                             Text(
                                               'Prepare for',
                                               style: GoogleFont.ibmPlexSans(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
                                                 color: AppColor.lightBlack,
                                               ),
                                             ),
                                             Text(
                                               'Examinations',
                                               style: GoogleFont.ibmPlexSans(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w700,
                                                 color: AppColor.black,
                                               ),
                                             ),
-                                            SizedBox(height: 15),
+                                            SizedBox(height: 7),
                                             Text(
                                               'First Term Exam will \nbe conducted on \n11.Jun.25 ',
                                               style: GoogleFont.ibmPlexSans(
@@ -502,31 +727,36 @@ class _HomeScreenState extends State<HomeTab> {
                               ),
                             ),
                             Positioned(
-                              child: Image.asset(AppImages.clock, height: 90),
-                              left: 15,
-                              top: 20,
+                              child: Image.asset(
+                                AppImages.clock,
+                                height: 72,
+                                width: 60.3,
+                              ),
+                              left: 20,
+                              top: 15,
                             ),
                             Positioned(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColor.brown,
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Text(
-                                  'Jun 11',
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontSize: 13,
-                                    color: AppColor.yellow,
-                                    fontWeight: FontWeight.bold,
+                              child: SizedBox(
+                                height: 22,
+                                width: 58,
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: AppColor.brown,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Text(
+                                    'Jun 11',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 12,
+                                      color: AppColor.yellow,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
                               right: 25,
-                              top: 60,
+                              top: 48,
                             ),
                             // Positioned(
                             //   child: TextButton(
@@ -558,10 +788,10 @@ class _HomeScreenState extends State<HomeTab> {
                               begin: Alignment.topRight,
                               end: Alignment.bottomRight,
                               colors: [
-                                AppColor.greenG4.withOpacity(0.05),
-                                AppColor.greenG2.withOpacity(0.3),
-                                AppColor.greenG1.withOpacity(0.2),
-                                AppColor.greenG4.withOpacity(0.6),
+                                AppColor.greenG4.withOpacity(0.2),
+                                AppColor.greenG2.withOpacity(0.4),
+                                AppColor.greenG1.withOpacity(0.9),
+                                AppColor.greenG1.withOpacity(0.9),
                               ],
                             ),
                             // border: Border.all(color: Colors.black12),
@@ -599,10 +829,10 @@ class _HomeScreenState extends State<HomeTab> {
 
                                       child: Padding(
                                         padding: const EdgeInsets.only(
-                                          top: 15,
+                                          top: 18,
                                           left: 15,
-                                          right: 15,
-                                          bottom: 55,
+                                          right: 20,
+                                          bottom: 50,
                                         ),
                                         child: Column(
                                           crossAxisAlignment:
@@ -611,28 +841,31 @@ class _HomeScreenState extends State<HomeTab> {
                                             Text(
                                               'Upcoming Saturday\nHalf day School',
                                               style: GoogleFont.ibmPlexSans(
-                                                fontSize: 14,
+                                                fontSize: 12,
                                                 color: AppColor.black,
+                                                fontWeight: FontWeight.w400,
                                               ),
                                             ),
                                             SizedBox(height: 5),
                                             Text(
-                                              textAlign: TextAlign.start,
                                               '16-Jun-25',
                                               style: GoogleFont.ibmPlexSans(
-                                                fontSize: 14,
+                                                fontSize: 10,
                                                 color: AppColor.grey,
                                               ),
                                             ),
-                                            SizedBox(height: 20),
-                                            IconButton(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 55,
+                                            SizedBox(height: 21),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                left: 45.0,
                                               ),
-                                              onPressed: () {},
-                                              icon: Image.asset(
-                                                AppImages.greenButtomArrow,
-                                                height: 30,
+                                              child: InkWell(
+                                                onTap: () {},
+                                                child: Image.asset(
+                                                  AppImages.greenButtomArrow,
+                                                  height: 24,
+                                                  width: 23,
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -644,16 +877,20 @@ class _HomeScreenState extends State<HomeTab> {
                                       'Notice Board',
                                       style: GoogleFont.ibmPlexSans(
                                         fontSize: 15,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w600,
                                         color: AppColor.lightBlack,
                                       ),
                                     ),
                                   ],
                                 ),
                                 Positioned(
-                                  child: Image.asset(AppImages.bag, height: 65),
-                                  top: 160,
-                                  left: 53,
+                                  child: Image.asset(
+                                    AppImages.bag,
+                                    height: 45,
+                                    width: 43.75,
+                                  ),
+                                  top: 140,
+                                  left: 50,
                                 ),
                               ],
                             ),
@@ -679,7 +916,7 @@ class _HomeScreenState extends State<HomeTab> {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                  top: 70,
+                                  top: 60,
                                   right: 10,
                                   left: 10,
                                   bottom: 8,
@@ -692,64 +929,67 @@ class _HomeScreenState extends State<HomeTab> {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 40,
+                                        padding: EdgeInsets.only(
+                                          top: 30,
                                           right: 20,
                                           left: 15,
-                                          bottom: 8,
+                                          bottom: 15,
                                         ),
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Container(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 15,
-                                                vertical: 3,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: AppColor.lightBlue,
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                              ),
-                                              child: Text(
-                                                'Jun 11',
-                                                style: GoogleFont.ibmPlexSans(
-                                                  fontSize: 13,
-                                                  color: AppColor.textBlue,
-                                                  fontWeight: FontWeight.bold,
+                                            SizedBox(
+                                              height: 22,
+                                              width: 58,
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: AppColor.lightBlue,
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                ),
+                                                child: Text(
+                                                  'Jun 11',
+                                                  style: GoogleFont.ibmPlexSans(
+                                                    fontSize: 12,
+                                                    color: AppColor.textBlue,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(height: 10),
+                                            SizedBox(height: 6),
                                             Text(
                                               'Second-Term \nFees',
                                               style: GoogleFont.ibmPlexSans(
                                                 fontSize: 18,
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.w600,
                                                 color: AppColor.black,
                                               ),
                                             ),
-                                            SizedBox(height: 10),
-                                            TextButton(
-                                              onPressed: () {},
+                                            SizedBox(height: 8),
+                                            Divider(),
+                                            SizedBox(height: 6),
+                                            InkWell(
+                                              onTap: () {},
                                               child: Row(
                                                 children: [
                                                   Text(
                                                     'Know More',
                                                     style:
                                                         GoogleFont.ibmPlexSans(
-                                                          fontSize: 12,
+                                                          fontSize: 11,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color:
                                                               AppColor.blueG2,
                                                         ),
                                                   ),
-                                                  SizedBox(width: 7),
+                                                  SizedBox(width: 5),
                                                   Image.asset(
                                                     AppImages.rightArrow,
-                                                    height: 10,
+                                                    height: 7,
                                                     color: AppColor.blueG2,
                                                   ),
                                                 ],
@@ -764,9 +1004,13 @@ class _HomeScreenState extends State<HomeTab> {
                               ),
                             ),
                             Positioned(
-                              child: Image.asset(AppImages.wallet, height: 100),
+                              child: Image.asset(
+                                AppImages.wallet,
+                                height: 81,
+                                width: 67.84,
+                              ),
                               left: 20,
-                              top: 8,
+                              top: 15,
                             ),
                           ],
                         ),

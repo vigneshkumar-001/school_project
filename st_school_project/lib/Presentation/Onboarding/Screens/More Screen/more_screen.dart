@@ -73,7 +73,7 @@ class _MoreScreenState extends State<MoreScreen>
     super.dispose();
   }
 
-  void _showEditProfileSheet(BuildContext context) {
+  void _OTPonMobileNoEdit(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -542,7 +542,7 @@ class _MoreScreenState extends State<MoreScreen>
     );
   }
 
-  void _switchprofile(BuildContext context) {
+  void Switchprofileorlogout(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -576,109 +576,88 @@ class _MoreScreenState extends State<MoreScreen>
                       Text(
                         'Switch Profile',
                         style: GoogleFont.ibmPlexSans(
-                          fontSize: 20,
+                          fontSize: 22,
                           fontWeight: FontWeight.w600,
                           color: AppColor.black,
                         ),
                       ),
+                      Spacer(),
+                      Text(
+                        'Logout',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.lightRed,
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      InkWell(
+                        onTap: () {},
+                        child: Image.asset(AppImages.logOut, height: 26),
+                      ),
                     ],
                   ),
-                  ListTile(
-                    leading: Container(
-                      padding: EdgeInsets.all(17),
-                      decoration: BoxDecoration(
-                        color: AppColor.lightGrey,
-                        borderRadius: BorderRadius.circular(15),
+                  SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Image.asset(AppImages.moreSimage1, height: 58),
+                      SizedBox(width: 5),
+                      Text(
+                        'Anushka',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 18,
+                          color: AppColor.black,
+                        ),
                       ),
-                      child: Image.asset(AppImages.phoneIcon, height: 24),
-                    ),
-                    title: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ChangeMobileNumber(),
-                          ),
-                        );
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Change Mobile Number',
-                            style: GoogleFont.ibmPlexSans(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                              color: AppColor.grey,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '+91 900 000 0000',
-                            style: GoogleFont.ibmPlexSans(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 20,
-                              color: AppColor.lightBlack,
-                            ),
-                          ),
-                        ],
+                      Spacer(),
+                      InkWell(
+                        onTap: () {},
+                        child: Image.asset(AppImages.rightArrow, height: 16),
                       ),
-                    ),
-                    trailing: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ChangeMobileNumber(),
-                          ),
-                        );
-                      },
-                      child: Image.asset(
-                        AppImages.rightArrow,
-                        height: 16,
-                        width: 16,
-                      ),
-                    ),
+                    ],
                   ),
                   SizedBox(height: 20),
-
-                  ListTile(
-                    leading: Image.asset(AppImages.moreSimage1, height: 58),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Change',
-                          style: GoogleFont.ibmPlexSans(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: AppColor.grey,
-                          ),
+                  Row(
+                    children: [
+                      Image.asset(AppImages.moreSimage1, height: 58),
+                      SizedBox(width: 5),
+                      Text(
+                        'Swathi',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 18,
+                          color: AppColor.black,
                         ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Profile Picture',
-                          style: GoogleFont.ibmPlexSans(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 20,
-                            color: AppColor.lightBlack,
-                          ),
-                        ),
-                      ],
-                    ),
-                    trailing: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => ProfileScreen()),
-                        );
-                      },
-                      child: Image.asset(
-                        AppImages.rightArrow,
-                        height: 16,
-                        width: 16,
                       ),
-                    ),
+                      Spacer(),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: AppColor.blue, width: 1),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 6,
+                            ),
+                            child: Text(
+                              'Active',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.blue,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 7),
+                      InkWell(
+                        onTap: () {},
+                        child: Image.asset(AppImages.rightArrow, height: 16),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -737,7 +716,7 @@ class _MoreScreenState extends State<MoreScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 GestureDetector(
-                                  onTap: () => _showEditProfileSheet(context),
+                                  onTap: () => _OTPonMobileNoEdit(context),
                                   child: Row(
                                     children: [
                                       Text(
@@ -814,8 +793,8 @@ class _MoreScreenState extends State<MoreScreen>
                             ),
                             trailing: Image.asset(
                               AppImages.moreSimage2,
-                              height: 60,
-                              width: 80,
+                              height: 58,
+                              width: 58,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -824,9 +803,16 @@ class _MoreScreenState extends State<MoreScreen>
                     ),
                   ),
                   Positioned(
-                    right: 70,
-                    bottom: 33,
-                    child: Image.asset(AppImages.moreSimage1, height: 90),
+                    right: 58,
+                    bottom: 30,
+                    child: InkWell(
+                      onTap: () => Switchprofileorlogout(context),
+                      child: Image.asset(
+                        AppImages.moreSimage1,
+                        height: 95,
+                        width: 95,
+                      ),
+                    ),
                   ),
                 ],
               ),

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 
-import '../../Presentation/Onboarding/Screens/Home Screen/home_screen.dart'
-    show HomeScreen;
-import '../../Presentation/Onboarding/Screens/Task Screen/task_screen.dart'
-    show TaskScreen;
+
 import '../Utility/app_color.dart' show AppColor;
 import '../Utility/app_images.dart' show AppImages;
 

@@ -29,7 +29,6 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
           builder: (context, scrollController) {
             final items = ['Shoes', 'Notebooks', 'Tuition Fees'];
 
-
             return Container(
               decoration: BoxDecoration(
                 color: AppColor.white,
@@ -109,7 +108,8 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                         ),
                       ),
                     ),
-                  ),SizedBox(height: 15,),
+                  ),
+                  SizedBox(height: 15),
 
                   ElevatedButton(
                     onPressed: () {},
@@ -213,7 +213,28 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                   gradientEndColor: AppColor.black,
                   onDetailsTap: () => _feessSheet(context),
                 ),
-
+                SizedBox(height: 20),
+                CustomContainer.announcementsScreen(
+                  mainText: 'Result- First Term',
+                  backRoundImage: AppImages.announcement6,
+                  iconData: CupertinoIcons.clock_fill,
+                  additionalText1: '',
+                  additionalText2: '18-Jun-25',
+                  verticalPadding: 12,
+                  gradientStartColor: AppColor.black.withOpacity(0.01),
+                  gradientEndColor: AppColor.black,
+                ),
+                SizedBox(height: 20),
+                CustomContainer.announcementsScreen(
+                  mainText: 'Heavy Rain Holiday',
+                  backRoundImage: AppImages.announcement7,
+                  iconData: CupertinoIcons.clock_fill,
+                  additionalText1: '',
+                  additionalText2: '11-Jun-25',
+                  verticalPadding: 12,
+                  gradientStartColor: AppColor.black.withOpacity(0.01),
+                  gradientEndColor: AppColor.black,
+                ),
                 SizedBox(height: 20),
                 CustomContainer.announcementsScreen(
                   mainText: 'Sports Day',

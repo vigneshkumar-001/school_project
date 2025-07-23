@@ -34,6 +34,8 @@ class AppImages {
   static String announcement3 = 'assets/images/Announcement3.png';
   static String announcement4 = 'assets/images/Announcement4.png';
   static String announcement5 = 'assets/images/Announcement5.png';
+  static String announcement6 = 'assets/images/Announcement6.png';
+  static String announcement7 = 'assets/images/Announcement7.png';
   static String moreStopImage = 'assets/images/MoreStopImage.png';
   static String moreSimage1 = 'assets/images/MoreSimage1.png';
   static String moreSimage2 = 'assets/images/MoreSimage2.png';
@@ -60,8 +62,15 @@ class AppImages {
   static String splashBackImage1 = 'assets/images/SplashBackImage1.png';
   static String splashBackImage2 = 'assets/images/SplashBackImage2.png';
 
+  static String homeScreenCont2 = 'assets/images/HomeScreenCont2.png';
+  static String homeScreenCont3 = 'assets/images/HomeScreenCont3.png';
+  static String taskScreenCont1 = 'assets/images/TaskScreenCont1.png';
+
+
+
   static String advertisement1 = 'assets/images/advertisement1.png';
   static String advertisement2 = 'assets/images/advertisement2.png';
   static String advertisement3 = 'assets/images/advertisement3.png';
   static String advertisement4 = 'assets/images/advertisement4.png';
+
 }
