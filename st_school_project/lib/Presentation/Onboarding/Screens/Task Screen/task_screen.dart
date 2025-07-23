@@ -174,9 +174,9 @@ class _TaskScreenState extends State<TaskScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 16),
+                     SizedBox(height: 16),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding:  EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         children: [
                           GestureDetector(
@@ -192,8 +192,8 @@ class _TaskScreenState extends State<TaskScreen> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(width: 4),
-                                const Icon(
+                                 SizedBox(width: 4),
+                                 Icon(
                                   Icons.keyboard_arrow_down,
                                   color: Colors.white,
                                 ),
@@ -203,7 +203,7 @@ class _TaskScreenState extends State<TaskScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                     SizedBox(height: 20),
                     SizedBox(
                       height: 90,
                       child: ListView.builder(
@@ -265,7 +265,7 @@ class _TaskScreenState extends State<TaskScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 16),
+                     SizedBox(height: 16),
                     Expanded(
                       child: Stack(
                         children: [

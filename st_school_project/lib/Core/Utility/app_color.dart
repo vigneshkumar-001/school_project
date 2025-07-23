@@ -43,4 +43,8 @@ class AppColor {
   static const greenMore1 = Color(0xff1BB35A);
   static const lowGery1 = Color(0xffF2F2F2);
   static const quizGreen = Color(0xffEDFAF2);
+  static const blackG1 = Color(0xff090E1B);
+  static const lowLightBlueG1 = Color(0xffEDF7FF);
+  static const lowLightBlueG2 = Color(0xffECF7FB);
+  static const lowLightBlueG3 = Color(0xffEBF6E7);
 }

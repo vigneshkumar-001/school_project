@@ -33,18 +33,10 @@ class _OtpScreenState extends State<OtpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColor.lightGrey,
-                  border: Border.all(color: AppColor.lowLightBlue, width: 1),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(color: AppColor.grey, CupertinoIcons.left_chevron),
-                ),
+              CustomContainer.leftSaitArrow(
+                onTap: () {
+                  Navigator.pop(context);
+                },
               ),
               SizedBox(height: 20),
               Text(

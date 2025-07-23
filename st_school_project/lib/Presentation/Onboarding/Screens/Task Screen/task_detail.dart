@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:st_school_project/Core/Utility/app_images.dart';
+import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_screen.dart'
     show TaskScreen;
 
@@ -18,7 +19,8 @@ class TaskDetail extends StatefulWidget {
 class _TaskDetailState extends State<TaskDetail> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: AppColor.white,
+    return Scaffold(
+      backgroundColor: AppColor.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -27,24 +29,10 @@ class _TaskDetailState extends State<TaskDetail> {
               children: [
                 Row(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColor.lightGrey,
-                        border: Border.all(
-                          color: AppColor.lowLightBlue,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(
-                          color: AppColor.grey,
-                          CupertinoIcons.left_chevron,
-                        ),
-                      ),
+                    CustomContainer.leftSaitArrow(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
                     ),
                     SizedBox(width: 15),
                     Text(
@@ -81,10 +69,7 @@ class _TaskDetailState extends State<TaskDetail> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 30,
-
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 30),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -110,12 +95,16 @@ class _TaskDetailState extends State<TaskDetail> {
                               ),
                             ],
                           ),
-                        ),SizedBox(height: 20,),
+                        ),
+                        SizedBox(height: 20),
 
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 25),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 15,
+                              horizontal: 25,
+                            ),
                             child: Row(
                               children: [
                                 Container(
@@ -156,9 +145,8 @@ class _TaskDetailState extends State<TaskDetail> {
                                         Icon(
                                           CupertinoIcons.clock_fill,
                                           size: 35,
-                                          color: AppColor.lightBlack.withOpacity(
-                                            0.3,
-                                          ),
+                                          color: AppColor.lightBlack
+                                              .withOpacity(0.3),
                                         ),
                                         SizedBox(width: 10),
                                         Text(
