@@ -8,6 +8,7 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/
 
 import '../../../../Core/Utility/app_color.dart' show AppColor;
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
+import '../../../Admssion/Screens/admission_1.dart';
 import 'change_mobile_number.dart' show ChangeMobileNumber;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -31,7 +32,6 @@ class _MoreScreenState extends State<MoreScreen>
       'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude',
     );
 
-    // Always check if it can launch
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       throw Exception('Could not launch Google Maps');
     }
@@ -39,12 +39,11 @@ class _MoreScreenState extends State<MoreScreen>
 
   Future<void> _openPhoneBook() async {
     const phoneNumber = 'tel:+918248191110';
-    // CommonLogger.log.i(phoneNumber);
+
     final Uri url = Uri.parse(phoneNumber);
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
     } else {
-      // Optionally show a toast/snackbar
       print('Could not launch dialer');
     }
   }
@@ -52,17 +51,14 @@ class _MoreScreenState extends State<MoreScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-
-    _tabController.addListener(_handleTabChange);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   void _handleTabChange() {
-    if (_tabController.index == 3 && _tabController.indexIsChanging) {
+    if (_tabController.index == 2 && _tabController.indexIsChanging) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         _showContactSchoolSheet(context);
-
         _tabController.index = _lastValidTabIndex;
       });
     } else if (_tabController.index < 2) {
@@ -120,7 +116,7 @@ class _MoreScreenState extends State<MoreScreen>
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const ChangeMobileNumber(),
+                            builder: (_) => ChangeMobileNumber(),
                           ),
                         );
                       },
@@ -135,7 +131,7 @@ class _MoreScreenState extends State<MoreScreen>
                               color: AppColor.grey,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
                             '+91 900 000 0000',
                             style: GoogleFont.ibmPlexSans(
@@ -165,41 +161,49 @@ class _MoreScreenState extends State<MoreScreen>
                   ),
                   SizedBox(height: 20),
 
-                  ListTile(
-                    leading: Image.asset(AppImages.moreSimage1, height: 58),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Change',
-                          style: GoogleFont.ibmPlexSans(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: AppColor.grey,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => Admission1()),
+                      );
+                    },
+                    child: ListTile(
+                      leading: Image.asset(AppImages.moreSimage1, height: 58),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Change',
+                            style: GoogleFont.ibmPlexSans(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: AppColor.grey,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Profile Picture',
-                          style: GoogleFont.ibmPlexSans(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 20,
-                            color: AppColor.lightBlack,
+                          SizedBox(height: 4),
+                          Text(
+                            'Profile Picture',
+                            style: GoogleFont.ibmPlexSans(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                              color: AppColor.lightBlack,
+                            ),
                           ),
+                        ],
+                      ),
+                      trailing: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => Admission1()),
+                          );
+                        },
+                        child: Image.asset(
+                          AppImages.rightArrow,
+                          height: 16,
+                          width: 16,
                         ),
-                      ],
-                    ),
-                    trailing: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => ProfileScreen()),
-                        );
-                      },
-                      child: Image.asset(
-                        AppImages.rightArrow,
-                        height: 16,
-                        width: 16,
                       ),
                     ),
                   ),
@@ -270,7 +274,7 @@ class _MoreScreenState extends State<MoreScreen>
                         InkWell(
                           onTap: () async {
                             const phoneNumber = 'tel:+918248191110';
-                            // CommonLogger.log.i(phoneNumber);
+
                             final Uri url = Uri.parse(phoneNumber);
                             if (await canLaunchUrl(url)) {
                               await launchUrl(
@@ -538,6 +542,153 @@ class _MoreScreenState extends State<MoreScreen>
     );
   }
 
+  void _switchprofile(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.30,
+          minChildSize: 0.20,
+          maxChildSize: 0.50,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: ListView(
+                controller: scrollController,
+                padding: EdgeInsets.all(16),
+                children: [
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: 30,
+                      decoration: BoxDecoration(color: AppColor.grayop),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Text(
+                        'Switch Profile',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  ListTile(
+                    leading: Container(
+                      padding: EdgeInsets.all(17),
+                      decoration: BoxDecoration(
+                        color: AppColor.lightGrey,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Image.asset(AppImages.phoneIcon, height: 24),
+                    ),
+                    title: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ChangeMobileNumber(),
+                          ),
+                        );
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Change Mobile Number',
+                            style: GoogleFont.ibmPlexSans(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: AppColor.grey,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '+91 900 000 0000',
+                            style: GoogleFont.ibmPlexSans(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                              color: AppColor.lightBlack,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    trailing: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ChangeMobileNumber(),
+                          ),
+                        );
+                      },
+                      child: Image.asset(
+                        AppImages.rightArrow,
+                        height: 16,
+                        width: 16,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+
+                  ListTile(
+                    leading: Image.asset(AppImages.moreSimage1, height: 58),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Change',
+                          style: GoogleFont.ibmPlexSans(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: AppColor.grey,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Profile Picture',
+                          style: GoogleFont.ibmPlexSans(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20,
+                            color: AppColor.lightBlack,
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => ProfileScreen()),
+                        );
+                      },
+                      child: Image.asset(
+                        AppImages.rightArrow,
+                        height: 16,
+                        width: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -681,116 +832,125 @@ class _MoreScreenState extends State<MoreScreen>
               ),
               SizedBox(height: 15),
 
-              Column(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TabBar(
-                    controller: _tabController,
-                    tabs: [
-                      Tab(text: 'Payment History'),
-                      Tab(text: 'Teachers'),
-                      Tab(text: 'Contact School'),
-                    ],
-                    labelColor: AppColor.lightBlack,
-                    unselectedLabelColor: AppColor.grey,
-                    indicatorColor: AppColor.lightBlack,
-                    labelStyle: GoogleFont.ibmPlexSans(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    dividerColor: Colors.transparent,
-
-                    onTap: (index) {
-                      if (index == 2) {
-                        _showContactSchoolSheet(context);
-
-                        _tabController.index = _lastValidTabIndex;
-                      }
-                    },
-                  ),
-
-                  SizedBox(
-                    height: 500,
-                    child: TabBarView(
+                  Expanded(
+                    child: TabBar(
                       controller: _tabController,
-
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          child: Column(
-                            children: [
-                              SizedBox(height: 20),
-                              CustomContainer.moreScreen(
-                                termTitle: 'Third-Term Fees',
-                                timeDate: '8 Jan 26',
-                                amount: 'Rs. 15000',
-                                isPaid: false,
-                                onDetailsTap: () => _feessSheet(context),
-                              ),
-                              CustomContainer.moreScreen(
-                                termTitle: 'Second-Term Fees',
-                                timeDate: '12.30Pm - 8 Dec 25',
-                                amount: 'Rs. 15000',
-                                isPaid: true,
-                                onDetailsTap: () {},
-                              ),
-                              CustomContainer.moreScreen(
-                                termTitle: 'First-Term Fees',
-                                timeDate: '12.30Pm - 2 Jun 25',
-                                amount: 'Rs. 15000',
-                                isPaid: true,
-                                onDetailsTap: () {},
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 17,
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  CustomContainer.teacherTab(
-                                    teachresName: 'Vasanth',
-                                    classTitle: 'Tamil - Class Teacher',
-                                    teacherImage: AppImages.teacher1,
-                                  ),
-                                  SizedBox(width: 17),
-                                  CustomContainer.teacherTab(
-                                    teachresName: 'Abishiek',
-                                    classTitle: 'English',
-                                    teacherImage: AppImages.teacher2,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 20),
-                              Row(
-                                children: [
-                                  CustomContainer.teacherTab(
-                                    teachresName: 'Kumari',
-                                    classTitle: 'Maths',
-                                    teacherImage: AppImages.teacher3,
-                                  ),
-                                  SizedBox(width: 17),
-                                  CustomContainer.teacherTab(
-                                    teachresName: 'Ponnamma',
-                                    classTitle: 'Science',
-                                    teacherImage: AppImages.teacher4,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox.shrink(),
+                      tabs: const [
+                        Tab(text: 'Payment History'),
+                        Tab(text: 'Teachers'),
                       ],
+                      labelColor: AppColor.lightBlack,
+                      unselectedLabelColor: AppColor.grey,
+                      indicatorColor: AppColor.lightBlack,
+                      labelStyle: GoogleFont.ibmPlexSans(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      dividerColor: Colors.transparent,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => _showContactSchoolSheet(context),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      child: Text(
+                        'Contact School',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.grey,
+                        ),
+                      ),
                     ),
                   ),
                 ],
+              ),
+              SizedBox(
+                height: 500,
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    // Payment History
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          CustomContainer.moreScreen(
+                            termTitle: 'Third-Term Fees',
+                            timeDate: '8 Jan 26',
+                            amount: 'Rs. 15000',
+                            isPaid: false,
+                            onDetailsTap: () => _feessSheet(context),
+                          ),
+                          CustomContainer.moreScreen(
+                            termTitle: 'Second-Term Fees',
+                            timeDate: '12.30Pm - 8 Dec 25',
+                            amount: 'Rs. 15000',
+                            isPaid: true,
+                            onDetailsTap: () {},
+                          ),
+                          CustomContainer.moreScreen(
+                            termTitle: 'First-Term Fees',
+                            timeDate: '12.30Pm - 2 Jun 25',
+                            amount: 'Rs. 15000',
+                            isPaid: true,
+                            onDetailsTap: () {},
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Teachers
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 17,
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              CustomContainer.teacherTab(
+                                teachresName: 'Vasanth',
+                                classTitle: 'Tamil - Class Teacher',
+                                teacherImage: AppImages.teacher1,
+                              ),
+                              const SizedBox(width: 17),
+                              CustomContainer.teacherTab(
+                                teachresName: 'Abishiek',
+                                classTitle: 'English',
+                                teacherImage: AppImages.teacher2,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              CustomContainer.teacherTab(
+                                teachresName: 'Kumari',
+                                classTitle: 'Maths',
+                                teacherImage: AppImages.teacher3,
+                              ),
+                              const SizedBox(width: 17),
+                              CustomContainer.teacherTab(
+                                teachresName: 'Ponnamma',
+                                classTitle: 'Science',
+                                teacherImage: AppImages.teacher4,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

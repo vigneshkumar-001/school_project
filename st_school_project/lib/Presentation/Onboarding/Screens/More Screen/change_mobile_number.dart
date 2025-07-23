@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
+import 'package:st_school_project/Core/Widgets/custom_container.dart';
 
 import '../../../../Core/Utility/app_color.dart' show AppColor;
 import 'otp_screen.dart' show OtpScreen;
@@ -60,26 +61,18 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: AppColor.white,
-      body:
-      SafeArea(
+    return Scaffold(
+      backgroundColor: AppColor.white,
+      body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 17),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColor.lightGrey,
-                  border: Border.all(color: AppColor.lowLightBlue, width: 1),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(color: AppColor.grey, CupertinoIcons.left_chevron),
-                ),
+              CustomContainer.leftSaitArrow(
+                onTap: () {
+                  Navigator.pop(context);
+                },
               ),
               SizedBox(height: 20),
               Padding(
