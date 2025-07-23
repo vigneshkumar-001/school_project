@@ -59,4 +59,9 @@ class AppImages {
   static String arrow = 'assets/images/arrow.png';
   static String splashBackImage1 = 'assets/images/SplashBackImage1.png';
   static String splashBackImage2 = 'assets/images/SplashBackImage2.png';
+
+  static String advertisement1 = 'assets/images/advertisement1.png';
+  static String advertisement2 = 'assets/images/advertisement2.png';
+  static String advertisement3 = 'assets/images/advertisement3.png';
+  static String advertisement4 = 'assets/images/advertisement4.png';
 }

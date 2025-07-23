@@ -171,9 +171,17 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                   ),
                 ),
                 SizedBox(height: 25),
-                AppButton.button(text: 'Save & Continue',onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>CommunicationScreen()));
-                }),
+                AppButton.button(
+                  text: 'Save & Continue',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CommunicationScreen(),
+                      ),
+                    );
+                  },
+                ),
                 SizedBox(height: 10),
               ],
             ),
