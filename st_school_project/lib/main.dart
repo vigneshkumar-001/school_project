@@ -11,8 +11,7 @@ void main() {
       statusBarIconBrightness: Brightness.dark, // Black icons on status bar
       statusBarBrightness: Brightness.light, // For iOS (inverted logic)
       systemNavigationBarColor: Colors.white, // White background for nav bar
-      systemNavigationBarIconBrightness:
-          Brightness.dark, 
+      systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
 

@@ -1,29 +1,26 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
+import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
-import 'package:st_school_project/Presentation/Admssion/Screens/parents_info_screen.dart';
 
-import '../../../Core/Utility/app_images.dart';
-
-class StudentInfoScreen extends StatefulWidget {
-  const StudentInfoScreen({super.key});
+class CommunicationScreen extends StatefulWidget {
+  const CommunicationScreen({super.key});
 
   @override
-  State<StudentInfoScreen> createState() => _StudentInfoScreenState();
+  State<CommunicationScreen> createState() => _CommunicationScreenState();
 }
 
-class _StudentInfoScreenState extends State<StudentInfoScreen> {
+class _CommunicationScreenState extends State<CommunicationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-          child: SingleChildScrollView(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -66,7 +63,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                 SizedBox(height: 30),
                 LinearProgressIndicator(
                   minHeight: 6,
-                  value: 0.2,
+                  value: 0.6,
 
                   valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
                   stopIndicatorRadius: 16,
@@ -74,115 +71,81 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 SizedBox(height: 40),
-                CustomTextField.textWith600(text: 'Student Info', fontSize: 26),
-                SizedBox(height: 30),
+                CustomTextField.textWith600(
+                  text: 'Communication Details',
+                  fontSize: 26,
+                ),
+                SizedBox(height: 20),
+
                 CustomTextField.richText(
-                  text: 'Name of the Student ',
-                  text2: 'As per Birth Certificate',
-                ),
-                SizedBox(height: 10),
-                CustomContainer.studentInfoScreen(text: 'English'),
-                SizedBox(height: 20),
-                CustomContainer.studentInfoScreen(text: 'Tamil'),
-                SizedBox(height: 20),
-                CustomTextField.richText(
-                  text: 'Student Aadhar Number',
-                  text2: '',
-                ),
-                SizedBox(height: 10),
-                CustomContainer.studentInfoScreen(text: 'Aadhar No'),
-                SizedBox(height: 20),
-                CustomTextField.richText(
-                  text: 'Date of Birth ',
-                  text2: '01-06-2021 to 31-05-2022',
-                ),
-                SizedBox(height: 10),
-                CustomContainer.studentInfoScreen(
-                  text: '',
-                  imagePath: AppImages.calender,
-                ),
-                SizedBox(height: 20),
-                CustomTextField.richText(text: 'Religion', text2: ''),
-                SizedBox(height: 10),
-                CustomContainer.studentInfoScreen(
-                  text: '',
-                  verticalDivider: false,
-                  imageSize: 11,
-                  imagePath: AppImages.dropDown,
-                ),
-                SizedBox(height: 20),
-                CustomTextField.richText(text: 'Caste', text2: ''),
-                SizedBox(height: 10),
-                CustomContainer.studentInfoScreen(
-                  text: '',
-                  verticalDivider: false,
-                  imageSize: 11,
-                  imagePath: AppImages.dropDown,
-                ),
-                SizedBox(height: 20),
-                CustomTextField.richText(
-                  text: 'Community  ',
-                  text2: 'As per Community Certificate',
-                ),
-                SizedBox(height: 10),
-                CustomContainer.studentInfoScreen(
-                  text: '',
-                  verticalDivider: false,
-                  imageSize: 11,
-                  imagePath: AppImages.dropDown,
-                ),
-                SizedBox(height: 20),
-                CustomTextField.richText(text: 'Mother Tongue', text2: ''),
-                SizedBox(height: 10),
-                CustomContainer.studentInfoScreen(
-                  text: '',
-                  verticalDivider: false,
-                  imageSize: 11,
-                  imagePath: AppImages.dropDown,
-                ),
-                SizedBox(height: 20),
-                CustomTextField.richText(text: 'Nationality', text2: ''),
-                SizedBox(height: 10),
-                CustomContainer.studentInfoScreen(
-                  text: '',
-                  verticalDivider: false,
-                  imageSize: 11,
-                  imagePath: AppImages.dropDown,
-                ),
-                SizedBox(height: 20),
-                CustomTextField.richText(
-                  text: 'Personal Identification 1',
+                  text: 'Mobile Number - Primary',
                   text2: '',
                 ),
                 SizedBox(height: 10),
                 CustomContainer.studentInfoScreen(
                   text: '',
                   verticalDivider: false,
-                ),
-                SizedBox(height: 20),
-                CustomTextField.richText(
-                  text: 'Personal Identification 2',
-                  text2: '',
-                ),
-                SizedBox(height: 10),
-                CustomContainer.studentInfoScreen(
-                  text: '',
-                  verticalDivider: false,
-                ),
-                SizedBox(height: 30),
-                AppButton.button(
-                  text: 'Save & Continue',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ParentsInfoScreen(),
-                      ),
-                    );
-                  },
                 ),
 
+                SizedBox(height: 20),
+
+                CustomTextField.richText(
+                  text: 'Mobile Number - Secondary',
+                  text2: '',
+                ),
                 SizedBox(height: 10),
+                CustomContainer.studentInfoScreen(
+                  text: '',
+                  verticalDivider: false,
+                ),
+
+                SizedBox(height: 20),
+                CustomTextField.richText(text: 'Country', text2: ''),
+                SizedBox(height: 10),
+                CustomContainer.studentInfoScreen(
+                  text: '',
+                  verticalDivider: false,
+                  imageSize: 11,
+                  imagePath: AppImages.dropDown,
+                ),
+                SizedBox(height: 20),
+                CustomTextField.richText(text: 'State', text2: ''),
+                SizedBox(height: 10),
+                CustomContainer.studentInfoScreen(
+                  text: '',
+                  verticalDivider: false,
+                  imageSize: 11,
+                  imagePath: AppImages.dropDown,
+                ),
+                SizedBox(height: 20),
+                CustomTextField.richText(text: 'City', text2: ''),
+                SizedBox(height: 10),
+                CustomContainer.studentInfoScreen(
+                  text: '',
+                  verticalDivider: false,
+                  imageSize: 11,
+                  imagePath: AppImages.dropDown,
+                ),
+                SizedBox(height: 20),
+
+                CustomTextField.richText(text: 'Pin Code', text2: ''),
+                SizedBox(height: 10),
+                CustomContainer.studentInfoScreen(
+                  text: '',
+                  verticalDivider: false,
+                ),
+                SizedBox(height: 20),
+
+                CustomTextField.richText(text: 'Address', text2: ''),
+                SizedBox(height: 10),
+                CustomContainer.studentInfoScreen(
+                  text: '',
+                  verticalDivider: false,
+                  maxLine: 4,
+                ),
+                SizedBox(height: 30),
+                AppButton.button(text: 'Save & Continue'),
+                SizedBox(height: 20),
               ],
             ),
           ),

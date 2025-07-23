@@ -9,86 +9,6 @@ import '../Utility/app_images.dart';
 import '../Utility/google_font.dart' show GoogleFont;
 
 class CustomContainer {
-  static homeScreen({String? text}) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      // child: Container(
-      //   decoration: BoxDecoration(
-      //     border: Border.all(color: AppColor.grey.withOpacity(0.1)),
-      //
-      //     borderRadius: BorderRadius.circular(15),
-      //   ),
-      //   child: Padding(
-      //     padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-      //     child: Column(
-      //       children: [
-      //         Row(
-      //           children: [
-      //             Text(
-      //               'Science Homework',
-      //               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-      //             ),
-      //          Spacer()        ,
-      //             TextButton(
-      //               onPressed: () {},
-      //               child: Row(
-      //                 children: [
-      //                   Text(
-      //                     'View',
-      //                     style: TextStyle(
-      //                       fontWeight: FontWeight.w500,
-      //                       color: AppColor.blue,
-      //                     ),
-      //                   ),
-      //                   Padding(
-      //                     padding: const EdgeInsets.only(left: 5.0),
-      //                     child: Icon(
-      //                       Icons.arrow_forward_ios_outlined,
-      //                       color: AppColor.blue,
-      //                       size: 11,
-      //                     ),
-      //                   ),
-      //                 ],
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //         Text(
-      //           'Lorem ipsum dolor sit amet, consectetur adipiscing elit \nMaecenas laoreet ullamcorper nulla...',
-      //           style: TextStyle(fontSize: 12, color: AppColor.grey),
-      //         ),
-      //         SizedBox(height: 10),
-      //         Divider(),
-      //         SizedBox(height: 10),
-      //         Row(
-      //           children: [
-      //             Text(
-      //               'Assigned By',
-      //               style: TextStyle(fontSize: 12, color: AppColor.grey),
-      //             ),
-      //             SizedBox(width: 4),
-      //             Text(
-      //               'Flora',
-      //               style: TextStyle(
-      //                 fontSize: 12,
-      //                 color: Colors.black87,
-      //                 fontWeight: FontWeight.bold,
-      //               ),
-      //             ),
-      //      Spacer(),
-      //             Text(
-      //               '4.35Pm | 18.7.25',
-      //               style: TextStyle(color: AppColor.lowGrey, fontSize: 12),
-      //             ),
-      //           ],
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // ),
-    );
-  }
-
   static taskScreen({
     required String homeWorkText,
     required String avatarImage,
@@ -233,7 +153,8 @@ class CustomContainer {
     Color? gradientStartColor,
     Color? gradientEndColor,
   }) {
-    return InkWell(onTap: onDetailsTap,
+    return InkWell(
+      onTap: onDetailsTap,
       child: Stack(
         children: [
           Image.asset(backRoundImage),
@@ -729,6 +650,94 @@ class CustomContainer {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  static studentInfoScreen({
+    required String text,
+    String? imagePath,
+    bool verticalDivider = true,
+    double imageSize = 20,
+    int? maxLine ,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: AppColor.lowGery1,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 4,
+              child: TextField(
+                maxLines: maxLine,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            verticalDivider == true
+                ? Container(
+                  width: 2,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.grey.shade200,
+                        Colors.grey.shade300,
+                        Colors.grey.shade200,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                )
+                : Container(),
+            SizedBox(width: 20),
+            if (imagePath == null)
+              Expanded(
+                child: CustomTextField.textWithSmall(
+                  text: text,
+                  fontSize: 14,
+                  color: AppColor.grey,
+                ),
+              ),
+            if (imagePath != null)
+              Padding(
+                padding: const EdgeInsets.only(right: 15),
+                child: Image.asset(
+                  imagePath ?? '',
+                  height: imageSize,
+                  width: imageSize,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static parentInfo({bool isSelected = true, required String text}) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border:
+            isSelected
+                ? Border.all(color: AppColor.blue, width: 2)
+                : Border.all(color: Colors.transparent, width: 0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: CustomTextField.textWithSmall(
+          text: text,
+          fontWeight: FontWeight.w600,
+          color: isSelected ? AppColor.blue : AppColor.grey,
+        ),
       ),
     );
   }
