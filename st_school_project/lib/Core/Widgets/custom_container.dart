@@ -654,9 +654,9 @@ class CustomContainer {
     );
   }
 
-
   static leftSaitArrow({required VoidCallback onTap}) {
-    return InkWell( onTap: onTap,
+    return InkWell(
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           color: AppColor.lightGrey,
@@ -670,13 +670,17 @@ class CustomContainer {
             height: 14,
             color: AppColor.grey,
           ),
+        ),
+      ),
+    );
+  }
 
   static studentInfoScreen({
     required String text,
     String? imagePath,
     bool verticalDivider = true,
     double imageSize = 20,
-    int? maxLine ,
+    int? maxLine,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -754,7 +758,6 @@ class CustomContainer {
           text: text,
           fontWeight: FontWeight.w600,
           color: isSelected ? AppColor.blue : AppColor.grey,
-
         ),
       ),
     );
