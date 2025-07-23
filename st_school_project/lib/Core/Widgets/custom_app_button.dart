@@ -8,30 +8,34 @@ class AppButton {
     BuildContext? context,
     VoidCallback? onTap,
     required String text,
+    double fontSize = 16,
+
+    FontWeight? fontWeight = FontWeight.w700,
+    double? width = 200,
+    double? height = 60,
+    Image? image,
   }) {
     return Center(
       child: SizedBox(
-        width: 200,
+        width: width,
+        height: height,
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                AppColor.blueG1.withOpacity(0.9),
-                AppColor.blueG2.withOpacity(0.8),
-              ],
-              begin: Alignment.bottomLeft,
+              colors: [AppColor.blueG1, AppColor.blueG2.withOpacity(0.9)],
+              begin: Alignment.topRight,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(18),
           ),
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+            style: ButtonStyle(
+              padding: MaterialStateProperty.all(EdgeInsets.zero),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              elevation: MaterialStateProperty.all(0),
+              backgroundColor: MaterialStateProperty.all(Colors.transparent),
             ),
             onPressed: onTap,
             child: Row(
@@ -40,18 +44,16 @@ class AppButton {
                 Text(
                   text,
                   style: GoogleFont.ibmPlexSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    fontSize: fontSize,
+                    fontWeight: fontWeight,
                     color: AppColor.white,
                   ),
                 ),
+                SizedBox(width: 15),
 
-                Image.asset(
-                  AppImages.arrow,
-                  height: 35,
-                  width: 35,
-                  color: AppColor.white,
-                ),
+                image != null
+                    ? Image.asset(AppImages.rightSaitArrow, height: 20)
+                    : Container(),
               ],
             ),
           ),

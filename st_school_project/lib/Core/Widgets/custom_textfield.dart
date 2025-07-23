@@ -51,21 +51,26 @@ class CustomTextField {
     );
   }
 
-  static richText({required String text, required String text2,double secondFontSize = 15,FontWeight fontWeight = FontWeight.normal}) {
+  static richText({
+    required String text,
+    required String text2,
+    double secondFontSize = 15,
+    FontWeight fontWeight = FontWeight.normal,
+  }) {
     return RichText(
       text: TextSpan(
         text: text,
         style: GoogleFont.ibmPlexSans(fontSize: 15, color: AppColor.lightBlack),
         children: [
-          if(text2 .isNotEmpty)
-          TextSpan(
-            text: '( ${text2} )',
-            style: GoogleFont.ibmPlexSans(
-              fontWeight: fontWeight,
-              fontSize: secondFontSize,
-              color: AppColor.lowGrey,
+          if (text2.isNotEmpty)
+            TextSpan(
+              text: '( ${text2} )',
+              style: GoogleFont.ibmPlexSans(
+                fontWeight: fontWeight,
+                fontSize: secondFontSize,
+                color: AppColor.lowGrey,
+              ),
             ),
-          ),
         ],
       ),
     );

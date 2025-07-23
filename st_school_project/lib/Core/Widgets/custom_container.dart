@@ -241,7 +241,7 @@ class CustomContainer {
     VoidCallback? onDetailsTap,
   }) {
     return Container(
-      margin: EdgeInsets.only(bottom: 20), // spacing between items
+      margin: EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
         border: Border.all(color: AppColor.grey.withOpacity(0.2)),
         borderRadius: BorderRadius.circular(15),
@@ -310,7 +310,7 @@ class CustomContainer {
                 ),
               )
               : Padding(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -401,7 +401,7 @@ class CustomContainer {
                 border: Border.all(color: AppColor.grey.withOpacity(0.1)),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(20),
                 child: Column(
                   children: [
                     Text(
@@ -421,7 +421,7 @@ class CustomContainer {
                       ),
                     ),
                     SizedBox(height: 10),
-                    Image.asset(teacherImage, height: 133),
+                    Image.asset(teacherImage, height: 135, width: 135),
                   ],
                 ),
               ),
@@ -456,7 +456,7 @@ class CustomContainer {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(17.0),
+              padding: EdgeInsets.all(17.0),
               child: Image.asset(AppImages.tick, height: 20, width: 20),
             ),
           ),
@@ -478,16 +478,15 @@ class CustomContainer {
   }) {
     return Row(
       children: [
-        // Left Option
         Expanded(
           child: GestureDetector(
             onTap: leftOnTap,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               decoration: BoxDecoration(
                 gradient:
                     leftSelected
-                        ? const LinearGradient(
+                        ? LinearGradient(
                           colors: [Colors.white, AppColor.white],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -530,18 +529,17 @@ class CustomContainer {
           ),
         ),
 
-        const SizedBox(width: 20),
+        SizedBox(width: 20),
 
-        // Right Option
         Expanded(
           child: GestureDetector(
             onTap: rightOnTap,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               decoration: BoxDecoration(
                 gradient:
                     rightSelected
-                        ? const LinearGradient(
+                        ? LinearGradient(
                           colors: [Colors.white, AppColor.white],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -615,7 +613,7 @@ class CustomContainer {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
+                padding: EdgeInsets.symmetric(horizontal: 15),
                 child: Row(
                   children: [
                     Expanded(
@@ -639,11 +637,6 @@ class CustomContainer {
                                 : AppColor.black,
                       ),
                     ),
-
-                    // CustomTextField.textWithSmall(
-                    //   text: ' ',
-                    //   color: AppColor.black,
-                    // )
                   ],
                 ),
               ),
@@ -664,7 +657,7 @@ class CustomContainer {
           borderRadius: BorderRadius.circular(30),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(14),
+          padding: EdgeInsets.all(14),
           child: Image.asset(
             AppImages.leftArrow,
             height: 14,
@@ -688,7 +681,7 @@ class CustomContainer {
         color: AppColor.lowGery1,
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
         child: Row(
           children: [
             Expanded(
@@ -730,7 +723,7 @@ class CustomContainer {
               ),
             if (imagePath != null)
               Padding(
-                padding: const EdgeInsets.only(right: 15),
+                padding: EdgeInsets.only(right: 15),
                 child: Image.asset(
                   imagePath ?? '',
                   height: imageSize,
@@ -753,7 +746,7 @@ class CustomContainer {
                 : Border.all(color: Colors.transparent, width: 0),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: CustomTextField.textWithSmall(
           text: text,
           fontWeight: FontWeight.w600,

@@ -57,5 +57,6 @@ class AppImages {
   static String calender = 'assets/images/calender.png';
   static String dropDown = 'assets/images/dropDown.png';
   static String arrow = 'assets/images/arrow.png';
-
+  static String splashBackImage1 = 'assets/images/SplashBackImage1.png';
+  static String splashBackImage2 = 'assets/images/SplashBackImage2.png';
 }

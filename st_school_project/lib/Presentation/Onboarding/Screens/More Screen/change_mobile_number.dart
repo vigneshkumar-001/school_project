@@ -2,13 +2,15 @@ import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
+import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 
 import '../../../../Core/Utility/app_color.dart' show AppColor;
 import 'otp_screen.dart' show OtpScreen;
 
 class ChangeMobileNumber extends StatefulWidget {
-  const ChangeMobileNumber({super.key});
+  final String? page;
+  const ChangeMobileNumber({super.key, this.page});
 
   @override
   State<ChangeMobileNumber> createState() => _ChangeMobileNumberState();
@@ -75,6 +77,7 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                 },
               ),
               SizedBox(height: 20),
+
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Text(
@@ -122,7 +125,7 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                       flex: 9,
                       child: TextField(
                         controller: mobileNumberController,
-                        autofocus: true,
+
                         keyboardType: TextInputType.phone,
                         style: GoogleFont.inter(
                           fontWeight: FontWeight.w600,
@@ -149,52 +152,53 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
               ),
               SizedBox(height: 25),
 
-              ElevatedButton(
-                onPressed: () {
-                  final String phn = mobileNumberController.text.trim();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => OtpScreen(mobileNumber: phn),
-                    ),
-                  );
-                },
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all(EdgeInsets.zero),
-                  shape: MaterialStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  elevation: MaterialStateProperty.all(0),
-                  backgroundColor: MaterialStateProperty.all(
-                    Colors.transparent,
-                  ),
-                ),
-                child: Ink(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppColor.blueG1, AppColor.blueG2],
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Container(
-                    alignment: Alignment.center,
-                    height: 50,
-                    width: double.infinity,
-                    child: Text(
-                      'Get OTP',
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                        color: AppColor.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     final String phn = mobileNumberController.text.trim();
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => OtpScreen(mobileNumber: phn),
+              //       ),
+              //     );
+              //   },
+              //   style: ButtonStyle(
+              //     padding: MaterialStateProperty.all(EdgeInsets.zero),
+              //     shape: MaterialStateProperty.all(
+              //       RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.circular(12),
+              //       ),
+              //     ),
+              //     elevation: MaterialStateProperty.all(0),
+              //     backgroundColor: MaterialStateProperty.all(
+              //       Colors.transparent,
+              //     ),
+              //   ),
+              //   child: Ink(
+              //     decoration: BoxDecoration(
+              //       gradient: LinearGradient(
+              //         colors: [AppColor.blueG1, AppColor.blueG2],
+              //         begin: Alignment.topRight,
+              //         end: Alignment.bottomRight,
+              //       ),
+              //       borderRadius: BorderRadius.circular(12),
+              //     ),
+              //     child: Container(
+              //       alignment: Alignment.center,
+              //       height: 50,
+              //       width: double.infinity,
+              //       child: Text(
+              //         'Get OTP',
+              //         style: GoogleFont.ibmPlexSans(
+              //           fontSize: 16,
+              //           fontWeight: FontWeight.w800,
+              //           color: AppColor.white,
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              AppButton.button(text: 'Get OTP', width: double.infinity),
             ],
           ),
         ),

@@ -876,7 +876,6 @@ class _MoreScreenState extends State<MoreScreen>
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    // Payment History
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Column(
@@ -907,46 +906,56 @@ class _MoreScreenState extends State<MoreScreen>
                       ),
                     ),
 
-                    // Teachers
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 17,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 18.0,
+                        vertical: 20,
                       ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              CustomContainer.teacherTab(
-                                teachresName: 'Vasanth',
-                                classTitle: 'Tamil - Class Teacher',
-                                teacherImage: AppImages.teacher1,
-                              ),
-                              const SizedBox(width: 17),
-                              CustomContainer.teacherTab(
-                                teachresName: 'Abishiek',
-                                classTitle: 'English',
-                                teacherImage: AppImages.teacher2,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              CustomContainer.teacherTab(
-                                teachresName: 'Kumari',
-                                classTitle: 'Maths',
-                                teacherImage: AppImages.teacher3,
-                              ),
-                              const SizedBox(width: 17),
-                              CustomContainer.teacherTab(
-                                teachresName: 'Ponnamma',
-                                classTitle: 'Science',
-                                teacherImage: AppImages.teacher4,
-                              ),
-                            ],
-                          ),
-                        ],
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomContainer.teacherTab(
+                                    teachresName: 'Vasanth',
+                                    classTitle: 'Tamil - Class Teacher',
+                                    teacherImage: AppImages.teacher1,
+                                  ),
+                                ),
+                                SizedBox(width: 18),
+                                Expanded(
+                                  child: CustomContainer.teacherTab(
+                                    teachresName: 'Abishiek',
+                                    classTitle: 'English',
+                                    teacherImage: AppImages.teacher2,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 15),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomContainer.teacherTab(
+                                    teachresName: 'Kumari',
+                                    classTitle: 'Maths',
+                                    teacherImage: AppImages.teacher3,
+                                  ),
+                                ),
+                                SizedBox(width: 18),
+                                Expanded(
+                                  child: CustomContainer.teacherTab(
+                                    teachresName: 'Ponnamma',
+                                    classTitle: 'Science',
+                                    teacherImage: AppImages.teacher4,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

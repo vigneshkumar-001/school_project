@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
+import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 
 class Admission1 extends StatefulWidget {
@@ -21,6 +22,8 @@ class _Admission1State extends State<Admission1> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -34,24 +37,27 @@ class _Admission1State extends State<Admission1> {
                 ),
                 const SizedBox(height: 16),
                 Container(
-                  height: 900,
+                  // Remove fixed height and use constraints
+                  constraints: BoxConstraints(minHeight: screenHeight * 0.75),
                   child: Stack(
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: Image.asset(
                           AppImages.admissionTop,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                           width: double.infinity,
+                          height: screenHeight * 0.22,
                         ),
                       ),
                       Container(
+                        height: screenHeight * 0.25,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
                               AppColor.blackG1.withOpacity(0.7),
                               AppColor.black.withOpacity(0.0),
-                              AppColor.black.withOpacity(0.0),
+                              Colors.transparent,
                             ],
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
@@ -96,20 +102,12 @@ class _Admission1State extends State<Admission1> {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        top: 170,
+                        top: screenHeight * 0.19,
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [
-                                AppColor.lowLightBlueG1,
-                                AppColor.white,
-                                AppColor.white,
-                                AppColor.white,
-                                AppColor.white,
-                                AppColor.white,
-                                AppColor.white,
-                              ],
+                              colors: [AppColor.lowLightBlueG1, AppColor.white],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                             ),
@@ -118,105 +116,105 @@ class _Admission1State extends State<Admission1> {
                               topLeft: Radius.circular(20),
                             ),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12.0,
-                              vertical: 40,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Instructions',
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 18,
-                                    color: AppColor.lightBlack,
-                                  ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Instructions',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                  color: AppColor.lightBlack,
                                 ),
-                                const SizedBox(height: 15),
-                                ListView.builder(
-                                  itemCount: points.length,
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 10.0,
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "${index + 1}. ",
+                              ),
+                              const SizedBox(height: 15),
+                              ListView.builder(
+                                itemCount: points.length,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 10.0,
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${index + 1}. ",
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            height: 1.5,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            points[index],
                                             style: const TextStyle(
                                               fontSize: 12,
                                               height: 1.5,
+                                              color: Colors.black87,
                                             ),
                                           ),
-                                          Expanded(
-                                            child: Text(
-                                              points[index],
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                height: 1.5,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      elevation: 0,
-                      backgroundColor: Colors.transparent,
-                    ),
-                    child: Ink(
-                      height: 60,
-                      width: 160,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColor.blueG1, AppColor.blueG2],
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Next Step',
-                            style: GoogleFont.ibmPlexSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: AppColor.white,
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Image.asset(AppImages.rightSaitArrow, height: 20),
-                        ],
-                      ),
-                    ),
-                  ),
+                const SizedBox(height: 15),
+                // Center(
+                //   child: ElevatedButton(
+                //     onPressed: () {},
+                //     style: ElevatedButton.styleFrom(
+                //       padding: EdgeInsets.zero,
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(18),
+                //       ),
+                //       elevation: 0,
+                //       backgroundColor: Colors.transparent,
+                //     ),
+                //     child: Container(
+                //       height: 60,
+                //       width: 160,
+                //       decoration: BoxDecoration(
+                //         gradient: LinearGradient(
+                //           colors: [AppColor.blueG1, AppColor.blueG2],
+                //           begin: Alignment.topRight,
+                //           end: Alignment.bottomRight,
+                //         ),
+                //         borderRadius: BorderRadius.circular(18),
+                //       ),
+                //       child: Row(
+                //         mainAxisAlignment: MainAxisAlignment.center,
+                //         children: [
+                //           Text(
+                //             'Next Step',
+                //             style: GoogleFont.ibmPlexSans(
+                //               fontSize: 16,
+                //               fontWeight: FontWeight.w600,
+                //               color: AppColor.white,
+                //             ),
+                //           ),
+                //           const SizedBox(width: 10),
+                //           Image.asset(AppImages.rightSaitArrow, height: 20),
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                AppButton.button(
+                  text: 'Next Step',
+                  width: 160,
+                  image: Image.asset(AppImages.rightSaitArrow),
                 ),
               ],
             ),

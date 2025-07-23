@@ -4,6 +4,7 @@ import 'package:st_school_project/Core/Utility/app_color.dart';
 
 import 'Presentation/Admssion/Screens/student_info_screen.dart';
 import 'Presentation/Onboarding/Screens/Home Screen/home_screen.dart';
+import 'Presentation/splash_screen.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: AppColor.white),
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: SplashScreen(),
     );
   }
 }
