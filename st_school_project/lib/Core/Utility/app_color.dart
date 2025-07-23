@@ -47,7 +47,11 @@ class AppColor {
   static const lowLightBlueG1 = Color(0xffEDF7FF);
   static const lowLightBlueG2 = Color(0xffECF7FB);
   static const lowLightBlueG3 = Color(0xffEBF6E7);
+
   static const lightBlueG1 = Color(0xffB8E3FF);
   static const lightBlueG2 = Color(0xffDDF1FF);
+
+  static const splash = Color(0xffF3FAFF);
+  static const weAreColor = Color(0xffF2F9FF);
 
 }
