@@ -7,6 +7,7 @@ class CustomTextField {
   static textWith600({
     required String text,
     double fontSize = 18,
+    double hight = 1.5,
     Color? color = AppColor.lightBlack,
   }) {
     return Text(
