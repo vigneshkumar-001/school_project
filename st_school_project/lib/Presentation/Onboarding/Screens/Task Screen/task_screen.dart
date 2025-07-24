@@ -290,11 +290,9 @@ class _TaskScreenState extends State<TaskScreen> {
                             maxChildSize: 0.99,
                             builder: (context, scrollController) {
                               return Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 35,
-                                ),
+                                padding: const EdgeInsets.only(top: 20),
                                 decoration: const BoxDecoration(
-                                  color: Colors.white,
+                                  color: AppColor.white,
                                   borderRadius: BorderRadius.vertical(
                                     top: Radius.circular(30),
                                   ),
@@ -305,137 +303,147 @@ class _TaskScreenState extends State<TaskScreen> {
                                     ),
                                   ],
                                 ),
-                                child: SingleChildScrollView(
-                                  controller: scrollController,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 16,
-                                        ),
-                                        child: Text(
-                                          'Your Tasks',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 28,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black,
-                                          ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 16,
+                                      ),
+                                      child: Text(
+                                        'Your Tasks',
+                                        style: GoogleFont.ibmPlexSans(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black,
                                         ),
                                       ),
-                                      SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          children:
-                                              subjects.map((subject) {
-                                                final isSelected =
-                                                    selectedSubject == subject;
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        left: 16.0,
-                                                      ),
-                                                  child: ElevatedButton(
-                                                    style: ButtonStyle(
-                                                      elevation:
-                                                          MaterialStatePropertyAll(
-                                                            0,
-                                                          ),
-                                                      backgroundColor:
-                                                          MaterialStatePropertyAll(
+                                    ),
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children:
+                                            subjects.map((subject) {
+                                              final isSelected =
+                                                  selectedSubject == subject;
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                  left: 16.0,
+                                                ),
+                                                child: ElevatedButton(
+                                                  style: ButtonStyle(
+                                                    elevation:
+                                                        MaterialStatePropertyAll(
+                                                          0,
+                                                        ),
+                                                    backgroundColor:
+                                                        MaterialStatePropertyAll(
+                                                          isSelected
+                                                              ? AppColor.white
+                                                              : AppColor
+                                                                  .lightGrey,
+                                                        ),
+                                                    side: MaterialStatePropertyAll(
+                                                      BorderSide(
+                                                        color:
                                                             isSelected
-                                                                ? AppColor.white
+                                                                ? AppColor.black
                                                                 : AppColor
                                                                     .lightGrey,
-                                                          ),
-                                                      side: MaterialStatePropertyAll(
-                                                        BorderSide(
+                                                        width: 2,
+                                                      ),
+                                                    ),
+                                                    shape: MaterialStatePropertyAll(
+                                                      RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              20,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      selectedSubject = subject;
+                                                    });
+                                                  },
+                                                  child: Text(
+                                                    subject,
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
                                                           color:
                                                               isSelected
                                                                   ? AppColor
                                                                       .black
                                                                   : AppColor
-                                                                      .lightGrey,
-                                                          width: 2,
+                                                                      .grey,
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                         ),
-                                                      ),
-                                                      shape: MaterialStatePropertyAll(
-                                                        RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                20,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        selectedSubject =
-                                                            subject;
-                                                      });
-                                                    },
-                                                    child: Text(
-                                                      subject,
-                                                      style:
-                                                          GoogleFont.ibmPlexSans(
-                                                            color:
-                                                                isSelected
-                                                                    ? AppColor
-                                                                        .black
-                                                                    : AppColor
-                                                                        .grey,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                    ),
                                                   ),
-                                                );
-                                              }).toList(),
+                                                ),
+                                              );
+                                            }).toList(),
+                                      ),
+                                    ),
+                                    SizedBox(height: 20),
+                                    Expanded(
+                                      child: SingleChildScrollView(
+                                        controller: scrollController,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            ...allTasks
+                                                .where(
+                                                  (task) =>
+                                                      selectedSubject ==
+                                                          'All' ||
+                                                      task['subject'] ==
+                                                          selectedSubject,
+                                                )
+                                                .map((task) {
+                                                  return CustomContainer.taskScreen(
+                                                    subText:
+                                                        task['subText'] ?? '',
+                                                    homeWorkText:
+                                                        task['homeWorkText'] ??
+                                                        '',
+                                                    homeWorkImage:
+                                                        task['homeWorkImage'] ??
+                                                        '',
+                                                    avatarImage:
+                                                        task['avatar'] ?? '',
+                                                    mainText:
+                                                        task['mainText'] ?? '',
+                                                    smaleText:
+                                                        task['smaleText'] ?? '',
+                                                    time: task['time'] ?? '',
+                                                    aText1: 'By ',
+                                                    aText2: 'Floran',
+                                                    backRoundColor:
+                                                        task['bgColor'] ??
+                                                        Colors.white,
+                                                    gradient: task['gradient'],
+                                                    onIconTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder:
+                                                              (_) =>
+                                                                  const TaskDetail(),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                })
+                                                .toList(),
+                                          ],
                                         ),
                                       ),
-                                      const SizedBox(height: 20),
-                                      ...allTasks
-                                          .where(
-                                            (task) =>
-                                                selectedSubject == 'All' ||
-                                                task['subject'] ==
-                                                    selectedSubject,
-                                          )
-                                          .map((task) {
-                                            return CustomContainer.taskScreen(
-                                              subText: task['subText'] ?? '',
-                                              homeWorkText:
-                                                  task['homeWorkText'] ?? '',
-                                              homeWorkImage:
-                                                  task['homeWorkImage'] ?? '',
-                                              avatarImage: task['avatar'] ?? '',
-                                              mainText: task['mainText'] ?? '',
-                                              smaleText:
-                                                  task['smaleText'] ?? '',
-                                              time: task['time'] ?? '',
-                                              aText1: 'By ',
-                                              aText2: 'Floran',
-                                              backRoundColor:
-                                                  task['bgColor'] ??
-                                                  Colors.white,
-                                              gradient: task['gradient'],
-                                              onIconTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder:
-                                                        (_) =>
-                                                            const TaskDetail(),
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          })
-                                          .toList(),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               );
                             },
