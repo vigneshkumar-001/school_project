@@ -78,7 +78,7 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
                 ),
                 SizedBox(height: 34),
                 Text(
-                  'Submit the Admission',
+                  'Submit the Admission ',
                   style: GoogleFont.ibmPlexSans(
                     fontWeight: FontWeight.w500,
                     fontSize: 26,
