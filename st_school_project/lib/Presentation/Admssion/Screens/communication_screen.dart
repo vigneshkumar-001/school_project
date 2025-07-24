@@ -47,8 +47,8 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                           padding: const EdgeInsets.all(10),
                           child: Image.asset(
                             AppImages.leftArrow,
-                            height: 20,
-                            width: 20,
+                            height: 12,
+                            width: 12,
                           ),
                         ),
                       ),

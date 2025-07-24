@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
+import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
 
@@ -50,8 +51,8 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
                           padding: const EdgeInsets.all(10),
                           child: Image.asset(
                             AppImages.leftArrow,
-                            height: 20,
-                            width: 20,
+                            height: 12,
+                            width: 12,
                           ),
                         ),
                       ),
@@ -122,6 +123,33 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
                       ],
                     );
                   }),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: AppColor.lightRed.withOpacity(0.1),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                    child: CustomTextField.richText(
+                      secondFontSize: 12,
+                      firstFontSize: 12,
+                      text1Color: AppColor.lightRed,
+                      text2Color: AppColor.lightRed,
+                      fontWeight1: FontWeight.w600,
+                      isBold: true,
+                      text: 'Note',
+
+                      text2:
+                          '  If any of the above requirements are not provided the application will be rejected without any notice.',
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                AppButton.button(
+                  text: 'Save & Continue',
+                  image: AppImages.rightSaitArrow,
                 ),
               ],
             ),

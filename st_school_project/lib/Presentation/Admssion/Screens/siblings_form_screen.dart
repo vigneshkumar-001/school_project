@@ -45,8 +45,8 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                           padding: const EdgeInsets.all(10),
                           child: Image.asset(
                             AppImages.leftArrow,
-                            height: 20,
-                            width: 20,
+                            height: 12,
+                            width: 12,
                           ),
                         ),
                       ),
@@ -82,7 +82,7 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                   text: '',
                   text2: 'Only Own Sisters',
                   secondFontSize: 26,
-                  fontWeight: FontWeight.w500,
+                  fontWeight2: FontWeight.w500,
                 ),
                 SizedBox(height: 30),
                 Row(
