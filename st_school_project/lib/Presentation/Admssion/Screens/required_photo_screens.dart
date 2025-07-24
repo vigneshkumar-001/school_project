@@ -142,7 +142,7 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
                       text: 'Note',
 
                       text2:
-                          '  If any of the above requirements are not provided the application will be rejected without any notice.',
+                          '  If any of the above requirements are not provided the application will be rejected without any notice. ',
                     ),
                   ),
                 ),
