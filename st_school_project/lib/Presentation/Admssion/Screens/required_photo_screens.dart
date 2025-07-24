@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
+import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
+import 'package:st_school_project/Presentation/Admssion/Screens/submit_the_admission.dart';
 
 class RequiredPhotoScreens extends StatefulWidget {
   const RequiredPhotoScreens({super.key});
@@ -70,7 +72,7 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
                 SizedBox(height: 30),
                 LinearProgressIndicator(
                   minHeight: 6,
-                  value: 0.6,
+                  value: 0.9,
 
                   valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
                   stopIndicatorRadius: 16,
@@ -119,9 +121,21 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
                           },
                         ),
                         SizedBox(height: 20),
+
                       ],
                     );
                   }),
+                ),
+                AppButton.button(
+                  text: 'Save & Continue',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SubmitTheAdmission(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
