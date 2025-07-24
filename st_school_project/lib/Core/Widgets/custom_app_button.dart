@@ -13,7 +13,7 @@ class AppButton {
     FontWeight? fontWeight = FontWeight.w700,
     double? width = 200,
     double? height = 60,
-    Image? image,
+    String? image,
   }) {
     return Center(
       child: SizedBox(
@@ -51,9 +51,7 @@ class AppButton {
                 ),
                 SizedBox(width: 15),
 
-                image != null
-                    ? Image.asset(AppImages.rightSaitArrow, height: 20)
-                    : Container(),
+                image != null ? Image.asset(image, height: 20) : Container(),
               ],
             ),
           ),

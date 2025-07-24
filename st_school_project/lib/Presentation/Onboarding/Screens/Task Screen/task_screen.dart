@@ -290,9 +290,7 @@ class _TaskScreenState extends State<TaskScreen> {
                             maxChildSize: 0.99,
                             builder: (context, scrollController) {
                               return Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 35,
-                                ),
+                                padding: const EdgeInsets.only(top: 5),
                                 decoration: const BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.vertical(

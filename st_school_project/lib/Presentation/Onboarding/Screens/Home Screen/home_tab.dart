@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
+import 'package:st_school_project/Presentation/Admssion/Screens/student_info_screen.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_screen.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
@@ -391,9 +392,11 @@ class _HomeScreenState extends State<HomeTab> {
                                           context,
                                           MaterialPageRoute(
                                             builder:
-                                                (context) => CommonBottomNavigationBar(currentIndex: 3, onTabSelected: (index) {
-
-                                                },),
+                                                (context) =>
+                                                    CommonBottomNavigationBar(
+                                                      currentIndex: 3,
+                                                      onTabSelected: (index) {},
+                                                    ),
                                           ),
                                         );
                                       },
@@ -502,7 +505,16 @@ class _HomeScreenState extends State<HomeTab> {
                                             Divider(color: AppColor.lightGrey),
                                             SizedBox(height: 6),
                                             InkWell(
-                                              onTap: () {},
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (context) =>
+                                                            StudentInfoScreen(),
+                                                  ),
+                                                );
+                                              },
                                               child: Row(
                                                 children: [
                                                   Text(
