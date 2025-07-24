@@ -65,12 +65,11 @@ class AppImages {
   static String homeScreenCont2 = 'assets/images/HomeScreenCont2.png';
   static String homeScreenCont3 = 'assets/images/HomeScreenCont3.png';
   static String taskScreenCont1 = 'assets/images/TaskScreenCont1.png';
-
-
+  static String copyImage = 'assets/images/CopyImage.png';
 
   static String advertisement1 = 'assets/images/advertisement1.png';
   static String advertisement2 = 'assets/images/advertisement2.png';
   static String advertisement3 = 'assets/images/advertisement3.png';
   static String advertisement4 = 'assets/images/advertisement4.png';
-
+  static String paymentSuccessful = 'assets/images/Payment Successful.png';
 }
