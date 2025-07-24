@@ -4,6 +4,7 @@ import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/student_info_screen.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_screen.dart';
+import 'package:st_school_project/noDataFound_screen.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/common_bottom_navigation_bar.dart'
@@ -620,7 +621,16 @@ class _HomeScreenState extends State<HomeTab> {
                                             Divider(color: AppColor.lightGrey),
                                             SizedBox(height: 6),
                                             InkWell(
-                                              onTap: () {},
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (context) =>
+                                                            NoDataFoundScreen(),
+                                                  ),
+                                                );
+                                              },
                                               child: Row(
                                                 children: [
                                                   Text(

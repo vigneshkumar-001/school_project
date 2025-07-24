@@ -40,9 +40,11 @@ class CustomTextField {
     required String text,
     Color? color = AppColor.grayop,
     FontWeight? fontWeight = FontWeight.w500,
+    TextAlign? textAlign  ,
     double? fontSize = 16,
   }) {
     return Text(
+      textAlign: textAlign,
       text,
       style: GoogleFont.ibmPlexSans(
         fontSize: fontSize!,

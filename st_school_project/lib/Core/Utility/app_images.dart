@@ -73,4 +73,6 @@ class AppImages {
   static String advertisement3 = 'assets/images/advertisement3.png';
   static String advertisement4 = 'assets/images/advertisement4.png';
 
+  static String noDataFound = 'assets/images/noDataFound.png';
+
 }
