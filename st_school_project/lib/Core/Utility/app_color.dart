@@ -54,5 +54,6 @@ class AppColor {
   static const splash = Color(0xffF3FAFF);
   static const weAreColor = Color(0xffF2F9FF);
   static const taskScrnCont1 = Color(0xffF5F8FD);
+  static const lowGreen = Color(0xffF0F5F3);
 
 }

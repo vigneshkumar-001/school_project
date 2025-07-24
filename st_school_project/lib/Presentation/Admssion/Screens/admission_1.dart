@@ -104,7 +104,7 @@ class _Admission1State extends State<Admission1> {
                         bottom: 0,
                         top: screenHeight * 0.19,
                         child: Container(
-                          padding: const EdgeInsets.all(16),
+                          padding:  EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [AppColor.lowLightBlueG1, AppColor.white],
@@ -127,14 +127,14 @@ class _Admission1State extends State<Admission1> {
                                   color: AppColor.lightBlack,
                                 ),
                               ),
-                              const SizedBox(height: 15),
+                               SizedBox(height: 15),
                               ListView.builder(
                                 itemCount: points.length,
                                 shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
+                                physics:  NeverScrollableScrollPhysics(),
                                 itemBuilder: (context, index) {
                                   return Padding(
-                                    padding: const EdgeInsets.symmetric(
+                                    padding:  EdgeInsets.symmetric(
                                       vertical: 10.0,
                                     ),
                                     child: Row(
@@ -143,7 +143,7 @@ class _Admission1State extends State<Admission1> {
                                       children: [
                                         Text(
                                           "${index + 1}. ",
-                                          style: const TextStyle(
+                                          style:  GoogleFont.ibmPlexSans(
                                             fontSize: 12,
                                             height: 1.5,
                                           ),
@@ -151,10 +151,10 @@ class _Admission1State extends State<Admission1> {
                                         Expanded(
                                           child: Text(
                                             points[index],
-                                            style: const TextStyle(
+                                            style:  GoogleFont.ibmPlexSans(
                                               fontSize: 12,
                                               height: 1.5,
-                                              color: Colors.black87,
+                                              color:  AppColor.lightBlack,
                                             ),
                                           ),
                                         ),
@@ -170,47 +170,8 @@ class _Admission1State extends State<Admission1> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 15),
-                // Center(
-                //   child: ElevatedButton(
-                //     onPressed: () {},
-                //     style: ElevatedButton.styleFrom(
-                //       padding: EdgeInsets.zero,
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(18),
-                //       ),
-                //       elevation: 0,
-                //       backgroundColor: Colors.transparent,
-                //     ),
-                //     child: Container(
-                //       height: 60,
-                //       width: 160,
-                //       decoration: BoxDecoration(
-                //         gradient: LinearGradient(
-                //           colors: [AppColor.blueG1, AppColor.blueG2],
-                //           begin: Alignment.topRight,
-                //           end: Alignment.bottomRight,
-                //         ),
-                //         borderRadius: BorderRadius.circular(18),
-                //       ),
-                //       child: Row(
-                //         mainAxisAlignment: MainAxisAlignment.center,
-                //         children: [
-                //           Text(
-                //             'Next Step',
-                //             style: GoogleFont.ibmPlexSans(
-                //               fontSize: 16,
-                //               fontWeight: FontWeight.w600,
-                //               color: AppColor.white,
-                //             ),
-                //           ),
-                //           const SizedBox(width: 10),
-                //           Image.asset(AppImages.rightSaitArrow, height: 20),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // ),
+                 SizedBox(height: 15),
+
                 AppButton.button(
                   text: 'Next Step',
                   width: 160,
