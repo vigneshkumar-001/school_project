@@ -5,6 +5,7 @@ import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
+import 'package:st_school_project/Presentation/Admssion/Screens/required_photo_screens.dart';
 
 class CommunicationScreen extends StatefulWidget {
   const CommunicationScreen({super.key});
@@ -145,6 +146,14 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                 ),
                 SizedBox(height: 30),
                 AppButton.button(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RequiredPhotoScreens(),
+                      ),
+                    );
+                  },
                   text: 'Save & Continue',
                   image: AppImages.rightSaitArrow,
                 ),

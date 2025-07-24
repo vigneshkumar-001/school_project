@@ -771,4 +771,50 @@ class CustomContainer {
       ),
     );
   }
+
+  static Widget tickContainer({
+    required bool isChecked,
+    required VoidCallback onTap,
+    required String text,
+    String? text2,
+  }) {
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: onTap,
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            height: 40,
+            width: 40,
+            decoration: BoxDecoration(
+              color: isChecked ? Colors.white : Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isChecked ? AppColor.blue : Colors.transparent,
+                width: 3,
+              ),
+            ),
+            child:
+                isChecked
+                    ? Center(
+                      child: Image.asset(
+                        AppImages.tick,
+                        height: 15,
+                        color: AppColor.blue,
+                      ),
+                    )
+                    : null,
+          ),
+        ),
+        SizedBox(width: 15),
+        Expanded(
+          child: CustomTextField.richText(
+            text: text,
+            text2: text2 ?? '',
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
 }

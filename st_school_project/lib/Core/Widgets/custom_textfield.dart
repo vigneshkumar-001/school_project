@@ -60,7 +60,11 @@ class CustomTextField {
     return RichText(
       text: TextSpan(
         text: text,
-        style: GoogleFont.ibmPlexSans(fontSize: 15, color: AppColor.lightBlack),
+        style: GoogleFont.ibmPlexSans(
+          fontSize: 15,
+          color: AppColor.lightBlack,
+          fontWeight: fontWeight,
+        ),
         children: [
           if (text2.isNotEmpty)
             TextSpan(
