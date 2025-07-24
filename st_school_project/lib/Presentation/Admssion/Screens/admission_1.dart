@@ -214,7 +214,7 @@ class _Admission1State extends State<Admission1> {
                 AppButton.button(
                   text: 'Next Step',
                   width: 160,
-                  image: Image.asset(AppImages.rightSaitArrow),
+                  image: AppImages.rightSaitArrow
                 ),
               ],
             ),

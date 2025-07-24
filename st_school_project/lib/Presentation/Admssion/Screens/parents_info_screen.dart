@@ -244,6 +244,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                 ),
                 SizedBox(height: 40),
                 AppButton.button(
+                  image: AppImages.rightSaitArrow,
                   text: 'Save & Continue',
                   onTap: () {
                     Navigator.push(

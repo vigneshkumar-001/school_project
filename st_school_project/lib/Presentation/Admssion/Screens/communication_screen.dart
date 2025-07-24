@@ -144,7 +144,10 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   maxLine: 4,
                 ),
                 SizedBox(height: 30),
-                AppButton.button(text: 'Save & Continue'),
+                AppButton.button(
+                  text: 'Save & Continue',
+                  image: AppImages.rightSaitArrow,
+                ),
                 SizedBox(height: 20),
               ],
             ),
