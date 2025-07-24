@@ -3,13 +3,20 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'app_color.dart';
 
-class GoogleFont{
-  static ibmPlexSans({double fontSize =14, FontWeight? fontWeight, letterSpacing,Color? color}) {
+class GoogleFont {
+  static ibmPlexSans({
+    double fontSize = 14,
+    double? height = 1.5,
+    FontWeight? fontWeight,
+    letterSpacing,
+    Color? color,
+  }) {
     return GoogleFonts.ibmPlexSans(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
-        letterSpacing:letterSpacing,
+      letterSpacing: letterSpacing,
+      height: height,
     );
   }
 
@@ -18,7 +25,6 @@ class GoogleFont{
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
-
     );
   }
 }
