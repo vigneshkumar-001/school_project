@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
+import 'package:st_school_project/Core/Widgets/custom_container.dart';
 
 import '../../../Core/Utility/app_color.dart';
 import '../../../Core/Utility/app_images.dart';
@@ -12,6 +14,7 @@ class SubmitTheAdmission extends StatefulWidget {
 }
 
 class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
+  bool isChecked = false;
   final List<String> points = [
     "I hereby certify that the following information provided by me is correct and I understand that if the information is incorrect or false the ward shall be automatically debarred from the admission without any further notice.",
     "I assure that I will never give any donation / contribution to anybody in the getting admission of the school.",
@@ -67,7 +70,7 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
                 SizedBox(height: 30),
                 LinearProgressIndicator(
                   minHeight: 6,
-                  value: 0.8,
+                  value: 1,
                   valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
                   stopIndicatorRadius: 16,
                   backgroundColor: AppColor.lowGery1,
@@ -75,7 +78,7 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
                 ),
                 SizedBox(height: 34),
                 Text(
-                  'Submit the Admission',
+                  'Submit the Admission ',
                   style: GoogleFont.ibmPlexSans(
                     fontWeight: FontWeight.w500,
                     fontSize: 26,
@@ -136,14 +139,22 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
                   ),
                 ),
                 SizedBox(height: 30),
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {});
-                      },
-                    ),
-                  ],
+
+                CustomContainer.tickContainer(
+                  isChecked: isChecked,
+                  onTap: () {
+                    setState(() {
+                      isChecked = !isChecked;
+                    });
+                  },
+                  text:
+                      'I have read and understood the instructions furnished above',
+                ),
+                SizedBox(height: 38),
+                AppButton.button(
+                  text: 'Pay for Admission',
+                  image: AppImages.rightSaitArrow,
+                  width: 220,
                 ),
               ],
             ),
