@@ -67,7 +67,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                 SizedBox(height: 30),
                 LinearProgressIndicator(
                   minHeight: 6,
-                  value: 0.6,
+                  value: 0.8,
 
                   valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
                   stopIndicatorRadius: 16,
