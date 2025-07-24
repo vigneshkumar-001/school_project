@@ -13,6 +13,7 @@ class CustomContainer {
     required String homeWorkText,
     required String avatarImage,
     required String mainText,
+    String? subText,
     required String smaleText,
     required String time,
     required String aText1,
@@ -21,6 +22,7 @@ class CustomContainer {
     Color? backRoundColors,
     Gradient? gradient,
     onIconTap,
+    String? homeWorkImage,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -66,13 +68,16 @@ class CustomContainer {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    homeWorkText,
-                    style: GoogleFonts.inter(
-                      fontSize: 10,
-                      color: AppColor.grey,
-                    ),
-                  ),
+                  (homeWorkImage != null && homeWorkImage.toString().isNotEmpty)
+                      ? Image.asset(homeWorkImage, height: 60)
+                      : Text(
+                        homeWorkText,
+                        style: GoogleFonts.inter(
+                          fontSize: 10,
+                          color: AppColor.grey,
+                        ),
+                      ),
+
                   SizedBox(height: 6),
                   Text(
                     mainText,
@@ -82,6 +87,17 @@ class CustomContainer {
                       color: AppColor.lightBlack,
                     ),
                   ),
+                  SizedBox(height: 6),
+                  subText.toString().isEmpty
+                      ? Container()
+                      : Text(
+                        subText ?? '',
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: AppColor.lightBlack,
+                        ),
+                      ),
                   SizedBox(height: 6),
                   Text(
                     smaleText,

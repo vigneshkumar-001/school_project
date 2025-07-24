@@ -6,8 +6,7 @@ import 'package:intl/intl.dart' show DateFormat;
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
-import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_detail.dart'
-    show TaskDetail;
+import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_detail.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 
@@ -73,6 +72,7 @@ class _TaskScreenState extends State<TaskScreen> {
 
   final List<String> subjects = [
     'All',
+    'Quiz',
     'Science',
     'English',
     'Social Science',
@@ -80,6 +80,22 @@ class _TaskScreenState extends State<TaskScreen> {
   ];
 
   final List<Map<String, dynamic>> allTasks = [
+    {
+      'subject': 'Quiz',
+      'homeWorkText': 'Quiz',
+      'homeWorkImage': AppImages.taskScreenCont1,
+      'avatar': AppImages.avatar1,
+      'mainText': 'Mathematics Quiz',
+      'subText': 'Waiting for you',
+      'smaleText': 'Lorem ipsum dolor sit amet, co...',
+      'time': '4.30Pm',
+      'bgColor': AppColor.taskScrnCont1,
+      'gradient': LinearGradient(
+        colors: [AppColor.black, AppColor.black],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+    },
     {
       'subject': 'Science',
       'homeWorkText': 'Science Homework',
@@ -174,9 +190,9 @@ class _TaskScreenState extends State<TaskScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                     SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Padding(
-                      padding:  EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         children: [
                           GestureDetector(
@@ -192,8 +208,8 @@ class _TaskScreenState extends State<TaskScreen> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                 SizedBox(width: 4),
-                                 Icon(
+                                const SizedBox(width: 4),
+                                const Icon(
                                   Icons.keyboard_arrow_down,
                                   color: Colors.white,
                                 ),
@@ -203,7 +219,7 @@ class _TaskScreenState extends State<TaskScreen> {
                         ],
                       ),
                     ),
-                     SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     SizedBox(
                       height: 90,
                       child: ListView.builder(
@@ -225,7 +241,6 @@ class _TaskScreenState extends State<TaskScreen> {
                             },
                             child: Container(
                               width: 57,
-                              margin: const EdgeInsets.symmetric(horizontal: 0),
                               decoration:
                                   isSelected
                                       ? BoxDecoration(
@@ -265,7 +280,7 @@ class _TaskScreenState extends State<TaskScreen> {
                         },
                       ),
                     ),
-                     SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Expanded(
                       child: Stack(
                         children: [
@@ -310,8 +325,6 @@ class _TaskScreenState extends State<TaskScreen> {
                                           ),
                                         ),
                                       ),
-
-                                      // Subject Tab Buttons
                                       SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Row(
@@ -382,33 +395,39 @@ class _TaskScreenState extends State<TaskScreen> {
                                               }).toList(),
                                         ),
                                       ),
-
                                       const SizedBox(height: 20),
-
                                       ...allTasks
-                                          .where((task) {
-                                            return selectedSubject == 'All' ||
+                                          .where(
+                                            (task) =>
+                                                selectedSubject == 'All' ||
                                                 task['subject'] ==
-                                                    selectedSubject;
-                                          })
+                                                    selectedSubject,
+                                          )
                                           .map((task) {
                                             return CustomContainer.taskScreen(
+                                              subText: task['subText'] ?? '',
                                               homeWorkText:
-                                                  task['homeWorkText'],
-                                              avatarImage: task['avatar'],
-                                              mainText: task['mainText'],
-                                              smaleText: task['smaleText'],
-                                              time: task['time'],
+                                                  task['homeWorkText'] ?? '',
+                                              homeWorkImage:
+                                                  task['homeWorkImage'] ?? '',
+                                              avatarImage: task['avatar'] ?? '',
+                                              mainText: task['mainText'] ?? '',
+                                              smaleText:
+                                                  task['smaleText'] ?? '',
+                                              time: task['time'] ?? '',
                                               aText1: 'By ',
                                               aText2: 'Floran',
-                                              backRoundColor: task['bgColor'],
+                                              backRoundColor:
+                                                  task['bgColor'] ??
+                                                  Colors.white,
                                               gradient: task['gradient'],
                                               onIconTap: () {
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                     builder:
-                                                        (_) => TaskDetail(),
+                                                        (_) =>
+                                                            const TaskDetail(),
                                                   ),
                                                 );
                                               },

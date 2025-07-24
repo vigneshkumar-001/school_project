@@ -191,7 +191,7 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => OtpScreen(mobileNumber: mbl),
+                            builder: (context) => OtpScreen(mobileNumber: mbl,pages: widget.page,),
                           ),
                         );
                       },
