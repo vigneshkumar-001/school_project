@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/home_screen.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/home_tab.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/quiz_screen.dart';
 
@@ -11,7 +13,8 @@ import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
 class OtpScreen extends StatefulWidget {
   final String? mobileNumber;
-  const OtpScreen({super.key, this.mobileNumber});
+  final String? pages;
+  const OtpScreen({super.key, this.mobileNumber, this.pages});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -139,10 +142,18 @@ class _OtpScreenState extends State<OtpScreen> {
               SizedBox(height: 30),
               CustomContainer.checkMark(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => QuizScreen()),
-                  );
+                  if(widget.pages == 'splash'){
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                    );
+                  }else{
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => QuizScreen()),
+                    );
+                  }
+
                 },
               ),
             ],
