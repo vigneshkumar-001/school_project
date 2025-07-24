@@ -18,7 +18,7 @@ class _NoDataFoundScreenState extends State<NoDataFoundScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
           child: Column(
             children: [
               Expanded(
