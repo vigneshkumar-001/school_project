@@ -65,7 +65,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                 SizedBox(height: 30),
                 LinearProgressIndicator(
                   minHeight: 6,
-                  value: 0.2,
+                  value: 0.4,
 
                   valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
                   stopIndicatorRadius: 16,
