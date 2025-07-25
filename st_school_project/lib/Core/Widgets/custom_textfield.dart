@@ -40,9 +40,11 @@ class CustomTextField {
     required String text,
     Color? color = AppColor.grayop,
     FontWeight? fontWeight = FontWeight.w500,
+    TextAlign? textAlign  ,
     double? fontSize = 16,
   }) {
     return Text(
+      textAlign: textAlign,
       text,
       style: GoogleFont.ibmPlexSans(
         fontSize: fontSize!,
@@ -55,25 +57,30 @@ class CustomTextField {
   static richText({
     required String text,
     required String text2,
+    bool isBold = false,
+    Color   text1Color = AppColor.lightBlack,
+    Color   text2Color = AppColor.lowGrey,
     double secondFontSize = 15,
-    FontWeight fontWeight = FontWeight.normal,
+    double firstFontSize = 15,
+    FontWeight fontWeight1 = FontWeight.normal,
+    FontWeight fontWeight2 = FontWeight.normal,
   }) {
     return RichText(
       text: TextSpan(
         text: text,
         style: GoogleFont.ibmPlexSans(
-          fontSize: 15,
-          color: AppColor.lightBlack,
-          fontWeight: fontWeight,
+          fontSize: firstFontSize,
+          color: text1Color,
+          fontWeight: fontWeight1,
         ),
         children: [
           if (text2.isNotEmpty)
             TextSpan(
-              text: '( ${text2} )',
+              text: isBold == false ? '( ${text2} )' : text2,
               style: GoogleFont.ibmPlexSans(
-                fontWeight: fontWeight,
+                fontWeight: fontWeight2,
                 fontSize: secondFontSize,
-                color: AppColor.lowGrey,
+                color: text2Color,
               ),
             ),
         ],

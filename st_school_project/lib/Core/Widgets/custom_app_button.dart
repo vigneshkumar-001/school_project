@@ -9,6 +9,7 @@ class AppButton {
     VoidCallback? onTap,
     required String text,
     double fontSize = 16,
+    bool isBorder = false,
 
     FontWeight? fontWeight = FontWeight.w700,
     double? width = 200,
@@ -21,11 +22,21 @@ class AppButton {
         height: height,
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppColor.blueG1, AppColor.blueG2.withOpacity(0.9)],
+
+            color: isBorder ? AppColor.white : null,
+            gradient: isBorder
+                ? null
+                : LinearGradient(
+              colors: [
+                AppColor.blueG1,
+                AppColor.blueG2.withOpacity(0.9),
+              ],
               begin: Alignment.topRight,
               end: Alignment.bottomRight,
             ),
+            border: isBorder
+                ? Border.all(color: AppColor.blueG1, width: 2)
+                : null,
             borderRadius: BorderRadius.circular(18),
           ),
           child: ElevatedButton(
@@ -46,7 +57,7 @@ class AppButton {
                   style: GoogleFont.ibmPlexSans(
                     fontSize: fontSize,
                     fontWeight: fontWeight,
-                    color: AppColor.white,
+                    color: isBorder ? AppColor.blue :  AppColor.white,
                   ),
                 ),
                 SizedBox(width: 15),

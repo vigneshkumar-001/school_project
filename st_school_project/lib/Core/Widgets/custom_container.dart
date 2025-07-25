@@ -409,40 +409,36 @@ class CustomContainer {
   }) {
     return Column(
       children: [
-        Row(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColor.grey.withOpacity(0.1)),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    Text(
-                      teachresName,
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.black,
-                      ),
-                    ),
-                    Text(
-                      classTitle,
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.blue,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Image.asset(teacherImage, height: 135, width: 135),
-                  ],
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColor.grey.withOpacity(0.1)),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Text(
+                  teachresName,
+                  style: GoogleFont.ibmPlexSans(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.black,
+                  ),
                 ),
-              ),
+                Text(
+                  classTitle,
+                  style: GoogleFont.ibmPlexSans(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.blue,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Image.asset(teacherImage, height: 135, width: 135),
+              ],
             ),
-          ],
+          ),
         ),
       ],
     );
@@ -812,7 +808,7 @@ class CustomContainer {
           child: CustomTextField.richText(
             text: text,
             text2: text2 ?? '',
-            fontWeight: FontWeight.w500,
+            fontWeight1: FontWeight.w500,
           ),
         ),
       ],
