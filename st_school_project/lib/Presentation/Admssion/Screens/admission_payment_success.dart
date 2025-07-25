@@ -4,6 +4,8 @@ import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 
+import 'check_admission_status.dart';
+
 class AdmissionPaymentSuccess extends StatefulWidget {
   const AdmissionPaymentSuccess({super.key});
 
@@ -119,7 +121,9 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
                 text: 'Admission Status',
                 image: AppImages.rightSaitArrow,
                 width: 220,
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => CheckAdmissionStatus()));
+                },
               ),
             ],
           ),
