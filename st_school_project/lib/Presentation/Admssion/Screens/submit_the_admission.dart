@@ -5,6 +5,7 @@ import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import '../../../Core/Utility/app_color.dart';
 import '../../../Core/Utility/app_images.dart';
 import '../../../Core/Utility/google_font.dart';
+import 'admission_payment_success.dart';
 
 class SubmitTheAdmission extends StatefulWidget {
   const SubmitTheAdmission({super.key});
@@ -155,6 +156,14 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
                   text: 'Pay for Admission',
                   image: AppImages.rightSaitArrow,
                   width: 220,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AdmissionPaymentSuccess(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

@@ -686,6 +686,7 @@ class CustomContainer {
     bool verticalDivider = true,
     double imageSize = 20,
     int? maxLine,
+    int flex = 4,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -697,7 +698,7 @@ class CustomContainer {
         child: Row(
           children: [
             Expanded(
-              flex: 4,
+              flex: flex,
               child: TextField(
                 maxLines: maxLine,
                 decoration: InputDecoration(
