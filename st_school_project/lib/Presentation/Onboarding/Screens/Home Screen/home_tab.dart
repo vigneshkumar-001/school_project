@@ -10,6 +10,7 @@ import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/common_bottom_navigation_bar.dart'
     show CommonBottomNavigationBar;
 import '../../../../Core/Widgets/custom_container.dart';
+import '../../../Admssion/Screens/admission_1.dart';
 import '../Attendence Screen/attendence_screen.dart';
 
 class HomeTab extends StatefulWidget {
@@ -512,7 +513,7 @@ class _HomeScreenState extends State<HomeTab> {
                                                   MaterialPageRoute(
                                                     builder:
                                                         (context) =>
-                                                            StudentInfoScreen(),
+                                                            Admission1(),
                                                   ),
                                                 );
                                               },

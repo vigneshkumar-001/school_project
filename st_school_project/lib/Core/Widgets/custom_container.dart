@@ -21,7 +21,7 @@ class CustomContainer {
     required Color backRoundColor,
     Color? backRoundColors,
     Gradient? gradient,
-    onIconTap,
+    VoidCallback? onIconTap,
     String? homeWorkImage,
   }) {
     return Padding(
@@ -129,21 +129,24 @@ class CustomContainer {
                           ),
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: gradient == null ? backRoundColors : null,
-                          gradient: gradient,
-                          border: Border.all(
-                            color: AppColor.lightGrey,
-                            width: 1,
+                      InkWell(
+                        onTap: onIconTap,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: gradient == null ? backRoundColors : null,
+                            gradient: gradient,
+                            border: Border.all(
+                              color: AppColor.lightGrey,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: IconButton(
-                          onPressed: onIconTap,
-                          icon: Icon(
-                            color: AppColor.white,
-                            CupertinoIcons.right_chevron,
+                          child: Padding(
+                            padding: const EdgeInsets.all(14.0),
+                            child: Icon(
+                              color: AppColor.white,
+                              CupertinoIcons.right_chevron,
+                            ),
                           ),
                         ),
                       ),
@@ -444,7 +447,7 @@ class CustomContainer {
     );
   }
 
-  static checkMark({required VoidCallback onTap}) {
+  static checkMark({required VoidCallback onTap, String? imagePath}) {
     return Center(
       child: ElevatedButton(
         onPressed: () {},
@@ -469,7 +472,7 @@ class CustomContainer {
             ),
             child: Padding(
               padding: EdgeInsets.all(17.0),
-              child: Image.asset(AppImages.tick, height: 20, width: 20),
+              child: Image.asset(imagePath ?? '', height: 20, width: 20),
             ),
           ),
         ),
@@ -812,6 +815,108 @@ class CustomContainer {
           ),
         ),
       ],
+    );
+  }
+
+  static myadmissions({
+    required String maintext,
+    required String subtext1,
+    required String subtext2,
+    required String iconText,
+    VoidCallback? onTap ,
+
+    String imagepath = '',
+    Color? backRoundColors,
+    Color? iconColor,
+    Color? iconTextColor,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: AppColor.lightGrey),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(13.0),
+        child: Row(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: backRoundColors,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 17, vertical: 10),
+                child: Column(
+                  children: [
+                    Image.asset(imagepath, height: 29, color: iconColor),
+                    SizedBox(height: 4),
+                    Text(
+                      iconText,
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w500,
+                        color: iconTextColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(width: 15),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  maintext,
+                  style: GoogleFont.ibmPlexSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.lightBlack,
+                  ),
+                ),
+                SizedBox(height: 5),
+                RichText(
+                  text: TextSpan(
+                    text: subtext1,
+                    style: GoogleFont.ibmPlexSans(
+                      fontSize: 12,
+                      color: AppColor.lowGrey,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: subtext2,
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 12,
+                          color: AppColor.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Spacer(),
+            InkWell(
+              onTap: onTap,
+              child: Column(
+                children: [
+                  Image.asset(AppImages.downloadImage, height: 29),
+                  SizedBox(height: 5),
+                  Text(
+                    'Download',
+                    style: GoogleFont.ibmPlexSans(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.blue,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

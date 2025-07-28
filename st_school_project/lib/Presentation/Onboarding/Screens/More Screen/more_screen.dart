@@ -165,7 +165,7 @@ class _MoreScreenState extends State<MoreScreen>
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => Admission1()),
+                        MaterialPageRoute(builder: (_) => ProfileScreen()),
                       );
                     },
                     child: ListTile(
@@ -196,7 +196,7 @@ class _MoreScreenState extends State<MoreScreen>
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => Admission1()),
+                            MaterialPageRoute(builder: (_) => ProfileScreen()),
                           );
                         },
                         child: Image.asset(
@@ -804,7 +804,7 @@ class _MoreScreenState extends State<MoreScreen>
                   ),
                   Positioned(
                     right: 58,
-                    bottom: 30,
+                    bottom: 35,
                     child: InkWell(
                       onTap: () => Switchprofileorlogout(context),
                       child: Image.asset(

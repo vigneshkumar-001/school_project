@@ -9,6 +9,7 @@ import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_detail.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
+import '../More Screen/quiz_screen.dart';
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -95,6 +96,7 @@ class _TaskScreenState extends State<TaskScreen> {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
+      'screen': QuizScreen(),
     },
     {
       'subject': 'Science',
@@ -109,6 +111,7 @@ class _TaskScreenState extends State<TaskScreen> {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
+      'screen': TaskDetail(),
     },
     {
       'subject': 'Maths',
@@ -290,11 +293,8 @@ class _TaskScreenState extends State<TaskScreen> {
                             maxChildSize: 0.99,
                             builder: (context, scrollController) {
                               return Container(
- 
-                               
- 
                                 padding: const EdgeInsets.only(top: 20),
- 
+
                                 decoration: const BoxDecoration(
                                   color: AppColor.white,
                                   borderRadius: BorderRadius.vertical(
@@ -428,17 +428,20 @@ class _TaskScreenState extends State<TaskScreen> {
                                                     aText2: 'Floran',
                                                     backRoundColor:
                                                         task['bgColor'] ??
-                                                        Colors.white,
+                                                        AppColor.white,
                                                     gradient: task['gradient'],
                                                     onIconTap: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder:
-                                                              (_) =>
-                                                                  const TaskDetail(),
-                                                        ),
-                                                      );
+                                                      final screen =
+                                                          task['screen'];
+                                                      if (screen != null) {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder:
+                                                                (_) => screen,
+                                                          ),
+                                                        );
+                                                      }
                                                     },
                                                   );
                                                 })

@@ -4,6 +4,7 @@ import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
+import 'package:st_school_project/Presentation/Admssion/Screens/student_info_screen.dart';
 
 class Admission1 extends StatefulWidget {
   const Admission1({super.key});
@@ -104,7 +105,7 @@ class _Admission1State extends State<Admission1> {
                         bottom: 0,
                         top: screenHeight * 0.19,
                         child: Container(
-                          padding:  EdgeInsets.all(16),
+                          padding: EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [AppColor.lowLightBlueG1, AppColor.white],
@@ -127,14 +128,14 @@ class _Admission1State extends State<Admission1> {
                                   color: AppColor.lightBlack,
                                 ),
                               ),
-                               SizedBox(height: 15),
+                              SizedBox(height: 15),
                               ListView.builder(
                                 itemCount: points.length,
                                 shrinkWrap: true,
-                                physics:  NeverScrollableScrollPhysics(),
+                                physics: NeverScrollableScrollPhysics(),
                                 itemBuilder: (context, index) {
                                   return Padding(
-                                    padding:  EdgeInsets.symmetric(
+                                    padding: EdgeInsets.symmetric(
                                       vertical: 10.0,
                                     ),
                                     child: Row(
@@ -143,7 +144,7 @@ class _Admission1State extends State<Admission1> {
                                       children: [
                                         Text(
                                           "${index + 1}. ",
-                                          style:  GoogleFont.ibmPlexSans(
+                                          style: GoogleFont.ibmPlexSans(
                                             fontSize: 12,
                                             height: 1.5,
                                           ),
@@ -151,10 +152,10 @@ class _Admission1State extends State<Admission1> {
                                         Expanded(
                                           child: Text(
                                             points[index],
-                                            style:  GoogleFont.ibmPlexSans(
+                                            style: GoogleFont.ibmPlexSans(
                                               fontSize: 12,
                                               height: 1.5,
-                                              color:  AppColor.lightBlack,
+                                              color: AppColor.lightBlack,
                                             ),
                                           ),
                                         ),
@@ -170,12 +171,19 @@ class _Admission1State extends State<Admission1> {
                     ],
                   ),
                 ),
-                 SizedBox(height: 15),
-
+                SizedBox(height: 15),
                 AppButton.button(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => StudentInfoScreen(),
+                      ),
+                    );
+                  },
                   text: 'Next Step',
                   width: 160,
-                  image: AppImages.rightSaitArrow
+                  image: AppImages.rightSaitArrow,
                 ),
               ],
             ),
