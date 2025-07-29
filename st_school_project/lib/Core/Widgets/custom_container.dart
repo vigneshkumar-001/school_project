@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/announcements_screen.dart';
@@ -7,6 +8,16 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%
 import '../Utility/app_color.dart';
 import '../Utility/app_images.dart';
 import '../Utility/google_font.dart' show GoogleFont;
+
+class InputFormatterUtil {
+  static List<TextInputFormatter> languageFormatter({required bool isTamil}) {
+    return [
+      FilteringTextInputFormatter.allow(
+        RegExp(isTamil ? r'[\u0B80-\u0BFF\s]' : r'[a-zA-Z\s]'),
+      ),
+    ];
+  }
+}
 
 class CustomContainer {
   static taskScreen({
@@ -259,149 +270,152 @@ class CustomContainer {
     bool isPaid = true,
     VoidCallback? onDetailsTap,
   }) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 20),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColor.grey.withOpacity(0.2)),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child:
-          isPaid
-              ? ListTile(
-                title: Text(
-                  'Paid for',
-                  style: GoogleFont.ibmPlexSans(
-                    fontSize: 12,
-                    color: AppColor.lowGrey,
+    return InkWell(
+      onTap: onDetailsTap,
+      child: Container(
+        margin: EdgeInsets.only(bottom: 20),
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColor.grey.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child:
+            isPaid
+                ? ListTile(
+                  title: Text(
+                    'Paid for',
+                    style: GoogleFont.ibmPlexSans(
+                      fontSize: 12,
+                      color: AppColor.lowGrey,
+                    ),
                   ),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 7),
-                    Text(
-                      termTitle,
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 16,
-                        color: AppColor.black,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    SizedBox(height: 7),
-                    Text(
-                      timeDate,
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 12,
-                        color: AppColor.grey,
-                      ),
-                    ),
-                    SizedBox(height: 7),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Row(
-                        children: [
-                          Text(
-                            'Details',
-                            style: GoogleFont.ibmPlexSans(
-                              fontSize: 10,
-                              color: AppColor.lowGrey,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(width: 1),
-                          Icon(
-                            CupertinoIcons.right_chevron,
-                            size: 10,
-                            color: AppColor.lowGrey,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                trailing: Text(
-                  amount,
-                  style: GoogleFont.ibmPlexSans(
-                    fontSize: 20,
-                    color: AppColor.greenMore1,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              )
-              : Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      termTitle,
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          amount,
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: AppColor.blue,
-                          ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 7),
+                      Text(
+                        termTitle,
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 16,
+                          color: AppColor.black,
+                          fontWeight: FontWeight.w800,
                         ),
-                        Spacer(),
-                        GestureDetector(
-                          onTap: onDetailsTap,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [AppColor.blueG1, AppColor.blueG2],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: Text(
-                              'Pay Now',
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: AppColor.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 7),
-                    RichText(
-                      text: TextSpan(
-                        text: 'Due Date',
+                      ),
+                      SizedBox(height: 7),
+                      Text(
+                        timeDate,
                         style: GoogleFont.ibmPlexSans(
                           fontSize: 12,
-                          fontWeight: FontWeight.w700,
                           color: AppColor.grey,
                         ),
+                      ),
+                      SizedBox(height: 7),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Row(
+                          children: [
+                            Text(
+                              'Details',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 10,
+                                color: AppColor.lowGrey,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(width: 1),
+                            Icon(
+                              CupertinoIcons.right_chevron,
+                              size: 10,
+                              color: AppColor.lowGrey,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  trailing: Text(
+                    amount,
+                    style: GoogleFont.ibmPlexSans(
+                      fontSize: 20,
+                      color: AppColor.greenMore1,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                )
+                : Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        termTitle,
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Row(
                         children: [
-                          TextSpan(
-                            text: ' $timeDate',
+                          Text(
+                            amount,
                             style: GoogleFont.ibmPlexSans(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: AppColor.lightBlack,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.blue,
+                            ),
+                          ),
+                          Spacer(),
+                          GestureDetector(
+                            onTap: onDetailsTap,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [AppColor.blueG1, AppColor.blueG2],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                ),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Text(
+                                'Pay Now',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColor.white,
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 7),
+                      RichText(
+                        text: TextSpan(
+                          text: 'Due Date',
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.grey,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: ' $timeDate',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: AppColor.lightBlack,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+      ),
     );
   }
 
@@ -683,52 +697,171 @@ class CustomContainer {
     );
   }
 
-  static studentInfoScreen({
+  static Widget studentInfoScreen({
     required String text,
+    required TextEditingController controller,
     String? imagePath,
     bool verticalDivider = true,
     double imageSize = 20,
     int? maxLine,
     int flex = 4,
+    bool isTamil = false,
+    bool isAadhaar = false,
+    bool isDOB = false,
+    bool isMobile = false,
+    bool isPincode = false,
+    BuildContext? context,
+    FormFieldValidator<String>? validator,
+    bool isError = false,
+    String? errorText,
   }) {
+    DateTime today = DateTime.now();
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: AppColor.lowGery1,
+        border: Border.all(
+          color: isError ? AppColor.lightRed : Colors.transparent,
+          width: 1.5,
+        ),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
         child: Row(
           children: [
             Expanded(
               flex: flex,
-              child: TextField(
-                maxLines: maxLine,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                  border: InputBorder.none,
+              child: GestureDetector(
+                onTap:
+                    isDOB
+                        ? () async {
+                          DateTime firstDate = DateTime(today.year - 120);
+                          DateTime lastDate = DateTime(
+                            today.year - 3,
+                            today.month,
+                            today.day,
+                          );
+
+                          final pickedDate = await showDatePicker(
+                            context: context!,
+                            initialDate: lastDate,
+                            firstDate: firstDate,
+                            lastDate: lastDate,
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  dialogBackgroundColor: AppColor.white,
+                                  colorScheme: ColorScheme.light(
+                                    primary: AppColor.blueG2,
+                                    onPrimary: Colors.white,
+                                    onSurface: AppColor.black,
+                                  ),
+                                  textButtonTheme: TextButtonThemeData(
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: AppColor.blueG2,
+                                    ),
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+
+                          if (pickedDate != null) {
+                            int age = today.year - pickedDate.year;
+                            if (pickedDate.month > today.month ||
+                                (pickedDate.month == today.month &&
+                                    pickedDate.day > today.day)) {
+                              age--;
+                            }
+
+                            if (age < 3 || age > 120) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Date of Birth is Not eligible',
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } else {
+                              controller.text =
+                                  "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                            }
+                          }
+                        }
+                        : null,
+                child: AbsorbPointer(
+                  absorbing: isDOB,
+                  child: TextFormField(
+                    controller: controller,
+                    validator: validator,
+                    maxLines: maxLine,
+                    maxLength:
+                        isMobile
+                            ? 10
+                            : isAadhaar
+                            ? 12
+                            : isPincode
+                            ? 6
+                            : null,
+                    keyboardType:
+                        isMobile || isAadhaar || isPincode
+                            ? TextInputType.number
+                            : isDOB
+                            ? TextInputType.none
+                            : TextInputType.text,
+                    inputFormatters:
+                        isMobile || isAadhaar || isPincode
+                            ? [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(
+                                isMobile
+                                    ? 10
+                                    : isAadhaar
+                                    ? 12
+                                    : 6,
+                              ),
+                            ]
+                            : InputFormatterUtil.languageFormatter(
+                              isTamil: isTamil,
+                            ),
+                    style: const TextStyle(fontSize: 14, color: Colors.black),
+                    decoration: InputDecoration(
+                      hintText: '',
+                      counterText: '',
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                      ),
+                      border: InputBorder.none,
+                      isDense: true,
+                      errorText: errorText,
+                    ),
+                  ),
                 ),
               ),
             ),
-            verticalDivider == true
-                ? Container(
-                  width: 2,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.grey.shade200,
-                        Colors.grey.shade300,
-                        Colors.grey.shade200,
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(1),
+
+            if (verticalDivider)
+              Container(
+                width: 2,
+                height: 30,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.grey.shade200,
+                      Colors.grey.shade300,
+                      Colors.grey.shade200,
+                    ],
                   ),
-                )
-                : Container(),
-            SizedBox(width: 20),
+                  borderRadius: BorderRadius.circular(1),
+                ),
+              ),
+            const SizedBox(width: 20),
+
             if (imagePath == null)
               Expanded(
                 child: CustomTextField.textWithSmall(
@@ -739,9 +872,9 @@ class CustomContainer {
               ),
             if (imagePath != null)
               Padding(
-                padding: EdgeInsets.only(right: 15),
+                padding: const EdgeInsets.only(right: 15),
                 child: Image.asset(
-                  imagePath ?? '',
+                  imagePath,
                   height: imageSize,
                   width: imageSize,
                 ),
@@ -823,7 +956,7 @@ class CustomContainer {
     required String subtext1,
     required String subtext2,
     required String iconText,
-    VoidCallback? onTap ,
+    VoidCallback? onTap,
 
     String imagepath = '',
     Color? backRoundColors,

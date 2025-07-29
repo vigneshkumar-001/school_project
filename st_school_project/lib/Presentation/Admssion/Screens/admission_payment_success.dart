@@ -24,7 +24,7 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 65.0),
+                padding: const EdgeInsets.symmetric(horizontal: 55.0),
                 child: Container(
                   decoration: BoxDecoration(
                     color: AppColor.lowGreen,
@@ -122,7 +122,12 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
                 image: AppImages.rightSaitArrow,
                 width: 220,
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => CheckAdmissionStatus()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CheckAdmissionStatus(),
+                    ),
+                  );
                 },
               ),
             ],

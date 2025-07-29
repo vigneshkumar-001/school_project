@@ -16,6 +16,28 @@ class ParentsInfoScreen extends StatefulWidget {
 
 class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
   String selected = 'Father & Mother';
+  final _fatherNameController = TextEditingController();
+  final _motherNameController = TextEditingController();
+  final _aadhaarController = TextEditingController();
+  final _mobileController = TextEditingController();
+  final englishController = TextEditingController();
+  final tamilController = TextEditingController();
+  final fatherOccupation = TextEditingController();
+  final fatherQualification = TextEditingController();
+  final fatherAnnualIncome = TextEditingController();
+  final officeAddress = TextEditingController();
+  final motherQualification = TextEditingController();
+  final motherOccupation = TextEditingController();
+  final motherAnnualIncome = TextEditingController();
+  final guardianQualification = TextEditingController();
+  final guardianOccupation = TextEditingController();
+  final guardianAnnualIncome = TextEditingController();
+
+  bool _fatherNameError = false;
+  bool _motherNameError = false;
+  bool _aadhaarError = false;
+  bool _mobileError = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,9 +130,17 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                 if (selected == 'Father & Mother') ...[
                   CustomTextField.richText(text: 'Father Name', text2: ''),
                   SizedBox(height: 10),
-                  CustomContainer.studentInfoScreen(text: 'English'),
+                  CustomContainer.studentInfoScreen(
+                    text: 'English',
+                    isTamil: false,
+                    controller: englishController,
+                  ),
                   SizedBox(height: 20),
-                  CustomContainer.studentInfoScreen(text: 'Tamil'),
+                  CustomContainer.studentInfoScreen(
+                    text: 'Tamil',
+                    isTamil: true,
+                    controller: tamilController,
+                  ),
                   SizedBox(height: 20),
                   CustomTextField.richText(
                     text: 'Father Qualification',
@@ -118,6 +148,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    controller: fatherQualification,
                     text: '',
                     imagePath: AppImages.dropDown,
                     imageSize: 11,
@@ -130,6 +161,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    controller: fatherOccupation,
                     text: '',
                     verticalDivider: false,
                   ),
@@ -140,6 +172,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    controller: fatherAnnualIncome,
                     text: '',
                     verticalDivider: false,
                   ),
@@ -148,6 +181,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                   CustomTextField.richText(text: 'Office Address', text2: ''),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    controller: officeAddress,
                     maxLine: 3,
                     text: '',
                     verticalDivider: false,
@@ -158,9 +192,17 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
 
                   CustomTextField.richText(text: 'Mother Name', text2: ''),
                   SizedBox(height: 10),
-                  CustomContainer.studentInfoScreen(text: 'English'),
+                  CustomContainer.studentInfoScreen(
+                    text: 'English',
+                    isTamil: false,
+                    controller: englishController,
+                  ),
                   SizedBox(height: 10),
-                  CustomContainer.studentInfoScreen(text: 'Tamil'),
+                  CustomContainer.studentInfoScreen(
+                    text: 'Tamil',
+                    isTamil: true,
+                    controller: tamilController,
+                  ),
 
                   SizedBox(height: 20),
                   CustomTextField.richText(
@@ -169,6 +211,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    controller: motherQualification,
                     text: '',
                     imagePath: AppImages.dropDown,
                     imageSize: 11,
@@ -181,6 +224,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    controller: motherOccupation,
                     text: '',
                     verticalDivider: false,
                   ),
@@ -191,15 +235,24 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    controller: motherAnnualIncome,
                     text: '',
                     verticalDivider: false,
                   ),
                 ] else if (selected == 'Guardian') ...[
                   CustomTextField.richText(text: 'Guardian Name', text2: ''),
                   SizedBox(height: 10),
-                  CustomContainer.studentInfoScreen(text: 'English'),
+                  CustomContainer.studentInfoScreen(
+                    text: 'English',
+                    isTamil: false,
+                    controller: englishController,
+                  ),
                   SizedBox(height: 20),
-                  CustomContainer.studentInfoScreen(text: 'Tamil'),
+                  CustomContainer.studentInfoScreen(
+                    text: 'Tamil',
+                    isTamil: true,
+                    controller: tamilController,
+                  ),
                   SizedBox(height: 20),
 
                   CustomTextField.richText(
@@ -208,6 +261,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    controller: guardianQualification,
                     text: '',
                     imagePath: AppImages.dropDown,
                     imageSize: 11,
@@ -220,6 +274,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    controller: guardianOccupation,
                     text: '',
                     verticalDivider: false,
                   ),
@@ -230,6 +285,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    controller: guardianAnnualIncome,
                     text: '',
                     verticalDivider: false,
                   ),
@@ -238,6 +294,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                 CustomTextField.richText(text: 'Office Address', text2: ''),
                 SizedBox(height: 10),
                 CustomContainer.studentInfoScreen(
+                  controller: officeAddress,
                   maxLine: 3,
                   text: '',
                   verticalDivider: false,

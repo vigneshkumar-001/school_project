@@ -6,8 +6,11 @@ import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/student_info_screen.dart';
 
+import 'check_admission_status.dart';
+
 class Admission1 extends StatefulWidget {
-  const Admission1({super.key});
+  final String? pages;
+  const Admission1({super.key, this.pages});
 
   @override
   State<Admission1> createState() => _Admission1State();
@@ -181,10 +184,47 @@ class _Admission1State extends State<Admission1> {
                       ),
                     );
                   },
-                  text: 'Next Step',
-                  width: 160,
+                  text:
+                      widget.pages == "otpScreen"
+                          ? 'Create New Admission'
+                          : 'Next Step',
+                  width: 250,
                   image: AppImages.rightSaitArrow,
                 ),
+
+                if (widget.pages == "otpScreen")
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CheckAdmissionStatus(),
+                            ),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                'Check Admission Status',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.blueG2,
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Image.asset(AppImages.rightArrow, height: 10),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),

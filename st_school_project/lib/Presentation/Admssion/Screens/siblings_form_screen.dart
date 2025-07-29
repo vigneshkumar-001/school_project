@@ -16,6 +16,21 @@ class SiblingsFormScreen extends StatefulWidget {
 
 class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
   String selected = 'Yes';
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController admissionNoController = TextEditingController();
+  final TextEditingController classController = TextEditingController();
+  final TextEditingController sectionController = TextEditingController();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    admissionNoController.dispose();
+    classController.dispose();
+    sectionController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,16 +81,14 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                 LinearProgressIndicator(
                   minHeight: 6,
                   value: 0.6,
-
                   valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
-                  stopIndicatorRadius: 16,
                   backgroundColor: AppColor.lowGery1,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 SizedBox(height: 40),
                 CustomTextField.textWith600(
                   text:
-                      'If Your Sister Studying in St.Joseph\'s Matriculation School-Madurai.',
+                  "If Your Sister Studying in St.Joseph's Matriculation School-Madurai.",
                   fontSize: 26,
                 ),
                 CustomTextField.richText(
@@ -98,7 +111,6 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                         isSelected: selected == 'Yes',
                       ),
                     ),
-
                     SizedBox(width: 20),
                     GestureDetector(
                       onTap: () {
@@ -117,6 +129,7 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                 CustomTextField.richText(text: 'Name', text2: ''),
                 SizedBox(height: 10),
                 CustomContainer.studentInfoScreen(
+                  controller: nameController,
                   text: '',
                   verticalDivider: false,
                 ),
@@ -124,6 +137,7 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                 CustomTextField.richText(text: 'Admission No', text2: ''),
                 SizedBox(height: 10),
                 CustomContainer.studentInfoScreen(
+                  controller: admissionNoController,
                   text: '',
                   verticalDivider: false,
                 ),
@@ -137,6 +151,7 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                           CustomTextField.richText(text: 'Class', text2: ''),
                           SizedBox(height: 10),
                           CustomContainer.studentInfoScreen(
+                            controller: classController,
                             text: '',
                             verticalDivider: false,
                             imagePath: AppImages.dropDown,
@@ -153,6 +168,7 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                           CustomTextField.richText(text: 'Section', text2: ''),
                           SizedBox(height: 10),
                           CustomContainer.studentInfoScreen(
+                            controller: sectionController,
                             text: '',
                             verticalDivider: false,
                             imagePath: AppImages.dropDown,
@@ -172,7 +188,7 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                 ),
                 SizedBox(height: 25),
                 AppButton.button(
-                    image: AppImages.rightSaitArrow,
+                  image: AppImages.rightSaitArrow,
                   text: 'Save & Continue',
                   onTap: () {
                     Navigator.push(

@@ -1,11 +1,15 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 
 import '../../../Core/Utility/app_color.dart';
 import '../../../Core/Utility/app_images.dart';
 import '../../../Core/Utility/google_font.dart';
+import '../../../Core/Widgets/bottom_navigationbar.dart';
 import '../../../Core/Widgets/custom_textfield.dart';
+import '../../Onboarding/Screens/Home Screen/home_tab.dart';
 
 class CheckAdmissionStatus extends StatefulWidget {
   const CheckAdmissionStatus({super.key});
@@ -15,6 +19,9 @@ class CheckAdmissionStatus extends StatefulWidget {
 }
 
 class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _admissionIdController = TextEditingController();
+
   void _paymentReceipt(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -294,125 +301,151 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColor.lightGrey,
-                      border: Border.all(
-                        color: AppColor.lowLightBlue,
-                        width: 1,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColor.lightGrey,
+                        border: Border.all(
+                          color: AppColor.lowLightBlue,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Image.asset(
-                        AppImages.leftArrow,
-                        height: 20,
-                        width: 20,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Image.asset(
+                          AppImages.leftArrow,
+                          height: 20,
+                          width: 20,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: 33),
-                Text(
-                  'Check Admission Status',
-                  style: GoogleFont.ibmPlexSans(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w500,
-                    color: AppColor.black,
-                  ),
-                ),
-                SizedBox(height: 14),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 4,
-                      child: CustomContainer.studentInfoScreen(
-                        text: 'Admission Id',
-                        verticalDivider: true,
-                        flex: 2,
-                      ),
-                    ),
-                    Expanded(
-                      child: CustomContainer.checkMark(
-                        onTap: () {},
-                        imagePath: AppImages.searchImage,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 15),
-                RichText(
-                  text: TextSpan(
-                    text: '2025-26 result will be updated on',
+                  SizedBox(height: 33),
+                  Text(
+                    'Check Admission Status',
                     style: GoogleFont.ibmPlexSans(
-                      fontSize: 12,
-                      color: AppColor.lowGrey,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.black,
                     ),
+                  ),
+                  SizedBox(height: 14),
+                  Row(
                     children: [
-                      TextSpan(
-                        text: ' 25th May',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 12,
-                          color: AppColor.lightBlack,
-                          fontWeight: FontWeight.w500,
+                      Expanded(
+                        flex: 4,
+                        child: CustomContainer.studentInfoScreen(
+                          controller: _admissionIdController,
+                          text: 'Admission Id',
+                          verticalDivider: true,
+                          flex: 2,
+                        ),
+                      ),
+                      Expanded(
+                        child: CustomContainer.checkMark(
+                          onTap: () {
+                            if (_admissionIdController.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Enter Admission Id'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } else {
+                              // Add your search logic here
+                            }
+                          },
+                          imagePath: AppImages.searchImage,
                         ),
                       ),
                     ],
                   ),
-                ),
-                SizedBox(height: 35),
-                Text(
-                  'My Admissions',
-                  style: GoogleFont.ibmPlexSans(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: AppColor.lightBlack,
+                  SizedBox(height: 15),
+                  RichText(
+                    text: TextSpan(
+                      text: '2025-26 result will be updated on',
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 12,
+                        color: AppColor.lowGrey,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: ' 25th May',
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 12,
+                            color: AppColor.lightBlack,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: 15),
-                CustomContainer.myadmissions(
-                  imagepath: AppImages.clockIcon,
-                  iconColor: AppColor.blue,
-                  backRoundColors: AppColor.checkAdmissCont1,
-                  iconTextColor: AppColor.blue,
-                  maintext: 'Suganya M',
-                  subtext1: 'Submitted On ',
-                  subtext2: '25 Jul 2025',
-                  iconText: 'Pending',
-                  onTap: () => _paymentReceipt(context),
-                ),
-                SizedBox(height: 20),
-                CustomContainer.myadmissions(
-                  imagepath: AppImages.approvedImage,
-                  iconColor: AppColor.greenMore1,
-                  backRoundColors: AppColor.checkAdmissCont2,
-                  iconTextColor: AppColor.greenMore1,
-                  maintext: 'Suganya M',
-                  subtext1: 'Submitted On ',
-                  subtext2: '25 Jul 2025',
-                  iconText: 'Approved',
-                ),
-                SizedBox(height: 20),
-                CustomContainer.myadmissions(
-                  imagepath: AppImages.rejectedImage,
-                  iconColor: AppColor.lightRed,
-                  backRoundColors: AppColor.checkAdmissCont3,
-                  iconTextColor: AppColor.lightRed,
-                  maintext: 'Suganya M',
-                  subtext1: 'Submitted On ',
-                  subtext2: '25 Jul 2025',
-                  iconText: 'Rejected',
-                ),
-              ],
+                  SizedBox(height: 35),
+                  Text(
+                    'My Admissions',
+                    style: GoogleFont.ibmPlexSans(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.lightBlack,
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  CustomContainer.myadmissions(
+                    imagepath: AppImages.clockIcon,
+                    iconColor: AppColor.blue,
+                    backRoundColors: AppColor.checkAdmissCont1,
+                    iconTextColor: AppColor.blue,
+                    maintext: 'Suganya M',
+                    subtext1: 'Submitted On ',
+                    subtext2: '25 Jul 2025',
+                    iconText: 'Pending',
+                    onTap: () => _paymentReceipt(context),
+                  ),
+                  SizedBox(height: 20),
+                  CustomContainer.myadmissions(
+                    imagepath: AppImages.approvedImage,
+                    iconColor: AppColor.greenMore1,
+                    backRoundColors: AppColor.checkAdmissCont2,
+                    iconTextColor: AppColor.greenMore1,
+                    maintext: 'Suganya M',
+                    subtext1: 'Submitted On ',
+                    subtext2: '25 Jul 2025',
+                    iconText: 'Approved',
+                  ),
+                  SizedBox(height: 20),
+                  CustomContainer.myadmissions(
+                    imagepath: AppImages.rejectedImage,
+                    iconColor: AppColor.lightRed,
+                    backRoundColors: AppColor.checkAdmissCont3,
+                    iconTextColor: AppColor.lightRed,
+                    maintext: 'Suganya M',
+                    subtext1: 'Submitted On ',
+                    subtext2: '25 Jul 2025',
+                    iconText: 'Rejected',
+                  ),
+                  SizedBox(height: 30),
+                  AppButton.button(
+                    text: 'Home Page',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CommonBottomNavigation(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

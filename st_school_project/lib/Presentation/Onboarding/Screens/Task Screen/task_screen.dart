@@ -68,6 +68,132 @@ class _TaskScreenState extends State<TaskScreen> {
     );
   }
 
+  void Switchprofileorlogout(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.30,
+          minChildSize: 0.20,
+          maxChildSize: 0.50,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: ListView(
+                controller: scrollController,
+                padding: EdgeInsets.all(16),
+                children: [
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: 30,
+                      decoration: BoxDecoration(color: AppColor.grayop),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Text(
+                        'Switch Profile',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.black,
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        'Logout',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.lightRed,
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      InkWell(
+                        onTap: () {},
+                        child: Image.asset(AppImages.logOut, height: 26),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Image.asset(AppImages.moreSimage1, height: 58),
+                      SizedBox(width: 5),
+                      Text(
+                        'Anushka',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 18,
+                          color: AppColor.black,
+                        ),
+                      ),
+                      Spacer(),
+                      InkWell(
+                        onTap: () {},
+                        child: Image.asset(AppImages.rightArrow, height: 16),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Image.asset(AppImages.moreSimage1, height: 58),
+                      SizedBox(width: 5),
+                      Text(
+                        'Swathi',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 18,
+                          color: AppColor.black,
+                        ),
+                      ),
+                      Spacer(),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: AppColor.blue, width: 1),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 6,
+                            ),
+                            child: Text(
+                              'Active',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.blue,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 7),
+                      InkWell(
+                        onTap: () {},
+                        child: Image.asset(AppImages.rightArrow, height: 16),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   int index = 0;
   String selectedSubject = 'All';
 
@@ -315,13 +441,42 @@ class _TaskScreenState extends State<TaskScreen> {
                                         horizontal: 16,
                                         vertical: 16,
                                       ),
-                                      child: Text(
-                                        'Your Tasks',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black,
-                                        ),
+                                      child: Stack(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Your Tasks',
+                                                style: GoogleFont.ibmPlexSans(
+                                                  fontSize: 28,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                              SizedBox(width: 199),
+                                              Image.asset(
+                                                AppImages.moreSimage2,
+                                                height: 20,
+                                                width: 20,
+                                              ),
+                                            ],
+                                          ),
+                                          Positioned(
+                                            right: 0,
+                                            bottom: 6,
+                                            child: InkWell(
+                                              onTap:
+                                                  () => Switchprofileorlogout(
+                                                    context,
+                                                  ),
+                                              child: Image.asset(
+                                                AppImages.moreSimage1,
+                                                height: 30,
+                                                width: 40,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     SingleChildScrollView(
