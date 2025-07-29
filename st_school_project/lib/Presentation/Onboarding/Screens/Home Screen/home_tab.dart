@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
+import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/student_info_screen.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_screen.dart';
 import 'package:st_school_project/noDataFound_screen.dart';
@@ -10,6 +11,8 @@ import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/common_bottom_navigation_bar.dart'
     show CommonBottomNavigationBar;
 import '../../../../Core/Widgets/custom_container.dart';
+import '../../../Admssion/Screens/admission_1.dart';
+import '../../../Admssion/Screens/check_admission_status.dart';
 import '../Attendence Screen/attendence_screen.dart';
 
 class HomeTab extends StatefulWidget {
@@ -99,6 +102,132 @@ class _HomeScreenState extends State<HomeTab> {
     );
   }
 
+  void Switchprofileorlogout(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.30,
+          minChildSize: 0.20,
+          maxChildSize: 0.50,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: ListView(
+                controller: scrollController,
+                padding: EdgeInsets.all(16),
+                children: [
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: 30,
+                      decoration: BoxDecoration(color: AppColor.grayop),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Text(
+                        'Switch Profile',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.black,
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        'Logout',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.lightRed,
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      InkWell(
+                        onTap: () {},
+                        child: Image.asset(AppImages.logOut, height: 26),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Image.asset(AppImages.moreSimage1, height: 58),
+                      SizedBox(width: 5),
+                      Text(
+                        'Anushka',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 18,
+                          color: AppColor.black,
+                        ),
+                      ),
+                      Spacer(),
+                      InkWell(
+                        onTap: () {},
+                        child: Image.asset(AppImages.rightArrow, height: 16),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Image.asset(AppImages.moreSimage1, height: 58),
+                      SizedBox(width: 5),
+                      Text(
+                        'Swathi',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 18,
+                          color: AppColor.black,
+                        ),
+                      ),
+                      Spacer(),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: AppColor.blue, width: 1),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 6,
+                            ),
+                            child: Text(
+                              'Active',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.blue,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 7),
+                      InkWell(
+                        onTap: () {},
+                        child: Image.asset(AppImages.rightArrow, height: 16),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final filteredTasks =
@@ -123,85 +252,103 @@ class _HomeScreenState extends State<HomeTab> {
                 ),
               ),
               SizedBox(height: 20),
-              ListTile(
-                title: RichText(
-                  text: TextSpan(
-                    style: GoogleFont.ibmPlexSans(
-                      fontSize: 28,
-                      color: AppColor.black,
-                    ),
-                    text: 'Hi ',
-                    children: [
-                      TextSpan(
-                        text: 'Jelastin',
-                        style: GoogleFont.ibmPlexSans(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 28,
-                        ),
-                      ),
-                      TextSpan(
-                        text: '!',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w800,
-                          color: AppColor.blue,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 5),
-                    RichText(
+              Stack(
+                children: [
+                  ListTile(
+                    title: RichText(
                       text: TextSpan(
-                        text: '7',
                         style: GoogleFont.ibmPlexSans(
-                          fontSize: 14,
-                          color: AppColor.grey,
-                          fontWeight: FontWeight.w800,
+                          fontSize: 28,
+                          color: AppColor.black,
                         ),
+                        text: 'Hi ',
                         children: [
                           TextSpan(
-                            text: 'th ',
-                            style: GoogleFont.ibmPlexSans(fontSize: 10),
-                          ),
-                          TextSpan(
-                            text: 'Grade - ',
+                            text: 'Jelastin',
                             style: GoogleFont.ibmPlexSans(
-                              fontSize: 14,
-                              color: AppColor.grey,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          TextSpan(
-                            text: 'C ',
-                            style: GoogleFont.ibmPlexSans(
-                              fontSize: 14,
-                              color: AppColor.grey,
                               fontWeight: FontWeight.w800,
+                              fontSize: 28,
                             ),
                           ),
                           TextSpan(
-                            text: 'Section',
+                            text: '!',
                             style: GoogleFont.ibmPlexSans(
-                              fontWeight: FontWeight.normal,
+                              fontSize: 28,
+                              fontWeight: FontWeight.w800,
+                              color: AppColor.blue,
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-                trailing: SizedBox(
-                  height: 100,
-                  width: 80,
-                  child: Image.asset(AppImages.jesus, fit: BoxFit.cover),
-                ),
+
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 5),
+                        RichText(
+                          text: TextSpan(
+                            text: '7',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 14,
+                              color: AppColor.grey,
+                              fontWeight: FontWeight.w800,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: 'th ',
+                                style: GoogleFont.ibmPlexSans(fontSize: 10),
+                              ),
+                              TextSpan(
+                                text: 'Grade - ',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 14,
+                                  color: AppColor.grey,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'C ',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 14,
+                                  color: AppColor.grey,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'Section',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: SizedBox(
+                      child: Image.asset(
+                        AppImages.moreSimage2,
+                        height: 30,
+                        width: 30,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 34,
+                    bottom: 17,
+                    child: InkWell(
+                      onTap: () => Switchprofileorlogout(context),
+                      child: Image.asset(
+                        AppImages.moreSimage1,
+                        height: 49,
+                        width: 49,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              // SizedBox(height: 10),
+
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -394,9 +541,8 @@ class _HomeScreenState extends State<HomeTab> {
                                           MaterialPageRoute(
                                             builder:
                                                 (context) =>
-                                                    CommonBottomNavigationBar(
-                                                      currentIndex: 3,
-                                                      onTabSelected: (index) {},
+                                                    CommonBottomNavigation(
+                                                      initialIndex: 3,
                                                     ),
                                           ),
                                         );
@@ -512,7 +658,7 @@ class _HomeScreenState extends State<HomeTab> {
                                                   MaterialPageRoute(
                                                     builder:
                                                         (context) =>
-                                                            StudentInfoScreen(),
+                                                            Admission1(),
                                                   ),
                                                 );
                                               },
@@ -627,7 +773,7 @@ class _HomeScreenState extends State<HomeTab> {
                                                   MaterialPageRoute(
                                                     builder:
                                                         (context) =>
-                                                            NoDataFoundScreen(),
+                                                            CheckAdmissionStatus(),
                                                   ),
                                                 );
                                               },
@@ -1098,6 +1244,26 @@ class _HomeScreenState extends State<HomeTab> {
                                     initialDate: selectedDate,
                                     firstDate: DateTime(2000),
                                     lastDate: DateTime(2100),
+                                    builder: (context, child) {
+                                      return Theme(
+                                        data: Theme.of(context).copyWith(
+                                          dialogBackgroundColor: AppColor.white,
+                                          colorScheme: ColorScheme.light(
+                                            primary: AppColor.blueG2,
+                                            onPrimary: Colors.white,
+                                            onSurface: AppColor.black,
+                                          ),
+                                          textButtonTheme: TextButtonThemeData(
+                                            style: TextButton.styleFrom(
+                                              foregroundColor:
+                                                  AppColor
+                                                      .blueG2, // buttons like OK/CANCEL
+                                            ),
+                                          ),
+                                        ),
+                                        child: child!,
+                                      );
+                                    },
                                   );
 
                                   if (picked != null) {
@@ -1134,8 +1300,8 @@ class _HomeScreenState extends State<HomeTab> {
                                         color: AppColor.black,
                                       ),
                                     ),
-                                    const SizedBox(width: 4),
-                                    const Icon(
+                                    SizedBox(width: 4),
+                                    Icon(
                                       Icons.keyboard_arrow_down_outlined,
                                       size: 20,
                                       color: AppColor.black,

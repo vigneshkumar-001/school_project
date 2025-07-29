@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
@@ -40,7 +42,7 @@ class CustomTextField {
     required String text,
     Color? color = AppColor.grayop,
     FontWeight? fontWeight = FontWeight.w500,
-    TextAlign? textAlign  ,
+    TextAlign? textAlign,
     double? fontSize = 16,
   }) {
     return Text(
@@ -54,37 +56,43 @@ class CustomTextField {
     );
   }
 
-  static richText({
+  static Widget richText({
     required String text,
     required String text2,
     bool isBold = false,
-    Color   text1Color = AppColor.lightBlack,
-    Color   text2Color = AppColor.lowGrey,
+    Color text1Color = AppColor.lightBlack,
+    Color text2Color = AppColor.lowGrey,
     double secondFontSize = 15,
     double firstFontSize = 15,
     FontWeight fontWeight1 = FontWeight.normal,
     FontWeight fontWeight2 = FontWeight.normal,
+    String hintText = 'Enter Aadhaar Number',
   }) {
-    return RichText(
-      text: TextSpan(
-        text: text,
-        style: GoogleFont.ibmPlexSans(
-          fontSize: firstFontSize,
-          color: text1Color,
-          fontWeight: fontWeight1,
-        ),
-        children: [
-          if (text2.isNotEmpty)
-            TextSpan(
-              text: isBold == false ? '( ${text2} )' : text2,
-              style: GoogleFont.ibmPlexSans(
-                fontWeight: fontWeight2,
-                fontSize: secondFontSize,
-                color: text2Color,
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            text: text,
+            style: GoogleFont.ibmPlexSans(
+              fontSize: firstFontSize,
+              color: text1Color,
+              fontWeight: fontWeight1,
             ),
-        ],
-      ),
+            children: [
+              if (text2.isNotEmpty)
+                TextSpan(
+                  text: isBold ? text2 : ' ( $text2 )',
+                  style: GoogleFont.ibmPlexSans(
+                    fontWeight: fontWeight2,
+                    fontSize: secondFontSize,
+                    color: text2Color,
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

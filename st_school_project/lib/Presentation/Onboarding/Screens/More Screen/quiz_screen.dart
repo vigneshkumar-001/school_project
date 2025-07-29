@@ -14,7 +14,6 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  // Map to store selected option per question
   Map<int, String> selectedAnswers = {};
   int questionIndex = 0;
   int selectedAnswerIndexQ1 = -1;
@@ -378,6 +377,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 SizedBox(height: 30),
                 if (!isQuizCompleted)
                   CustomContainer.checkMark(
+                    imagePath: AppImages.tick,
                     onTap: () {
                       setState(() {
                         isQuizCompleted = !isQuizCompleted;

@@ -71,11 +71,16 @@ class AppImages {
   static String advertisement2 = 'assets/images/advertisement2.png';
   static String advertisement3 = 'assets/images/advertisement3.png';
   static String advertisement4 = 'assets/images/advertisement4.png';
-
   static String paymentSuccessful = 'assets/images/Payment Successful.png';
-
-
-  
-
-
+  static String noDataFound = 'assets/images/noDataFound.png';
+  static String searchImage = 'assets/images/SearchImage.png';
+  static String downloadImage = 'assets/images/DownloadImage.png';
+  static String approvedImage = 'assets/images/ApprovedImage.png';
+  static String rejectedImage = 'assets/images/RejectedImage.png';
+  static String examResultBCImage = 'assets/images/ExamResultBCImage.png';
+  static String paidImage = 'assets/images/PaidImage.png';
+  static String failedImage = 'assets/images/FailedImage.png';
+  static String admissionNo = 'assets/images/AdmissionNo.png';
+  static String receiptNo= 'assets/images/ReceiptNo.png';
+  static String timeImage= 'assets/images/TimeImage.png';
 }
