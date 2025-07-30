@@ -715,6 +715,8 @@ class CustomContainer {
     FormFieldValidator<String>? validator,
     bool isError = false,
     String? errorText,
+    bool? hasError = false,
+    Color borderColor = AppColor.lightRed,
   }) {
     DateTime today = DateTime.now();
 

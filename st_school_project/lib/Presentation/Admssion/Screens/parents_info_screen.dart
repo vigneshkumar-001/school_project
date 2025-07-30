@@ -20,6 +20,8 @@ class ParentsInfoScreen extends StatefulWidget {
 }
 
 class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
+  final _formKey = GlobalKey<FormState>();
+
   String selected = 'Father & Mother';
   bool isSubmitted = false;
 
@@ -59,89 +61,96 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColor.lightGrey,
-                          border: Border.all(
-                            color: AppColor.lowLightBlue,
-                            width: 1,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColor.lightGrey,
+                            border: Border.all(
+                              color: AppColor.lowLightBlue,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Image.asset(
-                            AppImages.leftArrow,
-                            height: 12,
-                            width: 12,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Image.asset(
+                              AppImages.leftArrow,
+                              height: 12,
+                              width: 12,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 15),
-                    Text(
-                      '2025 - 2026 LKG Admission',
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.black,
+                      SizedBox(width: 15),
+                      Text(
+                        '2025 - 2026 LKG Admission',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.black,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 30),
-                LinearProgressIndicator(
-                  minHeight: 6,
-                  value: 0.4,
+                    ],
+                  ),
+                  SizedBox(height: 30),
+                  LinearProgressIndicator(
+                    minHeight: 6,
+                    value: 0.4,
 
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
-                  stopIndicatorRadius: 16,
-                  backgroundColor: AppColor.lowGery1,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                SizedBox(height: 40),
-                CustomTextField.textWith600(text: 'Parent Info', fontSize: 26),
-                SizedBox(height: 20),
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
+                    stopIndicatorRadius: 16,
+                    backgroundColor: AppColor.lowGery1,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  SizedBox(height: 40),
+                  CustomTextField.textWith600(
+                    text: 'Parent Info',
+                    fontSize: 26,
+                  ),
+                  SizedBox(height: 20),
 
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selected = 'Father & Mother';
-                        });
-                      },
-                      child: CustomContainer.parentInfo(
-                        text: 'Father & Mother',
-                        isSelected: selected == 'Father & Mother',
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selected = 'Father & Mother';
+                          });
+                        },
+                        child: CustomContainer.parentInfo(
+                          text: 'Father & Mother',
+                          isSelected: selected == 'Father & Mother',
+                        ),
                       ),
-                    ),
 
-                    SizedBox(width: 20),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selected = 'Guardian';
-                        });
-                      },
-                      child: CustomContainer.parentInfo(
-                        text: 'Guardian',
-                        isSelected: selected == 'Guardian',
+                      SizedBox(width: 20),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selected = 'Guardian';
+                          });
+                        },
+                        child: CustomContainer.parentInfo(
+                          text: 'Guardian',
+                          isSelected: selected == 'Guardian',
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+
+                    ],
+                  ),
+
                 SizedBox(height: 20),
                 if (selected == 'Father & Mother') ...[
                   Form(
@@ -800,6 +809,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
 
                 SizedBox(height: 20),
               ],
+
             ),
           ),
         ),

@@ -21,6 +21,7 @@ class TaskScreen extends StatefulWidget {
 class _TaskScreenState extends State<TaskScreen> {
   DateTime selectedDate = DateTime.now();
   DateTime currentMonth = DateTime(DateTime.now().year, DateTime.now().month);
+  late ScrollController _scrollController;
 
   final List<String> months = List.generate(
     12,
@@ -30,6 +31,7 @@ class _TaskScreenState extends State<TaskScreen> {
   List<Map<String, dynamic>> getFullMonthDates(DateTime currentMonth) {
     final firstDay = DateTime(currentMonth.year, currentMonth.month, 1);
     final lastDay = DateTime(currentMonth.year, currentMonth.month + 1, 0);
+    late ScrollController _scrollController;
 
     return List.generate(lastDay.day, (i) {
       final date = firstDay.add(Duration(days: i));
@@ -40,6 +42,35 @@ class _TaskScreenState extends State<TaskScreen> {
         "formattedFullDate": DateFormat('EEEE, dd MMM yyyy').format(date),
       };
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+
+    // Wait for first frame to render, then scroll
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      scrollToSelectedDate();
+    });
+  }
+
+  void scrollToSelectedDate() {
+    final dates = getFullMonthDates(currentMonth);
+    final index = dates.indexWhere((item) {
+      final date = item['fullDate'] as DateTime;
+      return selectedDate.day == date.day &&
+          selectedDate.month == date.month &&
+          selectedDate.year == date.year;
+    });
+
+    if (index != -1) {
+      final double itemWidth = 57; // match the container width
+      double scrollOffset = (index * itemWidth) - 100; // small left padding
+      if (scrollOffset < 0) scrollOffset = 0;
+
+      _scrollController.jumpTo(scrollOffset); // or animateTo
+    }
   }
 
   void showMonthPicker() {
@@ -330,17 +361,17 @@ class _TaskScreenState extends State<TaskScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  DateFormat.MMMM().format(currentMonth),
+                                  DateFormat('MMMM dd').format(selectedDate),
                                   style: GoogleFont.ibmPlexSans(
                                     color: Colors.white,
                                     fontSize: 32,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(width: 4),
-                                const Icon(
+                                SizedBox(width: 4),
+                                Icon(
                                   Icons.keyboard_arrow_down,
-                                  color: Colors.white,
+                                  color: AppColor.white,
                                 ),
                               ],
                             ),
@@ -348,10 +379,11 @@ class _TaskScreenState extends State<TaskScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                     SizedBox(height: 20),
                     SizedBox(
                       height: 90,
                       child: ListView.builder(
+                        controller: _scrollController,
                         scrollDirection: Axis.horizontal,
                         itemCount: getFullMonthDates(currentMonth).length,
                         itemBuilder: (context, index) {
@@ -366,6 +398,7 @@ class _TaskScreenState extends State<TaskScreen> {
                             onTap: () {
                               setState(() {
                                 selectedDate = date;
+                                scrollToSelectedDate();
                               });
                             },
                             child: Container(
