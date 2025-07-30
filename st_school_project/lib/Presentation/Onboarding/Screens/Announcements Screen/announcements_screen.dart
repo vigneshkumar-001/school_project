@@ -317,7 +317,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                       SizedBox(height: 30),
                       GestureDetector(
                         onTap: () {
-                          setState(() {});
+                          Navigator.pop(context);
                         },
                         child: Center(
                           child: Container(

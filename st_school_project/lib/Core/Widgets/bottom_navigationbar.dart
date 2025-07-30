@@ -17,15 +17,62 @@ class CommonBottomNavigation extends StatefulWidget {
   CommonBottomNavigationState createState() => CommonBottomNavigationState();
 }
 
-class CommonBottomNavigationState extends State<CommonBottomNavigation> {
-  late PageController _pageController;
+class CommonBottomNavigationState extends State<CommonBottomNavigation>
+    with TickerProviderStateMixin {
+  late final PageController _pageController;
+  late final AnimationController _animationController;
+  late Animation<Offset> _slideAnimation;
+
   int _selectedIndex = 0;
+  int _prevIndex = 0;
 
   @override
   void initState() {
     super.initState();
+
     _selectedIndex = widget.initialIndex;
+    _prevIndex = _selectedIndex;
+
     _pageController = PageController(initialPage: _selectedIndex);
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    _updateSlideAnimation();
+  }
+
+  void _updateSlideAnimation() {
+    _slideAnimation = Tween<Offset>(
+      begin:
+          _selectedIndex > _prevIndex
+              ? const Offset(1.0, 0.0)
+              : const Offset(-1.0, 0.0),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
+    _animationController.forward(from: 0.0);
+  }
+
+  void _onTabTapped(int index) {
+    if (index == _selectedIndex) return;
+
+    setState(() {
+      _prevIndex = _selectedIndex;
+      _selectedIndex = index;
+      _animationController.reset();
+      _updateSlideAnimation();
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _animationController.dispose();
+    super.dispose();
   }
 
   Widget _getScreen(int index) {
@@ -45,86 +92,57 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation> {
     }
   }
 
-  void _onTabTapped(int index) {
-    if (index == _selectedIndex) return;
-
-    final diff = (index - _selectedIndex).abs();
-
-    if (diff == 1) {
-      _pageController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      _pageController.jumpToPage(index);
-    }
-
-    setState(() => _selectedIndex = index);
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: PageView.builder(
-          controller: _pageController,
-          itemCount: 5,
-          itemBuilder: (context, index) => _getScreen(index),
-          onPageChanged: (index) {
-            setState(() => _selectedIndex = index);
-          },
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: AppColor.white,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: _selectedIndex,
-          onTap: _onTabTapped,
-          selectedItemColor: AppColor.blueG2,
-          unselectedItemColor: AppColor.lightBlack,
-          selectedLabelStyle: GoogleFont.ibmPlexSans(
-            fontWeight: FontWeight.bold,
+    return Scaffold(
+      body: Stack(
+        children: [
+          _getScreen(_prevIndex),
+          SlideTransition(
+            position: _slideAnimation,
+            child: _getScreen(_selectedIndex),
           ),
-          unselectedLabelStyle: GoogleFont.ibmPlexSans(
-            fontWeight: FontWeight.w500,
-            fontSize: 10,
-          ),
-          items: [
-            BottomNavigationBarItem(
-              icon: Image.asset(AppImages.bottum0, height: 26),
-              activeIcon: Image.asset(AppImages.bottum0select, height: 30),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset(AppImages.bottum3, height: 26),
-              activeIcon: Image.asset(AppImages.bottum3select, height: 30),
-              label: 'Announcements',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset(AppImages.bottum1, height: 26),
-              activeIcon: Image.asset(AppImages.bottum1select, height: 30),
-              label: 'Tasks',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset(AppImages.bottum2, height: 26),
-              activeIcon: Image.asset(AppImages.bottum2select, height: 30),
-              label: 'Attendance',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset(AppImages.moreSimage1, height: 26, width: 26),
-              activeIcon: Image.asset(AppImages.moreSimage1, height: 30),
-              label: 'More',
-            ),
-          ],
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: AppColor.white,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        onTap: _onTabTapped,
+        selectedItemColor: AppColor.blueG2,
+        unselectedItemColor: AppColor.lightBlack,
+        selectedLabelStyle: GoogleFont.ibmPlexSans(fontWeight: FontWeight.bold),
+        unselectedLabelStyle: GoogleFont.ibmPlexSans(
+          fontWeight: FontWeight.w500,
+          fontSize: 10,
         ),
+        items: [
+          BottomNavigationBarItem(
+            icon: Image.asset(AppImages.bottum0, height: 26),
+            activeIcon: Image.asset(AppImages.bottum0select, height: 30),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(AppImages.bottum3, height: 26),
+            activeIcon: Image.asset(AppImages.bottum3select, height: 30),
+            label: 'Announcements',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(AppImages.bottum1, height: 26),
+            activeIcon: Image.asset(AppImages.bottum1select, height: 30),
+            label: 'Tasks',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(AppImages.bottum2, height: 26),
+            activeIcon: Image.asset(AppImages.bottum2select, height: 30),
+            label: 'Attendance',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset(AppImages.moreSimage1, height: 26, width: 26),
+            activeIcon: Image.asset(AppImages.moreSimage1, height: 30),
+            label: 'More',
+          ),
+        ],
       ),
     );
   }

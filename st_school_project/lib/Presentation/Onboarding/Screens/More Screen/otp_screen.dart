@@ -106,13 +106,13 @@ class _OtpScreenState extends State<OtpScreen> {
                     fieldWidth: 60,
                     selectedColor: AppColor.black,
                     activeColor: AppColor.white,
-                    activeFillColor: AppColor.white,
+                    activeFillColor: AppColor.lowGery1,
                     inactiveColor: AppColor.lowGery1,
                     selectedFillColor: AppColor.white,
                     fieldOuterPadding: EdgeInsets.symmetric(horizontal: 12),
                     inactiveFillColor: AppColor.lowGery1,
                   ),
-                  cursorColor: Colors.black,
+                  cursorColor: AppColor.black,
                   animationDuration: const Duration(milliseconds: 300),
                   enableActiveFill: true,
                   // errorAnimationController: errorController,
@@ -121,7 +121,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   boxShadows: const [
                     BoxShadow(
                       offset: Offset(0, 1),
-                      color: Colors.black12,
+                      color: AppColor.lightBlack,
                       blurRadius: 5,
                     ),
                   ],
@@ -144,19 +144,21 @@ class _OtpScreenState extends State<OtpScreen> {
               SizedBox(height: 30),
               CustomContainer.checkMark(
                 onTap: () {
-                  if(widget.pages == 'splash'){
+                  if (widget.pages == 'splash') {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => Admission1(pages: 'otpScreen',)),
+                      MaterialPageRoute(
+                        builder: (context) => Admission1(pages: 'otpScreen'),
+                      ),
                     );
-                  }else{
+                  } else {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => QuizScreen()),
                     );
                   }
-
-                },imagePath: AppImages.tick,
+                },
+                imagePath: AppImages.tick,
               ),
             ],
           ),
