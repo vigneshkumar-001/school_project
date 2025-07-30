@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
+import 'package:st_school_project/Core/Utility/thanglish_to_tamil.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
@@ -28,6 +30,26 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
   TextEditingController nationalityController = TextEditingController();
   TextEditingController personalId1Controller = TextEditingController();
   TextEditingController personalId2Controller = TextEditingController();
+  List<String> fatherSuggestions = [];
+  bool isFatherLoading = false;
+  final FocusNode tamilFocusNode = FocusNode();
+  @override
+  void dispose() {
+    // Dispose the focus node along with controllers
+    tamilFocusNode.dispose();
+    nameEnglishController.dispose();
+    nameTamilController.dispose();
+    aadharController.dispose();
+    dobController.dispose();
+    religionController.dispose();
+    casteController.dispose();
+    communityController.dispose();
+    tongueController.dispose();
+    nationalityController.dispose();
+    personalId1Controller.dispose();
+    personalId2Controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,14 +115,52 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     subLabel: 'As per Birth Certificate',
                     controller: nameEnglishController,
                     hint: 'English',
-                    validatorMsg: ' names is required',
+                    validatorMsg: 'Student Name is required',
                   ),
 
                   buildField(
+                    context: context,
+                    focusNode: tamilFocusNode,
+                    isTamilField: true,
                     controller: nameTamilController,
                     hint: 'Tamil',
-                    validatorMsg: 'names is required',
+                    validatorMsg: 'Tamil name is required',
                   ),
+                  if (isFatherLoading)
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  if (fatherSuggestions.isNotEmpty)
+                    Container(
+                      margin: const EdgeInsets.only(top: 4),
+                      constraints: const BoxConstraints(maxHeight: 150),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: fatherSuggestions.length,
+                        itemBuilder: (context, index) {
+                          final suggestion = fatherSuggestions[index];
+                          return ListTile(
+                            title: Text(suggestion),
+                            onTap: () {
+                              TanglishTamilHelper.applySuggestion(
+                                controller: nameTamilController,
+                                suggestion: suggestion,
+                                onSuggestionApplied: () {
+                                  setState(() => fatherSuggestions = []);
+                                },
+                              );
+                            },
+                            // onTap:
+                            //     () => _onSuggestionSelected(suggestion),
+                          );
+                        },
+                      ),
+                    ),
 
                   buildField(
                     label: 'Student Aadhar Number',
@@ -124,7 +184,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     label: 'Religion',
                     controller: religionController,
                     hint: '',
-                    validatorMsg: 'Enter religion',
+                    validatorMsg: 'Religion is required',
                     isDropDown: true,
                   ),
 
@@ -132,7 +192,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     label: 'Caste',
                     controller: casteController,
                     hint: '',
-                    validatorMsg: 'Enter caste',
+                    validatorMsg: 'Caste is required',
                     isDropDown: true,
                   ),
 
@@ -141,7 +201,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     subLabel: 'As per Community Certificate',
                     controller: communityController,
                     hint: '',
-                    validatorMsg: 'Enter community',
+                    validatorMsg: 'Community is required',
                     isDropDown: true,
                   ),
 
@@ -149,7 +209,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     label: 'Mother Tongue',
                     controller: tongueController,
                     hint: '',
-                    validatorMsg: 'Enter mother tongue',
+                    validatorMsg: 'Mother tongue is required',
                     isDropDown: true,
                   ),
 
@@ -157,7 +217,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     label: 'Nationality',
                     controller: nationalityController,
                     hint: '',
-                    validatorMsg: 'Enter nationality',
+                    validatorMsg: 'Nationality is required',
                     isDropDown: true,
                   ),
 
@@ -165,14 +225,14 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     label: 'Personal Identification 1',
                     controller: personalId1Controller,
                     hint: '',
-                    validatorMsg: 'Enter personal ID 1',
+                    validatorMsg: 'Personal ID 1 is required',
                   ),
 
                   buildField(
                     label: 'Personal Identification 2',
                     controller: personalId2Controller,
                     hint: '',
-                    validatorMsg: 'Enter personal ID 2',
+                    validatorMsg: 'Personal ID 2 is required',
                   ),
 
                   const SizedBox(height: 30),
@@ -185,14 +245,14 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>  ParentsInfoScreen(),
+                            builder: (context) => ParentsInfoScreen(),
                           ),
                         );
                       }
                     },
                   ),
 
-                   SizedBox(height: 10),
+                  SizedBox(height: 10),
                 ],
               ),
             ),
@@ -211,7 +271,9 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
     bool isDropDown = false,
     bool isAadhaar = false,
     bool isDOB = false,
+    bool isTamilField = false,
     BuildContext? context,
+    FocusNode? focusNode, // new parameter
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,10 +285,10 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
         FormField<String>(
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (value) {
-            final text = controller.text;
+            final text = controller.text.trim();
             if (text.isEmpty) return validatorMsg;
             if (isAadhaar && !RegExp(r'^[2-9][0-9]{11}$').hasMatch(text)) {
-              return 'Enter a valid Aadhar number';
+              return 'Enter a valid Aadhaar number';
             }
             return null;
           },
@@ -247,7 +309,28 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                   isAadhaar: isAadhaar,
                   isDOB: isDOB,
                   isError: field.hasError,
-                  onChanged: field.didChange,
+                  focusNode: focusNode,
+                  onChanged:
+                      isTamilField
+                          ? (value) async {
+                            if (value.trim().isEmpty) {
+                              setState(() => fatherSuggestions = []);
+                              return;
+                            }
+
+                            setState(() => isFatherLoading = true);
+
+                            final result =
+                                await TanglishTamilHelper.transliterate(value);
+
+                            setState(() {
+                              fatherSuggestions = result;
+                              isFatherLoading = false;
+                            });
+
+                            field.didChange(value);
+                          }
+                          : field.didChange,
                 ),
                 if (field.hasError)
                   Padding(

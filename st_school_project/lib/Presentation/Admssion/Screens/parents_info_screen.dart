@@ -25,8 +25,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
   String selected = 'Father & Mother';
   bool isSubmitted = false;
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> _formKey1 = GlobalKey<FormState>();
+  final _formKey1 = GlobalKey<FormState>();
   bool hasError = false;
   final englishController = TextEditingController();
   final tamilController = TextEditingController();
@@ -49,12 +48,16 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
   final guardianOfficeAddress = TextEditingController();
 
   List<String> fatherSuggestions = [];
+  bool isFatherLoading = false;
   List<String> guardianSuggestions = [];
   bool isGuardianLoading = false;
-  bool isFatherLoading = false;
 
   List<String> motherSuggestions = [];
   bool isMotherLoading = false;
+  bool get isBothOfficeAddressEmpty {
+    return officeAddress.text.trim().isEmpty &&
+        motherOfficeAddressController.text.trim().isEmpty;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,93 +66,87 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: AppColor.lightGrey,
-                            border: Border.all(
-                              color: AppColor.lowLightBlue,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColor.lightGrey,
+                          border: Border.all(
+                            color: AppColor.lowLightBlue,
+                            width: 1,
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Image.asset(
-                              AppImages.leftArrow,
-                              height: 12,
-                              width: 12,
-                            ),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Image.asset(
+                            AppImages.leftArrow,
+                            height: 12,
+                            width: 12,
                           ),
                         ),
                       ),
-                      SizedBox(width: 15),
-                      Text(
-                        '2025 - 2026 LKG Admission',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.black,
-                        ),
+                    ),
+                    SizedBox(width: 15),
+                    Text(
+                      '2025 - 2026 LKG Admission',
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.black,
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 30),
-                  LinearProgressIndicator(
-                    minHeight: 6,
-                    value: 0.4,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 30),
+                LinearProgressIndicator(
+                  minHeight: 6,
+                  value: 0.4,
 
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
-                    stopIndicatorRadius: 16,
-                    backgroundColor: AppColor.lowGery1,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  SizedBox(height: 40),
-                  CustomTextField.textWith600(
-                    text: 'Parent Info',
-                    fontSize: 26,
-                  ),
-                  SizedBox(height: 20),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
+                  stopIndicatorRadius: 16,
+                  backgroundColor: AppColor.lowGery1,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                SizedBox(height: 40),
+                CustomTextField.textWith600(text: 'Parent Info', fontSize: 26),
+                SizedBox(height: 20),
 
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selected = 'Father & Mother';
-                          });
-                        },
-                        child: CustomContainer.parentInfo(
-                          text: 'Father & Mother',
-                          isSelected: selected == 'Father & Mother',
-                        ),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selected = 'Father & Mother';
+                        });
+                      },
+                      child: CustomContainer.parentInfo(
+                        text: 'Father & Mother',
+                        isSelected: selected == 'Father & Mother',
                       ),
+                    ),
 
-                      SizedBox(width: 20),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selected = 'Guardian';
-                          });
-                        },
-                        child: CustomContainer.parentInfo(
-                          text: 'Guardian',
-                          isSelected: selected == 'Guardian',
-                        ),
+                    SizedBox(width: 20),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selected = 'Guardian';
+                        });
+                      },
+                      child: CustomContainer.parentInfo(
+                        text: 'Guardian',
+                        isSelected: selected == 'Guardian',
                       ),
-
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
 
                 SizedBox(height: 20),
                 if (selected == 'Father & Mother') ...[
@@ -169,12 +166,15 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                               setState(() {});
                             }
                           },
-
+                          isError:
+                              isSubmitted &&
+                              englishController.text.trim().isEmpty,
                           errorText:
                               isSubmitted &&
                                       englishController.text.trim().isEmpty
                                   ? 'Name is required'
                                   : null,
+
                           text: 'English',
                           isTamil: false,
                           controller: englishController,
@@ -187,13 +187,9 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                               isSubmitted && tamilController.text.trim().isEmpty
                                   ? 'Father name (Tamil) is required'
                                   : null,
-                          // onChanged: (value) async {
-                          //   if (hasError && value.trim().isNotEmpty) {
-                          //     setState(() {
-                          //       hasError = false;
-                          //     });
-                          //   }
-                          // },
+                          isError:
+                              isSubmitted &&
+                              tamilController.text.trim().isEmpty,
                           onChanged: (value) async {
                             if (hasError && value.trim().isNotEmpty) {
                               setState(() {
@@ -264,6 +260,9 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          isError:
+                              isSubmitted &&
+                              fatherQualification.text.trim().isEmpty,
                           onChanged: (value) {
                             if (isSubmitted && value.trim().isNotEmpty) {
                               setState(() {});
@@ -288,6 +287,9 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          isError:
+                              isSubmitted &&
+                              fatherOccupation.text.trim().isEmpty,
                           onChanged: (value) {
                             if (isSubmitted && value.trim().isNotEmpty) {
                               setState(() {});
@@ -310,6 +312,9 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          isError:
+                              isSubmitted &&
+                              fatherAnnualIncome.text.trim().isEmpty,
                           onChanged: (value) {
                             if (isSubmitted && value.trim().isNotEmpty) {
                               setState(() {});
@@ -333,13 +338,14 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          isError: isSubmitted && isBothOfficeAddressEmpty,
                           onChanged: (value) {
                             if (isSubmitted && value.trim().isNotEmpty) {
                               setState(() {});
                             }
                           },
                           errorText:
-                              isSubmitted && officeAddress.text.trim().isEmpty
+                              isSubmitted && isBothOfficeAddressEmpty
                                   ? 'Office Address is required'
                                   : null,
                           validator: null,
@@ -358,6 +364,9 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          isError:
+                              isSubmitted &&
+                              motherNameEnglishController.text.trim().isEmpty,
                           onChanged: (value) {
                             if (isSubmitted && value.trim().isNotEmpty) {
                               setState(() {});
@@ -377,11 +386,9 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
-                          // onChanged: (value) {
-                          //   if (isSubmitted && value.trim().isNotEmpty) {
-                          //     setState(() {});
-                          //   }
-                          // },
+                          isError:
+                              isSubmitted &&
+                              motherNameTamilController.text.trim().isEmpty,
                           onChanged: (value) async {
                             if (hasError && value.trim().isNotEmpty) {
                               setState(() {
@@ -458,6 +465,9 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          isError:
+                              isSubmitted &&
+                              motherQualification.text.trim().isEmpty,
                           onChanged: (value) {
                             if (isSubmitted && value.trim().isNotEmpty) {
                               setState(() {});
@@ -482,6 +492,9 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          isError:
+                              isSubmitted &&
+                              motherOccupation.text.trim().isEmpty,
                           onChanged: (value) {
                             if (isSubmitted && value.trim().isNotEmpty) {
                               setState(() {});
@@ -504,6 +517,9 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          isError:
+                              isSubmitted &&
+                              motherAnnualIncome.text.trim().isEmpty,
                           onChanged: (value) {
                             if (isSubmitted && value.trim().isNotEmpty) {
                               setState(() {});
@@ -526,16 +542,15 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          isError: isSubmitted && isBothOfficeAddressEmpty,
                           onChanged: (value) {
                             if (isSubmitted && value.trim().isNotEmpty) {
                               setState(() {});
                             }
                           },
+
                           errorText:
-                              isSubmitted &&
-                                      motherOfficeAddressController.text
-                                          .trim()
-                                          .isEmpty
+                              isSubmitted && isBothOfficeAddressEmpty
                                   ? 'Office Address is required'
                                   : null,
                           validator: null,
@@ -559,6 +574,9 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          isError:
+                              isSubmitted &&
+                              guardianEnglish.text.trim().isEmpty,
                           onChanged: (value) {
                             if (isSubmitted && value.trim().isNotEmpty) {
                               setState(() {});
@@ -576,6 +594,8 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
 
                         SizedBox(height: 20),
                         CustomContainer.studentInfoScreen(
+                          isError:
+                              isSubmitted && guardianTamil.text.trim().isEmpty,
                           onChanged: (value) async {
                             if (hasError && value.trim().isNotEmpty) {
                               setState(() {
@@ -647,6 +667,9 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          isError:
+                              isSubmitted &&
+                              guardianQualification.text.trim().isEmpty,
                           onChanged: (value) {
                             if (isSubmitted && value.trim().isNotEmpty) {
                               setState(() {});
@@ -671,6 +694,9 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          isError:
+                              isSubmitted &&
+                              guardianOccupation.text.trim().isEmpty,
                           onChanged: (value) {
                             if (isSubmitted && value.trim().isNotEmpty) {
                               setState(() {});
@@ -693,6 +719,9 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          isError:
+                              isSubmitted &&
+                              guardianAnnualIncome.text.trim().isEmpty,
                           onChanged: (value) {
                             if (isSubmitted && value.trim().isNotEmpty) {
                               setState(() {});
@@ -715,6 +744,10 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          isError:
+                              isSubmitted &&
+                              guardianOfficeAddress.text.trim().isEmpty,
+
                           onChanged: (value) {
                             if (isSubmitted && value.trim().isNotEmpty) {
                               setState(() {});
@@ -752,30 +785,19 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                           fatherOccupation.text.trim().isNotEmpty &&
                           fatherQualification.text.trim().isNotEmpty &&
                           fatherAnnualIncome.text.trim().isNotEmpty &&
-                          officeAddress.text.trim().isNotEmpty &&
                           motherNameEnglishController.text.trim().isNotEmpty &&
                           motherQualification.text.trim().isNotEmpty &&
                           motherOccupation.text.trim().isNotEmpty &&
-                          motherAnnualIncome.text.trim().isNotEmpty &&
-                          motherOfficeAddressController.text.trim().isNotEmpty;
+                          motherAnnualIncome.text.trim().isNotEmpty;
 
-                      if (!isFatherFilled) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "Please fill all Father & Mother details",
-                            ),
+                      if (isFatherFilled) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SiblingsFormScreen(),
                           ),
                         );
-                        return;
                       }
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SiblingsFormScreen(),
-                        ),
-                      );
                     }
 
                     if (selected == 'Guardian') {
@@ -784,32 +806,22 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                           guardianTamil.text.trim().isNotEmpty &&
                           guardianOccupation.text.trim().isNotEmpty &&
                           guardianQualification.text.trim().isNotEmpty &&
-                          guardianOfficeAddress.text.trim().isNotEmpty &&
                           guardianAnnualIncome.text.trim().isNotEmpty;
 
-                      if (!isGuardianFilled) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Please fill all Guardian details"),
+                      if (isGuardianFilled) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SiblingsFormScreen(),
                           ),
                         );
-                        return;
                       }
-
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SiblingsFormScreen(),
-                        ),
-                      );
                     }
                   },
                 ),
 
                 SizedBox(height: 20),
               ],
-
             ),
           ),
         ),

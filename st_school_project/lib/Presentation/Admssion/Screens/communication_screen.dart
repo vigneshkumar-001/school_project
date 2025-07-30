@@ -21,7 +21,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
 
   final TextEditingController primaryMobileController = TextEditingController();
   final TextEditingController secondaryMobileController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController countryController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
@@ -100,6 +100,9 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    isError:
+                        isSubmitted &&
+                        primaryMobileController.text.trim().isEmpty,
                     onChanged: (value) {
                       if (isSubmitted && value.trim().isNotEmpty) {
                         setState(() {});
@@ -131,6 +134,9 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    isError:
+                        isSubmitted &&
+                        secondaryMobileController.text.trim().isEmpty,
                     text: '',
                     controller: secondaryMobileController,
                     isMobile: true,
@@ -169,7 +175,8 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                         setState(() {});
                       }
                     },
-
+                    isError:
+                        isSubmitted && countryController.text.trim().isEmpty,
                     errorText:
                         isSubmitted && countryController.text.trim().isEmpty
                             ? 'Country is required'
@@ -185,6 +192,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   CustomTextField.richText(text: 'State', text2: ''),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    isError: isSubmitted && stateController.text.trim().isEmpty,
                     controller: stateController,
                     onChanged: (value) {
                       if (isSubmitted && value.trim().isNotEmpty) {
@@ -210,6 +218,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   CustomTextField.richText(text: 'City', text2: ''),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    isError: isSubmitted && cityController.text.trim().isEmpty,
                     onChanged: (value) {
                       if (isSubmitted && value.trim().isNotEmpty) {
                         setState(() {});
@@ -235,6 +244,8 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   CustomTextField.richText(text: 'Pin Code', text2: ''),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    isError:
+                        isSubmitted && pincodeController.text.trim().isEmpty,
                     onChanged: (value) {
                       if (isSubmitted && value.trim().isNotEmpty) {
                         setState(() {});
@@ -262,6 +273,8 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   CustomTextField.richText(text: 'Address', text2: ''),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    isError:
+                        isSubmitted && addressController.text.trim().isEmpty,
                     onChanged: (value) {
                       if (isSubmitted && value.trim().isNotEmpty) {
                         setState(() {});
