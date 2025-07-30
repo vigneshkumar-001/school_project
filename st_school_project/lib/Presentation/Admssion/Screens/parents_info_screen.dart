@@ -787,7 +787,6 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         return;
                       }
 
-
                       Navigator.push(
                         context,
                         MaterialPageRoute(
