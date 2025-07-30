@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -24,6 +26,9 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   final TextEditingController otp = TextEditingController();
+  String? otpError;
+  String verifyCode = '';
+  StreamController<ErrorAnimationType>? errorController;
   @override
   Widget build(BuildContext context) {
     String mobileNumber = widget.mobileNumber.toString() ?? '';
@@ -134,29 +139,56 @@ class _OtpScreenState extends State<OtpScreen> {
                   // onCompleted: (value) async {},
                   onChanged: (value) {
                     debugPrint(value);
+                    verifyCode = value;
+
+                    if (otpError != null && value.isNotEmpty) {
+                      setState(() {
+                        otpError = null;
+                      });
+                    }
                   },
+
                   beforeTextPaste: (text) {
                     debugPrint("Allowing to paste $text");
                     return true;
                   },
                 ),
               ),
+              if (otpError != null)
+                Center(
+                  child: Text(
+                    otpError!,
+                    style: TextStyle(color: Colors.red, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               SizedBox(height: 30),
               CustomContainer.checkMark(
                 onTap: () {
-                  if(widget.pages == 'splash'){
+                  if (otp.text.length != 4) {
+                    errorController?.add(ErrorAnimationType.shake);
+                    setState(() {
+                      otpError = 'Please enter a valid 4-digit OTP';
+                    });
+                    return;
+                  }
+
+                  // Proceed if OTP is valid
+                  if (widget.pages == 'splash') {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => Admission1(pages: 'otpScreen',)),
+                      MaterialPageRoute(
+                        builder: (context) => Admission1(pages: 'otpScreen'),
+                      ),
                     );
-                  }else{
+                  } else {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => QuizScreen()),
                     );
                   }
-
-                },imagePath: AppImages.tick,
+                },
+                imagePath: AppImages.tick,
               ),
             ],
           ),

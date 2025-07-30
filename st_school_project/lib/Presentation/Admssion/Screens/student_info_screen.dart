@@ -15,7 +15,7 @@ class StudentInfoScreen extends StatefulWidget {
 }
 
 class _StudentInfoScreenState extends State<StudentInfoScreen> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   TextEditingController nameEnglishController = TextEditingController();
   TextEditingController nameTamilController = TextEditingController();
@@ -35,9 +35,9 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -111,6 +111,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                   ),
 
                   buildField(
+                    context: context,
                     label: 'Date of Birth ',
                     subLabel: '01-06-2021 to 31-05-2022',
                     controller: dobController,
@@ -210,6 +211,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
     bool isDropDown = false,
     bool isAadhaar = false,
     bool isDOB = false,
+    BuildContext? context,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,43 +221,46 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
           const SizedBox(height: 10),
         ],
         FormField<String>(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (value) {
             final text = controller.text;
             if (text.isEmpty) return validatorMsg;
             if (isAadhaar && !RegExp(r'^[2-9][0-9]{11}$').hasMatch(text)) {
-              return 'required valid Aadhar number';
+              return 'Enter a valid Aadhar number';
             }
             return null;
           },
-          builder:
-              (field) => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomContainer.studentInfoScreen(
-                    context: isDOB ? context : null,
-                    controller: controller,
-                    text: hint,
-                    imagePath:
-                        isDropDown
-                            ? AppImages.dropDown
-                            : isDOB
-                            ? AppImages.calender
-                            : null,
-                    isAadhaar: isAadhaar,
-                    isDOB: isDOB,
-                    isError: field.hasError,
-                  ),
-                  if (field.hasError)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5, left: 8),
-                      child: Text(
-                        field.errorText!,
-                        style: const TextStyle(color: Colors.red, fontSize: 12),
-                      ),
+          builder: (field) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomContainer.studentInfoScreen(
+                  context: isDOB ? context : null,
+                  controller: controller,
+                  text: hint,
+                  imagePath:
+                      isDropDown
+                          ? AppImages.dropDown
+                          : isDOB
+                          ? AppImages.calender
+                          : null,
+                  isAadhaar: isAadhaar,
+                  isDOB: isDOB,
+                  isError: field.hasError,
+                  onChanged: field.didChange,
+                ),
+                if (field.hasError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5, left: 8),
+                    child: Text(
+                      field.errorText!,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
                     ),
-                  const SizedBox(height: 20),
-                ],
-              ),
+                  ),
+                const SizedBox(height: 20),
+              ],
+            );
+          },
         ),
       ],
     );

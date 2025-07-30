@@ -21,7 +21,7 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
   final TextEditingController admissionNoController = TextEditingController();
   final TextEditingController classController = TextEditingController();
   final TextEditingController sectionController = TextEditingController();
-
+  bool isSubmitted = false;
   @override
   void dispose() {
     nameController.dispose();
@@ -32,12 +32,17 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -77,7 +82,7 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 25),
                 LinearProgressIndicator(
                   minHeight: 6,
                   value: 0.6,
@@ -85,10 +90,10 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                   backgroundColor: AppColor.lowGery1,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                SizedBox(height: 40),
+                SizedBox(height: 30),
                 CustomTextField.textWith600(
                   text:
-                  "If Your Sister Studying in St.Joseph's Matriculation School-Madurai.",
+                      "If Your Sister Studying in St.Joseph's Matriculation School-Madurai.",
                   fontSize: 26,
                 ),
                 CustomTextField.richText(
@@ -97,7 +102,7 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                   secondFontSize: 26,
                   fontWeight2: FontWeight.w500,
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 25),
                 Row(
                   children: [
                     GestureDetector(
@@ -125,81 +130,179 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 30),
-                CustomTextField.richText(text: 'Name', text2: ''),
-                SizedBox(height: 10),
-                CustomContainer.studentInfoScreen(
-                  controller: nameController,
-                  text: '',
-                  verticalDivider: false,
-                ),
-                SizedBox(height: 20),
-                CustomTextField.richText(text: 'Admission No', text2: ''),
-                SizedBox(height: 10),
-                CustomContainer.studentInfoScreen(
-                  controller: admissionNoController,
-                  text: '',
-                  verticalDivider: false,
-                ),
-                SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomTextField.richText(text: 'Class', text2: ''),
-                          SizedBox(height: 10),
-                          CustomContainer.studentInfoScreen(
-                            controller: classController,
-                            text: '',
-                            verticalDivider: false,
-                            imagePath: AppImages.dropDown,
-                            imageSize: 11,
-                          ),
-                        ],
-                      ),
+
+                if (selected == 'Yes') ...[
+                  for (int i = 0; i < siblings.length; i++) ...[
+                    CustomTextField.textWith600(
+                      text: i == 0 ? '' : 'Sibling ${i + 1}',
+                      fontSize: 18,
                     ),
-                    SizedBox(width: 30),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomTextField.richText(text: 'Section', text2: ''),
-                          SizedBox(height: 10),
-                          CustomContainer.studentInfoScreen(
-                            controller: sectionController,
-                            text: '',
-                            verticalDivider: false,
-                            imagePath: AppImages.dropDown,
-                            imageSize: 11,
-                          ),
-                        ],
-                      ),
+                    SizedBox(height: 15),
+                    CustomTextField.richText(text: 'Name', text2: ''),
+                    SizedBox(height: 10),
+                    CustomContainer.studentInfoScreen(
+                      errorText:
+                          isSubmitted &&
+                                  siblings[i].nameController.text.trim().isEmpty
+                              ? 'Name is required'
+                              : null,
+                      onChanged: (value) {
+                        if (isSubmitted && value.trim().isNotEmpty) {
+                          setState(() {});
+                        }
+                      },
+                      controller: siblings[i].nameController,
+                      text: '',
+                      verticalDivider: false,
                     ),
+                    SizedBox(height: 15),
+                    CustomTextField.richText(text: 'Admission No', text2: ''),
+                    SizedBox(height: 10),
+                    CustomContainer.studentInfoScreen(
+                      errorText:
+                          isSubmitted &&
+                                  siblings[i].admissionNoController.text
+                                      .trim()
+                                      .isEmpty
+                              ? 'Admission No is required'
+                              : null,
+                      onChanged: (value) {
+                        if (isSubmitted && value.trim().isNotEmpty) {
+                          setState(() {});
+                        }
+                      },
+                      controller: siblings[i].admissionNoController,
+                      text: '',
+                      verticalDivider: false,
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTextField.richText(
+                                text: 'Class',
+                                text2: '',
+                              ),
+                              SizedBox(height: 10),
+                              CustomContainer.studentInfoScreen(
+                                controller: siblings[i].classController,
+                                errorText:
+                                    isSubmitted &&
+                                            siblings[i].classController.text
+                                                .trim()
+                                                .isEmpty
+                                        ? 'Class is required'
+                                        : null,
+                                onChanged: (value) {
+                                  if (isSubmitted && value.trim().isNotEmpty) {
+                                    setState(() {});
+                                  }
+                                },
+                                text: '',
+                                verticalDivider: false,
+                                imagePath: AppImages.dropDown,
+                                imageSize: 11,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 30),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTextField.richText(
+                                text: 'Section',
+                                text2: '',
+                              ),
+                              SizedBox(height: 10),
+                              CustomContainer.studentInfoScreen(
+                                controller: siblings[i].sectionController,
+                                errorText:
+                                    isSubmitted &&
+                                            siblings[i].sectionController.text
+                                                .trim()
+                                                .isEmpty
+                                        ? 'Section is required'
+                                        : null,
+                                onChanged: (value) {
+                                  if (isSubmitted && value.trim().isNotEmpty) {
+                                    setState(() {});
+                                  }
+                                },
+                                text: '',
+                                verticalDivider: false,
+                                imagePath: AppImages.dropDown,
+                                imageSize: 11,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
                   ],
-                ),
-                SizedBox(height: 25),
-                Center(
-                  child: CustomTextField.textWith600(
-                    text: 'Add More',
-                    fontSize: 16,
-                  ),
-                ),
-                SizedBox(height: 25),
-                AppButton.button(
-                  image: AppImages.rightSaitArrow,
-                  text: 'Save & Continue',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CommunicationScreen(),
+
+                  SizedBox(height: 25),
+                  if (siblings.length < 2)
+                    Center(
+                      child: GestureDetector(
+                        onTap: addMoreSibling,
+                        child: CustomTextField.textWith600(
+                          text: 'Add More',
+                          fontSize: 16,
+                        ),
                       ),
-                    );
-                  },
-                ),
-                SizedBox(height: 10),
+                    ),
+
+                  SizedBox(height: 15),
+
+                  AppButton.button(
+                    image: AppImages.rightSaitArrow,
+                    text: 'Save & Continue',
+                    onTap: () {
+                      setState(() {
+                        isSubmitted = true;
+                      });
+
+                      bool allValid = siblings.every(
+                        (sibling) =>
+                            sibling.nameController.text.trim().isNotEmpty &&
+                            sibling.admissionNoController.text
+                                .trim()
+                                .isNotEmpty &&
+                            sibling.classController.text.trim().isNotEmpty &&
+                            sibling.sectionController.text.trim().isNotEmpty,
+                      );
+
+                      if (allValid) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CommunicationScreen(),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ] else ...[
+                  SizedBox(height: 350),
+                  AppButton.button(
+                    image: AppImages.rightSaitArrow,
+                    text: 'Save & Continue',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CommunicationScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ],
             ),
           ),
@@ -207,4 +310,21 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
       ),
     );
   }
+
+  void addMoreSibling() {
+    if (siblings.length < 2) {
+      setState(() {
+        siblings.add(SiblingInfo());
+      });
+    }
+  }
+
+  List<SiblingInfo> siblings = [SiblingInfo()];
+}
+
+class SiblingInfo {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController admissionNoController = TextEditingController();
+  TextEditingController classController = TextEditingController();
+  TextEditingController sectionController = TextEditingController();
 }
