@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
+import 'package:st_school_project/Presentation/Admssion/Screens/parents_info_screen.dart';
 
 import 'Presentation/Admssion/Screens/student_info_screen.dart';
 import 'Presentation/Onboarding/Screens/Home Screen/home_screen.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: AppColor.white),
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: ParentsInfoScreen(),
     );
   }
 }
