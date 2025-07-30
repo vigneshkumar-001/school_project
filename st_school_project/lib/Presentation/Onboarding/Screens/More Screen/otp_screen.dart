@@ -111,13 +111,13 @@ class _OtpScreenState extends State<OtpScreen> {
                     fieldWidth: 60,
                     selectedColor: AppColor.black,
                     activeColor: AppColor.white,
-                    activeFillColor: AppColor.white,
+                    activeFillColor: AppColor.lowGery1,
                     inactiveColor: AppColor.lowGery1,
                     selectedFillColor: AppColor.white,
                     fieldOuterPadding: EdgeInsets.symmetric(horizontal: 12),
                     inactiveFillColor: AppColor.lowGery1,
                   ),
-                  cursorColor: Colors.black,
+                  cursorColor: AppColor.black,
                   animationDuration: const Duration(milliseconds: 300),
                   enableActiveFill: true,
                   // errorAnimationController: errorController,
@@ -126,7 +126,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   boxShadows: const [
                     BoxShadow(
                       offset: Offset(0, 1),
-                      color: Colors.black12,
+                      color: AppColor.lightBlack,
                       blurRadius: 5,
                     ),
                   ],
@@ -165,6 +165,8 @@ class _OtpScreenState extends State<OtpScreen> {
               SizedBox(height: 30),
               CustomContainer.checkMark(
                 onTap: () {
+
+
                   if (otp.text.length != 4) {
                     errorController?.add(ErrorAnimationType.shake);
                     setState(() {
@@ -174,6 +176,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   }
 
                   // Proceed if OTP is valid
+
                   if (widget.pages == 'splash') {
                     Navigator.pushReplacement(
                       context,

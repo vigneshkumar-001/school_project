@@ -21,6 +21,7 @@ class ChangeMobileNumber extends StatefulWidget {
 class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
   final TextEditingController mobileNumberController = TextEditingController();
   bool _isFormatting = false;
+   String errorText = '';
 
   final List<String> images1 = [
     AppImages.advertisement3,
@@ -156,7 +157,9 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                           const SizedBox(width: 10),
                           Expanded(
                             flex: 9,
-                            child: TextField(
+                            child: TextFormField(
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+
                               controller: mobileNumberController,
                               keyboardType: TextInputType.phone,
                               style: GoogleFont.inter(
@@ -167,7 +170,7 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
-                              onChanged: _formatPhoneNumber,
+                               onChanged: _formatPhoneNumber,
                               decoration: InputDecoration(
                                 counterText: '',
                                 hintText: '9000 000 000',
@@ -182,18 +185,35 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                         ],
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12.0, top: 4),
+                      child: Align(
+                        alignment: Alignment. topRight,
+                        child: Text(
+                          errorText,
+                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 25),
                     AppButton.button(
                       text: 'Get OTP',
                       width: double.infinity,
                       onTap: () {
                         final String mbl = mobileNumberController.text;
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => OtpScreen(mobileNumber: mbl,pages: widget.page,),
-                          ),
-                        );
+                        if(mbl.length != 10){
+                          setState(() {
+                            errorText = 'Mobile Number is Required';
+                          });
+                        }else{
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => OtpScreen(mobileNumber: mbl,pages: widget.page,),
+                            ),
+                          );
+                        }
+
                       },
                     ),
                   ],

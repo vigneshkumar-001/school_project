@@ -21,7 +21,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
 
   final TextEditingController primaryMobileController = TextEditingController();
   final TextEditingController secondaryMobileController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController countryController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
   final TextEditingController cityController = TextEditingController();

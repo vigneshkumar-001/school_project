@@ -956,7 +956,7 @@ class _MoreScreenState extends State<MoreScreen>
                       image: DecorationImage(
                         image: AssetImage(AppImages.moreSbackImage),
                         fit: BoxFit.cover,
-                        alignment: Alignment(-6, -0.8),
+                        alignment: Alignment(-8, -0.8),
                       ),
                       gradient: LinearGradient(
                         begin: Alignment.topRight,

@@ -106,7 +106,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     label: 'Student Aadhar Number',
                     controller: aadharController,
                     hint: 'Aadhar No',
-                    validatorMsg: 'Enter valid Aadhar number',
+                    validatorMsg: ' Aadhar nomber is required',
                     isAadhaar: true,
                   ),
 
@@ -185,14 +185,14 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const ParentsInfoScreen(),
+                            builder: (context) =>  ParentsInfoScreen(),
                           ),
                         );
                       }
                     },
                   ),
 
-                  const SizedBox(height: 10),
+                   SizedBox(height: 10),
                 ],
               ),
             ),
