@@ -17,6 +17,7 @@ class CommunicationScreen extends StatefulWidget {
 
 class _CommunicationScreenState extends State<CommunicationScreen> {
   final _formKey = GlobalKey<FormState>();
+  bool isSubmitted = false;
 
   final TextEditingController primaryMobileController = TextEditingController();
   final TextEditingController secondaryMobileController =
@@ -99,17 +100,28 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    onChanged: (value) {
+                      if (isSubmitted && value.trim().isNotEmpty) {
+                        setState(() {});
+                      }
+                    },
+
+                    errorText:
+                        isSubmitted &&
+                                primaryMobileController.text.trim().isEmpty
+                            ? 'Mobile Number - Primary is required'
+                            : null,
                     text: '',
                     controller: primaryMobileController,
                     isMobile: true,
                     verticalDivider: false,
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Enter primary mobile number';
-                      if (value.length != 10)
-                        return 'Enter valid 10-digit number';
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty)
+                    //     return 'Enter primary mobile number';
+                    //   if (value.length != 10)
+                    //     return 'Enter valid 10-digit number';
+                    //   return null;
+                    // },
                   ),
 
                   SizedBox(height: 20),
@@ -123,13 +135,24 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                     controller: secondaryMobileController,
                     isMobile: true,
                     verticalDivider: false,
-                    validator: (value) {
-                      if (value != null &&
-                          value.isNotEmpty &&
-                          value.length != 10)
-                        return 'Enter valid 10-digit number';
-                      return null;
+                    //   validator: (value) {
+                    //   if (value == null || value.isEmpty)
+                    //     return 'Enter Secondary mobile number';
+                    //   if (value.length != 10)
+                    //     return 'Enter valid 10-digit number';
+                    //   return null;
+                    // },
+                    onChanged: (value) {
+                      if (isSubmitted && value.trim().isNotEmpty) {
+                        setState(() {});
+                      }
                     },
+
+                    errorText:
+                        isSubmitted &&
+                                secondaryMobileController.text.trim().isEmpty
+                            ? 'Mobile Number - Secondary is required'
+                            : null,
                   ),
 
                   SizedBox(height: 20),
@@ -141,11 +164,21 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                     verticalDivider: false,
                     imageSize: 11,
                     imagePath: AppImages.dropDown,
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Enter country';
-                      return null;
+                    onChanged: (value) {
+                      if (isSubmitted && value.trim().isNotEmpty) {
+                        setState(() {});
+                      }
                     },
+
+                    errorText:
+                        isSubmitted && countryController.text.trim().isEmpty
+                            ? 'Country is required'
+                            : null,
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty)
+                    //     return 'Enter country';
+                    //   return null;
+                    // },
                   ),
 
                   SizedBox(height: 20),
@@ -153,67 +186,119 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
                     controller: stateController,
+                    onChanged: (value) {
+                      if (isSubmitted && value.trim().isNotEmpty) {
+                        setState(() {});
+                      }
+                    },
+
+                    errorText:
+                        isSubmitted && stateController.text.trim().isEmpty
+                            ? 'State is required'
+                            : null,
                     text: '',
                     verticalDivider: false,
                     imageSize: 11,
                     imagePath: AppImages.dropDown,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Enter state';
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) return 'Enter state';
+                    //   return null;
+                    // },
                   ),
 
                   SizedBox(height: 20),
                   CustomTextField.richText(text: 'City', text2: ''),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    onChanged: (value) {
+                      if (isSubmitted && value.trim().isNotEmpty) {
+                        setState(() {});
+                      }
+                    },
+
+                    errorText:
+                        isSubmitted && cityController.text.trim().isEmpty
+                            ? 'City is required'
+                            : null,
                     controller: cityController,
                     text: '',
                     verticalDivider: false,
                     imageSize: 11,
                     imagePath: AppImages.dropDown,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Enter city';
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) return 'Enter city';
+                    //   return null;
+                    // },
                   ),
 
                   SizedBox(height: 20),
                   CustomTextField.richText(text: 'Pin Code', text2: ''),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    onChanged: (value) {
+                      if (isSubmitted && value.trim().isNotEmpty) {
+                        setState(() {});
+                      }
+                    },
+
+                    errorText:
+                        isSubmitted && pincodeController.text.trim().isEmpty
+                            ? 'Pin Code is required'
+                            : null,
                     controller: pincodeController,
                     isPincode: true,
                     text: '',
                     verticalDivider: false,
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Enter pincode';
-                      if (value.length != 6)
-                        return 'Enter valid 6-digit pincode';
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty)
+                    //     return 'Enter pincode';
+                    //   if (value.length != 6)
+                    //     return 'Enter valid 6-digit pincode';
+                    //   return null;
+                    // },
                   ),
 
                   SizedBox(height: 20),
                   CustomTextField.richText(text: 'Address', text2: ''),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                    onChanged: (value) {
+                      if (isSubmitted && value.trim().isNotEmpty) {
+                        setState(() {});
+                      }
+                    },
+
+                    errorText:
+                        isSubmitted && addressController.text.trim().isEmpty
+                            ? 'Address is required'
+                            : null,
                     controller: addressController,
                     text: '',
                     verticalDivider: false,
                     maxLine: 4,
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Enter address';
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty)
+                    //     return 'Enter address';
+                    //   return null;
+                    // },
                   ),
 
                   SizedBox(height: 30),
                   AppButton.button(
                     onTap: () {
-                      if (_formKey.currentState!.validate()) {
+                      setState(() {
+                        isSubmitted = true;
+                      });
+
+                      bool isGuardianFilled =
+                          primaryMobileController.text.trim().isNotEmpty &&
+                          secondaryMobileController.text.trim().isNotEmpty &&
+                          countryController.text.trim().isNotEmpty &&
+                          stateController.text.trim().isNotEmpty &&
+                          cityController.text.trim().isNotEmpty &&
+                          addressController.text.trim().isNotEmpty &&
+                          pincodeController.text.trim().isNotEmpty;
+                      if (isGuardianFilled) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(

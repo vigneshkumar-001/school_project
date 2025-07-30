@@ -32,7 +32,7 @@ class _Admission1State extends State<Admission1> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -42,7 +42,7 @@ class _Admission1State extends State<Admission1> {
                 const SizedBox(height: 16),
                 Container(
                   // Remove fixed height and use constraints
-                  constraints: BoxConstraints(minHeight: screenHeight * 0.75),
+                  constraints: BoxConstraints(minHeight: screenHeight * 0.70),
                   child: Stack(
                     children: [
                       ClipRRect(

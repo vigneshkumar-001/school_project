@@ -702,6 +702,7 @@ class CustomContainer {
     required TextEditingController controller,
     String? imagePath,
     bool verticalDivider = true,
+    Function(String)? onChanged,
     double imageSize = 20,
     int? maxLine,
     int flex = 4,
@@ -717,171 +718,189 @@ class CustomContainer {
   }) {
     DateTime today = DateTime.now();
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: AppColor.lowGery1,
-        border: Border.all(
-          color: isError ? AppColor.lightRed : Colors.transparent,
-          width: 1.5,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
-        child: Row(
-          children: [
-            Expanded(
-              flex: flex,
-              child: GestureDetector(
-                onTap:
-                    isDOB
-                        ? () async {
-                          DateTime firstDate = DateTime(today.year - 120);
-                          DateTime lastDate = DateTime(
-                            today.year - 3,
-                            today.month,
-                            today.day,
-                          );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: AppColor.lowGery1,
+            border: Border.all(
+              color: isError ? AppColor.lightRed : Colors.transparent,
+              width: 1.5,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 15),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: flex,
+                  child: GestureDetector(
+                    onTap:
+                        isDOB && context != null
+                            ? () async {
+                              DateTime firstDate = DateTime(today.year - 120);
+                              DateTime lastDate = DateTime(
+                                today.year - 3,
+                                today.month,
+                                today.day,
+                              );
 
-                          final pickedDate = await showDatePicker(
-                            context: context!,
-                            initialDate: lastDate,
-                            firstDate: firstDate,
-                            lastDate: lastDate,
-                            builder: (context, child) {
-                              return Theme(
-                                data: Theme.of(context).copyWith(
-                                  dialogBackgroundColor: AppColor.white,
-                                  colorScheme: ColorScheme.light(
-                                    primary: AppColor.blueG2,
-                                    onPrimary: Colors.white,
-                                    onSurface: AppColor.black,
-                                  ),
-                                  textButtonTheme: TextButtonThemeData(
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: AppColor.blueG2,
+                              final pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: lastDate,
+                                firstDate: firstDate,
+                                lastDate: lastDate,
+                                builder: (context, child) {
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      dialogBackgroundColor: AppColor.white,
+                                      colorScheme: ColorScheme.light(
+                                        primary: AppColor.blueG2,
+                                        onPrimary: Colors.white,
+                                        onSurface: AppColor.black,
+                                      ),
+                                      textButtonTheme: TextButtonThemeData(
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: AppColor.blueG2,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                child: child!,
+                                    child: child!,
+                                  );
+                                },
                               );
-                            },
-                          );
 
-                          if (pickedDate != null) {
-                            int age = today.year - pickedDate.year;
-                            if (pickedDate.month > today.month ||
-                                (pickedDate.month == today.month &&
-                                    pickedDate.day > today.day)) {
-                              age--;
-                            }
+                              if (pickedDate != null) {
+                                int age = today.year - pickedDate.year;
+                                if (pickedDate.month > today.month ||
+                                    (pickedDate.month == today.month &&
+                                        pickedDate.day > today.day)) {
+                                  age--;
+                                }
 
-                            if (age < 3 || age > 120) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Date of Birth is Not eligible',
-                                  ),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            } else {
-                              controller.text =
-                                  "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                if (age < 3 || age > 120) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Date of Birth is Not eligible',
+                                      ),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                } else {
+                                  controller.text =
+                                      "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                }
+                              }
                             }
-                          }
-                        }
-                        : null,
-                child: AbsorbPointer(
-                  absorbing: isDOB,
-                  child: TextFormField(
-                    controller: controller,
-                    validator: validator,
-                    maxLines: maxLine,
-                    maxLength:
-                        isMobile
-                            ? 10
-                            : isAadhaar
-                            ? 12
-                            : isPincode
-                            ? 6
                             : null,
-                    keyboardType:
-                        isMobile || isAadhaar || isPincode
-                            ? TextInputType.number
-                            : isDOB
-                            ? TextInputType.none
-                            : TextInputType.text,
-                    inputFormatters:
-                        isMobile || isAadhaar || isPincode
-                            ? [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(
-                                isMobile
-                                    ? 10
-                                    : isAadhaar
-                                    ? 12
-                                    : 6,
-                              ),
-                            ]
-                            : InputFormatterUtil.languageFormatter(
-                              isTamil: isTamil,
-                            ),
-                    style: const TextStyle(fontSize: 14, color: Colors.black),
-                    decoration: InputDecoration(
-                      hintText: '',
-                      counterText: '',
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 10,
+                    child: AbsorbPointer(
+                      absorbing: isDOB,
+                      child: TextFormField(
+                        onChanged: onChanged,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        controller: controller,
+                        validator: validator,
+                        maxLines: maxLine,
+                        maxLength:
+                            isMobile
+                                ? 10
+                                : isAadhaar
+                                ? 12
+                                : isPincode
+                                ? 6
+                                : null,
+                        keyboardType:
+                            isMobile || isAadhaar || isPincode
+                                ? TextInputType.number
+                                : isDOB
+                                ? TextInputType.none
+                                : TextInputType.text,
+                        inputFormatters:
+                            isMobile || isAadhaar || isPincode
+                                ? [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(
+                                    isMobile
+                                        ? 10
+                                        : isAadhaar
+                                        ? 12
+                                        : 6,
+                                  ),
+                                ]
+                                : InputFormatterUtil.languageFormatter(
+                                  isTamil: isTamil,
+                                ),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: '',
+                          counterText: '',
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                          // errorText: errorText,
+                        ),
                       ),
-                      border: InputBorder.none,
-                      isDense: true,
-                      errorText: errorText,
                     ),
                   ),
                 ),
-              ),
-            ),
 
-            if (verticalDivider)
-              Container(
-                width: 2,
-                height: 30,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.grey.shade200,
-                      Colors.grey.shade300,
-                      Colors.grey.shade200,
-                    ],
+                if (verticalDivider)
+                  Container(
+                    width: 2,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.grey.shade200,
+                          Colors.grey.shade300,
+                          Colors.grey.shade200,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(1),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(1),
-                ),
-              ),
-            const SizedBox(width: 20),
+                const SizedBox(width: 20),
 
-            if (imagePath == null)
-              Expanded(
-                child: CustomTextField.textWithSmall(
-                  text: text,
-                  fontSize: 14,
-                  color: AppColor.grey,
-                ),
-              ),
-            if (imagePath != null)
-              Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: Image.asset(
-                  imagePath,
-                  height: imageSize,
-                  width: imageSize,
-                ),
-              ),
-          ],
+                if (imagePath == null)
+                  Expanded(
+                    child: CustomTextField.textWithSmall(
+                      text: text,
+                      fontSize: 14,
+                      color: AppColor.grey,
+                    ),
+                  ),
+                if (imagePath != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 15),
+                    child: Image.asset(
+                      imagePath,
+                      height: imageSize,
+                      width: imageSize,
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
-      ),
+        if (errorText != null && errorText.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0, top: 4),
+            child: Text(
+              errorText,
+              style: const TextStyle(color: Colors.red, fontSize: 12),
+            ),
+          ),
+      ],
     );
   }
 
