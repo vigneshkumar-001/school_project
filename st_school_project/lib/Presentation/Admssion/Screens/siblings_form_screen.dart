@@ -133,14 +133,19 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
 
                 if (selected == 'Yes') ...[
                   for (int i = 0; i < siblings.length; i++) ...[
-                    CustomTextField.textWith600(
-                      text: i == 0 ? '' : 'Sibling ${i + 1}',
-                      fontSize: 18,
-                    ),
+                    i == 0
+                        ? SizedBox.shrink()
+                        : CustomTextField.textWith600(
+                          text: 'Sibling ${i + 1}',
+                          fontSize: 18,
+                        ),
                     SizedBox(height: 15),
                     CustomTextField.richText(text: 'Name', text2: ''),
                     SizedBox(height: 10),
                     CustomContainer.studentInfoScreen(
+                      isError:
+                          isSubmitted &&
+                          siblings[i].nameController.text.trim().isEmpty,
                       errorText:
                           isSubmitted &&
                                   siblings[i].nameController.text.trim().isEmpty
@@ -159,6 +164,9 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                     CustomTextField.richText(text: 'Admission No', text2: ''),
                     SizedBox(height: 10),
                     CustomContainer.studentInfoScreen(
+                      isError:
+                          isSubmitted &&
+                          siblings[i].admissionNoController.text.trim().isEmpty,
                       errorText:
                           isSubmitted &&
                                   siblings[i].admissionNoController.text
@@ -188,6 +196,11 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                               ),
                               SizedBox(height: 10),
                               CustomContainer.studentInfoScreen(
+                                isError:
+                                    isSubmitted &&
+                                    siblings[i].classController.text
+                                        .trim()
+                                        .isEmpty,
                                 controller: siblings[i].classController,
                                 errorText:
                                     isSubmitted &&
@@ -220,6 +233,10 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                               ),
                               SizedBox(height: 10),
                               CustomContainer.studentInfoScreen(
+                                isError:  isSubmitted &&
+                                    siblings[i].sectionController.text
+                                        .trim()
+                                        .isEmpty,
                                 controller: siblings[i].sectionController,
                                 errorText:
                                     isSubmitted &&

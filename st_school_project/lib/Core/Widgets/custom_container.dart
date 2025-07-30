@@ -716,6 +716,7 @@ class CustomContainer {
     bool isError = false,
     String? errorText,
     bool? hasError = false,
+    FocusNode? focusNode,
     Color borderColor = AppColor.lightRed,
   }) {
     DateTime today = DateTime.now();
@@ -739,68 +740,55 @@ class CustomContainer {
                 Expanded(
                   flex: flex,
                   child: GestureDetector(
-                    onTap:
-                        isDOB && context != null
-                            ? () async {
-                              DateTime firstDate = DateTime(today.year - 120);
-                              DateTime lastDate = DateTime(
-                                today.year - 3,
-                                today.month,
-                                today.day,
-                              );
+                    onTap: isDOB && context != null
+                        ? () async {
+                      final DateTime startDate = DateTime(2021, 6, 1); // 01-06-2021
+                      final DateTime endDate = DateTime(2022, 5, 31);  // 31-05-2022
+                      final DateTime initialDate = DateTime(2021, 6, 2);
 
-                              final pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: lastDate,
-                                firstDate: firstDate,
-                                lastDate: lastDate,
-                                builder: (context, child) {
-                                  return Theme(
-                                    data: Theme.of(context).copyWith(
-                                      dialogBackgroundColor: AppColor.white,
-                                      colorScheme: ColorScheme.light(
-                                        primary: AppColor.blueG2,
-                                        onPrimary: Colors.white,
-                                        onSurface: AppColor.black,
-                                      ),
-                                      textButtonTheme: TextButtonThemeData(
-                                        style: TextButton.styleFrom(
-                                          foregroundColor: AppColor.blueG2,
-                                        ),
-                                      ),
-                                    ),
-                                    child: child!,
-                                  );
-                                },
-                              );
+                      final pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: initialDate,
+                        firstDate: DateTime(2000), // Or earlier
+                        lastDate: DateTime.now(),
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              dialogBackgroundColor: AppColor.white,
+                              colorScheme: ColorScheme.light(
+                                primary: AppColor.blueG2,
+                                onPrimary: Colors.white,
+                                onSurface: AppColor.black,
+                              ),
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: AppColor.blueG2,
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      );
 
-                              if (pickedDate != null) {
-                                int age = today.year - pickedDate.year;
-                                if (pickedDate.month > today.month ||
-                                    (pickedDate.month == today.month &&
-                                        pickedDate.day > today.day)) {
-                                  age--;
-                                }
+                      if (pickedDate != null) {
+                        if (pickedDate.isBefore(startDate) || pickedDate.isAfter(endDate)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Date of Birth must be between 01-06-2021 and 31-05-2022'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else {
+                          controller.text = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                        }
+                      }
+                    }
+                        : null,
 
-                                if (age < 3 || age > 120) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Date of Birth is Not eligible',
-                                      ),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
-                                } else {
-                                  controller.text =
-                                      "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                }
-                              }
-                            }
-                            : null,
                     child: AbsorbPointer(
                       absorbing: isDOB,
-                      child: TextFormField(
+                      child: TextFormField( focusNode: focusNode,
                         onChanged: onChanged,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         controller: controller,

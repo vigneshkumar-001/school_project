@@ -21,7 +21,7 @@ class ChangeMobileNumber extends StatefulWidget {
 class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
   final TextEditingController mobileNumberController = TextEditingController();
   bool _isFormatting = false;
-   String errorText = '';
+  String errorText = '';
 
   final List<String> images1 = [
     AppImages.advertisement3,
@@ -39,6 +39,9 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
   }
 
   void _formatPhoneNumber(String value) {
+    setState(() {
+      errorText = '';
+    });
     if (_isFormatting) return;
 
     _isFormatting = true;
@@ -158,7 +161,8 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                           Expanded(
                             flex: 9,
                             child: TextFormField(
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
 
                               controller: mobileNumberController,
                               keyboardType: TextInputType.phone,
@@ -170,7 +174,7 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
-                               onChanged: _formatPhoneNumber,
+                              onChanged: _formatPhoneNumber,
                               decoration: InputDecoration(
                                 counterText: '',
                                 hintText: '9000 000 000',
@@ -188,10 +192,13 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                     Padding(
                       padding: const EdgeInsets.only(left: 12.0, top: 4),
                       child: Align(
-                        alignment: Alignment. topRight,
+                        alignment: Alignment.topRight,
                         child: Text(
                           errorText,
-                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ),
@@ -200,22 +207,34 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                       text: 'Get OTP',
                       width: double.infinity,
                       onTap: () {
-                        final String mbl = mobileNumberController.text;
-                        if(mbl.length != 10){
+                        final String mbl = mobileNumberController.text.replaceAll(' ', '');
+
+                        if (mbl.isEmpty) {
                           setState(() {
                             errorText = 'Mobile Number is Required';
                           });
-                        }else{
+                        } else if (mbl.length != 10) {
+                          setState(() {
+                            errorText = 'Mobile Number must be exactly 10 digits';
+                          });
+                        } else {
+                          setState(() {
+                            errorText = '';
+                          });
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => OtpScreen(mobileNumber: mbl,pages: widget.page,),
+                              builder: (context) => OtpScreen(
+                                mobileNumber: mbl,
+                                pages: widget.page,
+                              ),
                             ),
                           );
                         }
-
                       },
                     ),
+
                   ],
                 ),
               ),
