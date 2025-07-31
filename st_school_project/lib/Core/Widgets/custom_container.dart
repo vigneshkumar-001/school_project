@@ -19,6 +19,8 @@ class InputFormatterUtil {
   }
 }
 
+final FocusNode nextFieldFocusNode = FocusNode();
+
 class CustomContainer {
   static taskScreen({
     required String homeWorkText,
@@ -703,6 +705,8 @@ class CustomContainer {
     String? imagePath,
     bool verticalDivider = true,
     Function(String)? onChanged,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     double imageSize = 20,
     int? maxLine,
     int flex = 4,
@@ -740,55 +744,66 @@ class CustomContainer {
                 Expanded(
                   flex: flex,
                   child: GestureDetector(
-                    onTap: isDOB && context != null
-                        ? () async {
-                      final DateTime startDate = DateTime(2021, 6, 1); // 01-06-2021
-                      final DateTime endDate = DateTime(2022, 5, 31);  // 31-05-2022
-                      final DateTime initialDate = DateTime(2021, 6, 2);
+                    onTap:
+                        isDOB && context != null
+                            ? () async {
+                              final DateTime startDate = DateTime(2021, 6, 1);
+                              final DateTime endDate = DateTime(2022, 5, 31);
+                              final DateTime initialDate = DateTime(2021, 6, 2);
 
-                      final pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: initialDate,
-                        firstDate: DateTime(2000), // Or earlier
-                        lastDate: DateTime.now(),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              dialogBackgroundColor: AppColor.white,
-                              colorScheme: ColorScheme.light(
-                                primary: AppColor.blueG2,
-                                onPrimary: Colors.white,
-                                onSurface: AppColor.black,
-                              ),
-                              textButtonTheme: TextButtonThemeData(
-                                style: TextButton.styleFrom(
-                                  foregroundColor: AppColor.blueG2,
-                                ),
-                              ),
-                            ),
-                            child: child!,
-                          );
-                        },
-                      );
+                              final pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: initialDate,
+                                firstDate: DateTime(2020),
+                                lastDate: DateTime(2025),
+                                builder: (context, child) {
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      dialogBackgroundColor: AppColor.white,
+                                      colorScheme: ColorScheme.light(
+                                        primary: AppColor.blueG2,
+                                        onPrimary: Colors.white,
+                                        onSurface: AppColor.black,
+                                      ),
+                                      textButtonTheme: TextButtonThemeData(
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: AppColor.blueG2,
+                                        ),
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
+                              );
 
-                      if (pickedDate != null) {
-                        if (pickedDate.isBefore(startDate) || pickedDate.isAfter(endDate)) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Date of Birth must be between 01-06-2021 and 31-05-2022'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        } else {
-                          controller.text = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                        }
-                      }
-                    }
-                        : null,
+                              if (pickedDate != null) {
+                                if (pickedDate.isBefore(startDate) ||
+                                    pickedDate.isAfter(endDate)) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Invalid Date of Birth!\nPlease select a date between 01-06-2021 and 31-05-2022.',
+                                      ),
+                                      backgroundColor: Colors.red,
+                                      duration: Duration(seconds: 3),
+                                    ),
+                                  );
+                                } else {
+                                  controller.text =
+                                      "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                  // Move focus to next field after DOB
+                                  FocusScope.of(
+                                    context,
+                                  ).requestFocus(nextFieldFocusNode);
+                                }
+                              }
+                            }
+                            : null,
 
                     child: AbsorbPointer(
                       absorbing: isDOB,
-                      child: TextFormField( focusNode: focusNode,
+                      child: TextFormField(
+                        focusNode: focusNode,
                         onChanged: onChanged,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         controller: controller,
@@ -802,12 +817,13 @@ class CustomContainer {
                                 : isPincode
                                 ? 6
                                 : null,
-                        keyboardType:
-                            isMobile || isAadhaar || isPincode
-                                ? TextInputType.number
-                                : isDOB
-                                ? TextInputType.none
-                                : TextInputType.text,
+                        // keyboardType:
+                        // isMobile || isAadhaar || isPincode
+                        //     ? TextInputType.number
+                        //     : isDOB
+                        //     ? TextInputType.none
+                        //     : TextInputType.emailAddress,
+                        keyboardType: keyboardType,
                         inputFormatters:
                             isMobile || isAadhaar || isPincode
                                 ? [
@@ -820,19 +836,15 @@ class CustomContainer {
                                         : 6,
                                   ),
                                 ]
-                                : InputFormatterUtil.languageFormatter(
-                                  isTamil: isTamil,
-                                ),
-                        style: const TextStyle(
+                                : [],
+                        style: GoogleFont.ibmPlexSans(
                           fontSize: 14,
-                          color: Colors.black,
+                          color: AppColor.black,
                         ),
                         decoration: InputDecoration(
                           hintText: '',
                           counterText: '',
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                          ),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
                           border: InputBorder.none,
                           isDense: true,
                           // errorText: errorText,
@@ -918,7 +930,10 @@ class CustomContainer {
     required bool isChecked,
     required VoidCallback onTap,
     required String text,
-    String? text2,
+    String text2 = '',
+    bool isError = false,
+
+    Color borderColor = Colors.transparent,
   }) {
     return Row(
       children: [
@@ -929,11 +944,11 @@ class CustomContainer {
             height: 40,
             width: 40,
             decoration: BoxDecoration(
-              color: isChecked ? Colors.white : Colors.grey.shade200,
+              color: isChecked ? AppColor.white : Colors.grey.shade200,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isChecked ? AppColor.blue : Colors.transparent,
-                width: 3,
+                color: borderColor ?? Colors.transparent,
+                width: 1.5,
               ),
             ),
             child:

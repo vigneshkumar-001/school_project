@@ -135,9 +135,23 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                   for (int i = 0; i < siblings.length; i++) ...[
                     i == 0
                         ? SizedBox.shrink()
-                        : CustomTextField.textWith600(
-                          text: 'Sibling ${i + 1}',
-                          fontSize: 18,
+                        : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CustomTextField.textWith600(
+                              text: 'Sibling ${i + 1}',
+                              fontSize: 18,
+                            ),
+                            if (i == 1)
+                              IconButton(
+                                icon: Icon(Icons.delete, color: Colors.red),
+                                onPressed: () {
+                                  setState(() {
+                                    siblings.removeAt(i);
+                                  });
+                                },
+                              ),
+                          ],
                         ),
                     SizedBox(height: 15),
                     CustomTextField.richText(text: 'Name', text2: ''),
@@ -164,6 +178,7 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                     CustomTextField.richText(text: 'Admission No', text2: ''),
                     SizedBox(height: 10),
                     CustomContainer.studentInfoScreen(
+
                       isError:
                           isSubmitted &&
                           siblings[i].admissionNoController.text.trim().isEmpty,
@@ -233,7 +248,8 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                               ),
                               SizedBox(height: 10),
                               CustomContainer.studentInfoScreen(
-                                isError:  isSubmitted &&
+                                isError:
+                                    isSubmitted &&
                                     siblings[i].sectionController.text
                                         .trim()
                                         .isEmpty,

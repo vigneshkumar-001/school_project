@@ -100,6 +100,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                      keyboardType: TextInputType.number,
                     isError:
                         isSubmitted &&
                         primaryMobileController.text.trim().isEmpty,
@@ -134,6 +135,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                      keyboardType: TextInputType.number,
                     isError:
                         isSubmitted &&
                         secondaryMobileController.text.trim().isEmpty,
@@ -244,6 +246,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   CustomTextField.richText(text: 'Pin Code', text2: ''),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
+                      keyboardType: TextInputType.number,
                     isError:
                         isSubmitted && pincodeController.text.trim().isEmpty,
                     onChanged: (value) {

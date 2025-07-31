@@ -15,14 +15,38 @@ class RequiredPhotoScreens extends StatefulWidget {
 }
 
 class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
-  List<bool> isChecked = [false, false, false, false, false];
   List<String> text = [
-    'New online downloaded birth certifcate',
-    'Community Certificate',
-    'Baptism certifcate ',
-    'Parents last received academic certificate',
-    'Proof of Residence ',
+    "Birth Certificate",
+    "Community Certificate",
+    "Baptism Certificate",
+    "Income Certificate",
+    "Proof of Residence",
   ];
+
+  List<bool> isChecked = List.filled(5, false);
+  // final List<String> text = [
+  //   'New online downloaded birth certifcate',
+  //   'Community Certificate',
+  //   'Baptism certifcate',
+  //   'Parents last received academic certificate',
+  //   'Proof of Residence',
+  // ];
+
+  String? errorText;
+
+  void validateAndNavigate() {
+    final areAllSelected = isChecked.every((value) => value);
+    if (!areAllSelected) {
+      setState(() => errorText = "");
+    } else {
+      setState(() => errorText = null);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SubmitTheAdmission()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,32 +57,26 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Top Header
                 Row(
                   children: [
                     InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                      onTap: () => Navigator.pop(context),
                       child: Container(
                         decoration: BoxDecoration(
                           color: AppColor.lightGrey,
-                          border: Border.all(
-                            color: AppColor.lowLightBlue,
-                            width: 1,
-                          ),
+                          border: Border.all(color: AppColor.lowLightBlue),
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Image.asset(
-                            AppImages.leftArrow,
-                            height: 12,
-                            width: 12,
-                          ),
+                        padding: const EdgeInsets.all(10),
+                        child: Image.asset(
+                          AppImages.leftArrow,
+                          height: 12,
+                          width: 12,
                         ),
                       ),
                     ),
-                    SizedBox(width: 15),
+                    const SizedBox(width: 15),
                     Text(
                       '2025 - 2026 LKG Admission',
                       style: GoogleFont.ibmPlexSans(
@@ -69,99 +87,110 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
                     ),
                   ],
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
+                // Progress bar
                 LinearProgressIndicator(
                   minHeight: 6,
                   value: 0.9,
-
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
-                  stopIndicatorRadius: 16,
+                  valueColor: AlwaysStoppedAnimation(AppColor.blue),
                   backgroundColor: AppColor.lowGery1,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
+
+                // Title
                 CustomTextField.textWith600(
                   text: 'Required Photo Copies',
                   fontSize: 26,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 CustomTextField.textWithSmall(
                   text:
                       'Required Photo copies of the certificates to be attached with the downloaded application form',
                   color: AppColor.grey,
                   fontSize: 14,
-                  fontWeight: FontWeight.normal,
                 ),
-                SizedBox(height: 20),
+
+                const SizedBox(height: 20),
                 CustomTextField.textWithSmall(
                   text: 'Xerox copy of',
                   color: AppColor.lightBlack,
                   fontSize: 20,
-                  fontWeight: FontWeight.w400,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
+
+                // Checkboxes
                 Column(
-                  children: List.generate(isChecked.length, (index) {
-                    return Column(
-                      children: [
-                        CustomContainer.tickContainer(
-                          text2:
-                              index == 2
-                                  ? 'for Catholics'
-                                  : index == 4
-                                  ? 'Ration Card | Aadhar Card | Voter Id'
-                                  : '',
-
-                          text: text[index],
-                          isChecked: isChecked[index], // Pass a single bool
-                          onTap: () {
-                            setState(() {
-                              isChecked[index] = !isChecked[index];
-                            });
-                          },
-                        ),
-                        SizedBox(height: 20),
-
-                      ],
+                  children: List.generate(text.length, (index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: CustomContainer.tickContainer(
+                        text2:
+                            index == 2
+                                ? 'for Catholics'
+                                : index == 4
+                                ? 'Ration Card | Aadhar Card | Voter Id'
+                                : '',
+                        text: text[index],
+                        isChecked: isChecked[index],
+                        borderColor:
+                            (errorText != null && !isChecked[index])
+                                ? AppColor.lightRed
+                                : isChecked[index]
+                                ? AppColor.blue
+                                : AppColor.lowLightBlue,
+                        onTap: () {
+                          setState(() {
+                            isChecked[index] = !isChecked[index];
+                            if (isChecked.every((e) => e)) {
+                              errorText = null;
+                            }
+                          });
+                        },
+                      ),
                     );
                   }),
                 ),
 
-                SizedBox(height: 20),
+                if (errorText != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8, bottom: 10),
+                    child: Text(
+                      errorText!,
+                      style: const TextStyle(color: Colors.red, fontSize: 13),
+                    ),
+                  ),
+
+                // Note Box
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     color: AppColor.lightRed.withOpacity(0.1),
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                    child: CustomTextField.richText(
-                      secondFontSize: 12,
-                      firstFontSize: 12,
-                      text1Color: AppColor.lightRed,
-                      text2Color: AppColor.lightRed,
-                      fontWeight1: FontWeight.w600,
-                      isBold: true,
-                      text: 'Note',
-
-                      text2:
-                          '  If any of the above requirements are not provided the application will be rejected without any notice. ',
-                    ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 15,
+                  ),
+                  child: CustomTextField.richText(
+                    secondFontSize: 12,
+                    firstFontSize: 12,
+                    text1Color: AppColor.lightRed,
+                    text2Color: AppColor.lightRed,
+                    fontWeight1: FontWeight.w600,
+                    isBold: true,
+                    text: 'Note',
+                    text2:
+                        '  If any of the above requirements are not provided the application will be rejected without any notice.',
                   ),
                 ),
-                SizedBox(height: 30),
+
+                const SizedBox(height: 30),
+
+                // Save Button
                 AppButton.button(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SubmitTheAdmission(),
-                      ),
-                    );
-                  },
+                  onTap: validateAndNavigate,
                   text: 'Save & Continue',
                   image: AppImages.rightSaitArrow,
- 
                 ),
               ],
             ),
