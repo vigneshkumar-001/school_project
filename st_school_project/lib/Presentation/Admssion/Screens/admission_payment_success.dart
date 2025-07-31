@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
@@ -15,26 +16,43 @@ class AdmissionPaymentSuccess extends StatefulWidget {
 }
 
 class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
+
+  bool _isCopied = false;
+
+  void handleCopy() {
+    Clipboard.setData(ClipboardData(text: 'SJ54956J6'));
+    setState(() {
+      _isCopied = true;
+    });
+
+    Future.delayed(Duration(seconds: 1), () {
+      if (mounted) {
+        setState(() {
+          _isCopied = false;
+        });
+      }
+    });
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left: 15.0, right: 15, top: 80),
+          padding: EdgeInsets.only(left: 15.0, right: 15, top: 80),
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 55.0),
+                padding: EdgeInsets.symmetric(horizontal: 55.0),
                 child: Container(
                   decoration: BoxDecoration(
                     color: AppColor.lowGreen,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 25,
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 25),
                     child: Column(
                       children: [
                         Text(
@@ -47,6 +65,7 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
+
                           children: [
                             Text(
                               'SJ54956J6',
@@ -57,15 +76,31 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
                               ),
                             ),
                             SizedBox(width: 11),
-                            InkWell(
-                              onTap: () {},
-                              child: Image.asset(
-                                AppImages.copyImage,
-                                height: 20,
-                              ),
+                            Column(
+                              children: [
+                                InkWell(
+                                  onTap: handleCopy,
+                                  child: Image.asset(
+                                    AppImages.copyImage,
+                                    height: 20,
+                                  ),
+                                ),
+                                if (_isCopied)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: Text(
+                                      'Copied',
+                                      style: GoogleFont.ibmPlexSans(
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ],
                         ),
+
                       ],
                     ),
                   ),

@@ -16,6 +16,8 @@ class SubmitTheAdmission extends StatefulWidget {
 
 class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
   bool isChecked = false;
+  bool showError = false;
+
   final List<String> points = [
     "I hereby certify that the following information provided by me is correct and I understand that if the information is incorrect or false the ward shall be automatically debarred from the admission without any further notice.",
     "I assure that I will never give any donation / contribution to anybody in the getting admission of the school.",
@@ -143,20 +145,32 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
 
                 CustomContainer.tickContainer(
                   isChecked: isChecked,
+                  borderColor: showError
+                      ? AppColor.lightRed // Show red if error
+                      : isChecked
+                      ? AppColor.blue // Show blue if checked
+                      : AppColor.lowLightBlue, // Default color
                   onTap: () {
                     setState(() {
                       isChecked = !isChecked;
+                      showError = !isChecked; // Red border if not checked
                     });
                   },
-                  text:
-                      'I have read and understood the instructions furnished above',
+                  text: 'I have read and understood the instructions furnished above',
                 ),
+
+
                 SizedBox(height: 38),
                 AppButton.button(
                   text: 'Pay for Admission',
                   image: AppImages.rightSaitArrow,
                   width: 220,
                   onTap: () {
+                    if (!isChecked) {
+                      setState(() => showError = true);
+                      return;
+                    }
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -165,6 +179,7 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
                     );
                   },
                 ),
+
               ],
             ),
           ),

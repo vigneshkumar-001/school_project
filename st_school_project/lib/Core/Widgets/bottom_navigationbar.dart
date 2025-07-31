@@ -37,7 +37,7 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
 
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 400),
     );
 
     _updateSlideAnimation();

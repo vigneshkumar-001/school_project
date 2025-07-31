@@ -227,8 +227,8 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                             margin: const EdgeInsets.only(top: 4),
                             constraints: const BoxConstraints(maxHeight: 150),
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: Colors.grey),
+                              color: AppColor.white,
+                              border: Border.all(color: AppColor.grey),
                             ),
                             child: ListView.builder(
                               shrinkWrap: true,
@@ -312,6 +312,8 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          keyboardType: TextInputType.number,
+                          isMobile: true,
                           isError:
                               isSubmitted &&
                               fatherAnnualIncome.text.trim().isEmpty,
@@ -338,17 +340,17 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
-                          isError: isSubmitted && isBothOfficeAddressEmpty,
-                          onChanged: (value) {
-                            if (isSubmitted && value.trim().isNotEmpty) {
-                              setState(() {});
-                            }
-                          },
-                          errorText:
-                              isSubmitted && isBothOfficeAddressEmpty
-                                  ? 'Office Address is required'
-                                  : null,
-                          validator: null,
+                          // isError: isSubmitted && isBothOfficeAddressEmpty,
+                          // // onChanged: (value) {
+                          // //   if (isSubmitted && value.trim().isNotEmpty) {
+                          // //     setState(() {});
+                          // //   }
+                          // // },
+                          // // errorText:
+                          // //     isSubmitted && isBothOfficeAddressEmpty
+                          // //         ? 'Office Address is required'
+                          // //         : null,
+                          // validator: null,
                           controller: officeAddress,
                           maxLine: 3,
                           text: '',
@@ -517,6 +519,8 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
+                          keyboardType: TextInputType.number,
+                          isMobile: true,
                           isError:
                               isSubmitted &&
                               motherAnnualIncome.text.trim().isEmpty,
@@ -542,18 +546,18 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                         ),
                         SizedBox(height: 10),
                         CustomContainer.studentInfoScreen(
-                          isError: isSubmitted && isBothOfficeAddressEmpty,
-                          onChanged: (value) {
-                            if (isSubmitted && value.trim().isNotEmpty) {
-                              setState(() {});
-                            }
-                          },
-
-                          errorText:
-                              isSubmitted && isBothOfficeAddressEmpty
-                                  ? 'Office Address is required'
-                                  : null,
-                          validator: null,
+                          // isError: isSubmitted && isBothOfficeAddressEmpty,
+                          // onChanged: (value) {
+                          //   if (isSubmitted && value.trim().isNotEmpty) {
+                          //     setState(() {});
+                          //   }
+                          // },
+                          //
+                          // errorText:
+                          //     isSubmitted && isBothOfficeAddressEmpty
+                          //         ? 'Office Address is required'
+                          //         : null,
+                          // validator: null,
                           controller: motherOfficeAddressController,
                           maxLine: 3,
                           text: '',

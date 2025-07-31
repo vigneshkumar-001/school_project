@@ -34,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 title: Text('Take from Camera'),
                 onTap: () {
                   Navigator.pop(context);
-                  _pickImage(ImageSource.camera); 
+                  _pickImage(ImageSource.camera);
                 },
               ),
               ListTile(
