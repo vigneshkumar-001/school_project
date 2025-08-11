@@ -17,7 +17,8 @@ import '../Attendence Screen/attendence_screen.dart';
 
 class HomeTab extends StatefulWidget {
   final VoidCallback? onBackPressed;
-  const HomeTab({super.key, this.onBackPressed});
+  final String? pages;
+  const HomeTab({super.key, this.onBackPressed, this.pages});
 
   @override
   State<HomeTab> createState() => _HomeScreenState();

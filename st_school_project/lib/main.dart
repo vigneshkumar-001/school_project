@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/parents_info_screen.dart';
 
 import 'Presentation/Admssion/Screens/student_info_screen.dart';
 import 'Presentation/Onboarding/Screens/Home Screen/home_screen.dart';
 import 'Presentation/splash_screen.dart';
+import 'init_controller.dart';
 
-void main() {
+Future<void> main() async {
+  await initController();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Colors.white, // White background for status bar
-      statusBarIconBrightness: Brightness.dark, // Black icons on status bar
-      statusBarBrightness: Brightness.light, // For iOS (inverted logic)
-      systemNavigationBarColor: Colors.white, // White background for nav bar
+      statusBarColor: AppColor.white,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+      systemNavigationBarColor: AppColor.white,
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
@@ -26,7 +29,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: AppColor.white),
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),

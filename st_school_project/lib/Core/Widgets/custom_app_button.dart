@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:st_school_project/Core/Utility/app_color.dart';
-import 'package:st_school_project/Core/Utility/app_images.dart';
-import 'package:st_school_project/Core/Utility/google_font.dart';
+
+import '../Utility/app_color.dart';
+import '../Utility/google_font.dart';
+
 
 class AppButton {
   static button({
     BuildContext? context,
     VoidCallback? onTap,
     required String text,
+    Widget? loader,
     double fontSize = 16,
     bool isBorder = false,
-
     FontWeight? fontWeight = FontWeight.w700,
     double? width = 200,
     double? height = 60,
@@ -22,21 +23,15 @@ class AppButton {
         height: height,
         child: Container(
           decoration: BoxDecoration(
-
             color: isBorder ? AppColor.white : null,
             gradient: isBorder
                 ? null
                 : LinearGradient(
-              colors: [
-                AppColor.blueG1,
-                AppColor.blueG2.withOpacity(0.9),
-              ],
+              colors: [AppColor.blueG1, AppColor.blue.withOpacity(0.9)],
               begin: Alignment.topRight,
               end: Alignment.bottomRight,
             ),
-            border: isBorder
-                ? Border.all(color: AppColor.blueG1, width: 2)
-                : null,
+            border: isBorder ? Border.all(color: AppColor.blueG1, width: 2) : null,
             borderRadius: BorderRadius.circular(18),
           ),
           child: ElevatedButton(
@@ -49,7 +44,9 @@ class AppButton {
               backgroundColor: MaterialStateProperty.all(Colors.transparent),
             ),
             onPressed: onTap,
-            child: Row(
+            child: loader != null
+                ? loader // Show loader instead of text
+                : Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
@@ -57,12 +54,13 @@ class AppButton {
                   style: GoogleFont.ibmPlexSans(
                     fontSize: fontSize,
                     fontWeight: fontWeight,
-                    color: isBorder ? AppColor.blue :  AppColor.white,
+                    color: isBorder ? AppColor.blue : AppColor.white,
                   ),
                 ),
-                SizedBox(width: 15),
-
-                image != null ? Image.asset(image, height: 20) : Container(),
+                if (image != null) ...[
+                  SizedBox(width: 15),
+                  Image.asset(image, height: 20),
+                ]
               ],
             ),
           ),
