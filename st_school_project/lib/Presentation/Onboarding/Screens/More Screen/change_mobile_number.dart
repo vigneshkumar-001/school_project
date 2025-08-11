@@ -132,7 +132,15 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                       decoration: BoxDecoration(
                         color: AppColor.lowGery1,
                         borderRadius: BorderRadius.circular(15),
-                        border: Border.all(color: AppColor.lowGery1),
+                        border: Border.all(
+                          color:
+                          mobileNumberController.text.isNotEmpty
+                              ? AppColor
+                              .black
+                              : AppColor
+                              .lowGery1,
+                          width: mobileNumberController.text.isNotEmpty ? 2 : 1,
+                        ),
                       ),
                       child: Row(
                         children: [
@@ -155,15 +163,14 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                               ),
                             ],
                           ),
-                          const SizedBox(width: 10),
-                          const SizedBox(height: 35, child: VerticalDivider()),
-                          const SizedBox(width: 10),
+                          SizedBox(width: 10),
+                          SizedBox(height: 35, child: VerticalDivider()),
+                          SizedBox(width: 10),
                           Expanded(
                             flex: 9,
                             child: TextFormField(
                               autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-
+                              AutovalidateMode.onUserInteraction,
                               controller: mobileNumberController,
                               keyboardType: TextInputType.phone,
                               style: GoogleFont.inter(
@@ -174,7 +181,12 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
-                              onChanged: _formatPhoneNumber,
+                              onChanged: (value) {
+                                _formatPhoneNumber(value);
+                                setState(
+                                      () {},
+                                );
+                              },
                               decoration: InputDecoration(
                                 counterText: '',
                                 hintText: '9000 000 000',
@@ -183,6 +195,29 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                   fontSize: 20,
                                 ),
                                 border: InputBorder.none,
+                                suffixIcon:
+                                mobileNumberController.text.isNotEmpty
+                                    ? GestureDetector(
+                                  onTap: () {
+                                    mobileNumberController.clear();
+                                    setState(() {});
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 12,
+                                      right: 8,
+                                    ),
+                                    child: Text(
+                                      'Clear',
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColor.grayop,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    : null,
                               ),
                             ),
                           ),
