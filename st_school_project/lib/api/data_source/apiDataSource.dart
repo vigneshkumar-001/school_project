@@ -15,6 +15,7 @@ abstract class BaseApiDataSource {
 }
 
 class ApiDataSource extends BaseApiDataSource {
+
   @override
   Future<Either<Failure, LoginResponse>> mobileNumberLogin(String phone) async {
     try {
@@ -26,20 +27,32 @@ class ApiDataSource extends BaseApiDataSource {
         'Post',
         false,
       );
+
       AppLogger.log.i(response);
-      if (response is! DioException && response.statusCode == 201) {
+
+      // Check if response is NOT DioException and status code is 200 or 201 (both common success codes)
+      if (response is! DioException && (response.statusCode == 200 || response.statusCode == 201)) {
         if (response.data['status'] == true) {
           return Right(LoginResponse.fromJson(response.data));
         } else {
-          return Left(ServerFailure(response.data['message']));
+          // If message is a list, convert to string for readability
+          final msg = response.data['message'];
+          return Left(ServerFailure(msg is String ? msg : msg.toString()));
         }
+      } else if (response is DioException) {
+        // Dio error occurred, extract error message
+        return Left(ServerFailure(response.message ?? "Unknown Dio error"));
       } else {
-        return Left(ServerFailure((response as DioException).message ?? ""));
+        // Unexpected error case
+        return Left(ServerFailure("Unexpected error"));
       }
     } catch (e) {
-      return Left(ServerFailure(''));
+      // Catch and return exception message
+      return Left(ServerFailure(e.toString()));
     }
   }
+
+
 
   Future<Either<Failure, LoginResponse>> otpLogin({
     required String phone,

@@ -93,7 +93,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   child: PinCodeTextField(
                     onCompleted: (value) async {},
 
-                    autoFocus: true,
+                    autoFocus: otp.text.isEmpty,
                     appContext: context,
                     // pastedTextStyle: TextStyle(
                     //   color: Colors.green.shade600,
@@ -167,7 +167,10 @@ class _OtpScreenState extends State<OtpScreen> {
                   Center(
                     child: Text(
                       otpError!,
-                      style: TextStyle(color: Colors.red, fontSize: 14),
+                      style: GoogleFont.ibmPlexSans(
+                        color: AppColor.lightRed,
+                        fontSize: 14,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -182,20 +185,22 @@ class _OtpScreenState extends State<OtpScreen> {
                       return;
                     }
 
-                    // Proceed if OTP is valid
-
                     if (widget.pages == 'splash') {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Admission1(pages: 'otpScreen'),
-                        ),
-                      );
+                      String Otp = otp.text.toString();
+                      String mobileNumber =
+                          widget.mobileNumber.toString() ?? '';
+                      otpController.otpLogin(phone: mobileNumber, otp: Otp);
+                      // Navigator.pushReplacement(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => Home(pages: 'homeScreen'),
+                      //   ),
+                      // );
                     } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => QuizScreen()),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => QuizScreen()),
+                      // );
                     }
                   },
                   imagePath: AppImages.tick,
