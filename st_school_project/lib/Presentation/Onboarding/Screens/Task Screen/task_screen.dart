@@ -5,11 +5,14 @@ import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
+import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/controller/task_controller.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_detail.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../More Screen/quiz_screen.dart';
+import 'package:get/get.dart';
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -19,6 +22,7 @@ class TaskScreen extends StatefulWidget {
 }
 
 class _TaskScreenState extends State<TaskScreen> {
+  final TaskController taskController = Get.put(TaskController());
   DateTime selectedDate = DateTime.now();
   DateTime currentMonth = DateTime(DateTime.now().year, DateTime.now().month);
   late ScrollController _scrollController;
@@ -51,6 +55,7 @@ class _TaskScreenState extends State<TaskScreen> {
 
     // Wait for first frame to render, then scroll
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      taskController.getTaskDetails();
       scrollToSelectedDate();
     });
   }
@@ -268,7 +273,6 @@ class _TaskScreenState extends State<TaskScreen> {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
-      'screen': TaskDetail(),
     },
     {
       'subject': 'Maths',
@@ -379,7 +383,7 @@ class _TaskScreenState extends State<TaskScreen> {
                         ],
                       ),
                     ),
-                     SizedBox(height: 20),
+                    SizedBox(height: 20),
                     SizedBox(
                       height: 90,
                       child: ListView.builder(
@@ -580,7 +584,7 @@ class _TaskScreenState extends State<TaskScreen> {
                                       ),
                                     ),
                                     SizedBox(height: 20),
-                                    Expanded(
+                                    /*Expanded(
                                       child: SingleChildScrollView(
                                         controller: scrollController,
                                         child: Column(
@@ -637,6 +641,86 @@ class _TaskScreenState extends State<TaskScreen> {
                                           ],
                                         ),
                                       ),
+                                    ),*/
+                                    Expanded(
+                                      child: Obx(() {
+                                        if (taskController.isLoading.value) {
+                                          return Center(
+                                            child: AppLoader.circularLoader(
+                                              AppColor.black,
+                                            ),
+                                          );
+                                        }
+
+                                        // Filter tasks by selectedSubject
+                                        final filteredTasks =
+                                            taskController.tasks.where((task) {
+                                              return selectedSubject == 'All' ||
+                                                  task.subject ==
+                                                      selectedSubject;
+                                            }).toList();
+
+                                        if (filteredTasks.isEmpty) {
+                                          return const Center(
+                                            child: Text('No tasks available'),
+                                          );
+                                        }
+
+                                        return SingleChildScrollView(
+                                          controller: scrollController,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children:
+                                                filteredTasks.map<Widget>((
+                                                  task,
+                                                ) {
+                                                  return CustomContainer.taskScreen(
+                                                    subText: task.subject,
+                                                    homeWorkText: task.title,
+                                                    homeWorkImage: '',
+                                                    avatarImage:
+                                                        AppImages.approvedImage,
+                                                    mainText: task.description,
+                                                    smaleText: task.type,
+                                                    time:
+                                                        task.time
+                                                            .toIso8601String(),
+                                                    aText1: 'By ',
+                                                    aText2: task.assignedByName,
+                                                    backRoundColor:
+                                                        AppColor.white,
+                                                    gradient: LinearGradient(
+                                                      colors: [
+                                                        AppColor.black,
+                                                        AppColor.black,
+                                                      ],
+                                                      begin: Alignment.topLeft,
+                                                      end:
+                                                          Alignment.bottomRight,
+                                                    ),
+                                                    onIconTap: () {
+                                                      taskController
+                                                          .homeWorkIdDetails(
+                                                            id: task.id,
+                                                          );
+
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder:
+                                                              (context) =>
+                                                                  TaskDetail(
+                                                                    id: task.id,
+                                                                  ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                }).toList(), // <- make sure to use <Widget> in map
+                                          ),
+                                        );
+                                      }),
                                     ),
                                   ],
                                 ),

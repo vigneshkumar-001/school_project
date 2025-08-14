@@ -52,8 +52,8 @@ class CustomContainer {
               top: 22,
               child: Column(
                 children: [
-                  CircleAvatar(radius: 25, child: Image.asset(avatarImage)),
-                  SizedBox(height: 5),
+                  // CircleAvatar(radius: 25, child: Image.asset(avatarImage)),
+                  // SizedBox(height: 5),
                   RichText(
                     text: TextSpan(
                       text: aText1,
@@ -84,6 +84,7 @@ class CustomContainer {
                   (homeWorkImage != null && homeWorkImage.toString().isNotEmpty)
                       ? Image.asset(homeWorkImage, height: 60)
                       : Text(
+
                         homeWorkText,
                         style: GoogleFonts.inter(
                           fontSize: 10,
