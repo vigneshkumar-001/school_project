@@ -30,15 +30,17 @@ class _SplashScreenState extends State<SplashScreen> {
   void _startLoading() {
     Timer.periodic(const Duration(milliseconds: 400), (timer) {
       setState(() {
-        _progress += 0.1; // Increase progress
+        _progress += 0.1;
         if (_progress >= 1.0) {
           _progress = 1.0;
           timer.cancel();
 
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => ChangeMobileNumber(page: 'splash',)),
-            );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChangeMobileNumber(page: 'splash'),
+            ),
+          );
 
           // Navigator.pushReplacement(
           //   context,
