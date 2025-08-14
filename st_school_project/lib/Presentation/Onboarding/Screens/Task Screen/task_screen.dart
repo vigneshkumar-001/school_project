@@ -11,6 +11,7 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_detail.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
+import '../../../../Core/Widgets/date_and_time_convert.dart';
 import '../More Screen/quiz_screen.dart';
 import 'package:get/get.dart';
 
@@ -669,6 +670,14 @@ class _TaskScreenState extends State<TaskScreen>
                                           );
                                         }
 
+                                        const List<Color> colors = [
+                                          AppColor.lowLightBlue,
+                                          AppColor.lowLightYellow,
+                                          AppColor.lowLightNavi,
+                                          AppColor.white,
+                                          AppColor.lowLightPink,
+
+                                        ];
 
                                         final filteredTasks =
                                             taskController.tasks.where((task) {
@@ -689,24 +698,35 @@ class _TaskScreenState extends State<TaskScreen>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children:
-                                                filteredTasks.map<Widget>((
-                                                  task,
-                                                ) {
+                                                filteredTasks.asMap().entries.map<
+                                                  Widget
+                                                >((entry) {
+                                                  final index =
+                                                      entry.key; // task index
+                                                  final task = entry.value;
+                                                  final bgColor =
+                                                      colors[index %
+                                                          colors
+                                                              .length]; // pick color by index
+
                                                   return CustomContainer.taskScreen(
-                                                    subText: task.subject,
-                                                    homeWorkText: task.title,
+                                                    backRoundColors: bgColor,
+                                                    subText: task.description,
+                                                    homeWorkText: task.subject,
                                                     homeWorkImage: '',
                                                     avatarImage:
-                                                        AppImages.approvedImage,
-                                                    mainText: task.description,
+                                                        AppImages.avatar1,
+                                                    mainText: task.title,
                                                     smaleText: task.type,
                                                     time:
-                                                        task.time
-                                                            .toIso8601String(),
+                                                        DateAndTimeConvert.formatDateTime(
+                                                          task.time.toString(),
+                                                          showDate: false,
+                                                          showTime: true,
+                                                        ),
                                                     aText1: 'By ',
                                                     aText2: task.assignedByName,
-                                                    backRoundColor:
-                                                        AppColor.white,
+                                                    backRoundColor: bgColor,
                                                     gradient: LinearGradient(
                                                       colors: [
                                                         AppColor.black,
