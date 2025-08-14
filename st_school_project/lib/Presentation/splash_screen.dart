@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
+import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/controller/student_home_controller.dart';
 import '../Core/Utility/app_color.dart';
 import 'Onboarding/Screens/Home Screen/home_tab.dart';
 import 'Onboarding/Screens/More Screen/change_mobile_number.dart';
 import 'package:get/get.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -17,8 +19,8 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   double _progress = 0.0;
-final StudentHomeController controller = Get.put(StudentHomeController())
-;  @override
+  final StudentHomeController controller = Get.put(StudentHomeController());
+  @override
   void initState() {
     super.initState();
     controller.getStudentHome();
@@ -33,14 +35,16 @@ final StudentHomeController controller = Get.put(StudentHomeController())
           _progress = 1.0;
           timer.cancel();
 
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => ChangeMobileNumber(page: 'splash',)),
-          );
-          //
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => ChangeMobileNumber(page: 'splash',)),
+            );
+
           // Navigator.pushReplacement(
           //   context,
-          //   MaterialPageRoute(builder: (context) => HomeTab()),
+          //   MaterialPageRoute(
+          //     builder: (context) => CommonBottomNavigation(initialIndex: 0),
+          //   ),
           // );
         }
       });

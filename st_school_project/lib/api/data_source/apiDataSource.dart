@@ -32,25 +32,33 @@ class ApiDataSource extends BaseApiDataSource {
 
       AppLogger.log.i(response);
 
-      // Check if response is NOT DioException and status code is 200 or 201 (both common success codes)
-      if (response is! DioException &&
-          (response.statusCode == 200 || response.statusCode == 201)) {
-        if (response.data['status'] == true) {
-          return Right(LoginResponse.fromJson(response.data));
+      // Not a DioException -> means it's an HTTP Response
+      if (response is! DioException) {
+        // If status code is success
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          if (response.data['status'] == true) {
+            return Right(LoginResponse.fromJson(response.data));
+          } else {
+            return Left(
+              ServerFailure(response.data['message'] ?? "Login failed"),
+            );
+          }
         } else {
-          // If message is a list, convert to string for readability
-          final msg = response.data['message'];
-          return Left(ServerFailure(msg is String ? msg : msg.toString()));
+          // ❗ API returned non-success code but has JSON error message
+          return Left(
+            ServerFailure(response.data['message'] ?? "Something went wrong"),
+          );
         }
-      } else if (response is DioException) {
-        // Dio error occurred, extract error message
+      }
+      // Is DioException
+      else {
+        final errorData = response.response?.data;
+        if (errorData is Map && errorData.containsKey('message')) {
+          return Left(ServerFailure(errorData['message']));
+        }
         return Left(ServerFailure(response.message ?? "Unknown Dio error"));
-      } else {
-        // Unexpected error case
-        return Left(ServerFailure("Unexpected error"));
       }
     } catch (e) {
-      // Catch and return exception message
       return Left(ServerFailure(e.toString()));
     }
   }
@@ -69,14 +77,30 @@ class ApiDataSource extends BaseApiDataSource {
         false,
       );
       AppLogger.log.i(response);
-      if (response is! DioException && response.statusCode == 201) {
-        if (response.data['status'] == true) {
-          return Right(LoginResponse.fromJson(response.data));
+      if (response is! DioException) {
+        // If status code is success
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          if (response.data['status'] == true) {
+            return Right(LoginResponse.fromJson(response.data));
+          } else {
+            return Left(
+              ServerFailure(response.data['message'] ?? "Login failed"),
+            );
+          }
         } else {
-          return Left(ServerFailure(response.data['message']));
+          // ❗ API returned non-success code but has JSON error message
+          return Left(
+            ServerFailure(response.data['message'] ?? "Something went wrong"),
+          );
         }
-      } else {
-        return Left(ServerFailure((response as DioException).message ?? ""));
+      }
+      // Is DioException
+      else {
+        final errorData = response.response?.data;
+        if (errorData is Map && errorData.containsKey('message')) {
+          return Left(ServerFailure(errorData['message']));
+        }
+        return Left(ServerFailure(response.message ?? "Unknown Dio error"));
       }
     } catch (e) {
       return Left(ServerFailure(''));

@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/model/student_home_response.dart';
 import '../../../../../../api/data_source/apiDataSource.dart';
+import '../../../../../Core/Utility/app_color.dart';
 import '../model/home_work_id_response.dart';
 import '../model/task_response.dart';
 
@@ -17,7 +19,7 @@ class TaskController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getTaskDetails();
+    //getTaskDetails();
   }
 
   Future<String?> getTaskDetails() async {
@@ -33,7 +35,7 @@ class TaskController extends GetxController {
         },
         (response) async {
           isLoading.value = false;
-          tasks.value = response.data; 
+          tasks.value = response.data;
           AppLogger.log.i("Tasks fetched: ${tasks.length}");
           AppLogger.log.i(response.message);
 
@@ -48,19 +50,19 @@ class TaskController extends GetxController {
     return null;
   }
 
-  Future<String?> homeWorkIdDetails({int? id}) async {
+  Future<String?> homeWorkIdDetails({int? id, bool showLoader = true}) async {
     try {
-      isLoading.value = true;
+      if (showLoader) showPopupLoader(); // show popup loader
 
       final results = await apiDataSource.getHomeWorkIdDetails(id: id);
 
       results.fold(
         (failure) {
-          isLoading.value = false;
+          if (showLoader) hidePopupLoader(); // hide popup loader
           AppLogger.log.e(failure.message);
         },
         (response) async {
-          isLoading.value = false;
+          if (showLoader) hidePopupLoader(); // hide popup loader
           homeworkDetail.value = response.data;
           AppLogger.log.i("Tasks fetched: ${tasks.length}");
           AppLogger.log.i(response.message);
@@ -69,10 +71,39 @@ class TaskController extends GetxController {
         },
       );
     } catch (e) {
-      isLoading.value = false;
+      if (showLoader) hidePopupLoader(); // hide popup loader
       AppLogger.log.e(e);
       return e.toString();
     }
     return null;
+  }
+
+  void showPopupLoader() {
+    Get.dialog(
+      Center(
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CircularProgressIndicator(
+              color: AppColor.black,
+              strokeAlign: 1,
+            ),
+          ),
+        ),
+      ),
+      barrierDismissible: false, // user can't dismiss by tapping outside
+      barrierColor: Colors.black.withOpacity(0.3), // transparent background
+    );
+  }
+
+  void hidePopupLoader() {
+    if (Get.isDialogOpen ?? false) {
+      Get.back();
+    }
   }
 }

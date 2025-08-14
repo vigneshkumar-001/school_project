@@ -21,7 +21,8 @@ class TaskScreen extends StatefulWidget {
   State<TaskScreen> createState() => _TaskScreenState();
 }
 
-class _TaskScreenState extends State<TaskScreen> {
+class _TaskScreenState extends State<TaskScreen>
+    with AutomaticKeepAliveClientMixin {
   final TaskController taskController = Get.put(TaskController());
   DateTime selectedDate = DateTime.now();
   DateTime currentMonth = DateTime(DateTime.now().year, DateTime.now().month);
@@ -49,13 +50,28 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 
   @override
+  bool get wantKeepAlive => true; // ✅ tells Flutter to keep state alive
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _scrollController = ScrollController();
+  //
+  //   // Wait for first frame to render, then scroll
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     taskController.getTaskDetails();
+  //     scrollToSelectedDate();
+  //   });
+  // }
+  @override
   void initState() {
     super.initState();
+
     _scrollController = ScrollController();
 
-    // Wait for first frame to render, then scroll
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      taskController.getTaskDetails();
+      if (taskController.tasks.isEmpty) {
+        taskController.getTaskDetails();
+      }
       scrollToSelectedDate();
     });
   }
@@ -334,6 +350,7 @@ class _TaskScreenState extends State<TaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // ✅ Required for keep-alive to work
     return Scaffold(
       backgroundColor: AppColor.white,
       body: Container(
@@ -700,11 +717,6 @@ class _TaskScreenState extends State<TaskScreen> {
                                                           Alignment.bottomRight,
                                                     ),
                                                     onIconTap: () {
-                                                      taskController
-                                                          .homeWorkIdDetails(
-                                                            id: task.id,
-                                                          );
-
                                                       Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
@@ -717,7 +729,7 @@ class _TaskScreenState extends State<TaskScreen> {
                                                       );
                                                     },
                                                   );
-                                                }).toList(), // <- make sure to use <Widget> in map
+                                                }).toList(),
                                           ),
                                         );
                                       }),
