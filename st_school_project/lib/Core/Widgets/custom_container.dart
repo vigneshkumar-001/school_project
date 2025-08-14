@@ -87,7 +87,7 @@ class CustomContainer {
                     children: [
                       CircleAvatar(radius: 25, child: Image.asset(avatarImage)),
 
-                      RichText(
+                      RichText( 
                         text: TextSpan(
                           text: '\n$aText1',
                           style: GoogleFonts.inter(
