@@ -13,6 +13,7 @@ import '../../../Admssion/Screens/check_admission_status.dart';
 import '../Attendence Screen/attendence_screen.dart';
 import 'package:get/get.dart';
 
+import '../More Screen/change_mobile_number.dart';
 import 'controller/student_home_controller.dart';
 import 'model/student_home_response.dart';
 
@@ -156,18 +157,79 @@ class _HomeScreenState extends State<HomeTab>
                         ),
                       ),
                       Spacer(),
-                      Text(
-                        'Logout',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.lightRed,
-                        ),
-                      ),
-                      SizedBox(width: 10),
                       InkWell(
-                        onTap: () {},
-                        child: Image.asset(AppImages.logOut, height: 26),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                backgroundColor: AppColor.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    12,
+                                  ),
+                                ),
+                                title: Text(
+                                  'Log Out',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                content: Text(
+                                  'Are you sure you want to log out?',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text(
+                                      'Cancel',
+                                      style: GoogleFont.ibmPlexSans(fontWeight: FontWeight.w500,
+                                        color: AppColor.grey,
+                                      ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) =>
+                                                  ChangeMobileNumber(page: 'splash',),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      'Log Out',
+                                      style: GoogleFont.ibmPlexSans(
+                                        color: AppColor.lightRed,fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Image.asset(AppImages.logOut, height: 20),
+                            SizedBox(width: 15),
+                            Text(
+                              'LogOut',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                color: AppColor.lightRed,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
