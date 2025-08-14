@@ -50,7 +50,7 @@ class _TaskScreenState extends State<TaskScreen>
   }
 
   @override
-  bool get wantKeepAlive => true; // ✅ tells Flutter to keep state alive
+  bool get wantKeepAlive => true;
   // @override
   // void initState() {
   //   super.initState();
@@ -86,11 +86,11 @@ class _TaskScreenState extends State<TaskScreen>
     });
 
     if (index != -1) {
-      final double itemWidth = 57; // match the container width
-      double scrollOffset = (index * itemWidth) - 100; // small left padding
+      final double itemWidth = 57;
+      double scrollOffset = (index * itemWidth) - 100;
       if (scrollOffset < 0) scrollOffset = 0;
 
-      _scrollController.jumpTo(scrollOffset); // or animateTo
+      _scrollController.jumpTo(scrollOffset);
     }
   }
 
@@ -350,7 +350,7 @@ class _TaskScreenState extends State<TaskScreen>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // ✅ Required for keep-alive to work
+    super.build(context);
     return Scaffold(
       backgroundColor: AppColor.white,
       body: Container(
@@ -507,7 +507,7 @@ class _TaskScreenState extends State<TaskScreen>
                                                   color: Colors.black,
                                                 ),
                                               ),
-                                              SizedBox(width: 199),
+                                              SizedBox(width: 177),
                                               Image.asset(
                                                 AppImages.moreSimage2,
                                                 height: 20,
@@ -669,7 +669,7 @@ class _TaskScreenState extends State<TaskScreen>
                                           );
                                         }
 
-                                        // Filter tasks by selectedSubject
+
                                         final filteredTasks =
                                             taskController.tasks.where((task) {
                                               return selectedSubject == 'All' ||
