@@ -2,12 +2,15 @@ import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
 import '../../../../Core/Utility/app_color.dart' show AppColor;
+import 'Login_screen/controller/login_controller.dart';
 import 'otp_screen.dart' show OtpScreen;
 
 class ChangeMobileNumber extends StatefulWidget {
@@ -19,7 +22,9 @@ class ChangeMobileNumber extends StatefulWidget {
 }
 
 class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
+  final LoginController loginController = Get.put(LoginController());
   final TextEditingController mobileNumberController = TextEditingController();
+  bool _showClear = false;
   bool _isFormatting = false;
   String errorText = '';
 
@@ -130,15 +135,13 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                         vertical: 11,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColor.lowGery1,
+                        color: AppColor.lightGrey,
                         borderRadius: BorderRadius.circular(15),
                         border: Border.all(
                           color:
-                          mobileNumberController.text.isNotEmpty
-                              ? AppColor
-                              .black
-                              : AppColor
-                              .lowGery1,
+                              mobileNumberController.text.isNotEmpty
+                                  ? AppColor.black
+                                  : AppColor.lightGrey,
                           width: mobileNumberController.text.isNotEmpty ? 2 : 1,
                         ),
                       ),
@@ -170,7 +173,7 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                             flex: 9,
                             child: TextFormField(
                               autovalidateMode:
-                              AutovalidateMode.onUserInteraction,
+                                  AutovalidateMode.onUserInteraction,
                               controller: mobileNumberController,
                               keyboardType: TextInputType.phone,
                               style: GoogleFont.inter(
@@ -183,9 +186,7 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                               ],
                               onChanged: (value) {
                                 _formatPhoneNumber(value);
-                                setState(
-                                      () {},
-                                );
+                                setState(() {});
                               },
                               decoration: InputDecoration(
                                 counterText: '',
@@ -196,28 +197,28 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                 ),
                                 border: InputBorder.none,
                                 suffixIcon:
-                                mobileNumberController.text.isNotEmpty
-                                    ? GestureDetector(
-                                  onTap: () {
-                                    mobileNumberController.clear();
-                                    setState(() {});
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: 12,
-                                      right: 8,
-                                    ),
-                                    child: Text(
-                                      'Clear',
-                                      style: GoogleFont.ibmPlexSans(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColor.grayop,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                    : null,
+                                    mobileNumberController.text.isNotEmpty
+                                        ? GestureDetector(
+                                          onTap: () {
+                                            mobileNumberController.clear();
+                                            setState(() {});
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 12,
+                                              right: 8,
+                                            ),
+                                            child: Text(
+                                              'Clear',
+                                              style: GoogleFont.ibmPlexSans(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColor.grayop,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                        : null,
                               ),
                             ),
                           ),
@@ -237,39 +238,43 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 25),
-                    AppButton.button(
-                      text: 'Get OTP',
-                      width: double.infinity,
-                      onTap: () {
-                        final String mbl = mobileNumberController.text.replaceAll(' ', '');
-
-                        if (mbl.isEmpty) {
-                          setState(() {
-                            errorText = 'Mobile Number is Required';
-                          });
-                        } else if (mbl.length != 10) {
-                          setState(() {
-                            errorText = 'Mobile Number must be exactly 10 digits';
-                          });
-                        } else {
-                          setState(() {
-                            errorText = '';
-                          });
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => OtpScreen(
-                                mobileNumber: mbl,
-                                pages: widget.page,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-
+                    SizedBox(height: 25),
+                    Obx(() {
+                      return AppButton.button(
+                        text: 'Get OTP',
+                        loader:
+                        loginController.isLoading.value
+                            ? SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                            : null,
+                        width: double.infinity,
+                        onTap: () {
+                          final String mbl = mobileNumberController.text
+                              .replaceAll(' ', '');
+                          if (mbl.isEmpty) {
+                            setState(() {
+                              errorText = 'Mobile Number is Required';
+                            });
+                          } else if (mbl.length != 10) {
+                            setState(() {
+                              errorText =
+                              'Mobile Number must be exactly 10 digits';
+                            });
+                          } else {
+                            setState(() {
+                              errorText = '';
+                            });
+                            loginController.mobileNumberLogin('7904005315');
+                          }
+                        },
+                      );
+                    }),
                   ],
                 ),
               ),

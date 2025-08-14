@@ -48,6 +48,12 @@ dependencies:
   image_picker: ^1.1.0
   permission_handler: ^11.3.1
   device_info_plus: ^10.1.0
+  shared_preferences: any
+  dio: any
+  get: any
+  get_it: any
+  equatable: any
+  dartz: any
 
 
 
