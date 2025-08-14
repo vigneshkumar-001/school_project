@@ -1,12 +1,13 @@
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 
 import 'package:get/get.dart';
-import '../../../../Core/Utility/app_color.dart' show AppColor;
-import '../../../../Core/Utility/google_font.dart' show GoogleFont;
+
+import '../../../../Core/Utility/app_color.dart';
+import '../../../../Core/Utility/google_font.dart';
 import 'controller/task_controller.dart';
 
 class TaskDetail extends StatefulWidget {
@@ -19,6 +20,15 @@ class TaskDetail extends StatefulWidget {
 
 class _TaskDetailState extends State<TaskDetail> {
   final TaskController taskController = Get.put(TaskController());
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      taskController.homeWorkIdDetails(id: widget.id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,10 +36,6 @@ class _TaskDetailState extends State<TaskDetail> {
       body: SafeArea(
         child: Obx(() {
           final homework = taskController.homeworkDetail.value;
-
-          if (taskController.isLoading.value || homework == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
 
           return SingleChildScrollView(
             child: Padding(
@@ -77,16 +83,14 @@ class _TaskDetailState extends State<TaskDetail> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 // Replace static images with dynamic if available
-                                homework.tasks.isNotEmpty
-                                    ? Image.asset(AppImages.tdhs1)
-                                    : SizedBox.shrink(),
+                                Image.asset(AppImages.tdhs1),
+
                                 SizedBox(height: 20),
-                                homework.tasks.isNotEmpty
-                                    ? Image.asset(AppImages.tdhs2)
-                                    : SizedBox.shrink(),
+                                Image.asset(AppImages.tdhs2),
+
                                 SizedBox(height: 20),
                                 Text(
-                                  homework.title,
+                                  homework?.title ?? '',
                                   style: GoogleFont.inter(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 24,
@@ -95,7 +99,7 @@ class _TaskDetailState extends State<TaskDetail> {
                                 ),
                                 SizedBox(height: 15),
                                 Text(
-                                  homework.description,
+                                  homework?.description ?? '',
                                   style: GoogleFont.inter(
                                     fontSize: 12,
                                     color: AppColor.grey,
@@ -130,7 +134,7 @@ class _TaskDetailState extends State<TaskDetail> {
                                           ),
                                           SizedBox(width: 10),
                                           Text(
-                                            homework.subject.name,
+                                            homework?.subject.name ?? '',
                                             style: GoogleFont.inter(
                                               fontSize: 12,
                                               color: AppColor.lightBlack,
@@ -159,7 +163,7 @@ class _TaskDetailState extends State<TaskDetail> {
                                           ),
                                           SizedBox(width: 10),
                                           Text(
-                                            homework.time,
+                                            homework?.time ?? '',
                                             style: GoogleFont.inter(
                                               fontSize: 12,
                                               color: AppColor.lightBlack,
@@ -167,7 +171,7 @@ class _TaskDetailState extends State<TaskDetail> {
                                           ),
                                           SizedBox(width: 10),
                                           Text(
-                                            homework.date,
+                                            homework?.date ?? '',
                                             style: GoogleFont.inter(
                                               fontSize: 12,
                                               color: AppColor.grey,
@@ -214,7 +218,7 @@ class _TaskDetailState extends State<TaskDetail> {
                                   ),
                                   SizedBox(width: 20),
                                   Text(
-                                    '${homework.classInfo.name} - ${homework.classInfo.section}',
+                                    '${homework?.classInfo.name ?? ''} - ${homework?.classInfo.section}',
                                     style: GoogleFont.ibmPlexSans(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
@@ -235,7 +239,7 @@ class _TaskDetailState extends State<TaskDetail> {
                           child: Row(
                             children: [
                               Text(
-                                homework.subject.name,
+                                homework?.subject.name ?? '',
                                 style: GoogleFont.ibmPlexSans(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,

@@ -1,8 +1,10 @@
+import 'package:st_school_project/Core/Utility/snack_bar.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../../../Core/Widgets/bottom_navigationbar.dart';
 import '../../../../../../api/data_source/apiDataSource.dart';
 import '../../../Home Screen/home_tab.dart';
 import '../../otp_screen.dart';
@@ -26,6 +28,7 @@ class LoginController extends GetxController {
         (failure) {
           isLoading.value = false;
           AppLogger.log.e(failure.message);
+          CustomSnackBar.showError(failure.message);
         },
         (response) async {
           isLoading.value = false;
@@ -50,10 +53,11 @@ class LoginController extends GetxController {
       results.fold(
         (failure) {
           isOtpLoading.value = false;
+          CustomSnackBar.showError(failure.message);
           AppLogger.log.e(failure.message);
         },
         (response) async {
-          Get.offAll(HomeTab(pages: 'homeScreen'));
+          Get.offAll(CommonBottomNavigation(initialIndex: 0));
           isOtpLoading.value = false;
           AppLogger.log.i(response.message);
           final prefs = await SharedPreferences.getInstance();

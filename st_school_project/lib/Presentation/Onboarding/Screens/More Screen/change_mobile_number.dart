@@ -243,16 +243,16 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                       return AppButton.button(
                         text: 'Get OTP',
                         loader:
-                        loginController.isLoading.value
-                            ? SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                            : null,
+                            loginController.isLoading.value
+                                ? SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                                : null,
                         width: double.infinity,
                         onTap: () {
                           final String mbl = mobileNumberController.text
@@ -264,13 +264,14 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                           } else if (mbl.length != 10) {
                             setState(() {
                               errorText =
-                              'Mobile Number must be exactly 10 digits';
+                                  'Mobile Number must be exactly 10 digits';
                             });
                           } else {
                             setState(() {
                               errorText = '';
                             });
-                            loginController.mobileNumberLogin('7904005315');
+                            // loginController.mobileNumberLogin('7904005315');
+                            Get.to(OtpScreen(mobileNumber: '7904005315',pages: 'splash'));
                           }
                         },
                       );

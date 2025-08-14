@@ -4,14 +4,9 @@ import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
-import 'package:st_school_project/Presentation/Admssion/Screens/student_info_screen.dart';
-
-import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_screen.dart';
-import 'package:st_school_project/noDataFound_screen.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
-import '../../../../Core/Widgets/common_bottom_navigation_bar.dart'
-    show CommonBottomNavigationBar;
+
 import '../../../../Core/Widgets/custom_container.dart';
 import '../../../Admssion/Screens/admission_1.dart';
 import '../../../Admssion/Screens/check_admission_status.dart';
@@ -30,7 +25,8 @@ class HomeTab extends StatefulWidget {
   State<HomeTab> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeTab> {
+class _HomeScreenState extends State<HomeTab>
+    with AutomaticKeepAliveClientMixin {
   String selectedDay = 'Today';
   DateTime selectedDate = DateTime.now();
   final StudentHomeController controller = Get.put(StudentHomeController());
@@ -38,10 +34,14 @@ class _HomeScreenState extends State<HomeTab> {
 
   String selectedSubject = 'All'; // default selected
   @override
+  bool get wantKeepAlive => true;
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.getStudentHome();
+      if (controller.studentHomeData.value == null) {
+        controller.getStudentHome();
+      }
     });
   }
 

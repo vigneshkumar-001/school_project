@@ -16,11 +16,12 @@ class StudentHomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getStudentHome();
+    // getStudentHome();
   }
 
   Future<String?> getStudentHome() async {
     try {
+
       isLoading.value = true;
 
       final results = await apiDataSource.getStudentHomeDetails();
