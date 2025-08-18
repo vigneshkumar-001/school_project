@@ -95,4 +95,11 @@ class CustomTextField {
       ],
     );
   }
+
+
+  static String limitTo6(String text) {
+  return text.length > 6 ? '${text.substring(0, 7)}...' : text;
+  }
+
+
 }
