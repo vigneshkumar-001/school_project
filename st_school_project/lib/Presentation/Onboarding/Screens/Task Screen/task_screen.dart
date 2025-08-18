@@ -11,7 +11,11 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_detail.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
+
+import '../More Screen/change_mobile_number.dart';
+
 import '../../../../Core/Widgets/date_and_time_convert.dart';
+
 import '../More Screen/quiz_screen.dart';
 import 'package:get/get.dart';
 
@@ -121,6 +125,25 @@ class _TaskScreenState extends State<TaskScreen>
     );
   }
 
+  void scrollToDateIndex(int index) {
+    final double itemWidth = 57;
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    double scrollOffset =
+        (index * itemWidth) - (screenWidth / 2) + (itemWidth / 2);
+
+    if (scrollOffset < 0) scrollOffset = 0;
+    if (scrollOffset > _scrollController.position.maxScrollExtent) {
+      scrollOffset = _scrollController.position.maxScrollExtent;
+    }
+
+    _scrollController.animateTo(
+      scrollOffset,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
   void Switchprofileorlogout(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -161,18 +184,79 @@ class _TaskScreenState extends State<TaskScreen>
                         ),
                       ),
                       Spacer(),
-                      Text(
-                        'Logout',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.lightRed,
-                        ),
-                      ),
-                      SizedBox(width: 10),
                       InkWell(
-                        onTap: () {},
-                        child: Image.asset(AppImages.logOut, height: 26),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                backgroundColor: AppColor.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    12,
+                                  ),
+                                ),
+                                title: Text(
+                                  'Log Out',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                content: Text(
+                                  'Are you sure you want to log out?',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text(
+                                      'Cancel',
+                                      style: GoogleFont.ibmPlexSans(fontWeight: FontWeight.w500,
+                                        color: AppColor.grey,
+                                      ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) =>
+                                              ChangeMobileNumber(page: 'splash',),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      'Log Out',
+                                      style: GoogleFont.ibmPlexSans(
+                                        color: AppColor.lightRed,fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Image.asset(AppImages.logOut, height: 20),
+                            SizedBox(width: 15),
+                            Text(
+                              'LogOut',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                color: AppColor.lightRed,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -385,7 +469,7 @@ class _TaskScreenState extends State<TaskScreen>
                                 Text(
                                   DateFormat('MMMM dd').format(selectedDate),
                                   style: GoogleFont.ibmPlexSans(
-                                    color: Colors.white,
+                                    color: AppColor.white,
                                     fontSize: 32,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -420,9 +504,10 @@ class _TaskScreenState extends State<TaskScreen>
                             onTap: () {
                               setState(() {
                                 selectedDate = date;
-                                scrollToSelectedDate();
                               });
+                              scrollToDateIndex(index);
                             },
+
                             child: Container(
                               width: 57,
                               decoration:
@@ -670,6 +755,7 @@ class _TaskScreenState extends State<TaskScreen>
                                           );
                                         }
 
+
                                         const List<Color> colors = [
                                           AppColor.lowLightBlue,
                                           AppColor.lowLightYellow,
@@ -678,6 +764,7 @@ class _TaskScreenState extends State<TaskScreen>
                                           AppColor.lowLightPink,
 
                                         ];
+
 
                                         final filteredTasks =
                                             taskController.tasks.where((task) {
@@ -716,7 +803,11 @@ class _TaskScreenState extends State<TaskScreen>
                                                     homeWorkImage: '',
                                                     avatarImage:
                                                         AppImages.avatar1,
+
+                                                
+
                                                     mainText: task.title,
+
                                                     smaleText: task.type,
                                                     time:
                                                         DateAndTimeConvert.formatDateTime(

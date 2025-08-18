@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
@@ -177,6 +178,7 @@ class _Admission1State extends State<Admission1> {
                 SizedBox(height: 15),
                 AppButton.button(
                   onTap: () {
+                    HapticFeedback.heavyImpact();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -198,6 +200,7 @@ class _Admission1State extends State<Admission1> {
                     children: [
                       InkWell(
                         onTap: () {
+                          HapticFeedback.heavyImpact();
                           Navigator.push(
                             context,
                             MaterialPageRoute(

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/announcements_screen.dart';
 
+import '../../Presentation/Admssion/Screens/student_info_screen.dart';
 import '../Utility/app_color.dart';
 import '../Utility/app_images.dart';
 import '../Utility/google_font.dart' show GoogleFont;
@@ -107,6 +108,8 @@ class CustomContainer {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       CircleAvatar(radius: 25, child: Image.asset(avatarImage)),
+
+
                       SizedBox(height: 4),
                       Row(
                         children: [
@@ -118,6 +121,7 @@ class CustomContainer {
                               fontSize: 10,
                               color: AppColor.grey,
                             ),
+
                           ),
                           Text(
                             CustomTextField.limitTo6(aText2),
@@ -808,7 +812,7 @@ class CustomContainer {
                                 } else {
                                   controller.text =
                                       "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                  // Move focus to next field after DOB
+
                                   FocusScope.of(
                                     context,
                                   ).requestFocus(nextFieldFocusNode);
@@ -830,28 +834,26 @@ class CustomContainer {
                             isMobile
                                 ? 10
                                 : isAadhaar
-                                ? 12
+                                ? 14
                                 : isPincode
                                 ? 6
                                 : null,
-                        // keyboardType:
-                        // isMobile || isAadhaar || isPincode
-                        //     ? TextInputType.number
-                        //     : isDOB
-                        //     ? TextInputType.none
-                        //     : TextInputType.emailAddress,
                         keyboardType: keyboardType,
                         inputFormatters:
-                            isMobile || isAadhaar || isPincode
+                            isMobile
                                 ? [
                                   FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(
-                                    isMobile
-                                        ? 10
-                                        : isAadhaar
-                                        ? 12
-                                        : 6,
-                                  ),
+                                  LengthLimitingTextInputFormatter(10),
+                                ]
+                                : isAadhaar
+                                ? [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  AadhaarInputFormatter(),
+                                ]
+                                : isPincode
+                                ? [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(6),
                                 ]
                                 : [],
                         style: GoogleFont.ibmPlexSans(
@@ -864,7 +866,6 @@ class CustomContainer {
                           contentPadding: EdgeInsets.symmetric(horizontal: 10),
                           border: InputBorder.none,
                           isDense: true,
-                          // errorText: errorText,
                         ),
                       ),
                     ),
@@ -916,7 +917,10 @@ class CustomContainer {
             padding: const EdgeInsets.only(left: 12.0, top: 4),
             child: Text(
               errorText,
-              style: const TextStyle(color: Colors.red, fontSize: 12),
+              style: GoogleFont.ibmPlexSans(
+                color: AppColor.lightRed,
+                fontSize: 12,
+              ),
             ),
           ),
       ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
@@ -14,6 +15,29 @@ class StudentInfoScreen extends StatefulWidget {
 
   @override
   State<StudentInfoScreen> createState() => _StudentInfoScreenState();
+}
+
+class AadhaarInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    String digitsOnly = newValue.text.replaceAll(RegExp(r'\D'), '');
+    String formatted = '';
+
+    for (int i = 0; i < digitsOnly.length; i++) {
+      formatted += digitsOnly[i];
+      if ((i + 1) % 4 == 0 && i + 1 != digitsOnly.length) {
+        formatted += ' ';
+      }
+    }
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
 }
 
 class _StudentInfoScreenState extends State<StudentInfoScreen> {
@@ -35,7 +59,6 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
   final FocusNode tamilFocusNode = FocusNode();
   @override
   void dispose() {
-    // Dispose the focus node along with controllers
     tamilFocusNode.dispose();
     nameEnglishController.dispose();
     nameTamilController.dispose();
@@ -168,7 +191,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     hint: 'Aadhar No',
                     validatorMsg: ' Aadhar number is required',
                     isAadhaar: true,
-                    isNumeric: true
+                    isNumeric: true,
                   ),
 
                   buildField(
@@ -187,6 +210,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     hint: '',
                     validatorMsg: 'Religion is required',
                     isDropDown: true,
+                    verticalDivider: false,
                   ),
 
                   buildField(
@@ -195,6 +219,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     hint: '',
                     validatorMsg: 'Caste is required',
                     isDropDown: true,
+                    verticalDivider: false,
                   ),
 
                   buildField(
@@ -204,6 +229,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     hint: '',
                     validatorMsg: 'Community is required',
                     isDropDown: true,
+                    verticalDivider: false,
                   ),
 
                   buildField(
@@ -212,6 +238,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     hint: '',
                     validatorMsg: 'Mother tongue is required',
                     isDropDown: true,
+                    verticalDivider: false,
                   ),
 
                   buildField(
@@ -220,6 +247,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     hint: '',
                     validatorMsg: 'Nationality is required',
                     isDropDown: true,
+                    verticalDivider: false,
                   ),
 
                   buildField(
@@ -227,6 +255,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     controller: personalId1Controller,
                     hint: '',
                     validatorMsg: 'Personal ID 1 is required',
+                    verticalDivider: false,
                   ),
 
                   buildField(
@@ -234,14 +263,16 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     controller: personalId2Controller,
                     hint: '',
                     validatorMsg: 'Personal ID 2 is required',
+                    verticalDivider: false,
                   ),
 
-                  const SizedBox(height: 30),
+                  SizedBox(height: 30),
 
                   AppButton.button(
                     image: AppImages.rightSaitArrow,
                     text: 'Save & Continue',
                     onTap: () {
+                      HapticFeedback.heavyImpact();
                       if (_formKey.currentState!.validate()) {
                         Navigator.push(
                           context,
@@ -274,6 +305,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
     bool isDOB = false,
     bool isNumeric = false,
     bool isTamilField = false,
+    bool verticalDivider = true,
     BuildContext? context,
     FocusNode? focusNode,
   }) {
@@ -288,122 +320,152 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (value) {
             final text = controller.text.trim();
+
             if (text.isEmpty) return validatorMsg;
-            if (isAadhaar && !RegExp(r'^[2-9][0-9]{11}$').hasMatch(text)) {
-              return 'Enter a valid Aadhaar number';
+
+            if (isAadhaar == true) {
+              String cleanAadhaar = text.replaceAll(' ', '');
+              if (!RegExp(r'^[2-9][0-9]{11}$').hasMatch(cleanAadhaar)) {
+                return 'Enter a valid Aadhaar number';
+              }
             }
+
+            if (isAadhaar == false && text.length < 5) {
+              return 'Enter at least 5 characters';
+            }
+
             return null;
           },
+
           builder: (field) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 GestureDetector(
-                  onTap: isDOB && context != null
-                      ? () async {
-                    final DateTime startDate = DateTime(2021, 6, 1);
-                    final DateTime endDate = DateTime(2022, 5, 31);
-                    final DateTime initialDate = DateTime(2021, 6, 2);
+                  onTap:
+                      isDOB && context != null
+                          ? () async {
 
-                    final pickedDate = await showDatePicker(
-                      context: context!,
-                      initialDate: initialDate,
-                      firstDate: DateTime(2020),
-                      lastDate: DateTime(2025),
-                      builder: (context, child) {
-                        return Theme(
-                          data: Theme.of(context).copyWith(
-                            dialogBackgroundColor: AppColor.white,
-                            colorScheme: ColorScheme.light(
-                              primary: AppColor.blueG2,
-                              onPrimary: Colors.white,
-                              onSurface: AppColor.black,
-                            ),
-                            textButtonTheme: TextButtonThemeData(
-                              style: TextButton.styleFrom(
-                                foregroundColor: AppColor.blueG2,
-                              ),
-                            ),
-                          ),
-                          child: child!,
-                        );
-                      },
-                    );
+                            final DateTime startDate = DateTime(2021, 6, 1);
+                            final DateTime endDate = DateTime(2022, 5, 31);
+                            final DateTime initialDate = DateTime(2021, 6, 2);
 
-                    if (pickedDate != null) {
-                      if (pickedDate.isBefore(startDate) ||
-                          pickedDate.isAfter(endDate)) {
-                        ScaffoldMessenger.of(context!).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Invalid Date of Birth!\nPlease select a date between 01-06-2021 and 31-05-2022.',
-                            ),
-                            backgroundColor: Colors.red,
-                            duration: Duration(seconds: 3),
-                          ),
-                        );
-                      } else {
-                        controller.text =
-                        "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                        field.didChange(controller.text); // ✅ Trigger validation
-                        FocusScope.of(context!).requestFocus(nextFieldFocusNode);
-                      }
-                    }
-                  }
-                      : null,
+                            final pickedDate = await showDatePicker(
+                              context: context!,
+                              initialDate: initialDate,
+                              firstDate: DateTime(2020),
+                              lastDate: DateTime(2025),
+                              builder: (context, child) {
+                                return Theme(
+                                  data: Theme.of(context).copyWith(
+                                    dialogBackgroundColor: AppColor.white,
+                                    colorScheme: ColorScheme.light(
+                                      primary: AppColor.blueG2,
+                                      onPrimary: Colors.white,
+                                      onSurface: AppColor.black,
+                                    ),
+                                    textButtonTheme: TextButtonThemeData(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: AppColor.blueG2,
+                                      ),
+                                    ),
+                                  ),
+                                  child: child!,
+                                );
+                              },
+                            );
+
+                            if (pickedDate != null) {
+
+                              if (pickedDate.isBefore(startDate) ||
+                                  pickedDate.isAfter(endDate)) {
+                                ScaffoldMessenger.of(context!).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Invalid Date of Birth!\nPlease select a date between 01-06-2021 and 31-05-2022.',
+                                    ),
+                                    backgroundColor: Colors.red,
+                                    duration: Duration(seconds: 3),
+                                  ),
+                                );
+                              } else {
+                                controller.text =
+                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                field.didChange(controller.text);
+                                FocusScope.of(
+                                  context!,
+                                ).requestFocus(nextFieldFocusNode);
+                              }
+                            }
+                          }
+                          : null,
                   child: AbsorbPointer(
                     absorbing: isDOB,
                     child: CustomContainer.studentInfoScreen(
+                      verticalDivider: verticalDivider,
                       context: isDOB ? context : null,
                       keyboardType:
-                      isNumeric ? TextInputType.number : TextInputType.text,
+                          isNumeric ? TextInputType.number : TextInputType.text,
                       controller: controller,
                       text: hint,
-                      imagePath: isDropDown
-                          ? AppImages.dropDown
-                          : isDOB
-                          ? AppImages.calender
-                          : null,
+                      imagePath:
+                          isDropDown
+                              ? AppImages.dropDown
+                              : isDOB
+                              ? AppImages.calender
+                              : null,
                       isAadhaar: isAadhaar,
                       isDOB: isDOB,
                       isError: field.hasError,
                       focusNode: focusNode,
-                      onChanged: isTamilField
-                          ? (value) async {
-                        if (value.trim().isEmpty) {
-                          setState(() => fatherSuggestions = []);
-                          return;
-                        }
+                      inputFormatters:
+                          isAadhaar
+                              ? [
+                                FilteringTextInputFormatter.digitsOnly,
+                                AadhaarInputFormatter(),
+                              ]
+                              : [],
+                      onChanged:
+                          isTamilField
+                              ? (value) async {
+                                if (value.trim().isEmpty) {
+                                  setState(() => fatherSuggestions = []);
+                                  return;
+                                }
 
-                        setState(() => isFatherLoading = true);
-                        final result =
-                        await TanglishTamilHelper.transliterate(value);
+                                setState(() => isFatherLoading = true);
+                                final result =
+                                    await TanglishTamilHelper.transliterate(
+                                      value,
+                                    );
 
-                        setState(() {
-                          fatherSuggestions = result;
-                          isFatherLoading = false;
-                        });
+                                setState(() {
+                                  fatherSuggestions = result;
+                                  isFatherLoading = false;
+                                });
 
-                        field.didChange(value);
-                      }
-                          : field.didChange,
+                                field.didChange(value);
+                              }
+                              : field.didChange,
                     ),
                   ),
                 ),
                 if (field.hasError)
                   Padding(
-                    padding: const EdgeInsets.only(top: 5, left: 8),
+                    padding: EdgeInsets.only(top: 5, left: 8),
                     child: Text(
                       field.errorText!,
-                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                      style: GoogleFont.ibmPlexSans(
+                        color: AppColor.lightRed,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
               ],
             );
           },
         ),
-
       ],
     );
   }

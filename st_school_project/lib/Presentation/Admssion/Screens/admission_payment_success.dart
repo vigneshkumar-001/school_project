@@ -16,7 +16,6 @@ class AdmissionPaymentSuccess extends StatefulWidget {
 }
 
 class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
-
   bool _isCopied = false;
 
   void handleCopy() {
@@ -33,8 +32,6 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
       }
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +97,6 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
                             ),
                           ],
                         ),
-
                       ],
                     ),
                   ),
@@ -157,6 +153,7 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
                 image: AppImages.rightSaitArrow,
                 width: 220,
                 onTap: () {
+                  HapticFeedback.heavyImpact();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
