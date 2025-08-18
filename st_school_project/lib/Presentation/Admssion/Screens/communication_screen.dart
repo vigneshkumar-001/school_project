@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
@@ -302,6 +303,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   SizedBox(height: 30),
                   AppButton.button(
                     onTap: () {
+                      HapticFeedback.heavyImpact();
                       setState(() {
                         isSubmitted = true;
                       });

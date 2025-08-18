@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 
@@ -166,6 +167,7 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
                   image: AppImages.rightSaitArrow,
                   width: 220,
                   onTap: () {
+                    HapticFeedback.heavyImpact();
                     if (!isChecked) {
                       setState(() => showError = true);
                       return;

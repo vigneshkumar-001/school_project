@@ -20,9 +20,9 @@ class StudentInfoScreen extends StatefulWidget {
 class AadhaarInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue,
-      ) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     String digitsOnly = newValue.text.replaceAll(RegExp(r'\D'), '');
     String formatted = '';
 
@@ -59,7 +59,6 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
   final FocusNode tamilFocusNode = FocusNode();
   @override
   void dispose() {
-
     tamilFocusNode.dispose();
     nameEnglishController.dispose();
     nameTamilController.dispose();
@@ -273,6 +272,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     image: AppImages.rightSaitArrow,
                     text: 'Save & Continue',
                     onTap: () {
+                      HapticFeedback.heavyImpact();
                       if (_formKey.currentState!.validate()) {
                         Navigator.push(
                           context,
@@ -345,6 +345,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                   onTap:
                       isDOB && context != null
                           ? () async {
+
                             final DateTime startDate = DateTime(2021, 6, 1);
                             final DateTime endDate = DateTime(2022, 5, 31);
                             final DateTime initialDate = DateTime(2021, 6, 2);
@@ -375,6 +376,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                             );
 
                             if (pickedDate != null) {
+
                               if (pickedDate.isBefore(startDate) ||
                                   pickedDate.isAfter(endDate)) {
                                 ScaffoldMessenger.of(context!).showSnackBar(
