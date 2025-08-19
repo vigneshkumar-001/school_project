@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/controller/teacher_list_controller.dart';
 
 import '../../../../../../Core/Utility/app_color.dart';
 import 'package:get/get.dart';
@@ -123,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
     );
   }
-
+final TeacherListController controller = Get.put(TeacherListController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -203,7 +204,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 SizedBox(height: 20),
                 CustomContainer.checkMark(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    controller.imageUpload(frontImageFile:File(_imageFile?.path.toString()?? '') );
+                  },
                   imagePath: AppImages.tick,
                 ),
               ],

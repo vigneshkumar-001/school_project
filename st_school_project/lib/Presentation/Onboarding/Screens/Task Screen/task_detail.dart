@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:st_school_project/Core/Utility/app_images.dart';
+import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 
 import 'package:get/get.dart';
@@ -37,7 +38,7 @@ class _TaskDetailState extends State<TaskDetail> {
         child: Obx(() {
           final homework = taskController.homeworkDetail.value;
           if (homework == null) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: AppLoader.circularLoader(AppColor.black));
           }
 
           final tasks = homework.tasks ?? [];
@@ -276,76 +277,76 @@ class _TaskDetailState extends State<TaskDetail> {
           );
         }),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Row(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: AppColor.lightGrey,
-                border: Border.all(color: AppColor.lowLightBlue, width: 1),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 7,
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            color: AppColor.grey,
-                            CupertinoIcons.left_chevron,
-                            size: 20,
-                          ),
-                          SizedBox(width: 20),
-                          Text(
-                            'English',
-                            style: GoogleFont.ibmPlexSans(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColor.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: 30),
-            OutlinedButton(
-              onPressed: () {},
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                child: Row(
-                  children: [
-                    Text(
-                      'Mathematics',
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.black,
-                      ),
-                    ),
-                    SizedBox(width: 30),
-                    Icon(
-                      color: AppColor.grey,
-                      CupertinoIcons.right_chevron,
-                      size: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      // bottomNavigationBar: Padding(
+      //   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      //   child: Row(
+      //     children: [
+      //       Container(
+      //         decoration: BoxDecoration(
+      //           color: AppColor.lightGrey,
+      //           border: Border.all(color: AppColor.lowLightBlue, width: 1),
+      //           borderRadius: BorderRadius.circular(30),
+      //         ),
+      //         child: Row(
+      //           children: [
+      //             IconButton(
+      //               onPressed: () {},
+      //               icon: Padding(
+      //                 padding: const EdgeInsets.symmetric(
+      //                   horizontal: 15,
+      //                   vertical: 7,
+      //                 ),
+      //                 child: Row(
+      //                   children: [
+      //                     Icon(
+      //                       color: AppColor.grey,
+      //                       CupertinoIcons.left_chevron,
+      //                       size: 20,
+      //                     ),
+      //                     SizedBox(width: 20),
+      //                     Text(
+      //                       'English',
+      //                       style: GoogleFont.ibmPlexSans(
+      //                         fontSize: 14,
+      //                         fontWeight: FontWeight.w600,
+      //                         color: AppColor.grey,
+      //                       ),
+      //                     ),
+      //                   ],
+      //                 ),
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //       SizedBox(width: 30),
+      //       OutlinedButton(
+      //         onPressed: () {},
+      //         child: Padding(
+      //           padding: const EdgeInsets.symmetric(vertical: 14),
+      //           child: Row(
+      //             children: [
+      //               Text(
+      //                 'Mathematics',
+      //                 style: GoogleFont.ibmPlexSans(
+      //                   fontSize: 14,
+      //                   fontWeight: FontWeight.w600,
+      //                   color: AppColor.black,
+      //                 ),
+      //               ),
+      //               SizedBox(width: 30),
+      //               Icon(
+      //                 color: AppColor.grey,
+      //                 CupertinoIcons.right_chevron,
+      //                 size: 20,
+      //               ),
+      //             ],
+      //           ),
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // ),
     );
 
     return Scaffold(

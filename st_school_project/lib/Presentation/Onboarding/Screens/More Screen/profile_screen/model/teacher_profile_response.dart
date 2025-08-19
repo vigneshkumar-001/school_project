@@ -36,6 +36,8 @@ class TeacherListResponse {
 class TeachersStudentData {
   final String studentName;
   final String studentClass;
+  final String student_phone;
+  final String school_contact;
   final String section;
   final List<Teacher> teachers;
 
@@ -44,12 +46,16 @@ class TeachersStudentData {
     required this.studentClass,
     required this.section,
     required this.teachers,
+    required this.school_contact,
+    required this.student_phone,
   });
 
   factory TeachersStudentData.fromJson(Map<String, dynamic> json) {
     return TeachersStudentData(
       studentName: json['student_name'] ?? '',
       studentClass: json['class'] ?? '',
+      student_phone: json['student_phone'] ?? '',
+      school_contact: json['school_contact'] ?? '',
       section: json['section'] ?? '',
       teachers:
           (json['teachers'] as List<dynamic>? ?? [])

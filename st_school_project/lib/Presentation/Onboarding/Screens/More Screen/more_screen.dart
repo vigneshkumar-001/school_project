@@ -100,113 +100,71 @@ class _MoreScreenState extends State<MoreScreen>
                 color: AppColor.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
-              child: ListView(
-                controller: scrollController,
-                padding: EdgeInsets.all(16),
-                children: [
-                  Center(
-                    child: Container(
-                      height: 4,
-                      width: 30,
-                      decoration: BoxDecoration(color: AppColor.grayop),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  ListTile(
-                    leading: Container(
-                      padding: EdgeInsets.all(17),
-                      decoration: BoxDecoration(
-                        color: AppColor.lightGrey,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Image.asset(AppImages.phoneIcon, height: 24),
-                    ),
-                    title: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ChangeMobileNumber(),
-                          ),
-                        );
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Change Mobile Number',
-                            style: GoogleFont.ibmPlexSans(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                              color: AppColor.grey,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            '+91 900 000 0000',
-                            style: GoogleFont.ibmPlexSans(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 20,
-                              color: AppColor.lightBlack,
-                            ),
-                          ),
-                        ],
+              child: Obx(() {
+                final data =
+                    teacherListController.teacherListResponse.value?.data;
+                return ListView(
+                  controller: scrollController,
+                  padding: EdgeInsets.all(16),
+                  children: [
+                    Center(
+                      child: Container(
+                        height: 4,
+                        width: 30,
+                        decoration: BoxDecoration(color: AppColor.grayop),
                       ),
                     ),
-                    trailing: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ChangeMobileNumber(),
-                          ),
-                        );
-                      },
-                      child: Image.asset(
-                        AppImages.rightArrow,
-                        height: 16,
-                        width: 16,
+                    SizedBox(height: 20),
+                    ListTile(
+                      leading: Container(
+                        padding: EdgeInsets.all(17),
+                        decoration: BoxDecoration(
+                          color: AppColor.lightGrey,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Image.asset(AppImages.phoneIcon, height: 24),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => ProfileScreen()),
-                      );
-                    },
-                    child: ListTile(
-                      leading: Image.asset(AppImages.moreSimage1, height: 58),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Change',
-                            style: GoogleFont.ibmPlexSans(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                              color: AppColor.grey,
+                      title: GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context); // <- close bottom sheet first
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ChangeMobileNumber(),
                             ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Profile Picture',
-                            style: GoogleFont.ibmPlexSans(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 20,
-                              color: AppColor.lightBlack,
+                          );
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Change Mobile Number',
+                              style: GoogleFont.ibmPlexSans(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                color: AppColor.grey,
+                              ),
                             ),
-                          ),
-                        ],
+                            SizedBox(height: 4),
+                            Text(
+                              data?.student_phone.toString() ?? "",
+                              style: GoogleFont.ibmPlexSans(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 20,
+                                color: AppColor.lightBlack,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       trailing: InkWell(
                         onTap: () {
+                          Navigator.pop(context);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => ProfileScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => ChangeMobileNumber(),
+                            ),
                           );
                         },
                         child: Image.asset(
@@ -216,9 +174,59 @@ class _MoreScreenState extends State<MoreScreen>
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                    SizedBox(height: 20),
+
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => ProfileScreen()),
+                        );
+                      },
+                      child: ListTile(
+                        leading: Image.asset(AppImages.moreSimage1, height: 58),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Change',
+                              style: GoogleFont.ibmPlexSans(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                color: AppColor.grey,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Profile Picture',
+                              style: GoogleFont.ibmPlexSans(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 20,
+                                color: AppColor.lightBlack,
+                              ),
+                            ),
+                          ],
+                        ),
+                        trailing: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ProfileScreen(),
+                              ),
+                            );
+                          },
+                          child: Image.asset(
+                            AppImages.rightArrow,
+                            height: 16,
+                            width: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }),
             );
           },
         );
@@ -243,154 +251,159 @@ class _MoreScreenState extends State<MoreScreen>
                 color: AppColor.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
-              child: ListView(
-                controller: scrollController,
-                shrinkWrap: true,
+              child: Obx(() {
+                final data =
+                    teacherListController.teacherListResponse.value?.data;
+                return ListView(
+                  controller: scrollController,
+                  shrinkWrap: true,
 
-                children: [
-                  SizedBox(height: 15),
-                  Center(
-                    child: Container(
-                      height: 4,
-                      width: 30,
-                      decoration: BoxDecoration(
-                        color: AppColor.grayop,
-                        borderRadius: BorderRadius.circular(10),
+                  children: [
+                    SizedBox(height: 15),
+                    Center(
+                      child: Container(
+                        height: 4,
+                        width: 30,
+                        decoration: BoxDecoration(
+                          color: AppColor.grayop,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 35),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          spacing: 5,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomTextField.textWith600(
-                              color: AppColor.grey,
-                              text: 'Call Landline Number',
-                              fontSize: 14,
-                            ),
-                            CustomTextField.textWith600(
-                              text: '045 6000 0000 00',
-                              fontSize: 24,
-                            ),
-                          ],
-                        ),
-                        Spacer(),
-                        InkWell(
-                          onTap: () async {
-                            const phoneNumber = 'tel:+918248191110';
+                    SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 35),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            spacing: 5,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTextField.textWith600(
+                                color: AppColor.grey,
+                                text: 'Call Landline Number',
+                                fontSize: 14,
+                              ),
+                              CustomTextField.textWith600(
+                                text: data?.school_contact.toString() ?? '',
+                                fontSize: 24,
+                              ),
+                            ],
+                          ),
+                          Spacer(),
+                          InkWell(
+                            onTap: () async {
+                              final phoneNumber =
+                                  'tel:${data?.school_contact.toString() ?? ''}';
 
-                            final Uri url = Uri.parse(phoneNumber);
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(
-                                url,
-                                mode: LaunchMode.externalApplication,
-                              );
-                            } else {
-                              print('Could not launch dialer');
-                            }
-                          },
-                          child: Image.asset(
-                            AppImages.phoneGreenIcon,
-                            height: 55,
-                            width: 55,
+                              final Uri url = Uri.parse(phoneNumber);
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(
+                                  url,
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              } else {
+                                print('Could not launch dialer');
+                              }
+                            },
+                            child: Image.asset(
+                              AppImages.phoneGreenIcon,
+                              height: 55,
+                              width: 55,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Stack(
+                      children: [
+                        Card(
+                          margin: EdgeInsets.all(16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          elevation: 2,
+                          child: InkWell(
+                            onTap: _openGoogleMap,
+                            child: SizedBox(
+                              height: 122,
+
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: FlutterMap(
+                                  options: MapOptions(
+                                    center: LatLng(
+                                      9.914366964318729,
+                                      78.12744008201622,
+                                    ),
+
+                                    zoom: 16,
+                                    onTap: (tapPosition, point) {
+                                      _openGoogleMap();
+                                    },
+                                  ),
+                                  children: [
+                                    TileLayer(
+                                      urlTemplate:
+                                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                      userAgentPackageName:
+                                          'com.fenizo.st_school_project.st_school_project',
+                                    ),
+                                    MarkerLayer(
+                                      markers: [
+                                        Marker(
+                                          point: LatLng(
+                                            9.914366964318729,
+                                            78.12744008201622,
+                                          ),
+                                          width: 50,
+                                          height: 50,
+                                          child: Icon(
+                                            Icons.location_pin,
+                                            color: Colors.red,
+                                            size: 40,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 22,
+                          left: 25,
+                          child: InkWell(
+                            onTap: () => _openGoogleMap(),
+                            child: Card(
+                              elevation: 2,
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: AppColor.white,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(
+                                  'View Large Map',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColor.blue,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  Stack(
-                    children: [
-                      Card(
-                        margin: EdgeInsets.all(16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        elevation: 2,
-                        child: InkWell(
-                          onTap: _openGoogleMap,
-                          child: SizedBox(
-                            height: 122,
-
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: FlutterMap(
-                                options: MapOptions(
-                                  center: LatLng(
-                                    9.914366964318729,
-                                    78.12744008201622,
-                                  ),
-
-                                  zoom: 16,
-                                  onTap: (tapPosition, point) {
-                                    _openGoogleMap();
-                                  },
-                                ),
-                                children: [
-                                  TileLayer(
-                                    urlTemplate:
-                                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                    userAgentPackageName:
-                                        'com.fenizo.st_school_project.st_school_project',
-                                  ),
-                                  MarkerLayer(
-                                    markers: [
-                                      Marker(
-                                        point: LatLng(
-                                          9.914366964318729,
-                                          78.12744008201622,
-                                        ),
-                                        width: 50,
-                                        height: 50,
-                                        child: Icon(
-                                          Icons.location_pin,
-                                          color: Colors.red,
-                                          size: 40,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 22,
-                        left: 25,
-                        child: InkWell(
-                          onTap: () => _openGoogleMap(),
-                          child: Card(
-                            elevation: 2,
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: AppColor.white,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Text(
-                                'View Large Map',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColor.blue,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                  ],
+                );
+              }),
             );
           },
         );
@@ -1007,7 +1020,7 @@ class _MoreScreenState extends State<MoreScreen>
                                   child: Row(
                                     children: [
                                       Text(
-                                        '+91 900 000 0000',
+                                        data?.student_phone.toString() ?? '',
                                         style: GoogleFont.ibmPlexSans(
                                           fontWeight: FontWeight.w500,
                                           fontSize: 16,

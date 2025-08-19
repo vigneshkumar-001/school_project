@@ -6,6 +6,7 @@ import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
 import 'package:st_school_project/Core/Widgets/swicth_profile_sheet.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_detail.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 
@@ -1552,7 +1553,18 @@ class _HomeScreenState extends State<HomeTab>
                                                 ),
                                               ),
                                               TextButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder:
+                                                          (context) =>
+                                                              TaskDetail(
+                                                                id: task.id,
+                                                              ),
+                                                    ),
+                                                  );
+                                                },
                                                 child: Row(
                                                   children: [
                                                     Text(
