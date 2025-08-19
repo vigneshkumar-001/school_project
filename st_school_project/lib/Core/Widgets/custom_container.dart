@@ -457,7 +457,7 @@ class CustomContainer {
                 Text(
                   teachresName,
                   style: GoogleFont.ibmPlexSans(
-                    fontSize: 18,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: AppColor.black,
                   ),
@@ -471,7 +471,7 @@ class CustomContainer {
                   ),
                 ),
                 SizedBox(height: 10),
-                Image.asset(teacherImage, height: 135, width: 135),
+                Image.network(teacherImage,  fit: BoxFit.contain,),
               ],
             ),
           ),

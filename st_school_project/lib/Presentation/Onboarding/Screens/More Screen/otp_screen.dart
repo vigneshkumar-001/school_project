@@ -9,7 +9,7 @@ import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/admission_1.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/home_screen.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/home_tab.dart';
-import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/screen/profile_screen.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/quiz_screen.dart';
 
 import '../../../../Core/Utility/app_color.dart';
@@ -17,6 +17,7 @@ import '../../../../Core/Utility/app_loader.dart';
 import '../../../../Core/Utility/google_font.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
+import '../Home Screen/controller/student_home_controller.dart';
 import 'Login_screen/controller/login_controller.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -31,6 +32,7 @@ class OtpScreen extends StatefulWidget {
 class _OtpScreenState extends State<OtpScreen> {
   final LoginController otpController = LoginController();
   final TextEditingController otp = TextEditingController();
+  final StudentHomeController controller = Get.put(StudentHomeController());
   String? otpError;
   String verifyCode = '';
   StreamController<ErrorAnimationType>? errorController;
@@ -176,7 +178,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   ),
                 SizedBox(height: 30),
                 CustomContainer.checkMark(
-                  onTap: () {
+                  onTap: () async {
+
                     if (otp.text.length != 4) {
                       errorController?.add(ErrorAnimationType.shake);
                       setState(() {
@@ -190,6 +193,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       String mobileNumber =
                           widget.mobileNumber.toString() ?? '';
                       otpController.otpLogin(phone: mobileNumber, otp: Otp);
+                    await  controller.getStudentHome();
                       // Navigator.pushReplacement(
                       //   context,
                       //   MaterialPageRoute(

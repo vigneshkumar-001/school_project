@@ -10,6 +10,8 @@ import 'Onboarding/Screens/Home Screen/home_tab.dart';
 import 'Onboarding/Screens/More Screen/change_mobile_number.dart';
 import 'package:get/get.dart';
 
+import 'Onboarding/Screens/More Screen/profile_screen/controller/teacher_list_controller.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -20,10 +22,15 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   double _progress = 0.0;
   final StudentHomeController controller = Get.put(StudentHomeController());
+  final TeacherListController teacherListController = Get.put(
+    TeacherListController(),
+  );
+
   @override
   void initState() {
     super.initState();
-    controller.getStudentHome();
+     controller.getStudentHome();
+    teacherListController.teacherListData();
     _startLoading();
   }
 

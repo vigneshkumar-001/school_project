@@ -84,4 +84,8 @@ class AppImages {
   static String receiptNo= 'assets/images/ReceiptNo.png';
   static String timeImage= 'assets/images/TimeImage.png';
   static String profilePicture= 'assets/images/Profile Picture.png';
+  static String Morning1= 'assets/images/Morning1.png';
+  static String Afternoon1= 'assets/images/Afternoon1.png';
+  static String attendanceTick= 'assets/images/attendanceTick.png';
+  static String attendanceAbsent= 'assets/images/attendanceAbsent.png';
 }

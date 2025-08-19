@@ -7,11 +7,13 @@ import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
+import 'package:st_school_project/Core/Widgets/swicth_profile_sheet.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/controller/task_controller.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_detail.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/date_and_time_convert.dart';
+import '../Home Screen/controller/student_home_controller.dart';
 import '../More Screen/quiz_screen.dart';
 import 'package:get/get.dart';
 
@@ -26,6 +28,7 @@ class _TaskScreenState extends State<TaskScreen>
     with AutomaticKeepAliveClientMixin {
   final TaskController taskController = Get.put(TaskController());
   DateTime selectedDate = DateTime.now();
+  final StudentHomeController controller = Get.put(StudentHomeController());
   DateTime currentMonth = DateTime(DateTime.now().year, DateTime.now().month);
   late ScrollController _scrollController;
 
@@ -121,7 +124,7 @@ class _TaskScreenState extends State<TaskScreen>
     );
   }
 
-  void Switchprofileorlogout(BuildContext context) {
+  /*  void Switchprofileorlogout(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -245,109 +248,10 @@ class _TaskScreenState extends State<TaskScreen>
         );
       },
     );
-  }
+  }*/
 
   int index = 0;
   String selectedSubject = 'All';
-
-  final List<String> subjects = [
-    'All',
-    'Quiz',
-    'Science',
-    'English',
-    'Social Science',
-    'Maths',
-  ];
-
-  final List<Map<String, dynamic>> allTasks = [
-    {
-      'subject': 'Quiz',
-      'homeWorkText': 'Quiz',
-      'homeWorkImage': AppImages.taskScreenCont1,
-      'avatar': AppImages.avatar1,
-      'mainText': 'Mathematics Quiz',
-      'subText': 'Waiting for you',
-      'smaleText': 'Lorem ipsum dolor sit amet, co...',
-      'time': '4.30Pm',
-      'bgColor': AppColor.taskScrnCont1,
-      'gradient': LinearGradient(
-        colors: [AppColor.black, AppColor.black],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      'screen': QuizScreen(),
-    },
-    {
-      'subject': 'Science',
-      'homeWorkText': 'Science Homework',
-      'avatar': AppImages.avatar1,
-      'mainText': 'Draw Single cell',
-      'smaleText': 'Lorem ipsum dolor sit amet, co...',
-      'time': '4.30Pm',
-      'bgColor': AppColor.lowLightBlue,
-      'gradient': LinearGradient(
-        colors: [AppColor.black, AppColor.black],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-    },
-    {
-      'subject': 'Maths',
-      'homeWorkText': 'Maths Homework',
-      'avatar': AppImages.avatar2,
-      'mainText': 'Draw triangle',
-      'smaleText': 'Lorem ipsum dolor sit amet, co...',
-      'time': '3.00Pm',
-      'bgColor': AppColor.lowLightYellow,
-      'gradient': LinearGradient(
-        colors: [AppColor.black, AppColor.black],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-    },
-    {
-      'subject': 'English',
-      'homeWorkText': 'English Homework',
-      'avatar': AppImages.avatar3,
-      'mainText': 'Write an essay',
-      'smaleText': 'Lorem ipsum dolor sit amet...',
-      'time': '1.30Pm',
-      'bgColor': AppColor.lowLightNavi,
-      'gradient': LinearGradient(
-        colors: [AppColor.black, AppColor.black],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-    },
-    {
-      'subject': 'Social Science',
-      'homeWorkText': 'Social Science Homework',
-      'avatar': AppImages.avatar4,
-      'mainText': 'Map work',
-      'smaleText': 'Lorem ipsum dolor sit amet...',
-      'time': '2.30Pm',
-      'bgColor': AppColor.lowLightPink,
-      'gradient': LinearGradient(
-        colors: [AppColor.black, AppColor.black],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-    },
-    {
-      'subject': 'Science',
-      'homeWorkText': 'Science Homework',
-      'avatar': AppImages.avatar1,
-      'mainText': 'Label Plant Cell',
-      'smaleText': 'Lorem ipsum dolor sit amet...',
-      'time': '5.30Pm',
-      'bgColor': AppColor.white,
-      'gradient': LinearGradient(
-        colors: [AppColor.blueG1, AppColor.blueG2],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -411,10 +315,21 @@ class _TaskScreenState extends State<TaskScreen>
                         itemBuilder: (context, index) {
                           final item = getFullMonthDates(currentMonth)[index];
                           final date = item['fullDate'] as DateTime;
+
+                          // Check if this date is selected
                           final isSelected =
-                              selectedDate.day == date.day &&
-                              selectedDate.month == date.month &&
-                              selectedDate.year == date.year;
+                              selectedDate.year == date.year &&
+                                  selectedDate.month == date.month &&
+                                  selectedDate.day == date.day;
+
+                          // Count tasks for this date
+                          final tasksForDate = taskController.tasks.where((task) {
+                            final taskDate = task.date; // already DateTime
+                            return taskDate.year == date.year &&
+                                taskDate.month == date.month &&
+                                taskDate.day == date.day;
+                          }).toList();
+
 
                           return GestureDetector(
                             onTap: () {
@@ -425,13 +340,12 @@ class _TaskScreenState extends State<TaskScreen>
                             },
                             child: Container(
                               width: 57,
-                              decoration:
-                                  isSelected
-                                      ? BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(30),
-                                      )
-                                      : null,
+                              decoration: isSelected
+                                  ? BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(30),
+                              )
+                                  : null,
                               alignment: Alignment.center,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -439,24 +353,19 @@ class _TaskScreenState extends State<TaskScreen>
                                   Text(
                                     item['day'],
                                     style: GoogleFont.ibmPlexSans(
-                                      color:
-                                          isSelected
-                                              ? Colors.blue
-                                              : Colors.white,
+                                      color: isSelected ? Colors.blue : Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   Text(
                                     item['date'].toString(),
                                     style: GoogleFont.ibmPlexSans(
-                                      color:
-                                          isSelected
-                                              ? Colors.blue
-                                              : Colors.white,
+                                      color: isSelected ? Colors.blue : Colors.white,
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+
                                 ],
                               ),
                             ),
@@ -464,6 +373,7 @@ class _TaskScreenState extends State<TaskScreen>
                         },
                       ),
                     ),
+
                     const SizedBox(height: 16),
                     Expanded(
                       child: Stack(
@@ -520,10 +430,30 @@ class _TaskScreenState extends State<TaskScreen>
                                             right: 0,
                                             bottom: 6,
                                             child: InkWell(
-                                              onTap:
-                                                  () => Switchprofileorlogout(
-                                                    context,
-                                                  ),
+                                              onTap: () {
+                                                SwitchProfileSheet.show(
+                                                  context,
+                                                  students:
+                                                      controller.siblingsList,
+                                                  selectedStudent:
+                                                      controller
+                                                          .selectedStudent,
+                                                  onSwitch: (student) async {
+                                                    await controller
+                                                        .switchSiblings(
+                                                          id: student.id,
+                                                        );
+                                                    controller.selectStudent(
+                                                      student,
+                                                    );
+                                                  },
+                                                  onLogout: () async {
+                                                    await controller
+                                                        .clearData();
+                                                    // Get.offAllNamed('/login');
+                                                  },
+                                                );
+                                              },
                                               child: Image.asset(
                                                 AppImages.moreSimage1,
                                                 height: 30,
@@ -534,7 +464,216 @@ class _TaskScreenState extends State<TaskScreen>
                                         ],
                                       ),
                                     ),
-                                    SingleChildScrollView(
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Obx(() {
+                                            // Generate dynamic subjects from tasks
+                                            final subjects = <String>{'All'};
+                                            subjects.addAll(
+                                              taskController.tasks.map(
+                                                (t) => t.subject,
+                                              ),
+                                            );
+                                            final subjectList =
+                                                subjects.toList();
+
+                                            return SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Row(
+                                                children:
+                                                    subjectList.map((subject) {
+                                                      final isSelected =
+                                                          selectedSubject ==
+                                                          subject;
+                                                      return Padding(
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 8,
+                                                            ),
+                                                        child: ElevatedButton(
+                                                          style: ButtonStyle(
+                                                            elevation:
+                                                                MaterialStateProperty.all(
+                                                                  0,
+                                                                ),
+                                                            backgroundColor:
+                                                                MaterialStateProperty.all(
+                                                                  isSelected
+                                                                      ? AppColor
+                                                                          .white
+                                                                      : AppColor
+                                                                          .lightGrey,
+                                                                ),
+                                                            side: MaterialStateProperty.all(
+                                                              BorderSide(
+                                                                color:
+                                                                    isSelected
+                                                                        ? AppColor
+                                                                            .black
+                                                                        : AppColor
+                                                                            .lightGrey,
+                                                                width: 2,
+                                                              ),
+                                                            ),
+                                                            shape: MaterialStateProperty.all(
+                                                              RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                      20,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              selectedSubject =
+                                                                  subject;
+                                                            });
+                                                          },
+                                                          child: Text(
+                                                            subject,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  isSelected
+                                                                      ? AppColor
+                                                                          .black
+                                                                      : AppColor
+                                                                          .grey,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                              ),
+                                            );
+                                          }),
+                                          const SizedBox(height: 20),
+                                          Expanded(
+                                            child: Obx(() {
+                                              if (taskController
+                                                  .isLoading
+                                                  .value) {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              }
+
+                                              const List<Color> colors = [
+                                                AppColor.lowLightBlue,
+                                                AppColor.lowLightYellow,
+                                                AppColor.lowLightNavi,
+                                                AppColor.white,
+                                                AppColor.lowLightPink,
+                                              ];
+
+                                              final filteredTasks =
+                                                  taskController.tasks.where((
+                                                    task,
+                                                  ) {
+                                                    final taskDate = DateTime.parse(
+                                                      task.time.toString(),
+                                                    ); // convert ISO string to DateTime
+                                                    final isSameDate =
+                                                        taskDate.year ==
+                                                            selectedDate.year &&
+                                                        taskDate.month ==
+                                                            selectedDate
+                                                                .month &&
+                                                        taskDate.day ==
+                                                            selectedDate.day;
+
+                                                    final isSameSubject =
+                                                        selectedSubject ==
+                                                            'All' ||
+                                                        task.subject ==
+                                                            selectedSubject;
+
+                                                    return isSameDate &&
+                                                        isSameSubject;
+                                                  }).toList();
+
+                                              if (filteredTasks.isEmpty) {
+                                                return const Center(
+                                                  child: Text(
+                                                    'No tasks available',
+                                                  ),
+                                                );
+                                              }
+
+                                              return SingleChildScrollView(
+                                                controller: _scrollController,
+                                                child: Column(
+                                                  children:
+                                                      filteredTasks.asMap().entries.map<
+                                                        Widget
+                                                      >((entry) {
+                                                        final index = entry.key;
+                                                        final task =
+                                                            entry.value;
+                                                        final bgColor =
+                                                            colors[index %
+                                                                colors.length];
+
+                                                        return CustomContainer.taskScreen(
+                                                          mainText: task.title,
+                                                          subText:
+                                                              task.description,
+                                                          homeWorkText:
+                                                              task.subject,
+                                                          avatarImage:
+                                                              AppImages
+                                                                  .avatar1, // provide avatar if needed
+                                                          smaleText: task.type,
+                                                          time:
+                                                              DateAndTimeConvert.formatDateTime(
+                                                                task.time
+                                                                    .toString(),
+                                                                showDate: false,
+                                                                showTime: true,
+                                                              ),
+                                                          aText1: 'By ',
+                                                          aText2:
+                                                              task.assignedByName,
+                                                          backRoundColor:
+                                                              bgColor,
+                                                          gradient:
+                                                              LinearGradient(
+                                                                colors: [
+                                                                  Colors.black,
+                                                                  Colors.black,
+                                                                ],
+                                                              ),
+                                                          onIconTap: () {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (
+                                                                      context,
+                                                                    ) => TaskDetail(
+                                                                      id: task.id,
+                                                                    ),
+                                                              ),
+                                                            );
+                                                          },
+                                                        );
+                                                      }).toList(),
+                                                ),
+                                              );
+                                            }),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    /*  SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: Row(
                                         children:
@@ -602,64 +741,7 @@ class _TaskScreenState extends State<TaskScreen>
                                       ),
                                     ),
                                     SizedBox(height: 20),
-                                    /*Expanded(
-                                      child: SingleChildScrollView(
-                                        controller: scrollController,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            ...allTasks
-                                                .where(
-                                                  (task) =>
-                                                      selectedSubject ==
-                                                          'All' ||
-                                                      task['subject'] ==
-                                                          selectedSubject,
-                                                )
-                                                .map((task) {
-                                                  return CustomContainer.taskScreen(
-                                                    subText:
-                                                        task['subText'] ?? '',
-                                                    homeWorkText:
-                                                        task['homeWorkText'] ??
-                                                        '',
-                                                    homeWorkImage:
-                                                        task['homeWorkImage'] ??
-                                                        '',
-                                                    avatarImage:
-                                                        task['avatar'] ?? '',
-                                                    mainText:
-                                                        task['mainText'] ?? '',
-                                                    smaleText:
-                                                        task['smaleText'] ?? '',
-                                                    time: task['time'] ?? '',
-                                                    aText1: 'By ',
-                                                    aText2: 'Floran',
-                                                    backRoundColor:
-                                                        task['bgColor'] ??
-                                                        AppColor.white,
-                                                    gradient: task['gradient'],
-                                                    onIconTap: () {
-                                                      final screen =
-                                                          task['screen'];
-                                                      if (screen != null) {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder:
-                                                                (_) => screen,
-                                                          ),
-                                                        );
-                                                      }
-                                                    },
-                                                  );
-                                                })
-                                                .toList(),
-                                          ],
-                                        ),
-                                      ),
-                                    ),*/
+
                                     Expanded(
                                       child: Obx(() {
                                         if (taskController.isLoading.value) {
@@ -753,7 +835,7 @@ class _TaskScreenState extends State<TaskScreen>
                                           ),
                                         );
                                       }),
-                                    ),
+                                    ),*/
                                   ],
                                 ),
                               );

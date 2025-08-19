@@ -15,8 +15,8 @@ class StudentHomeResponse {
     return StudentHomeResponse(
       status: json['status'],
       code: json['code'],
-      message: json['message'],
-      data: StudentHomeData.fromJson(json['data']),
+      message: json['message'] ?? '',
+      data: StudentHomeData.fromJson(json['data'] ?? ''),
     );
   }
 
@@ -51,9 +51,10 @@ class StudentHomeData {
       className: json['class'],
       section: json['section'],
       attendance: Attendance.fromJson(json['attendance']),
-      announcements: (json['announcements'] as List)
-          .map((e) => Announcement.fromJson(e))
-          .toList(),
+      announcements:
+          (json['announcements'] as List)
+              .map((e) => Announcement.fromJson(e))
+              .toList(),
       tasks: (json['tasks'] as List).map((e) => Task.fromJson(e)).toList(),
     );
   }
@@ -75,16 +76,10 @@ class Attendance {
   Attendance({required this.morning, required this.afternoon});
 
   factory Attendance.fromJson(Map<String, dynamic> json) {
-    return Attendance(
-      morning: json['morning'],
-      afternoon: json['afternoon'],
-    );
+    return Attendance(morning: json['morning'], afternoon: json['afternoon']);
   }
 
-  Map<String, dynamic> toJson() => {
-    'morning': morning,
-    'afternoon': afternoon,
-  };
+  Map<String, dynamic> toJson() => {'morning': morning, 'afternoon': afternoon};
 }
 
 class Announcement {

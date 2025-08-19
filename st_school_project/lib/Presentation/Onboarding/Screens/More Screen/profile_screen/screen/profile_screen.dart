@@ -7,7 +7,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
-import '../../../../Core/Utility/app_color.dart';
+
+import '../../../../../../Core/Utility/app_color.dart';
+import 'package:get/get.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

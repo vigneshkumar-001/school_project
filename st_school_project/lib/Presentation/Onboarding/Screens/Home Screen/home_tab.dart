@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
+import 'package:st_school_project/Core/Widgets/swicth_profile_sheet.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 
@@ -38,11 +40,13 @@ class _HomeScreenState extends State<HomeTab>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (controller.studentHomeData.value == null) {
-        controller.getStudentHome();
-      }
-    });
+    controller.getStudentHome();
+    controller.getSiblingsData();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   if (controller.studentHomeData.value == null) {
+    //     controller.getStudentHome();
+    //   }
+    // });
   }
 
   final List<String> subjects = [
@@ -74,16 +78,16 @@ class _HomeScreenState extends State<HomeTab>
     );
   }
 
-  void Switchprofileorlogout(BuildContext context) {
+  /*  void switchProfileOrLogout(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.30,
-          minChildSize: 0.20,
-          maxChildSize: 0.50,
+          initialChildSize: 0.35,
+          minChildSize: 0.25,
+          maxChildSize: 0.6,
           expand: false,
           builder: (context, scrollController) {
             return Container(
@@ -91,120 +95,174 @@ class _HomeScreenState extends State<HomeTab>
                 color: AppColor.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
-              child: ListView(
-                controller: scrollController,
-                padding: EdgeInsets.all(16),
-                children: [
-                  Center(
-                    child: Container(
-                      height: 4,
-                      width: 30,
-                      decoration: BoxDecoration(color: AppColor.grayop),
+              child: Obx(() {
+                final students = controller.siblingsList;
+
+                return ListView(
+                  controller: scrollController,
+                  padding: EdgeInsets.all(16),
+                  children: [
+                    Center(
+                      child: Container(
+                        height: 4,
+                        width: 30,
+                        decoration: BoxDecoration(color: AppColor.grayop),
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Text(
-                        'Switch Profile',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.black,
-                        ),
-                      ),
-                      Spacer(),
-                      Text(
-                        'Logout',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.lightRed,
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      InkWell(
-                        onTap: () {},
-                        child: Image.asset(AppImages.logOut, height: 26),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 32),
-                  Row(
-                    children: [
-                      Image.asset(AppImages.moreSimage1, height: 58),
-                      SizedBox(width: 5),
-                      Text(
-                        'Anushka',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 18,
-                          color: AppColor.black,
-                        ),
-                      ),
-                      Spacer(),
-                      InkWell(
-                        onTap: () {},
-                        child: Image.asset(AppImages.rightArrow, height: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Image.asset(AppImages.moreSimage1, height: 58),
-                      SizedBox(width: 5),
-                      Text(
-                        'Swathi',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 18,
-                          color: AppColor.black,
-                        ),
-                      ),
-                      Spacer(),
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: AppColor.blue, width: 1),
+                    SizedBox(height: 20),
+
+                    // Header Row: Switch Profile & Logout
+                    Row(
+                      children: [
+                        Text(
+                          'Switch Profile',
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.black,
                           ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 6,
-                            ),
-                            child: Text(
-                              'Active',
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.blue,
+                        ),
+                        Spacer(),
+                        InkWell(
+                          onTap: () async {
+                            await controller.clearData();
+                            // navigate to login screen
+                            // Get.offAllNamed('/login');
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                'Logout',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColor.lightRed,
+                                ),
                               ),
-                            ),
+                              SizedBox(width: 10),
+                              Image.asset(AppImages.logOut, height: 26),
+                            ],
                           ),
                         ),
-                      ),
-                      SizedBox(width: 7),
-                      InkWell(
-                        onTap: () {},
-                        child: Image.asset(AppImages.rightArrow, height: 16),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                      ],
+                    ),
+                    SizedBox(height: 32),
+
+                    // List of students
+                    ...students.map((student) {
+                      final isActive =
+                          student.id == controller.selectedStudent.value?.id;
+
+                      return InkWell(
+                        onTap: () async {
+                          // Call API to switch student
+                          Navigator.pop(context);
+                          await controller.switchSiblings(id: student.id);
+
+
+                          controller.selectStudent(student);
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(vertical: 8),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color:
+                                isActive
+                                    ? AppColor.lightBlue.withOpacity(0.2)
+                                    : Colors.transparent,
+                            borderRadius: BorderRadius.circular(12),
+                            border:
+                                isActive
+                                    ? Border.all(
+                                      color: AppColor.blue,
+                                      width: 1.5,
+                                    )
+                                    : null,
+                          ),
+                          child: Row(
+                            children: [
+                              ClipOval(
+                                child: Image.network(
+                                  student.avatar,
+                                  width: 58,
+                                  height: 58,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      AppImages.moreSimage1,
+                                      width: 58,
+                                      height: 58,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    student.name,
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColor.black,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Class ${student.studentClass} - ${student.section}',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 14,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Spacer(),
+                              if (isActive)
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: AppColor.blue,
+                                      width: 1.2,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Active',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColor.blue,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ],
+                );
+              }),
             );
           },
         );
       },
     );
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final std = controller.studentHomeData.value;
-    final announcement = std?.announcements[index];
+
     return Scaffold(
       backgroundColor: AppColor.white,
       body: SafeArea(
@@ -212,6 +270,21 @@ class _HomeScreenState extends State<HomeTab>
           if (controller.isLoading.value) {
             return AppLoader.circularLoader(AppColor.black);
           }
+          final data = controller.studentHomeData.value;
+          final tasks = data?.tasks ?? [];
+          final subjects = <String>{'All'}; // Start with "All"
+          for (var task in tasks) {
+            if (task.subject != null && task.subject.isNotEmpty) {
+              subjects.add(task.subject);
+            }
+          }
+
+          // Convert to list for UI
+          final subjectsList = subjects.toList();
+          if (data == null) {
+            return Center(child: Text("No student data available"));
+          }
+          // final announcement = std?.announcements[index];
           return SingleChildScrollView(
             child: Column(
               children: [
@@ -236,9 +309,7 @@ class _HomeScreenState extends State<HomeTab>
                           text: 'Hi ',
                           children: [
                             TextSpan(
-                              text:
-                                  controller.studentHomeData.value?.name ??
-                                  "Welcome",
+                              text: data?.name ?? "Welcome",
                               style: GoogleFont.ibmPlexSans(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 28,
@@ -262,7 +333,7 @@ class _HomeScreenState extends State<HomeTab>
                           SizedBox(height: 5),
                           RichText(
                             text: TextSpan(
-                              text: std?.className ?? '',
+                              text: data?.className ?? '',
                               style: GoogleFont.ibmPlexSans(
                                 fontSize: 14,
                                 color: AppColor.grey,
@@ -282,7 +353,7 @@ class _HomeScreenState extends State<HomeTab>
                                   ),
                                 ),
                                 TextSpan(
-                                  text: std?.section ?? '',
+                                  text: data.section ?? '',
                                   style: GoogleFont.ibmPlexSans(
                                     fontSize: 14,
                                     color: AppColor.grey,
@@ -312,7 +383,21 @@ class _HomeScreenState extends State<HomeTab>
                       right: 34,
                       bottom: 17,
                       child: InkWell(
-                        onTap: () => Switchprofileorlogout(context),
+                        onTap: () {
+                          SwitchProfileSheet.show(
+                            context,
+                            students: controller.siblingsList,
+                            selectedStudent: controller.selectedStudent,
+                            onSwitch: (student) async {
+                              await controller.switchSiblings(id: student.id);
+                              controller.selectStudent(student);
+                            },
+                            onLogout: () async {
+                              await controller.clearData();
+                              // Get.offAllNamed('/login');
+                            },
+                          );
+                        },
                         child: Image.asset(
                           AppImages.moreSimage1,
                           height: 49,
@@ -556,7 +641,7 @@ class _HomeScreenState extends State<HomeTab>
                                     top: 90,
                                     left: 35,
                                     child: Image.asset(
-                                      std!.attendance.morning == true
+                                      data.attendance.morning == true
                                           ? AppImages.greenTick
                                           : AppImages.failedImage,
                                       height: 18,
@@ -566,7 +651,7 @@ class _HomeScreenState extends State<HomeTab>
                                     top: 90,
                                     right: 32,
                                     child: Image.asset(
-                                      std.attendance.afternoon == true
+                                      data.attendance.afternoon == true
                                           ? AppImages.greenTick
                                           : AppImages.failedImage,
                                       height: 18,
@@ -1219,6 +1304,7 @@ class _HomeScreenState extends State<HomeTab>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Header Row: Title + Date Filter
                         Padding(
                           padding: const EdgeInsets.only(top: 16),
                           child: Row(
@@ -1240,19 +1326,16 @@ class _HomeScreenState extends State<HomeTab>
                                   });
 
                                   if (value == 'Today') {
-                                    setState(() {
-                                      selectedDate = DateTime.now();
-                                    });
+                                    selectedDate = DateTime.now();
                                   } else if (value == 'Yesterday') {
-                                    setState(() {
-                                      selectedDate = DateTime.now().subtract(
-                                        Duration(days: 1),
-                                      );
-                                    });
+                                    selectedDate = DateTime.now().subtract(
+                                      Duration(days: 1),
+                                    );
                                   } else if (value == 'Custom Date') {
                                     DateTime? picked = await showDatePicker(
                                       context: context,
-                                      initialDate: selectedDate,
+                                      initialDate:
+                                          selectedDate ?? DateTime.now(),
                                       firstDate: DateTime(2000),
                                       lastDate: DateTime(2100),
                                       builder: (context, child) {
@@ -1265,13 +1348,13 @@ class _HomeScreenState extends State<HomeTab>
                                               onPrimary: Colors.white,
                                               onSurface: AppColor.black,
                                             ),
-                                            textButtonTheme: TextButtonThemeData(
-                                              style: TextButton.styleFrom(
-                                                foregroundColor:
-                                                    AppColor
-                                                        .blueG2, // buttons like OK/CANCEL
-                                              ),
-                                            ),
+                                            textButtonTheme:
+                                                TextButtonThemeData(
+                                                  style: TextButton.styleFrom(
+                                                    foregroundColor:
+                                                        AppColor.blueG2,
+                                                  ),
+                                                ),
                                           ),
                                           child: child!,
                                         );
@@ -1285,7 +1368,6 @@ class _HomeScreenState extends State<HomeTab>
                                     }
                                   }
                                 },
-
                                 itemBuilder:
                                     (context) => [
                                       _buildMenuItem('Today'),
@@ -1305,7 +1387,7 @@ class _HomeScreenState extends State<HomeTab>
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        selectedDay,
+                                        selectedDay ?? 'Select Date',
                                         style: GoogleFont.ibmPlexSans(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
@@ -1325,12 +1407,15 @@ class _HomeScreenState extends State<HomeTab>
                             ],
                           ),
                         ),
+
                         SizedBox(height: 20),
+
+                        // Subject Filter Buttons
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children:
-                                subjects.map((subject) {
+                                subjectsList.map((subject) {
                                   final isSelected = selectedSubject == subject;
                                   return Padding(
                                     padding: const EdgeInsets.only(right: 8.0),
@@ -1380,119 +1465,157 @@ class _HomeScreenState extends State<HomeTab>
                                 }).toList(),
                           ),
                         ),
+
                         SizedBox(height: 25),
-                        Column(
-                          children:
-                              std.tasks
-                                  .where(
-                                    (task) =>
-                                        selectedSubject == 'All' ||
-                                        task.subject == selectedSubject,
-                                  )
-                                  .map((task) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                        bottom: 16,
+
+                        // Tasks List
+                        Obx(() {
+                          if (controller.isLoading.value) {
+                            return AppLoader.circularLoader(AppColor.black);
+                          }
+
+                          final tasks =
+                              controller.studentHomeData.value?.tasks ?? [];
+
+                          // Filter tasks by selected subject and selected date
+                          final filteredTasks =
+                              tasks.where((task) {
+                                final matchesSubject =
+                                    selectedSubject == null ||
+                                    selectedSubject == 'All' ||
+                                    task.subject == selectedSubject;
+
+                                final taskDate =
+                                    DateTime.parse(
+                                      task.date.toString(),
+                                    ).toLocal();
+
+                                final matchesDate =
+                                    selectedDate == null ||
+                                    (taskDate.year == selectedDate!.year &&
+                                        taskDate.month == selectedDate!.month &&
+                                        taskDate.day == selectedDate!.day);
+
+                                return matchesSubject && matchesDate;
+                              }).toList();
+
+                          if (filteredTasks.isEmpty) {
+                            return Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Center(
+                                child: Text(
+                                  'No tasks available',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 14,
+                                    color: AppColor.grey,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
+                          return Column(
+                            children:
+                                filteredTasks.map((task) {
+                                  final taskDate =
+                                      DateTime.parse(
+                                        task.date.toString(),
+                                      ).toLocal();
+
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 16),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: AppColor.white,
+                                        border: Border.all(
+                                          color: AppColor.grey.withOpacity(0.1),
+                                        ),
+                                        borderRadius: BorderRadius.circular(15),
                                       ),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: AppColor.white,
-                                          border: Border.all(
-                                            color: AppColor.grey.withOpacity(
-                                              0.1,
-                                            ),
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            15,
-                                          ),
-                                        ),
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 20,
-                                          vertical: 15,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 15,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
                                                   task.title,
                                                   style: GoogleFont.ibmPlexSans(
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 16,
                                                   ),
                                                 ),
-                                                Spacer(),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    // Navigate to task detail if needed
-                                                  },
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        'View',
-                                                        style:
-                                                            GoogleFont.ibmPlexSans(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              color:
-                                                                  AppColor.blue,
-                                                            ),
-                                                      ),
-                                                      SizedBox(width: 5),
-                                                      Icon(
-                                                        Icons
-                                                            .arrow_forward_ios_outlined,
-                                                        color: AppColor.blue,
-                                                        size: 11,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-
-                                            Text(
-                                              task.description,
-                                              style: GoogleFont.ibmPlexSans(
-                                                fontSize: 12,
-                                                color: AppColor.grey,
                                               ),
-                                            ),
-                                            SizedBox(height: 10),
-                                            Divider(),
-                                            SizedBox(height: 6),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    'Assigned By: ${task.assignedByName}',
-                                                    style:
-                                                        GoogleFont.ibmPlexSans(
-                                                          fontSize: 12,
-                                                        ),
-                                                  ),
+                                              TextButton(
+                                                onPressed: () {},
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      'View',
+                                                      style:
+                                                          GoogleFont.ibmPlexSans(
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color:
+                                                                AppColor.blue,
+                                                          ),
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                    Icon(
+                                                      Icons
+                                                          .arrow_forward_ios_outlined,
+                                                      color: AppColor.blue,
+                                                      size: 11,
+                                                    ),
+                                                  ],
                                                 ),
-
-                                                Text(
-                                                  task.time
-                                                      .toString(), // format as needed
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            task.description,
+                                            style: GoogleFont.ibmPlexSans(
+                                              fontSize: 12,
+                                              color: AppColor.grey,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          const Divider(),
+                                          const SizedBox(height: 6),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  'Assigned By: ${task.assignedByName}',
                                                   style: GoogleFont.ibmPlexSans(
-                                                    color: AppColor.lowGrey,
                                                     fontSize: 12,
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
+                                              ),
+                                              Text(
+                                                DateFormat(
+                                                  'hh:mm a',
+                                                ).format(taskDate),
+                                                style: GoogleFont.ibmPlexSans(
+                                                  color: AppColor.lowGrey,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
-                                    );
-                                  })
-                                  .toList(),
-                        ),
+                                    ),
+                                  );
+                                }).toList(),
+                          );
+                        }),
                       ],
                     ),
                   ),

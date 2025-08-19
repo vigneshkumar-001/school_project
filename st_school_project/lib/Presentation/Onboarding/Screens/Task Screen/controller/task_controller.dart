@@ -19,14 +19,16 @@ class TaskController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    //getTaskDetails();
+    getTaskDetails();
   }
 
-  Future<String?> getTaskDetails() async {
+  Future<String?> getTaskDetails({DateTime? date, String? subject}) async {
     try {
       isLoading.value = true;
 
-      final results = await apiDataSource.getTaskDetails();
+      final results = await apiDataSource.getTaskDetails(
+       
+      );
 
       results.fold(
         (failure) {

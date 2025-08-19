@@ -4,7 +4,9 @@ class ApiUrl {
   static String login = '$baseUrl/student-auth/login';
   static String verifyOtp = '$baseUrl/student-auth/verify-otp';
   static String studentHome = '$baseUrl/student-home';
+  static String profiles = '$baseUrl/student-home/profiles';
   static String classList = '$baseUrl/teacher-student-attendance/class-list';
+  static String teacherInfo = '$baseUrl/student-teacher-info';
   static String task = '$baseUrl/student-home/tasks?';
   static String attendance =
       '$baseUrl/teacher-student-attendance/mark-attendance';
@@ -20,10 +22,15 @@ class ApiUrl {
     return '$baseUrl/teacher-student-attendance/attendance-by-date?class_id=$classId&date=$formattedDate';
   }
 
-
-
   static String getHomeWorkIdDetails({required int id}) {
     return '$baseUrl/student-home/homework/$id';
   }
 
+  static String switchSiblings({required int id}) {
+    return '$baseUrl/student-home/profiles/switch/$id';
+  }
+
+  static String getAttendanceMonth({required int month, required int year}) {
+    return '$baseUrl/student-home/monthly-attendance-by-student?year=$year&month=$month';
+  }
 }
