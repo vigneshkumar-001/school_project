@@ -49,7 +49,8 @@ class TeacherListController extends GetxController {
   Future<void> imageUpload({
     bool showLoader = true,
     File? frontImageFile,
-  }) async {
+  }) async
+  {
     try {
       String? frontImageUrl;
       if (showLoader) showPopupLoader();
