@@ -146,154 +146,173 @@ class _HomeScreenState extends State<HomeTab>
                     ),
                   ),
                   SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Text(
-                        'Switch Profile',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.black,
-                        ),
-                      ),
-                      Spacer(),
-                      InkWell(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                backgroundColor: AppColor.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    12,
-                                  ),
-                                ),
-                                title: Text(
-                                  'Log Out',
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                content: Text(
-                                  'Are you sure you want to log out?',
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text(
-                                      'Cancel',
-                                      style: GoogleFont.ibmPlexSans(fontWeight: FontWeight.w500,
-                                        color: AppColor.grey,
-                                      ),
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) =>
-                                                  ChangeMobileNumber(page: 'splash',),
-                                        ),
-                                      );
-                                    },
-                                    child: Text(
-                                      'Log Out',
-                                      style: GoogleFont.ibmPlexSans(
-                                        color: AppColor.lightRed,fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        child: Row(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                    child: Column(
+                      children: [
+                        Row(
                           children: [
-                            Image.asset(AppImages.logOut, height: 20),
-                            SizedBox(width: 15),
                             Text(
-                              'LogOut',
+                              'Switch Profile',
                               style: GoogleFont.ibmPlexSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800,
-                                color: AppColor.lightRed,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.black,
+                              ),
+                            ),
+                            Spacer(),
+                            InkWell(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      backgroundColor: AppColor.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      title: Text(
+                                        'Log out',
+                                        style: GoogleFont.ibmPlexSans(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      content: Text(
+                                        'Are you sure you want to log out?',
+                                        style: GoogleFont.ibmPlexSans(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text(
+                                            'Cancel',
+                                            style: GoogleFont.ibmPlexSans(
+                                              fontWeight: FontWeight.w500,
+                                              color: AppColor.grey,
+                                            ),
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            // close the dialog
+                                            Get.back();
+
+                                            // TODO: clear session/cache here
+
+                                            // remove all previous routes and go to splash/login
+                                            Get.offAll(
+                                                  () => ChangeMobileNumber(
+                                                page: 'splash',
+                                              ),
+                                            );
+                                          },
+                                          child: Text(
+                                            'Log out',
+                                            style: GoogleFont.ibmPlexSans(
+                                              color: AppColor.lightRed,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Logout',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w800,
+                                      color: AppColor.lightRed,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Image.asset(AppImages.logOut, height: 28),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 32),
-                  Row(
-                    children: [
-                      Image.asset(AppImages.moreSimage1, height: 58),
-                      SizedBox(width: 5),
-                      Text(
-                        'Anushka',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 18,
-                          color: AppColor.black,
-                        ),
-                      ),
-                      Spacer(),
-                      InkWell(
-                        onTap: () {},
-                        child: Image.asset(AppImages.rightArrow, height: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Image.asset(AppImages.moreSimage1, height: 58),
-                      SizedBox(width: 5),
-                      Text(
-                        'Swathi',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 18,
-                          color: AppColor.black,
-                        ),
-                      ),
-                      Spacer(),
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: AppColor.blue, width: 1),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 6,
-                            ),
-                            child: Text(
-                              'Active',
+                        SizedBox(height: 32),
+                        Row(
+                          children: [
+                            Image.asset(AppImages.moreSimage1, height: 58),
+                            SizedBox(width: 5),
+                            Text(
+                              'Anushka',
                               style: GoogleFont.ibmPlexSans(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.blue,
+                                fontSize: 18,
+                                color: AppColor.black,
                               ),
                             ),
-                          ),
+                            Spacer(),
+                            InkWell(
+                              onTap: () {},
+                              child: Image.asset(
+                                AppImages.rightArrow,
+                                height: 16,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      SizedBox(width: 7),
-                      InkWell(
-                        onTap: () {},
-                        child: Image.asset(AppImages.rightArrow, height: 16),
-                      ),
-                    ],
+                        SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Image.asset(AppImages.moreSimage1, height: 58),
+                            SizedBox(width: 5),
+                            Text(
+                              'Swathi',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 18,
+                                color: AppColor.black,
+                              ),
+                            ),
+                            Spacer(),
+                            InkWell(
+                              onTap: () {},
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: AppColor.blue,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 6,
+                                  ),
+                                  child: Text(
+                                    'Active',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColor.blue,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 7),
+                            InkWell(
+                              onTap: () {},
+                              child: Image.asset(
+                                AppImages.rightArrow,
+                                height: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
