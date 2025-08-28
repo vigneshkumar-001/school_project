@@ -73,56 +73,73 @@ class CustomContainer {
                         Text(
                           maxLines: 2,
                           mainText,
+                          overflow: TextOverflow.ellipsis,
                           softWrap: true,
                           style: GoogleFonts.inter(
-                            fontSize: 18,
+                            fontSize: 17,
                             fontWeight: FontWeight.bold,
                             color: AppColor.lightBlack,
                           ),
                         ),
+                        Row(
+                          children: [
+                            subText.toString().isEmpty
+                                ? Container()
+                                : Expanded(
+                                  child: Text(
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    subText ?? '',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColor.lightBlack,
+                                    ),
+                                  ),
+                                ),
+                            SizedBox(width: 40),
+                          ],
+                        ),
                       ],
                     ),
                   ),
+
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       CircleAvatar(radius: 25, child: Image.asset(avatarImage)),
 
-                      RichText(
-                        text: TextSpan(
-                          text: '\n$aText1',
-                          style: GoogleFonts.inter(
-                            fontSize: 10,
-                            color: AppColor.grey,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: '\n$aText2',
-                              style: GoogleFonts.inter(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.black,
-                              ),
+
+                      SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Text(
+                            CustomTextField.limitTo6(aText1),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              fontSize: 10,
+                              color: AppColor.grey,
                             ),
-                          ],
-                        ),
+
+                          ),
+                          Text(
+                            CustomTextField.limitTo6(aText2),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.black,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ],
               ),
 
-              SizedBox(height: 6),
-              subText.toString().isEmpty
-                  ? Container()
-                  : Text(
-                    subText ?? '',
-                    style: GoogleFonts.inter(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: AppColor.lightBlack,
-                    ),
-                  ),
               SizedBox(height: 6),
               Text(
                 smaleText,

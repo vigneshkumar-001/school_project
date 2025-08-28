@@ -37,229 +37,251 @@ class _TaskDetailState extends State<TaskDetail> {
         child: Obx(() {
           final homework = taskController.homeworkDetail.value;
 
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      CustomContainer.leftSaitArrow(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      SizedBox(width: 15),
-                      Text(
-                        'Homework Details',
-                        style: GoogleFont.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.lightBlack,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColor.lowLightYellow,
-                          AppColor.lowLightYellow.withOpacity(0.2),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 55),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 30),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Replace static images with dynamic if available
-                                Image.asset(AppImages.tdhs1),
-
-                                SizedBox(height: 20),
-                                Image.asset(AppImages.tdhs2),
-
-                                SizedBox(height: 20),
-                                Text(
-                                  homework?.title ?? '',
-                                  style: GoogleFont.inter(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 24,
-                                    color: AppColor.lightBlack,
-                                  ),
+                          Row(
+                            children: [
+                              CustomContainer.leftSaitArrow(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              SizedBox(width: 15),
+                              Text(
+                                'Homework Details',
+                                style: GoogleFont.inter(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColor.lightBlack,
                                 ),
-                                SizedBox(height: 15),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppColor.lowLightYellow,
+                                  AppColor.lowLightYellow.withOpacity(0.2),
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 55),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 30,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Replace static images with dynamic if available
+                                        Image.asset(AppImages.tdhs1),
+
+                                        SizedBox(height: 20),
+                                        Image.asset(AppImages.tdhs2),
+
+                                        SizedBox(height: 20),
+                                        Text(
+                                          homework?.title ?? '',
+                                          style: GoogleFont.inter(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 24,
+                                            color: AppColor.lightBlack,
+                                          ),
+                                        ),
+                                        SizedBox(height: 15),
+                                        Text(
+                                          homework?.description ?? '',
+                                          style: GoogleFont.inter(
+                                            fontSize: 12,
+                                            color: AppColor.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 15,
+                                        horizontal: 25,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: AppColor.black.withOpacity(
+                                                0.05,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(
+                                                8.0,
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  CircleAvatar(
+                                                    child: Image.asset(
+                                                      AppImages.avatar1,
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 10),
+                                                  Text(
+                                                    homework?.subject.name ??
+                                                        '',
+                                                    style: GoogleFont.inter(
+                                                      fontSize: 12,
+                                                      color:
+                                                          AppColor.lightBlack,
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 20),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(width: 20),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: AppColor.black.withOpacity(
+                                                0.05,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(10),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    CupertinoIcons.clock_fill,
+                                                    size: 35,
+                                                    color: AppColor.lightBlack
+                                                        .withOpacity(0.3),
+                                                  ),
+                                                  SizedBox(width: 10),
+                                                  Text(
+                                                    homework?.time ?? '',
+                                                    style: GoogleFont.inter(
+                                                      fontSize: 12,
+                                                      color:
+                                                          AppColor.lightBlack,
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 10),
+                                                  Text(
+                                                    homework?.date ?? '',
+                                                    style: GoogleFont.inter(
+                                                      fontSize: 12,
+                                                      color: AppColor.grey,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColor.lightGrey,
+                        border: Border.all(
+                          color: AppColor.lowLightBlue,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 7,
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  CupertinoIcons.left_chevron,
+                                  color: AppColor.grey,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 20),
                                 Text(
-                                  homework?.description ?? '',
-                                  style: GoogleFont.inter(
-                                    fontSize: 12,
+                                  '${homework?.classInfo.name ?? ''} - ${homework?.classInfo.section}',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
                                     color: AppColor.grey,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(height: 20),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 15,
-                                horizontal: 25,
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColor.black.withOpacity(0.05),
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        children: [
-                                          CircleAvatar(
-                                            child: Image.asset(
-                                              AppImages.avatar1,
-                                            ),
-                                          ),
-                                          SizedBox(width: 10),
-                                          Text(
-                                            homework?.subject.name ?? '',
-                                            style: GoogleFont.inter(
-                                              fontSize: 12,
-                                              color: AppColor.lightBlack,
-                                            ),
-                                          ),
-                                          SizedBox(width: 20),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 20),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColor.black.withOpacity(0.05),
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            CupertinoIcons.clock_fill,
-                                            size: 35,
-                                            color: AppColor.lightBlack
-                                                .withOpacity(0.3),
-                                          ),
-                                          SizedBox(width: 10),
-                                          Text(
-                                            homework?.time ?? '',
-                                            style: GoogleFont.inter(
-                                              fontSize: 12,
-                                              color: AppColor.lightBlack,
-                                            ),
-                                          ),
-                                          SizedBox(width: 10),
-                                          Text(
-                                            homework?.date ?? '',
-                                            style: GoogleFont.inter(
-                                              fontSize: 12,
-                                              color: AppColor.grey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  // Optional: class and section dynamically
-                  Row(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: AppColor.lightGrey,
-                          border: Border.all(
-                            color: AppColor.lowLightBlue,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
+                    SizedBox(width: 30),
+                    OutlinedButton(
+                      onPressed: () {},
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                         child: Row(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 7,
+                            Text(
+                              homework?.subject.name ?? '',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.black,
                               ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    CupertinoIcons.left_chevron,
-                                    color: AppColor.grey,
-                                    size: 20,
-                                  ),
-                                  SizedBox(width: 20),
-                                  Text(
-                                    '${homework?.classInfo.name ?? ''} - ${homework?.classInfo.section}',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColor.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            ),
+                            SizedBox(width: 30),
+                            Icon(
+                              CupertinoIcons.right_chevron,
+                              color: AppColor.grey,
+                              size: 20,
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(width: 30),
-                      OutlinedButton(
-                        onPressed: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          child: Row(
-                            children: [
-                              Text(
-                                homework?.subject.name ?? '',
-                                style: GoogleFont.ibmPlexSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColor.black,
-                                ),
-                              ),
-                              SizedBox(width: 30),
-                              Icon(
-                                CupertinoIcons.right_chevron,
-                                color: AppColor.grey,
-                                size: 20,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           );
         }),

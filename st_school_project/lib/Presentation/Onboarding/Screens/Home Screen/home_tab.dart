@@ -53,48 +53,6 @@ class _HomeScreenState extends State<HomeTab>
     'Social Science',
     'Maths',
   ];
-  final List<Map<String, dynamic>> tasks = [
-    {
-      'subject': 'Science',
-      'title': 'Science Homework',
-      'description':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit \nMaecenas laoreet ullamcorper nulla...',
-      'assignedBy': 'Flora',
-      'time': '4.35PM | 18.7.25',
-    },
-    {
-      'subject': 'Maths',
-      'title': 'Maths Homework',
-      'description':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit \nMaecenas laoreet ullamcorper nulla...',
-      'assignedBy': 'Mr. Singh',
-      'time': '3.15PM | 18.7.25',
-    },
-    {
-      'subject': 'English',
-      'title': 'English Homework',
-      'description':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit \nMaecenas laoreet ullamcorper nulla...',
-      'assignedBy': 'Mrs. Daisy',
-      'time': '2.45PM | 18.7.25',
-    },
-    {
-      'subject': 'Social Science',
-      'title': 'Social Science Homework',
-      'description':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit \nMaecenas laoreet ullamcorper nulla...',
-      'assignedBy': 'Mrs. Daisy',
-      'time': '2.45PM | 18.7.25',
-    },
-    {
-      'subject': 'Maths',
-      'title': 'Maths Homework',
-      'description':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit \nMaecenas laoreet ullamcorper nulla...',
-      'assignedBy': 'Mrs. Daisy',
-      'time': '2.45PM | 18.7.25',
-    },
-  ];
 
   PopupMenuItem<String> _buildMenuItem(String value) {
     final isSelected = value == selectedDay;
@@ -325,12 +283,7 @@ class _HomeScreenState extends State<HomeTab>
 
   @override
   Widget build(BuildContext context) {
-    final filteredTasks =
-        selectedSubject == 'All'
-            ? tasks
-            : tasks
-                .where((task) => task['subject'] == selectedSubject)
-                .toList();
+    super.build(context);
     final std = controller.studentHomeData.value;
     final announcement = std?.announcements[index];
     return Scaffold(

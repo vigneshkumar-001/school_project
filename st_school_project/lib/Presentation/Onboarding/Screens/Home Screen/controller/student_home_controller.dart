@@ -36,7 +36,7 @@ class StudentHomeController extends GetxController {
 
           AppLogger.log.i(response.message);
 
-          // Convert JSON to model
+
 
           studentHomeData.value = response.data; // assign to observable
 
