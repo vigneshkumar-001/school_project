@@ -774,16 +774,13 @@ class _TaskScreenState extends State<TaskScreen>
                                           );
                                         }
 
-
                                         const List<Color> colors = [
                                           AppColor.lowLightBlue,
                                           AppColor.lowLightYellow,
                                           AppColor.lowLightNavi,
                                           AppColor.white,
                                           AppColor.lowLightPink,
-
                                         ];
-
 
                                         final filteredTasks =
                                             taskController.tasks.where((task) {
@@ -822,8 +819,6 @@ class _TaskScreenState extends State<TaskScreen>
                                                     homeWorkImage: '',
                                                     avatarImage:
                                                         AppImages.avatar1,
-
-                                                
 
                                                     mainText: task.title,
 
