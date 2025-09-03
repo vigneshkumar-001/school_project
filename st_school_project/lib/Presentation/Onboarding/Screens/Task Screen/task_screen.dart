@@ -378,7 +378,7 @@ class _TaskScreenState extends State<TaskScreen>
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
-      'screen': QuizScreen(),
+      // 'screenBuilder': () => QuizScreen(quizId: 11),
     },
     {
       'subject': 'Science',

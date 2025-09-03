@@ -14,6 +14,8 @@ import '../Attendence Screen/attendence_screen.dart';
 import 'package:get/get.dart';
 
 import '../More Screen/change_mobile_number.dart';
+import '../More Screen/quiz_result.dart';
+import '../More Screen/quiz_screen.dart';
 import 'controller/student_home_controller.dart';
 import 'model/student_home_response.dart';
 
@@ -163,7 +165,7 @@ class _HomeScreenState extends State<HomeTab>
 
                                             // remove all previous routes and go to splash/login
                                             Get.offAll(
-                                                  () => ChangeMobileNumber(
+                                              () => ChangeMobileNumber(
                                                 page: 'splash',
                                               ),
                                             );
@@ -1507,7 +1509,14 @@ class _HomeScreenState extends State<HomeTab>
                                                 Spacer(),
                                                 TextButton(
                                                   onPressed: () {
-                                                    // Navigate to task detail if needed
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder:
+                                                            (context) =>
+                                                                QuizScreen(quizId: 26,),
+                                                      ),
+                                                    );
                                                   },
                                                   child: Row(
                                                     children: [
