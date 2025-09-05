@@ -867,12 +867,11 @@ class _QuizScreenState extends State<QuizScreen> {
 
                     // if (!isQuizCompleted)
                     Obx(() {
-                      final submitting =
-                          c.isSubmitting.value; // <-- reactive read in build
+                      final submitting = c.isSubmitting.value;
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 20),
                         child: IgnorePointer(
-                          ignoring: submitting, // disable taps while submitting
+                          ignoring: submitting,
                           child: AnimatedOpacity(
                             duration: const Duration(milliseconds: 200),
                             opacity: submitting ? 0.5 : 1.0,
@@ -881,36 +880,22 @@ class _QuizScreenState extends State<QuizScreen> {
                               onTap: () async {
                                 if (c.isSubmitting.isTrue) return;
 
-                                final result = await c.submitCurrent(
-                                  quizId: widget.quizId,
-                                );
-                                //
-                                // if (!mounted) return;
-                                //
-                                // if (result is QuizResultData) {
-                                //   Get.off(
-                                //     () => QuizResultScreen(data: result),
-                                //   ); // ✅ full result
-                                // }
-                                // // else {
-                                // //   Get.snackbar('Submit failed', result?.toString() ?? 'Unknown error');
-                                // // }
-                                // else {
-                                //   final msg = (result?.toString()?.trim().isNotEmpty == true)
-                                //       ? result.toString()
-                                //       : (c.lastError.value.isNotEmpty ? c.lastError.value : 'Unknown error');
-                                //   Get.snackbar(
-                                //     'Submit failed',
-                                //     msg,
-                                //     snackPosition: SnackPosition.TOP,
-                                //   );
-                                // }
+                                final err = await c.submitCurrent(quizId: widget.quizId);
+
+                                if (err != null && err.trim().isNotEmpty) {
+                                  Get.snackbar(
+                                    'Submit failed',
+                                    err,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  );
+                                }
                               },
                             ),
                           ),
                         ),
                       );
-                    }),
+                    })
+
 
                     // else
                     //   GestureDetector(

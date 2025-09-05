@@ -16,6 +16,16 @@ class TaskController extends GetxController {
   RxList<YourTask> tasks = <YourTask>[].obs;
   Rx<HomeworkIdDetail?> homeworkDetail = Rx<HomeworkIdDetail?>(null);
 
+  List<String> get subjectFilters {
+    final set = <String>{};
+    for (final t in tasks) {
+      final s = t.subject?.trim();
+      if (s != null && s.isNotEmpty) set.add(s);
+    }
+    final list = set.toList()..sort();
+    return ['All', ...list];
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -23,6 +33,7 @@ class TaskController extends GetxController {
   }
 
   Future<String?> getTaskDetails() async {
+    if (isLoading.value) return null;
     try {
       isLoading.value = true;
 
@@ -39,7 +50,6 @@ class TaskController extends GetxController {
           AppLogger.log.i("Tasks fetched: ${tasks.length}");
           AppLogger.log.i(response.message);
 
-          // Convert JSON to model
         },
       );
     } catch (e) {

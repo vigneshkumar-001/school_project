@@ -320,6 +320,8 @@ class QuizController extends GetxController {
     }
     return null;
   }
+
+
   /*  Future<dynamic> submitCurrent({required int quizId}) async {
     if (isSubmitting.value) return null;
     try {

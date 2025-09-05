@@ -1,6 +1,6 @@
 class ApiUrl {
-  static String baseUrl1 = 'https://school-back-end-594f59bea6cb.herokuapp.com';
-  static String baseUrl = 'https://9kt7pzw3-4000.inc1.devtunnels.ms';
+  static String baseUrl = 'https://school-back-end-594f59bea6cb.herokuapp.com';
+  static String baseUrl1 = 'https://9kt7pzw3-4000.inc1.devtunnels.ms';
 
   static String login = '$baseUrl/student-auth/login';
   static String verifyOtp = '$baseUrl/student-auth/verify-otp';
