@@ -7,6 +7,7 @@ class ApiUrl {
   static String studentHome = '$baseUrl/student-home';
   static String classList = '$baseUrl/teacher-student-attendance/class-list';
   static String task = '$baseUrl/student-home/tasks?';
+  static String announcementList = '$baseUrl/student-announcement/list';
   static String profileImage =
       '$baseUrl/student-home/profiles/profile-image-url';
 
