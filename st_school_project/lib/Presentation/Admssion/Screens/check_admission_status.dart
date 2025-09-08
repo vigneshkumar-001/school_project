@@ -436,6 +436,7 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                   AppButton.button(
                     text: 'Home Page',
                     onTap: () {
+                      HapticFeedback.heavyImpact();
                       Navigator.push(
                         context,
                         MaterialPageRoute(

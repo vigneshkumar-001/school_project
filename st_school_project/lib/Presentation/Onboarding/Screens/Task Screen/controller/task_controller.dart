@@ -19,16 +19,14 @@ class TaskController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getTaskDetails();
+    //getTaskDetails();
   }
 
-  Future<String?> getTaskDetails({DateTime? date, String? subject}) async {
+  Future<String?> getTaskDetails() async {
     try {
       isLoading.value = true;
 
-      final results = await apiDataSource.getTaskDetails(
-
-      );
+      final results = await apiDataSource.getTaskDetails();
 
       results.fold(
         (failure) {
@@ -54,18 +52,17 @@ class TaskController extends GetxController {
 
   Future<String?> homeWorkIdDetails({int? id, bool showLoader = true}) async {
     try {
-      homeworkDetail.value = null;
-      // if (showLoader) showPopupLoader(); // show popup loader
+      if (showLoader) showPopupLoader(); // show popup loader
 
       final results = await apiDataSource.getHomeWorkIdDetails(id: id);
 
       results.fold(
         (failure) {
-          // if (showLoader) hidePopupLoader(); // hide popup loader
+          if (showLoader) hidePopupLoader(); // hide popup loader
           AppLogger.log.e(failure.message);
         },
         (response) async {
-          // if (showLoader) hidePopupLoader();
+          if (showLoader) hidePopupLoader(); // hide popup loader
           homeworkDetail.value = response.data;
           AppLogger.log.i("Tasks fetched: ${tasks.length}");
           AppLogger.log.i(response.message);
@@ -74,7 +71,7 @@ class TaskController extends GetxController {
         },
       );
     } catch (e) {
-      // if (showLoader) hidePopupLoader(); // hide popup loader
+      if (showLoader) hidePopupLoader(); // hide popup loader
       AppLogger.log.e(e);
       return e.toString();
     }

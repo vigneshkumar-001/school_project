@@ -151,7 +151,7 @@ class Task {
     return Task(
       id: json['id'],
       title: json['title'],
-      description: json['description'],
+      description: json['description'] ?? '',
       date: DateTime.parse(json['date']),
       time: DateTime.parse(json['time']),
       assignedByName: json['assigned_by_name'],

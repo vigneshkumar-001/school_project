@@ -2,10 +2,10 @@ import 'package:get/get.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/controller/student_home_controller.dart';
 
 import 'Presentation/Onboarding/Screens/More Screen/Login_screen/controller/login_controller.dart';
-import 'Presentation/Onboarding/Screens/More Screen/profile_screen/controller/teacher_list_controller.dart';
 
-Future<void> initController() async {
+
+Future<void>  initController() async {
   Get.lazyPut(() => LoginController());
   Get.lazyPut(() => StudentHomeController());
-  Get.lazyPut(() => TeacherListController());
+
 }

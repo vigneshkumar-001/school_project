@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
@@ -35,6 +36,7 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
   String? errorText;
 
   void validateAndNavigate() {
+    HapticFeedback.heavyImpact();
     final areAllSelected = isChecked.every((value) => value);
     if (!areAllSelected) {
       setState(() => errorText = "");
