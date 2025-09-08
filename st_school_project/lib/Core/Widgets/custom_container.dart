@@ -109,7 +109,6 @@ class CustomContainer {
                     children: [
                       CircleAvatar(radius: 25, child: Image.asset(avatarImage)),
 
-
                       SizedBox(height: 4),
                       Row(
                         children: [
@@ -121,7 +120,6 @@ class CustomContainer {
                               fontSize: 10,
                               color: AppColor.grey,
                             ),
-
                           ),
                           Text(
                             CustomTextField.limitTo6(aText2),
@@ -517,6 +515,7 @@ class CustomContainer {
     );
   }
 
+  /*
   static Widget quizContainer({
     required String leftTextNumber,
     required String leftValue,
@@ -534,7 +533,7 @@ class CustomContainer {
           child: GestureDetector(
             onTap: leftOnTap,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               decoration: BoxDecoration(
                 gradient:
                     leftSelected
@@ -688,6 +687,249 @@ class CustomContainer {
                                     : AppColor.blue)
                                 : AppColor.black,
                       ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+*/
+
+  static Widget quizContainer({
+    required String leftTextNumber,
+    required String leftValue,
+    required String rightTextNumber,
+    required String rightValue,
+    required bool leftSelected,
+    required bool rightSelected,
+    required bool isQuizCompleted,
+    VoidCallback? leftOnTap,
+    VoidCallback? rightOnTap,
+  }) {
+    final bool leftIsPlaceholder =
+        (leftOnTap == null &&
+            leftTextNumber.trim().isEmpty &&
+            leftValue.trim().isEmpty);
+    final bool rightIsPlaceholder =
+        (rightOnTap == null &&
+            rightTextNumber.trim().isEmpty &&
+            rightValue.trim().isEmpty);
+
+    return Row(
+      children: [
+        // LEFT
+        Expanded(
+          child: GestureDetector(
+            onTap: leftIsPlaceholder ? null : leftOnTap,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              decoration: BoxDecoration(
+                gradient:
+                    leftIsPlaceholder
+                        ? null
+                        : (leftSelected
+                            ? const LinearGradient(
+                              colors: [Colors.white, Colors.white],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            )
+                            : null),
+                color:
+                    leftIsPlaceholder
+                        ? Colors.transparent
+                        : (leftSelected ? null : AppColor.lightGrey),
+                borderRadius: BorderRadius.circular(16),
+                border:
+                    leftIsPlaceholder
+                        ? null
+                        : Border.all(
+                          color:
+                              leftSelected
+                                  ? (isQuizCompleted
+                                      ? AppColor.greenMore1
+                                      : AppColor.blue)
+                                  : AppColor.lightGrey,
+                          width: leftSelected ? 3 : 1,
+                        ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child:
+                        leftIsPlaceholder
+                            ? const SizedBox.shrink()
+                            : CustomTextField.textWithSmall(
+                              text: leftTextNumber,
+                            ),
+                  ),
+                  Expanded(
+                    child:
+                        leftIsPlaceholder
+                            ? const SizedBox.shrink()
+                            : CustomTextField.textWithSmall(
+                              text: leftValue,
+                              fontWeight:
+                                  leftSelected
+                                      ? FontWeight.w800
+                                      : FontWeight.w500,
+                              color:
+                                  leftSelected
+                                      ? (isQuizCompleted
+                                          ? AppColor.greenMore1
+                                          : AppColor.blue)
+                                      : AppColor.black,
+                            ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        const SizedBox(width: 20),
+
+        // RIGHT
+        Expanded(
+          child: GestureDetector(
+            onTap: rightIsPlaceholder ? null : rightOnTap,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              decoration: BoxDecoration(
+                gradient:
+                    rightIsPlaceholder
+                        ? null
+                        : (rightSelected
+                            ? const LinearGradient(
+                              colors: [Colors.white, Colors.white],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            )
+                            : null),
+                color:
+                    rightIsPlaceholder
+                        ? Colors.transparent
+                        : (rightSelected ? null : AppColor.lightGrey),
+                borderRadius: BorderRadius.circular(16),
+                border:
+                    rightIsPlaceholder
+                        ? null
+                        : Border.all(
+                          color:
+                              rightSelected
+                                  ? (isQuizCompleted
+                                      ? AppColor.greenMore1
+                                      : AppColor.blue)
+                                  : AppColor.lightGrey,
+                          width: rightSelected ? 3 : 1,
+                        ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child:
+                        rightIsPlaceholder
+                            ? const SizedBox.shrink()
+                            : CustomTextField.textWithSmall(
+                              text: rightTextNumber,
+                            ),
+                  ),
+                  Expanded(
+                    child:
+                        rightIsPlaceholder
+                            ? const SizedBox.shrink()
+                            : CustomTextField.textWithSmall(
+                              text: rightValue,
+                              fontWeight:
+                                  rightSelected
+                                      ? FontWeight.w800
+                                      : FontWeight.w500,
+                              color:
+                                  rightSelected
+                                      ? (isQuizCompleted
+                                          ? AppColor.greenMore1
+                                          : AppColor.blue)
+                                      : AppColor.black,
+                            ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  static Widget quizContainer1({
+    required String leftTextNumber,
+    required String leftValue,
+    required bool isSelected,
+    VoidCallback? onTap,
+    required bool isQuizCompleted,
+  }) {
+    final bool isPlaceholder =
+        (onTap == null &&
+            leftTextNumber.trim().isEmpty &&
+            leftValue.trim().isEmpty);
+
+    return GestureDetector(
+      onTap: isPlaceholder ? null : onTap,
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              decoration: BoxDecoration(
+                color:
+                    isPlaceholder
+                        ? Colors.transparent
+                        : (isSelected ? Colors.white : AppColor.lightGrey),
+                borderRadius: BorderRadius.circular(16),
+                border:
+                    isPlaceholder
+                        ? null
+                        : Border.all(
+                          color:
+                              isSelected
+                                  ? (isQuizCompleted
+                                      ? AppColor.greenMore1
+                                      : AppColor.blue)
+                                  : AppColor.lightGrey,
+                          width: isSelected ? 3 : 1,
+                        ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child:
+                          isPlaceholder
+                              ? const SizedBox.shrink()
+                              : CustomTextField.textWithSmall(
+                                text: leftTextNumber,
+                                color: AppColor.grayop,
+                              ),
+                    ),
+                    Expanded(
+                      flex: 6,
+                      child:
+                          isPlaceholder
+                              ? const SizedBox.shrink()
+                              : CustomTextField.textWithSmall(
+                                text: leftValue,
+                                color:
+                                    isSelected
+                                        ? (isQuizCompleted
+                                            ? AppColor.greenMore1
+                                            : AppColor.blue)
+                                        : AppColor.black,
+                              ),
                     ),
                   ],
                 ),

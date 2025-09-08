@@ -6,12 +6,6 @@ import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
-import 'package:st_school_project/Presentation/Admssion/Screens/admission_1.dart';
-import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/home_screen.dart';
-import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/home_tab.dart';
-import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen.dart';
-import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/quiz_screen.dart';
-
 import '../../../../Core/Utility/app_color.dart';
 import '../../../../Core/Utility/app_loader.dart';
 import '../../../../Core/Utility/google_font.dart';
