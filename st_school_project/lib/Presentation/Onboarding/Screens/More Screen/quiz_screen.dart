@@ -845,7 +845,7 @@ class _QuizScreenState extends State<QuizScreen> {
             Obx(() {
               final quiz = c.quizRx.value;
               if (c.loadQuizLoading.value) {
-                return Center(child: AppLoader.circularLoader(AppColor.blue));
+                return Center(child: AppLoader.circularLoader( ));
               }
 
               if (quiz == null) {
@@ -926,7 +926,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       ? Container(
                         color: Colors.black.withOpacity(0.15),
                         child: Center(
-                          child: AppLoader.circularLoader(AppColor.blue),
+                          child: AppLoader.circularLoader( ),
                         ),
                       )
                       : const SizedBox.shrink(),

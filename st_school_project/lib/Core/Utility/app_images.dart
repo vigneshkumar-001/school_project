@@ -17,6 +17,8 @@ class AppImages {
   static String avatar1 = 'assets/images/Avatar1.png';
   static String avatar2 = 'assets/images/Avatar2.png';
   static String avatar3 = 'assets/images/Avatar3.png';
+  static String Morning1= 'assets/images/Morning1.png';
+  static String Afternoon1= 'assets/images/Afternoon1.png';
   static String avatar4 = 'assets/images/Avatar4.png';
   static String jbg = 'assets/images/jbg.png';
   static String tdhs1 = 'assets/images/TDHS1.png';
@@ -84,4 +86,6 @@ class AppImages {
   static String receiptNo= 'assets/images/ReceiptNo.png';
   static String timeImage= 'assets/images/TimeImage.png';
   static String profilePicture= 'assets/images/Profile Picture.png';
+  static String attendanceTick= 'assets/images/attendanceTick.png';
+  static String attendanceAbsent= 'assets/images/attendanceAbsent.png';
 }
