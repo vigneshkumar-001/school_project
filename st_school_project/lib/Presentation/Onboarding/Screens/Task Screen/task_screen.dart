@@ -2287,16 +2287,47 @@ class _TaskScreenState extends State<TaskScreen>
                                             CrossAxisAlignment.start,
                                         children: [
                                           Obx(() {
-                                            // Generate dynamic subjects from tasks
-                                            final subjects = <String>{'All'};
-                                            subjects.addAll(
-                                              taskController.tasks.map(
-                                                (t) => t.subject,
-                                              ),
-                                            );
+                                            // 1. Filter tasks by selectedDate first
+                                            final tasksForDate =
+                                                taskController.tasks.where((
+                                                  task,
+                                                ) {
+                                                  final taskDate =
+                                                      DateTime.parse(
+                                                        task.time.toString(),
+                                                      );
+                                                  return taskDate.year ==
+                                                          selectedDate.year &&
+                                                      taskDate.month ==
+                                                          selectedDate.month &&
+                                                      taskDate.day ==
+                                                          selectedDate.day;
+                                                }).toList();
+
+                                            // 2. Build subjects only from tasksForDate
+                                            final subjects = <String>{};
+                                            if (tasksForDate.isNotEmpty) {
+                                              subjects.add('All');
+                                              subjects.addAll(
+                                                tasksForDate.map(
+                                                  (t) => t.subject,
+                                                ),
+                                              );
+                                            }
                                             final subjectList =
                                                 subjects.toList();
 
+                                            // if (subjectList.isEmpty) {
+                                            //   return const Padding(
+                                            //     padding: EdgeInsets.all(16),
+                                            //     child: Text(
+                                            //       'No tasks available',
+                                            //       style: TextStyle(color: Colors.grey),
+                                            //     ),
+                                            //   );
+                                            // }
+
+                                            // 3. Subject filter row
                                             return SingleChildScrollView(
                                               scrollDirection: Axis.horizontal,
                                               child: Row(
@@ -2370,6 +2401,7 @@ class _TaskScreenState extends State<TaskScreen>
                                               ),
                                             );
                                           }),
+
                                           const SizedBox(height: 20),
                                           Expanded(
                                             child: Obx(() {
