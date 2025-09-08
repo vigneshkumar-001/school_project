@@ -120,8 +120,6 @@ class TaskController extends GetxController {
 }
 */
 
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
@@ -150,16 +148,14 @@ class TaskController extends GetxController {
     try {
       isLoading.value = true;
 
-      final results = await apiDataSource.getTaskDetails(
-
-      );
+      final results = await apiDataSource.getTaskDetails();
 
       results.fold(
-            (failure) {
+        (failure) {
           isLoading.value = false;
           AppLogger.log.e(failure.message);
         },
-            (response) async {
+        (response) async {
           isLoading.value = false;
           tasks.value = response.data;
           AppLogger.log.i("Tasks fetched: ${tasks.length}");
@@ -184,11 +180,11 @@ class TaskController extends GetxController {
       final results = await apiDataSource.getHomeWorkIdDetails(id: id);
 
       results.fold(
-            (failure) {
+        (failure) {
           // if (showLoader) hidePopupLoader(); // hide popup loader
           AppLogger.log.e(failure.message);
         },
-            (response) async {
+        (response) async {
           // if (showLoader) hidePopupLoader();
           homeworkDetail.value = response.data;
           AppLogger.log.i("Tasks fetched: ${tasks.length}");

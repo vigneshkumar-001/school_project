@@ -51,9 +51,10 @@ class StudentHomeData {
       className: json['class'],
       section: json['section'],
       attendance: Attendance.fromJson(json['attendance']),
-      announcements: (json['announcements'] as List)
-          .map((e) => Announcement.fromJson(e))
-          .toList(),
+      announcements:
+          (json['announcements'] as List)
+              .map((e) => Announcement.fromJson(e))
+              .toList(),
       tasks: (json['tasks'] as List).map((e) => Task.fromJson(e)).toList(),
     );
   }
@@ -75,16 +76,10 @@ class Attendance {
   Attendance({required this.morning, required this.afternoon});
 
   factory Attendance.fromJson(Map<String, dynamic> json) {
-    return Attendance(
-      morning: json['morning'],
-      afternoon: json['afternoon'],
-    );
+    return Attendance(morning: json['morning'], afternoon: json['afternoon']);
   }
 
-  Map<String, dynamic> toJson() => {
-    'morning': morning,
-    'afternoon': afternoon,
-  };
+  Map<String, dynamic> toJson() => {'morning': morning, 'afternoon': afternoon};
 }
 
 class Announcement {
@@ -156,7 +151,7 @@ class Task {
     return Task(
       id: json['id'],
       title: json['title'],
-      description: json['description'],
+      description: json['description'] ?? '',
       date: DateTime.parse(json['date']),
       time: DateTime.parse(json['time']),
       assignedByName: json['assigned_by_name'],

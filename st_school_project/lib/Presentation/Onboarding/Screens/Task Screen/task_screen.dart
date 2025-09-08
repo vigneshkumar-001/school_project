@@ -1808,9 +1808,6 @@ class _TaskScreenState extends State<TaskScreen>
   }
 }*/
 
-
-
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
@@ -1819,6 +1816,7 @@ import 'package:intl/intl.dart' show DateFormat;
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/app_loader.dart';
+import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/swicth_profile_sheet.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/controller/task_controller.dart';
@@ -1847,7 +1845,7 @@ class _TaskScreenState extends State<TaskScreen>
 
   final List<String> months = List.generate(
     12,
-        (index) => DateFormat.MMMM().format(DateTime(0, index + 6)),
+    (index) => DateFormat.MMMM().format(DateTime(0, index + 6)),
   );
 
   List<Map<String, dynamic>> getFullMonthDates(DateTime currentMonth) {
@@ -1916,24 +1914,24 @@ class _TaskScreenState extends State<TaskScreen>
       context: context,
       builder:
           (_) => ListView.builder(
-        itemCount: months.length,
-        itemBuilder: (_, index) {
-          return ListTile(
-            title: Text(months[index]),
-            onTap: () {
-              setState(() {
-                currentMonth = DateTime(DateTime.now().year, index + 6);
-                selectedDate = DateTime(
-                  currentMonth.year,
-                  currentMonth.month,
-                  1,
-                );
-              });
-              Navigator.pop(context);
+            itemCount: months.length,
+            itemBuilder: (_, index) {
+              return ListTile(
+                title: Text(months[index]),
+                onTap: () {
+                  setState(() {
+                    currentMonth = DateTime(DateTime.now().year, index + 6);
+                    selectedDate = DateTime(
+                      currentMonth.year,
+                      currentMonth.month,
+                      1,
+                    );
+                  });
+                  Navigator.pop(context);
+                },
+              );
             },
-          );
-        },
-      ),
+          ),
     );
   }
 
@@ -2132,17 +2130,17 @@ class _TaskScreenState extends State<TaskScreen>
                           // Check if this date is selected
                           final isSelected =
                               selectedDate.year == date.year &&
-                                  selectedDate.month == date.month &&
-                                  selectedDate.day == date.day;
+                              selectedDate.month == date.month &&
+                              selectedDate.day == date.day;
 
                           // Count tasks for this date
-                          final tasksForDate = taskController.tasks.where((task) {
-                            final taskDate = task.date; // already DateTime
-                            return taskDate.year == date.year &&
-                                taskDate.month == date.month &&
-                                taskDate.day == date.day;
-                          }).toList();
-
+                          final tasksForDate =
+                              taskController.tasks.where((task) {
+                                final taskDate = task.date; // already DateTime
+                                return taskDate.year == date.year &&
+                                    taskDate.month == date.month &&
+                                    taskDate.day == date.day;
+                              }).toList();
 
                           return GestureDetector(
                             onTap: () {
@@ -2153,12 +2151,13 @@ class _TaskScreenState extends State<TaskScreen>
                             },
                             child: Container(
                               width: 57,
-                              decoration: isSelected
-                                  ? BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(30),
-                              )
-                                  : null,
+                              decoration:
+                                  isSelected
+                                      ? BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(30),
+                                      )
+                                      : null,
                               alignment: Alignment.center,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -2166,19 +2165,24 @@ class _TaskScreenState extends State<TaskScreen>
                                   Text(
                                     item['day'],
                                     style: GoogleFont.ibmPlexSans(
-                                      color: isSelected ? Colors.blue : Colors.white,
+                                      color:
+                                          isSelected
+                                              ? Colors.blue
+                                              : Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   Text(
                                     item['date'].toString(),
                                     style: GoogleFont.ibmPlexSans(
-                                      color: isSelected ? Colors.blue : Colors.white,
+                                      color:
+                                          isSelected
+                                              ? Colors.blue
+                                              : Colors.white,
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-
                                 ],
                               ),
                             ),
@@ -2247,15 +2251,15 @@ class _TaskScreenState extends State<TaskScreen>
                                                 SwitchProfileSheet.show(
                                                   context,
                                                   students:
-                                                  controller.siblingsList,
+                                                      controller.siblingsList,
                                                   selectedStudent:
-                                                  controller
-                                                      .selectedStudent,
+                                                      controller
+                                                          .selectedStudent,
                                                   onSwitch: (student) async {
                                                     await controller
                                                         .switchSiblings(
-                                                      id: student.id,
-                                                    );
+                                                          id: student.id,
+                                                        );
                                                     controller.selectStudent(
                                                       student,
                                                     );
@@ -2280,89 +2284,89 @@ class _TaskScreenState extends State<TaskScreen>
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Obx(() {
                                             // Generate dynamic subjects from tasks
                                             final subjects = <String>{'All'};
                                             subjects.addAll(
                                               taskController.tasks.map(
-                                                    (t) => t.subject,
+                                                (t) => t.subject,
                                               ),
                                             );
                                             final subjectList =
-                                            subjects.toList();
+                                                subjects.toList();
 
                                             return SingleChildScrollView(
                                               scrollDirection: Axis.horizontal,
                                               child: Row(
                                                 children:
-                                                subjectList.map((subject) {
-                                                  final isSelected =
-                                                      selectedSubject ==
+                                                    subjectList.map((subject) {
+                                                      final isSelected =
+                                                          selectedSubject ==
                                                           subject;
-                                                  return Padding(
-                                                    padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                    ),
-                                                    child: ElevatedButton(
-                                                      style: ButtonStyle(
-                                                        elevation:
-                                                        MaterialStateProperty.all(
-                                                          0,
-                                                        ),
-                                                        backgroundColor:
-                                                        MaterialStateProperty.all(
-                                                          isSelected
-                                                              ? AppColor
-                                                              .white
-                                                              : AppColor
-                                                              .lightGrey,
-                                                        ),
-                                                        side: MaterialStateProperty.all(
-                                                          BorderSide(
-                                                            color:
-                                                            isSelected
-                                                                ? AppColor
-                                                                .black
-                                                                : AppColor
-                                                                .lightGrey,
-                                                            width: 2,
+                                                      return Padding(
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 8,
+                                                            ),
+                                                        child: ElevatedButton(
+                                                          style: ButtonStyle(
+                                                            elevation:
+                                                                MaterialStateProperty.all(
+                                                                  0,
+                                                                ),
+                                                            backgroundColor:
+                                                                MaterialStateProperty.all(
+                                                                  isSelected
+                                                                      ? AppColor
+                                                                          .white
+                                                                      : AppColor
+                                                                          .lightGrey,
+                                                                ),
+                                                            side: MaterialStateProperty.all(
+                                                              BorderSide(
+                                                                color:
+                                                                    isSelected
+                                                                        ? AppColor
+                                                                            .black
+                                                                        : AppColor
+                                                                            .lightGrey,
+                                                                width: 2,
+                                                              ),
+                                                            ),
+                                                            shape: MaterialStateProperty.all(
+                                                              RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                      20,
+                                                                    ),
+                                                              ),
+                                                            ),
                                                           ),
-                                                        ),
-                                                        shape: MaterialStateProperty.all(
-                                                          RoundedRectangleBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(
-                                                              20,
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              selectedSubject =
+                                                                  subject;
+                                                            });
+                                                          },
+                                                          child: Text(
+                                                            subject,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  isSelected
+                                                                      ? AppColor
+                                                                          .black
+                                                                      : AppColor
+                                                                          .grey,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          selectedSubject =
-                                                              subject;
-                                                        });
-                                                      },
-                                                      child: Text(
-                                                        subject,
-                                                        style: TextStyle(
-                                                          color:
-                                                          isSelected
-                                                              ? AppColor
-                                                              .black
-                                                              : AppColor
-                                                              .grey,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                }).toList(),
+                                                      );
+                                                    }).toList(),
                                               ),
                                             );
                                           }),
@@ -2374,7 +2378,7 @@ class _TaskScreenState extends State<TaskScreen>
                                                   .value) {
                                                 return const Center(
                                                   child:
-                                                  CircularProgressIndicator(),
+                                                      CircularProgressIndicator(),
                                                 );
                                               }
 
@@ -2387,30 +2391,30 @@ class _TaskScreenState extends State<TaskScreen>
                                               ];
 
                                               final filteredTasks =
-                                              taskController.tasks.where((
-                                                  task,
+                                                  taskController.tasks.where((
+                                                    task,
                                                   ) {
-                                                final taskDate = DateTime.parse(
-                                                  task.time.toString(),
-                                                ); // convert ISO string to DateTime
-                                                final isSameDate =
-                                                    taskDate.year ==
-                                                        selectedDate.year &&
+                                                    final taskDate = DateTime.parse(
+                                                      task.time.toString(),
+                                                    ); // convert ISO string to DateTime
+                                                    final isSameDate =
+                                                        taskDate.year ==
+                                                            selectedDate.year &&
                                                         taskDate.month ==
                                                             selectedDate
                                                                 .month &&
                                                         taskDate.day ==
                                                             selectedDate.day;
 
-                                                final isSameSubject =
-                                                    selectedSubject ==
-                                                        'All' ||
+                                                    final isSameSubject =
+                                                        selectedSubject ==
+                                                            'All' ||
                                                         task.subject ==
                                                             selectedSubject;
 
-                                                return isSameDate &&
-                                                    isSameSubject;
-                                              }).toList();
+                                                    return isSameDate &&
+                                                        isSameSubject;
+                                                  }).toList();
 
                                               if (filteredTasks.isEmpty) {
                                                 return const Center(
@@ -2420,64 +2424,106 @@ class _TaskScreenState extends State<TaskScreen>
                                                 );
                                               }
 
-                                              return SingleChildScrollView(
-                                                controller: _scrollController,
-                                                child: Column(
-                                                  children:
-                                                  filteredTasks.asMap().entries.map<
-                                                      Widget
-                                                  >((entry) {
-                                                    final index = entry.key;
-                                                    final task =
-                                                        entry.value;
-                                                    final bgColor =
-                                                    colors[index %
-                                                        colors.length];
+                                              return RefreshIndicator(
+                                                onRefresh: () async {
+                                                  await taskController
+                                                      .getTaskDetails(); // call your reload API
+                                                },
+                                                child: SingleChildScrollView(
+                                                  controller: _scrollController,
+                                                  physics:
+                                                      const AlwaysScrollableScrollPhysics(),
+                                                  child: Column(
+                                                    children:
+                                                        filteredTasks.asMap().entries.map<
+                                                          Widget
+                                                        >((entry) {
+                                                          final index =
+                                                              entry.key;
+                                                          final task =
+                                                              entry.value;
+                                                          final bgColor =
+                                                              colors[index %
+                                                                  colors
+                                                                      .length];
 
-                                                    return CustomContainer.taskScreen(
-                                                      mainText: task.title,
-                                                      subText:
-                                                      task.description,
-                                                      homeWorkText:
-                                                      task.subject,
-                                                      avatarImage:
-                                                      AppImages
-                                                          .avatar1, // provide avatar if needed
-                                                      smaleText: task.type,
-                                                      time:
-                                                      DateAndTimeConvert.formatDateTime(
-                                                        task.time
-                                                            .toString(),
-                                                        showDate: false,
-                                                        showTime: true,
-                                                      ),
-                                                      aText1: 'By ',
-                                                      aText2:
-                                                      task.assignedByName,
-                                                      backRoundColor:
-                                                      bgColor,
-                                                      gradient:
-                                                      LinearGradient(
-                                                        colors: [
-                                                          Colors.black,
-                                                          Colors.black,
-                                                        ],
-                                                      ),
-                                                      onIconTap: () {
-                                                        // Navigator.push(
-                                                        //   context,
-                                                        //   MaterialPageRoute(
-                                                        //     builder:
-                                                        //         (
-                                                        //         context,
-                                                        //         ) => TaskDetail(
-                                                        //       id: task.id,
-                                                        //     ),
-                                                        //   ),
-                                                        // );
-                                                      },
-                                                    );
-                                                  }).toList(),
+                                                          return CustomContainer.taskScreen(
+                                                            homeWorkImage:
+                                                                task.type ==
+                                                                        'Quiz'
+                                                                    ? AppImages
+                                                                        .taskScreenCont1
+                                                                    : null,
+                                                            mainText:
+                                                                task.title,
+                                                            subText:
+                                                                task.description,
+                                                            homeWorkText:
+                                                                task.subject,
+                                                            avatarImage:
+                                                                AppImages
+                                                                    .avatar1, // provide avatar if needed
+                                                            smaleText:
+                                                                task.type,
+                                                            time: DateAndTimeConvert.formatDateTime(
+                                                              task.time
+                                                                  .toString(),
+                                                              showDate: false,
+                                                              showTime: true,
+                                                            ),
+                                                            aText1: 'By ',
+                                                            aText2:
+                                                                task.assignedByName,
+                                                            backRoundColor:
+                                                                bgColor,
+                                                            gradient:
+                                                                LinearGradient(
+                                                                  colors: [
+                                                                    Colors
+                                                                        .black,
+                                                                    Colors
+                                                                        .black,
+                                                                  ],
+                                                                ),
+                                                            onIconTap: () {
+                                                              AppLogger.log.i(
+                                                                task.id,
+                                                              );
+                                                              AppLogger.log.i(
+                                                                task.type,
+                                                              );
+                                                              if (task.type ==
+                                                                  'Quiz') {
+                                                                Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (
+                                                                          context,
+                                                                        ) => QuizScreen(
+                                                                          quizId:
+                                                                              task.id,
+                                                                        ),
+                                                                  ),
+                                                                );
+                                                              } else {
+                                                                Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (
+                                                                          context,
+                                                                        ) => TaskDetail(
+                                                                          id:
+                                                                              task.id,
+                                                                        ),
+                                                                  ),
+                                                                );
+                                                              }
+                                                            },
+                                                          );
+                                                        }).toList(),
+                                                  ),
                                                 ),
                                               );
                                             }),

@@ -297,7 +297,7 @@ class QuizController extends GetxController {
   }
 
   // Submit quiz
-  Future<QuizResultData?> submitCurrent({required int quizId}) async {
+  /*  Future<QuizResultData?> submitCurrent({required int quizId}) async {
     if (isSubmitting.value) return null; // guard double taps
     isSubmitting.value = true;
     lastError.value = '';
@@ -337,8 +337,8 @@ class QuizController extends GetxController {
     } finally {
       isSubmitting.value = false;
     }
-  }
-  /*  Future<dynamic> submitCurrent({required int quizId}) async {
+  }*/
+  Future<dynamic> submitCurrent({required int quizId}) async {
     if (isSubmitting.value) return null;
     try {
       isSubmitting.value = true;
@@ -354,11 +354,18 @@ class QuizController extends GetxController {
       final submitErr = await subEither.fold<String?>(
         (failure) {
           final msg = failure.message;
+          Get.snackbar(
+            'Submit failed',
+            failure.message,
+            snackPosition: SnackPosition.TOP,
+          );
           lastError.value = msg;
           debugPrint('ERROR submit: $msg');
           return msg;
         },
         (resp) {
+          AppLogger.log.i("Quiz Created");
+
           submitRx.value = resp.data; // score/total (minimal)
           _stopTimer();
           return null;
@@ -367,15 +374,34 @@ class QuizController extends GetxController {
       if (submitErr != null) return submitErr; // ❌ failed
 
       // 2) Load FULL result for UI
-      final resEither = await apiDataSource.loadQuizResult(quizId: quizId);
-      return resEither.fold<dynamic>(
+      final results = await apiDataSource.loadQuizResult(quizId: quizId);
+      return results.fold<dynamic>(
         (failure) {
-          AppLogger.log.e('ERROR result: ${failure.message}');
-          return failure.message; // ❌ failed to fetch result
+          // ✅ Directly show only API "message"
+          final msg = failure.message;
+          lastError.value = msg;
+
+          // Clear any old snackbar before showing new one
+          if (Get.isSnackbarOpen) {
+            Get.closeCurrentSnackbar();
+          }
+
+          Get.snackbar(
+            'Error',
+            msg,
+            snackPosition: SnackPosition.TOP,
+
+            duration: const Duration(seconds: 3),
+          );
+
+          debugPrint('❌ API Error: $msg');
+          return msg;
         },
         (response) {
+          Get.off(() => QuizResultScreen(data: response.data));
           quizResult.value = response.data;
-          AppLogger.log.i(response.message);
+          AppLogger.log.i("Quiz Created");
+          AppLogger.log.i("Quiz Created  = ${response.message}");
           return response; // ✅ return full result object
         },
       );
@@ -387,7 +413,7 @@ class QuizController extends GetxController {
     } finally {
       isSubmitting.value = false;
     }
-  }*/
+  }
 
   // Selection helpers
   void selectOption({required int questionId, required int optionId}) {

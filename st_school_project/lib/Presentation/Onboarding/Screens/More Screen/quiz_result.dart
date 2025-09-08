@@ -445,31 +445,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _header(context, d, pct),
-              const SizedBox(height: 8),
-
-              // simple stateful toggle (optional)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Row(
-                  children: [
-                    const Icon(CupertinoIcons.checkmark_seal),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Show only correct answers',
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.lightBlack,
-                      ),
-                    ),
-                    const Spacer(),
-                    Switch(
-                      value: showOnlyCorrect,
-                      onChanged: (v) => setState(() => showOnlyCorrect = v),
-                    ),
-                  ],
-                ),
-              ),
+              const SizedBox(height: 20),
 
               const SizedBox(height: 12),
               Padding(

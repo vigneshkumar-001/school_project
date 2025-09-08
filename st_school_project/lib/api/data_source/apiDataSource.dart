@@ -222,33 +222,31 @@ class ApiDataSource extends BaseApiDataSource {
   }) async {
     try {
       final String url = ApiUrl.quizSubmit;
+      final Map<String, dynamic> body = {'quizId': quizId, 'answers': answers};
 
-      // If your backend requires snake_case, change keys here accordingly.
-      final Map<String, dynamic> body = {
-        'quizId': quizId, // or 'quiz_id'
-        'answers': answers, // list of {questionId, optionId}
-      };
-
-      // IMPORTANT: send the body (and use correct HTTP verb casing if required)
       final response = await Request.sendRequest(url, body, 'POST', true);
       AppLogger.log.i(response);
 
-      // Handle Dio responses the way your helper returns them
       if (response is! DioException &&
-          (response.statusCode == 200 || response.statusCode == 201)) {
+          (response.statusCode == 200 ||
+              response.statusCode == 201 ||
+              response.statusCode == 400)) {
         final data = response.data;
-        if (data is Map && data['status'] == true) {
-          return Right(QuizSubmit.fromJson(Map<String, dynamic>.from(data)));
+
+        if (data is Map<String, dynamic>) {
+          final quizSubmit = QuizSubmit.fromJson(data);
+
+          if (quizSubmit.status) {
+            return Right(quizSubmit);
+          } else {
+            // ❌ error from backend but still parse message
+            return Left(ServerFailure(quizSubmit.message));
+          }
         } else {
-          return Left(
-            ServerFailure(
-              (data is Map ? data['message'] : null) ??
-                  'Unknown server message',
-            ),
-          );
+          return Left(ServerFailure('Invalid response format'));
         }
       } else if (response is DioException) {
-        return Left(ServerFailure(response.message ?? 'Dio Error'));
+        return Left(ServerFailure(response.message ?? 'Dio error'));
       } else {
         return Left(ServerFailure('Unknown error'));
       }
@@ -310,6 +308,7 @@ class ApiDataSource extends BaseApiDataSource {
       return Left(ServerFailure(e.toString()));
     }
   }
+
   Future<Either<Failure, SiblingsListResponse>> getSiblingsDetails() async {
     try {
       String url = ApiUrl.profiles;
@@ -334,6 +333,4 @@ class ApiDataSource extends BaseApiDataSource {
       return Left(ServerFailure(e.toString()));
     }
   }
-
-
 }

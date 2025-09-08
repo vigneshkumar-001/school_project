@@ -806,7 +806,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
+import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
+import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/quiz_result.dart';
@@ -842,8 +844,8 @@ class _QuizScreenState extends State<QuizScreen> {
           children: [
             Obx(() {
               final quiz = c.quizRx.value;
-              if (c.loadQuizLoading.value  ) {
-                return const Center(child: CircularProgressIndicator());
+              if (c.loadQuizLoading.value) {
+                return Center(child: AppLoader.circularLoader(AppColor.blue));
               }
 
               if (quiz == null) {
@@ -880,29 +882,17 @@ class _QuizScreenState extends State<QuizScreen> {
                               onTap: () async {
                                 if (c.isSubmitting.isTrue) return;
 
-                                final result = await c.submitCurrent(quizId: widget.quizId);
+                                await c.submitCurrent(
+                                  quizId: widget.quizId,
+                                );
 
-                                if (result == null) {
-                                  final msg = c.lastError.value.isNotEmpty
-                                      ? c.lastError.value
-                                      : 'Submit failed';
-                                  Get.snackbar('Submit failed', msg,
-                                      snackPosition: SnackPosition.BOTTOM);
-                                  return;
-                                }
 
-                                Get.off(() => QuizResultScreen(data: result));
                               },
                             ),
                           ),
                         ),
                       );
-                    })
-
-
-
-
-
+                    }),
 
                     // else
                     //   GestureDetector(
@@ -935,7 +925,9 @@ class _QuizScreenState extends State<QuizScreen> {
                   c.isSubmitting.value
                       ? Container(
                         color: Colors.black.withOpacity(0.15),
-                        child: const Center(child: CircularProgressIndicator()),
+                        child: Center(
+                          child: AppLoader.circularLoader(AppColor.blue),
+                        ),
                       )
                       : const SizedBox.shrink(),
             ),
