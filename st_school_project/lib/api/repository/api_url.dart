@@ -1,12 +1,17 @@
 class ApiUrl {
   static String baseUrl = 'https://school-back-end-594f59bea6cb.herokuapp.com';
   static String baseUrl1 = 'https://9kt7pzw3-4000.inc1.devtunnels.ms';
-
+  static String teacherInfo = '$baseUrl/student-teacher-info';
   static String login = '$baseUrl/student-auth/login';
   static String verifyOtp = '$baseUrl/student-auth/verify-otp';
   static String studentHome = '$baseUrl/student-home';
   static String classList = '$baseUrl/teacher-student-attendance/class-list';
   static String task = '$baseUrl/student-home/tasks?';
+  static String profileImage =
+      '$baseUrl/student-home/profiles/profile-image-url';
+
+  static String imageUrl =
+      "https://next.fenizotechnologies.com/Adrox/api/image-save";
   static String attendance =
       '$baseUrl/teacher-student-attendance/mark-attendance';
   static String quizSubmit = '$baseUrl/student-quiz/submit';
@@ -20,6 +25,7 @@ class ApiUrl {
   static String switchSiblings({required int id}) {
     return '$baseUrl/student-home/profiles/switch/$id';
   }
+
   static String attendanceByDate({
     required int classId,
     required String formattedDate,
@@ -37,5 +43,9 @@ class ApiUrl {
 
   static String getHomeWorkIdDetails({required int id}) {
     return '$baseUrl/student-home/homework/$id';
+  }
+
+  static String getAttendanceMonth({required int month, required int year}) {
+    return '$baseUrl/student-home/monthly-attendance-by-student?year=$year&month=$month';
   }
 }

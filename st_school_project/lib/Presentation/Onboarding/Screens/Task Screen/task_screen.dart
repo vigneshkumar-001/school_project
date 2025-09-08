@@ -2376,9 +2376,9 @@ class _TaskScreenState extends State<TaskScreen>
                                               if (taskController
                                                   .isLoading
                                                   .value) {
-                                                return const Center(
+                                                return Center(
                                                   child:
-                                                      CircularProgressIndicator(),
+                                                      AppLoader.circularLoader(),
                                                 );
                                               }
 

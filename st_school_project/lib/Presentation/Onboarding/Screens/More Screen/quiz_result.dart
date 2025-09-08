@@ -425,7 +425,7 @@ class QuizResultScreen extends StatefulWidget {
 
 class _QuizResultScreenState extends State<QuizResultScreen> {
   late QuizResultData d;
-  bool showOnlyCorrect = false; // demo state
+  bool showOnlyCorrect = false;
 
   @override
   void initState() {

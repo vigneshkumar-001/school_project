@@ -269,7 +269,7 @@ class _HomeScreenState extends State<HomeTab>
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value) {
-            return AppLoader.circularLoader(AppColor.black);
+            return AppLoader.circularLoader();
           }
           final data = controller.studentHomeData.value;
           final tasks = data?.tasks ?? [];
@@ -1319,7 +1319,7 @@ class _HomeScreenState extends State<HomeTab>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Header Row: Title + Date Filter
+                          // ---------- Header ----------
                           Padding(
                             padding: const EdgeInsets.only(top: 16),
                             child: Row(
@@ -1332,7 +1332,7 @@ class _HomeScreenState extends State<HomeTab>
                                     color: AppColor.black,
                                   ),
                                 ),
-                                Spacer(),
+                                const Spacer(),
                                 PopupMenuButton<String>(
                                   color: AppColor.white,
                                   onSelected: (value) async {
@@ -1344,7 +1344,7 @@ class _HomeScreenState extends State<HomeTab>
                                       selectedDate = DateTime.now();
                                     } else if (value == 'Yesterday') {
                                       selectedDate = DateTime.now().subtract(
-                                        Duration(days: 1),
+                                        const Duration(days: 1),
                                       );
                                     } else if (value == 'Custom Date') {
                                       DateTime? picked = await showDatePicker(
@@ -1409,7 +1409,7 @@ class _HomeScreenState extends State<HomeTab>
                                             color: AppColor.black,
                                           ),
                                         ),
-                                        SizedBox(width: 4),
+                                        const SizedBox(width: 4),
                                         Icon(
                                           Icons.keyboard_arrow_down_outlined,
                                           size: 20,
@@ -1423,239 +1423,314 @@ class _HomeScreenState extends State<HomeTab>
                             ),
                           ),
 
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
-                          // Subject Filter Buttons
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children:
-                                  subjectsList.map((subject) {
-                                    final isSelected =
-                                        selectedSubject == subject;
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 8.0,
-                                      ),
-                                      child: ElevatedButton(
-                                        style: ButtonStyle(
-                                          elevation: MaterialStatePropertyAll(
-                                            0,
-                                          ),
-                                          backgroundColor:
-                                              MaterialStatePropertyAll(
-                                                isSelected
-                                                    ? AppColor.white
-                                                    : AppColor.lightGrey,
-                                              ),
-                                          side: MaterialStatePropertyAll(
-                                            BorderSide(
-                                              color:
-                                                  isSelected
-                                                      ? AppColor.blue
-                                                      : AppColor.lightGrey,
-                                              width: 2,
-                                            ),
-                                          ),
-                                          shape: MaterialStatePropertyAll(
-                                            RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            selectedSubject = subject;
-                                          });
-                                        },
-                                        child: Text(
-                                          subject,
-                                          style: GoogleFont.ibmPlexSans(
-                                            color:
-                                                isSelected
-                                                    ? AppColor.blue
-                                                    : AppColor.grey,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                            ),
-                          ),
-
-                          SizedBox(height: 25),
-
-                          // Tasks List
+                          // ---------- Task List with Subject Filter ----------
                           Obx(() {
                             if (controller.isLoading.value) {
-                              return AppLoader.circularLoader(AppColor.black);
+                              return AppLoader.circularLoader();
                             }
 
                             final tasks =
                                 controller.studentHomeData.value?.tasks ?? [];
 
-                            // Filter tasks by selected subject and selected date
-                            final filteredTasks =
+                            // filter tasks by selected date first
+                            final dateFilteredTasks =
                                 tasks.where((task) {
-                                  final matchesSubject =
-                                      selectedSubject == null ||
-                                      selectedSubject == 'All' ||
-                                      task.subject == selectedSubject;
+                                  if (selectedDate == null) return true;
 
                                   final taskDate =
                                       DateTime.parse(
                                         task.date.toString(),
                                       ).toLocal();
-
-                                  final matchesDate =
-                                      selectedDate == null ||
-                                      (taskDate.year == selectedDate!.year &&
-                                          taskDate.month ==
-                                              selectedDate!.month &&
-                                          taskDate.day == selectedDate!.day);
-
-                                  return matchesSubject && matchesDate;
+                                  return taskDate.year == selectedDate!.year &&
+                                      taskDate.month == selectedDate!.month &&
+                                      taskDate.day == selectedDate!.day;
                                 }).toList();
 
-                            if (filteredTasks.isEmpty) {
-                              return Padding(
-                                padding: const EdgeInsets.all(20),
-                                child: Center(
-                                  child: Text(
-                                    'No tasks available',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontSize: 14,
-                                      color: AppColor.grey,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }
+                            // subjects available only for that date
+                            final validSubjects =
+                                dateFilteredTasks
+                                    .map((e) => e.subject)
+                                    .toSet()
+                                    .toList();
+
+                            // apply subject filter
+                            final filteredTasks =
+                                dateFilteredTasks.where((task) {
+                                  return selectedSubject == null ||
+                                      selectedSubject == 'All' ||
+                                      task.subject == selectedSubject;
+                                }).toList();
 
                             return Column(
-                              children:
-                                  filteredTasks.map((task) {
-                                    final taskDate =
-                                        DateTime.parse(
-                                          task.date.toString(),
-                                        ).toLocal();
-
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                        bottom: 16,
-                                      ),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: AppColor.white,
-                                          border: Border.all(
-                                            color: AppColor.grey.withOpacity(
-                                              0.1,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // ---------- Subject Filter Row ----------
+                                if (validSubjects.isNotEmpty) ...[
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: [
+                                        // Add "All" button always
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            right: 8.0,
+                                          ),
+                                          child: ElevatedButton(
+                                            style: ButtonStyle(
+                                              elevation:
+                                                  const MaterialStatePropertyAll(
+                                                    0,
+                                                  ),
+                                              backgroundColor:
+                                                  MaterialStatePropertyAll(
+                                                    selectedSubject == 'All'
+                                                        ? AppColor.white
+                                                        : AppColor.lightGrey,
+                                                  ),
+                                              side: MaterialStatePropertyAll(
+                                                BorderSide(
+                                                  color:
+                                                      selectedSubject == 'All'
+                                                          ? AppColor.blue
+                                                          : AppColor.lightGrey,
+                                                  width: 2,
+                                                ),
+                                              ),
+                                              shape: MaterialStatePropertyAll(
+                                                RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                ),
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                selectedSubject = 'All';
+                                              });
+                                            },
+                                            child: Text(
+                                              'All',
+                                              style: GoogleFont.ibmPlexSans(
+                                                color:
+                                                    selectedSubject == 'All'
+                                                        ? AppColor.blue
+                                                        : AppColor.grey,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
-                                          borderRadius: BorderRadius.circular(
-                                            15,
-                                          ),
                                         ),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 20,
-                                          vertical: 15,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    task.title,
-                                                    style:
-                                                        GoogleFont.ibmPlexSans(
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          fontSize: 16,
+
+                                        // Render only subjects having tasks for selected date
+                                        ...validSubjects.map((subject) {
+                                          final isSelected =
+                                              selectedSubject == subject;
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                              right: 8.0,
+                                            ),
+                                            child: ElevatedButton(
+                                              style: ButtonStyle(
+                                                elevation:
+                                                    const MaterialStatePropertyAll(
+                                                      0,
+                                                    ),
+                                                backgroundColor:
+                                                    MaterialStatePropertyAll(
+                                                      isSelected
+                                                          ? AppColor.white
+                                                          : AppColor.lightGrey,
+                                                    ),
+                                                side: MaterialStatePropertyAll(
+                                                  BorderSide(
+                                                    color:
+                                                        isSelected
+                                                            ? AppColor.blue
+                                                            : AppColor
+                                                                .lightGrey,
+                                                    width: 2,
+                                                  ),
+                                                ),
+                                                shape: MaterialStatePropertyAll(
+                                                  RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          20,
                                                         ),
                                                   ),
                                                 ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder:
-                                                            (context) =>
-                                                                TaskDetail(
+                                              ),
+                                              onPressed: () {
+                                                setState(() {
+                                                  selectedSubject = subject;
+                                                });
+                                              },
+                                              child: Text(
+                                                subject,
+                                                style: GoogleFont.ibmPlexSans(
+                                                  color:
+                                                      isSelected
+                                                          ? AppColor.blue
+                                                          : AppColor.grey,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 25),
+                                ],
 
-                                                                  id: task.id,
-                                                                ),
-                                                      ),
-                                                    );
-                                                  },
-                                                  child: Row(
+                                // ---------- Tasks or Empty State ----------
+                                if (filteredTasks.isEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.all(20),
+                                    child: Center(
+                                      child: Text(
+                                        'No tasks available',
+                                        style: GoogleFont.ibmPlexSans(
+                                          fontSize: 14,
+                                          color: AppColor.grey,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                else
+                                  Column(
+                                    children:
+                                        filteredTasks.map((task) {
+                                          final taskDate =
+                                              DateTime.parse(
+                                                task.date.toString(),
+                                              ).toLocal();
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 16,
+                                            ),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: AppColor.white,
+                                                border: Border.all(
+                                                  color: AppColor.grey
+                                                      .withOpacity(0.1),
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 20,
+                                                    vertical: 15,
+                                                  ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
                                                     children: [
-                                                      Text(
-                                                        'View',
-                                                        style:
-                                                            GoogleFont.ibmPlexSans(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
+                                                      Expanded(
+                                                        child: Text(
+                                                          task.title,
+                                                          style:
+                                                              GoogleFont.ibmPlexSans(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize: 16,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder:
+                                                                  (
+                                                                    context,
+                                                                  ) => TaskDetail(
+                                                                    id: task.id,
+                                                                  ),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              'View',
+                                                              style: GoogleFont.ibmPlexSans(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color:
+                                                                    AppColor
+                                                                        .blue,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            Icon(
+                                                              Icons
+                                                                  .arrow_forward_ios_outlined,
                                                               color:
                                                                   AppColor.blue,
+                                                              size: 11,
                                                             ),
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      Icon(
-                                                        Icons
-                                                            .arrow_forward_ios_outlined,
-                                                        color: AppColor.blue,
-                                                        size: 11,
+                                                          ],
+                                                        ),
                                                       ),
                                                     ],
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Text(
-                                              task.description,
-                                              style: GoogleFont.ibmPlexSans(
-                                                fontSize: 12,
-                                                color: AppColor.grey,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            const Divider(),
-                                            const SizedBox(height: 6),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    'Assigned By: ${task.assignedByName}',
+                                                  const SizedBox(height: 6),
+                                                  Text(
+                                                    task.description,
                                                     style:
                                                         GoogleFont.ibmPlexSans(
                                                           fontSize: 12,
+                                                          color: AppColor.grey,
                                                         ),
                                                   ),
-                                                ),
-                                                Text(
-                                                  DateFormat(
-                                                    'hh:mm a',
-                                                  ).format(taskDate),
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    color: AppColor.lowGrey,
-                                                    fontSize: 12,
+                                                  const SizedBox(height: 10),
+                                                  const Divider(),
+                                                  const SizedBox(height: 6),
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                          'Assigned By: ${task.assignedByName}',
+                                                          style:
+                                                              GoogleFont.ibmPlexSans(
+                                                                fontSize: 12,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        DateFormat(
+                                                          'hh:mm a',
+                                                        ).format(taskDate),
+                                                        style:
+                                                            GoogleFont.ibmPlexSans(
+                                                              color:
+                                                                  AppColor
+                                                                      .lowGrey,
+                                                              fontSize: 12,
+                                                            ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
+                                          );
+                                        }).toList(),
+                                  ),
+                              ],
                             );
                           }),
                         ],

@@ -38,7 +38,7 @@ class _TaskDetailState extends State<TaskDetail> {
         child: Obx(() {
           final homework = taskController.homeworkDetail.value;
           if (homework == null) {
-            return Center(child: AppLoader.circularLoader(AppColor.blue));
+            return Center(child: AppLoader.circularLoader( ));
           }
 
           final tasks = homework.tasks ?? [];
