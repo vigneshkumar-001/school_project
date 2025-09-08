@@ -1514,7 +1514,9 @@ class _HomeScreenState extends State<HomeTab>
                                                       MaterialPageRoute(
                                                         builder:
                                                             (context) =>
-                                                                QuizScreen(quizId: 1,),
+                                                                QuizScreen(
+                                                                  quizId: 1,
+                                                                ),
                                                       ),
                                                     );
                                                   },

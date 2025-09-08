@@ -880,21 +880,28 @@ class _QuizScreenState extends State<QuizScreen> {
                               onTap: () async {
                                 if (c.isSubmitting.isTrue) return;
 
-                                final err = await c.submitCurrent(quizId: widget.quizId);
+                                final result = await c.submitCurrent(quizId: widget.quizId);
 
-                                if (err != null && err.trim().isNotEmpty) {
-                                  Get.snackbar(
-                                    'Submit failed',
-                                    err,
-                                    snackPosition: SnackPosition.BOTTOM,
-                                  );
+                                if (result == null) {
+                                  final msg = c.lastError.value.isNotEmpty
+                                      ? c.lastError.value
+                                      : 'Submit failed';
+                                  Get.snackbar('Submit failed', msg,
+                                      snackPosition: SnackPosition.BOTTOM);
+                                  return;
                                 }
+
+                                Get.off(() => QuizResultScreen(data: result));
                               },
                             ),
                           ),
                         ),
                       );
                     })
+
+
+
+
 
 
                     // else

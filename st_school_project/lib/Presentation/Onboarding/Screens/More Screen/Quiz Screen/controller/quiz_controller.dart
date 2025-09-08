@@ -199,6 +199,7 @@ class QuizController extends GetxController {
 */
 
 import 'dart:async';
+import 'dart:convert';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -296,32 +297,47 @@ class QuizController extends GetxController {
   }
 
   // Submit quiz
-  Future<String?> submitCurrent({required int quizId}) async {
+  Future<QuizResultData?> submitCurrent({required int quizId}) async {
+    if (isSubmitting.value) return null; // guard double taps
+    isSubmitting.value = true;
+    lastError.value = '';
+
     try {
-      final results = await apiDataSource.loadQuizControllerSubmit(
+      final either = await apiDataSource.loadQuizControllerSubmit(
         quizId: quizId,
         answers: submissionPayload,
       );
 
-      results.fold(
-        (failure) {
-          AppLogger.log.e(failure.message);
+      QuizResultData? out;
+
+      either.fold(
+            (failure) {
+          lastError.value = failure.message ?? 'Submission failed';
         },
             (resp) {
-          // resp.data = SubmitData (score/total)
-          submitRx.value = resp.data;
-          AppLogger.log.i('Submitted: ${resp.data.score}/${resp.data.total}');
-          return null; // success
+          // Try to coerce whatever the client puts in resp/resp.data into QuizResultData
+          final raw = resp.data; // many clients put only the "data" here
+          out = _asQuizResultData(raw) ??
+              _asQuizResultData(resp) ; // fallback: whole response
+
+          if (out != null) {
+            submitRx.value = out as SubmitData?;
+            AppLogger.log.i('Submitted: ${out!.score}/${out!.total} (${out!.percentageString})');
+          } else {
+            lastError.value = 'Invalid result format';
+          }
         },
       );
-    } catch (e) {
-      AppLogger.log.e(e);
-      return e.toString();
+
+      return out; // non-null => success
+    } catch (e, st) {
+      lastError.value = 'Submit error: $e';
+      AppLogger.log.e('Submit error: $e\n$st');
+      return null;
+    } finally {
+      isSubmitting.value = false;
     }
-    return null;
   }
-
-
   /*  Future<dynamic> submitCurrent({required int quizId}) async {
     if (isSubmitting.value) return null;
     try {
@@ -416,48 +432,33 @@ class QuizController extends GetxController {
     _startTimerFrom(data);
   }
 
-  Future<String> loadQuizResult({
-    required int quizId,
-    bool openScreen = true,
-  }) async {
-    try {
-      if (isLoading.value) return 'Already loading…';
-      isLoading.value = true;
+  QuizResultData? _asQuizResultData(dynamic raw) {
+    if (raw == null) return null;
+    if (raw is QuizResultData) return raw;
 
-      final either = await apiDataSource.loadQuizResult(quizId: quizId);
-
-      final msg = either.fold(
-        (failure) {
-          final m = "ERROR: ${failure.message ?? 'Something went wrong'}";
-          AppLogger.log.e(m);
-          return m;
-        },
-        (response) {
-          final d = response.data; // QuizResultData
-          quizResult.value = d; // state
-
-          AppLogger.log.i(response.message);
-          final m = "Heading: ${d.heading}, Score: ${d.score}/${d.total}";
-          AppLogger.log.i(m);
-
-          if (openScreen) {
-            // Get.off if you want to replace the quiz screen
-            Get.to(() => QuizResultScreen(data: d));
-          }
-          return m;
-        },
-      );
-
-      return msg;
-    } catch (e, st) {
-      AppLogger.log.e('loadQuizResult error: $e');
-      AppLogger.log.e(st.toString());
-      return 'ERROR: $e';
-    } finally {
-      isLoading.value = false;
-      try {
-        update();
-      } catch (_) {}
+    if (raw is Map<String, dynamic>) {
+      return QuizResultData.fromJson(raw);
     }
+    if (raw is Map) {
+      return QuizResultData.fromJson(Map<String, dynamic>.from(raw));
+    }
+    if (raw is String) {
+      // Try full response first, then inner data-only JSON
+      try {
+        final resp = QuizResultResponse.fromAny(raw);
+        return resp.data;
+      } catch (_) {
+        try {
+          final map = Map<String, dynamic>.from(jsonDecode(raw) as Map);
+          return QuizResultData.fromJson(map);
+        } catch (_) {
+          return null;
+        }
+      }
+    }
+    if (raw is QuizResultResponse) {
+      return raw.data;
+    }
+    return null;
   }
 }

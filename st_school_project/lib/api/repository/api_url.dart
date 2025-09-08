@@ -15,6 +15,11 @@ class ApiUrl {
     return '$baseUrl/teacher-student-attendance/today-status/?class_id=$classId';
   }
 
+  static String profiles = '$baseUrl/student-home/profiles';
+
+  static String switchSiblings({required int id}) {
+    return '$baseUrl/student-home/profiles/switch/$id';
+  }
   static String attendanceByDate({
     required int classId,
     required String formattedDate,
