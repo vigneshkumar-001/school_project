@@ -1,16 +1,15 @@
+
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
-import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/controller/teacher_list_controller.dart';
 
-import '../../../../../../Core/Utility/app_color.dart';
-import 'package:get/get.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -31,25 +30,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       builder:
           (_) => Wrap(
-            children: [
-              ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text('Take from Camera'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(ImageSource.camera);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Choose from Gallery'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(ImageSource.gallery);
-                },
-              ),
-            ],
+        children: [
+          ListTile(
+            leading: Icon(Icons.camera_alt),
+            title: Text('Take from Camera'),
+            onTap: () {
+              Navigator.pop(context);
+              _pickImage(ImageSource.camera);
+            },
           ),
+          ListTile(
+            leading: Icon(Icons.photo_library),
+            title: Text('Choose from Gallery'),
+            onTap: () {
+              Navigator.pop(context);
+              _pickImage(ImageSource.gallery);
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -104,27 +103,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder:
           (_) => AlertDialog(
-            title: Text('Permission Required'),
-            content: Text(
-              'Permission is permanently denied. Please enable it from app settings to continue.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  Navigator.pop(context);
-                  await openAppSettings();
-                },
-                child: Text('Open Settings'),
-              ),
-            ],
+        title: Text('Permission Required'),
+        content: Text(
+          'Permission is permanently denied. Please enable it from app settings to continue.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
           ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await openAppSettings();
+            },
+            child: Text('Open Settings'),
+          ),
+        ],
+      ),
     );
   }
-final TeacherListController controller = Get.put(TeacherListController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,10 +181,10 @@ final TeacherListController controller = Get.put(TeacherListController());
                           ),
                           image: DecorationImage(
                             image:
-                                _imageFile != null
-                                    ? FileImage(_imageFile!)
-                                    : AssetImage(AppImages.profilePicture)
-                                        as ImageProvider,
+                            _imageFile != null
+                                ? FileImage(_imageFile!)
+                                : AssetImage(AppImages.profilePicture)
+                            as ImageProvider,
                           ),
                         ),
                       ),
@@ -204,9 +203,7 @@ final TeacherListController controller = Get.put(TeacherListController());
 
                 SizedBox(height: 20),
                 CustomContainer.checkMark(
-                  onTap: () {
-                    controller.imageUpload(frontImageFile:File(_imageFile?.path.toString()?? '') );
-                  },
+                  onTap: () => Navigator.pop(context),
                   imagePath: AppImages.tick,
                 ),
               ],

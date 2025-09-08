@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
-import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen.dart';
 
 import '../../../../Core/Utility/app_color.dart' show AppColor;
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
@@ -13,6 +12,8 @@ import '../../../Admssion/Screens/admission_1.dart';
 import 'change_mobile_number.dart' show ChangeMobileNumber;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map/flutter_map.dart';
+
+import 'profile_screen/screen/profile_screen.dart';
 
 class MoreScreen extends StatefulWidget {
   const MoreScreen({super.key});

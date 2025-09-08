@@ -270,8 +270,13 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                             setState(() {
                               errorText = '';
                             });
-                            // loginController.mobileNumberLogin('7904005315');
-                            Get.to(OtpScreen(mobileNumber: '7904005315',pages: 'splash'));
+
+                            /*7904005315*/
+                            /*9894143252*/
+                            loginController.mobileNumberLogin(mbl);
+                            /*  Get.to(
+                              OtpScreen(mobileNumber: mbl, pages: 'splash'),
+                            );*/
                           }
                         },
                       );

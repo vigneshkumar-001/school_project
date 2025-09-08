@@ -1,17 +1,12 @@
+
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
-import 'package:intl/intl.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
-import 'package:st_school_project/Presentation/Onboarding/Screens/Attendence%20Screen/controller/attendance_controller.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
-import '../../../../Core/Widgets/attendance_card.dart';
-import '../../../../Core/Widgets/progress_bar.dart';
-import 'model/attendance_response.dart';
-import 'package:get/get.dart';
 
 class AttendenceScreen extends StatefulWidget {
   const AttendenceScreen({super.key});
@@ -22,46 +17,9 @@ class AttendenceScreen extends StatefulWidget {
 
 class _AttendenceScreenState extends State<AttendenceScreen> {
   DateTime today = DateTime.now();
-  DateTime _focusedDay = DateTime.now();
-
-  final AttendanceController controller = Get.put(AttendanceController());
-  AttendanceData? attendanceData;
-
-  AttendanceByDate? getDayAttendance(DateTime day) {
-    final formatted = DateFormat('yyyy-MM-dd').format(day);
-    return controller.attendanceData.value?.attendanceByDate[formatted];
-  }
-
-  DateTime? _selectedDay;
-  Color? getAttendanceColor(
-    DateTime day,
-    Map<String, AttendanceByDate> attendanceByDate,
-  ) {
-    String formatted = DateFormat('yyyy-MM-dd').format(day);
-    if (!attendanceByDate.containsKey(formatted)) return null;
-
-    final dayData = attendanceByDate[formatted]!;
-
-    if (dayData.fullDayAbsent) {
-      return AppColor.red01G1;
-    } else if (dayData.holidayStatus) {
-      return AppColor.green01G3; // Holiday color
-    } else if (dayData.eventsStatus) {
-      return AppColor.yellow;
-    }
-
-    return null;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.presentOrAbsent(
-        year: today.year,
-        month: today.month,
-        showLoader: false,
-      );
+  void _onDaySelected(DateTime day, DateTime focusedDay) {
+    setState(() {
+      today = day;
     });
   }
 
@@ -94,7 +52,6 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                           children: [
                             Opacity(
                               opacity: 0.2,
-
                               child: Image.asset(AppImages.jbg),
                             ),
                             Opacity(
@@ -104,26 +61,14 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                           ],
                         ),
                       ),
-                      Obx(() {
-                        if (controller.isLoading.value) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-
-                        final attendance =
-                            controller.attendanceData.value?.attendanceByDate ??
-                            {};
-
-                        return Column(
-                          children: [
-                            const SizedBox(height: 20),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
+                      Column(
+                        children: [
+                          SizedBox(height: 20),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Container(
                               child: TableCalendar(
-                                focusedDay: _focusedDay, // ✅ FIXED
+                                focusedDay: today,
                                 headerStyle: HeaderStyle(
                                   formatButtonVisible: false,
                                   titleCentered: true,
@@ -142,39 +87,15 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                     size: 24,
                                     color: AppColor.white,
                                   ),
-                                  headerPadding: const EdgeInsets.only(
-                                    bottom: 25,
-                                  ),
+                                  headerPadding: EdgeInsets.only(bottom: 25),
                                 ),
                                 availableGestures: AvailableGestures.all,
                                 selectedDayPredicate:
                                     (day) => isSameDay(day, today),
-                                onPageChanged: (focusedDay) {
-                                  setState(() {
-                                    _focusedDay = focusedDay; // ✅ updated
-                                  });
-
-                                  WidgetsBinding.instance.addPostFrameCallback((
-                                    _,
-                                  ) {
-                                    controller.presentOrAbsent(
-                                      year: focusedDay.year,
-                                      month: focusedDay.month,
-                                    );
-                                  });
-                                },
-
-                                onDaySelected: (selectedDay, focusedDay) {
-                                  setState(() {
-                                    _selectedDay = selectedDay;
-                                    today = selectedDay;
-                                  });
-                                  getDayAttendance(selectedDay);
-                                },
                                 startingDayOfWeek: StartingDayOfWeek.monday,
                                 firstDay: DateTime.utc(2000),
                                 lastDay: DateTime.utc(2050),
-                                // onDaySelected: _onDaySelected,
+                                onDaySelected: _onDaySelected,
                                 calendarStyle: CalendarStyle(
                                   todayDecoration: BoxDecoration(
                                     gradient: LinearGradient(
@@ -187,7 +108,7 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                     ),
                                     shape: BoxShape.circle,
                                   ),
-                                  selectedDecoration: const BoxDecoration(
+                                  selectedDecoration: BoxDecoration(
                                     color: Colors.orange,
                                     shape: BoxShape.circle,
                                   ),
@@ -201,39 +122,6 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                   defaultTextStyle: GoogleFont.ibmPlexSans(
                                     color: AppColor.white,
                                   ),
-                                ),
-                                calendarBuilders: CalendarBuilders(
-                                  markerBuilder: (context, day, events) {
-                                    final color = getAttendanceColor(
-                                      day,
-                                      attendance,
-                                    );
-                                    if (color != null) {
-                                      return Positioned(
-                                        bottom: 4,
-                                        child: Container(
-                                          width: 8,
-                                          height: 8,
-                                          decoration: BoxDecoration(
-                                            color: color,
-                                            shape: BoxShape.circle,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  },
-                                  defaultBuilder: (context, day, focusedDay) {
-                                    return Center(
-                                      child: Text(
-                                        '${day.day}',
-                                        style: GoogleFont.ibmPlexSans(
-                                          color: AppColor.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    );
-                                  },
                                 ),
                                 daysOfWeekStyle: DaysOfWeekStyle(
                                   weekdayStyle: GoogleFont.ibmPlexSans(
@@ -251,33 +139,33 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 20),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 60,
+                          ),
+                          SizedBox(height: 20),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 60),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColor.white.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: AppColor.white.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(10),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 25,
+                                  vertical: 12,
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 25,
-                                    vertical: 12,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      child: Row(
                                         children: [
                                           Icon(
                                             Icons.circle,
                                             size: 15,
                                             color: AppColor.yellow,
                                           ),
-                                          const SizedBox(width: 5),
+                                          SizedBox(width: 5),
                                           Text(
                                             'Event',
                                             style: GoogleFont.ibmPlexSans(
@@ -288,16 +176,18 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                           ),
                                         ],
                                       ),
-                                      Row(
+                                    ),
+                                    Container(
+                                      child: Row(
                                         children: [
                                           Icon(
                                             Icons.circle,
                                             size: 15,
                                             color: AppColor.greenG4,
                                           ),
-                                          const SizedBox(width: 5),
+                                          SizedBox(width: 5),
                                           Text(
-                                            'Holiday',
+                                            'Holidays',
                                             style: GoogleFont.ibmPlexSans(
                                               fontSize: 12,
                                               fontWeight: FontWeight.w800,
@@ -306,14 +196,16 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                           ),
                                         ],
                                       ),
-                                      Row(
+                                    ),
+                                    Container(
+                                      child: Row(
                                         children: [
                                           Icon(
                                             Icons.circle,
                                             size: 15,
                                             color: AppColor.lightRed,
                                           ),
-                                          const SizedBox(width: 5),
+                                          SizedBox(width: 5),
                                           Text(
                                             'Absent',
                                             style: GoogleFont.ibmPlexSans(
@@ -324,14 +216,14 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ],
-                        );
-                      }),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -342,9 +234,6 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
               minChildSize: 0.40,
               maxChildSize: 0.99,
               builder: (context, scrollController) {
-                final selected = _selectedDay ?? today;
-                final dayAttendance = getDayAttendance(selected);
-
                 return Container(
                   decoration: BoxDecoration(
                     color: AppColor.white,
@@ -365,7 +254,7 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                       child: Column(
                         children: [
                           Text(
-                            DateFormat('dd MMM yyyy').format(selected),
+                            'Today',
                             style: GoogleFont.ibmPlexSans(
                               fontWeight: FontWeight.w600,
                               fontSize: 26,
@@ -385,14 +274,13 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                               ),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
-                                      CurvedAttendanceCard(
-                                        imagePath: AppImages.Morning1,
-                                        isAbsent:
-                                            dayAttendance?.morning == 'present',
+                                      Image.asset(
+                                        AppImages.amorning1,
+                                        height: 55,
                                       ),
                                       SizedBox(width: 10),
                                       Text(
@@ -407,7 +295,7 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
 
                                   Column(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: List.generate(7, (index) {
                                       return Container(
                                         width: 2,
@@ -429,13 +317,10 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                   ),
                                   Row(
                                     children: [
-                                      CurvedAttendanceCard(
-                                        imagePath: AppImages.Afternoon1,
-                                        isAbsent:
-                                            dayAttendance?.afternoon ==
-                                            "present",
+                                      Image.asset(
+                                        AppImages.aafternoon2,
+                                        height: 55,
                                       ),
-
                                       SizedBox(width: 10),
                                       Text(
                                         'Afternoon',
@@ -451,7 +336,7 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                             ),
                           ),
                           SizedBox(height: 20),
-                          /*          Stack(
+                          Stack(
                             children: [
                               Image.asset(AppImages.attendence1),
                               Positioned(
@@ -525,21 +410,18 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                 ),
                               ),
                             ],
-                          ),*/
+                          ),
                           SizedBox(height: 25),
                           Row(
                             children: [
-                              Obx(
-                                () => Text(
-                                  '${controller.attendanceData.value?.monthName.toString() ?? ''} ',
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColor.lightBlack,
-                                  ),
+                              Text(
+                                'July ',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColor.lightBlack,
                                 ),
                               ),
-
                               Text(
                                 'Overall ',
                                 style: GoogleFont.ibmPlexSans(
@@ -568,26 +450,15 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                             ],
                           ),
                           SizedBox(height: 15),
-                          Obx(
-                            () => GradientProgressBar(
-                              progress:
-                                  (controller
-                                          .attendanceData
-                                          .value
-                                          ?.presentPercentage ??
-                                      0) /
-                                  100,
-                            ),
-                          ),
 
-                          /*        Stack(
+                          Stack(
                             alignment: Alignment.centerLeft,
                             children: [
                               Container(
                                 height: 30,
                                 width: double.infinity,
                                 decoration: BoxDecoration(
-                                  gradient: LinearGradient(
+                                  gradient:  LinearGradient(
                                     colors: [
                                       AppColor.grayop,
                                       AppColor.lightWhite.withOpacity(0.2),
@@ -631,7 +502,7 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                 child: Container(
                                   width: 12,
                                   height: 24,
-                                  decoration: BoxDecoration(
+                                  decoration:  BoxDecoration(
                                     color: AppColor.white,
                                     shape: BoxShape.circle,
                                     boxShadow: [
@@ -645,16 +516,16 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                 ),
                               ),
                             ],
-                          ),*/
+                          ),
+
                           const SizedBox(height: 12),
-                          Obx(
-                            () => Text(
-                              "${controller.attendanceData.value?.fullDayPresentCount ?? 0} Out of ${controller.attendanceData.value?.totalWorkingDays ?? 0}",
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.grayop,
-                              ),
+
+                          Text(
+                            "$current Out of $total",
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.grayop,
                             ),
                           ),
                         ],

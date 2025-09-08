@@ -1,3 +1,4 @@
+
 import 'package:st_school_project/Core/Widgets/consents.dart';
 
 import 'package:intl/intl.dart';
@@ -5,7 +6,12 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/model/home_work_id_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/model/task_response.dart';
 
+import '../../Presentation/Onboarding/Screens/Home Screen/model/sibling_switch_response.dart';
+import '../../Presentation/Onboarding/Screens/Home Screen/model/siblings_list_response.dart';
 import '../../Presentation/Onboarding/Screens/More Screen/Login_screen/Model/login_response.dart';
+import '../../Presentation/Onboarding/Screens/More Screen/Quiz Screen/Model/quiz_attend.dart';
+import '../../Presentation/Onboarding/Screens/More Screen/Quiz Screen/Model/quiz_result_response.dart';
+import '../../Presentation/Onboarding/Screens/More Screen/Quiz Screen/Model/quiz_submit.dart';
 import '../repository/api_url.dart';
 import '../repository/failure.dart';
 import 'package:dio/dio.dart';
@@ -171,6 +177,151 @@ class ApiDataSource extends BaseApiDataSource {
           (response.statusCode == 200 || response.statusCode == 201)) {
         if (response.data['status'] == true) {
           return Right(HomeWorkIdResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, QuizAttend>> QuizControllerAttend({
+    required int quizId,
+  }) async {
+    try {
+      String url = ApiUrl.QuizAttend(quizId: quizId);
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(response);
+
+      // Accept both 200 and 201 as success
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(QuizAttend.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, QuizSubmit>> loadQuizControllerSubmit({
+    required int quizId,
+    required List<Map<String, dynamic>> answers,
+  }) async {
+    try {
+      final String url = ApiUrl.quizSubmit;
+      final Map<String, dynamic> body = {'quizId': quizId, 'answers': answers};
+
+      final response = await Request.sendRequest(url, body, 'POST', true);
+      AppLogger.log.i(response);
+
+      if (response is! DioException &&
+          (response.statusCode == 200 ||
+              response.statusCode == 201 ||
+              response.statusCode == 400)) {
+        final data = response.data;
+
+        if (data is Map<String, dynamic>) {
+          final quizSubmit = QuizSubmit.fromJson(data);
+
+          if (quizSubmit.status) {
+            return Right(quizSubmit);
+          } else {
+            // ❌ error from backend but still parse message
+            return Left(ServerFailure(quizSubmit.message));
+          }
+        } else {
+          return Left(ServerFailure('Invalid response format'));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? 'Dio error'));
+      } else {
+        return Left(ServerFailure('Unknown error'));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, QuizResultResponse>> loadQuizResult({
+    required int quizId,
+  }) async {
+    try {
+      String url = ApiUrl.QuizResult(quizId: quizId);
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(response);
+
+      // Accept both 200 and 201 as success
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(QuizResultResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, SiblingsSwitchResponse>> switchSiblings({
+    int? id,
+  }) async {
+    try {
+      String url = ApiUrl.switchSiblings(id: id ?? 0);
+
+      dynamic response = await Request.sendRequest(url, {}, 'Post', true);
+      AppLogger.log.i(response);
+
+      // Accept both 200 and 201 as success
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(SiblingsSwitchResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, SiblingsListResponse>> getSiblingsDetails() async {
+    try {
+      String url = ApiUrl.profiles;
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(response);
+
+      // Accept both 200 and 201 as success
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(SiblingsListResponse.fromJson(response.data));
         } else {
           return Left(ServerFailure(response.data['message']));
         }
