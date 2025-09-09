@@ -16,9 +16,10 @@ class AnnouncementDetailsResponse {
       status: json['status'] ?? false,
       code: json['code'] ?? 0,
       message: json['message'] ?? '',
-      data: json['data'] != null
-          ? AnnouncementDetails.fromJson(json['data'])
-          : null,
+      data:
+          json['data'] != null
+              ? AnnouncementDetails.fromJson(json['data'])
+              : null,
     );
   }
 }
@@ -59,9 +60,10 @@ class AnnouncementDetails {
       createdBy: json['createdBy'] ?? 0,
       userType: json['userType'] ?? 0,
       content: json['content'] ?? '',
-      contents: (json['contents'] as List<dynamic>?)
-          ?.map((e) => AnnouncementContent.fromJson(e))
-          .toList() ??
+      contents:
+          (json['contents'] as List<dynamic>?)
+              ?.map((e) => AnnouncementContent.fromJson(e))
+              .toList() ??
           [],
     );
   }
