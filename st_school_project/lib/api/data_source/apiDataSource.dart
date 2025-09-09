@@ -9,6 +9,7 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/model/home_work_id_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/model/task_response.dart';
 
+import '../../Presentation/Onboarding/Screens/Announcements Screen/model/announcement_details_response.dart';
 import '../../Presentation/Onboarding/Screens/Attendence Screen/model/attendance_response.dart';
 import '../../Presentation/Onboarding/Screens/Home Screen/model/sibling_switch_response.dart';
 import '../../Presentation/Onboarding/Screens/Home Screen/model/siblings_list_response.dart';
@@ -481,6 +482,31 @@ class ApiDataSource extends BaseApiDataSource {
           (response.statusCode == 200 || response.statusCode == 201)) {
         if (response.data['status'] == true) {
           return Right(AnnouncementResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, AnnouncementDetailsResponse>> getAnnouncementDetails({required int id}) async {
+    try {
+      String url = ApiUrl.announcementDetails(id: id );
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(response);
+
+      // Accept both 200 and 201 as success
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(AnnouncementDetailsResponse.fromJson(response.data));
         } else {
           return Left(ServerFailure(response.data['message']));
         }

@@ -37,7 +37,9 @@ class ApiUrl {
   static String QuizAttend({required int quizId}) {
     return '$baseUrl/student-quiz/take/$quizId';
   }
-
+  static String announcementDetails({required int id}) {
+    return '$baseUrl/student-announcement/details/$id';
+  }
   static String QuizResult({required int quizId}) {
     return '$baseUrl/student-quiz/result/$quizId';
   }

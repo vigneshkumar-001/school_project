@@ -354,15 +354,19 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     );
   }
 
+
+
+
+
+
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if(controller.announcementData.value == null){
+      if (controller.announcementData.value == null) {
         controller.getAnnouncement();
       }
-
     });
   }
 
@@ -384,50 +388,56 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
             return const Center(child: Text("No announcements available"));
           }
 
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Text(
-                      'Announcements',
-                      style: GoogleFont.ibmPlexSans(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 26,
-                        color: AppColor.black,
+          return RefreshIndicator(
+            onRefresh: ()async{
+              await controller.getAnnouncement();
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Text(
+                        'Announcements',
+                        style: GoogleFont.ibmPlexSans(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 26,
+                          color: AppColor.black,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                  // Dynamic list of announcements
-                  Column(
-                    children:
-                        data.items.map((item) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: CustomContainer.announcementsScreen(
-                              mainText: item.announcementCategory,
-                              backRoundImage: AppImages.announcement2,
-                              iconData: CupertinoIcons.clock_fill,
-                              additionalText1: "Date",
-                              additionalText2: '18-Jun-25',
-                              verticalPadding: 12,
-                              gradientStartColor: AppColor.black.withOpacity(
-                                0.01,
+                    // Dynamic list of announcements
+                    Column(
+                      children:
+                          data.items.map((item) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: CustomContainer.announcementsScreen(
+                                mainText: item.announcementCategory,
+                                backRoundImage: AppImages.announcement2,
+                                iconData: CupertinoIcons.clock_fill,
+                                additionalText1: "Date",
+                                additionalText2: '18-Jun-25',
+                                verticalPadding: 12,
+                                gradientStartColor: AppColor.black.withOpacity(
+                                  0.01,
+                                ),
+                                gradientEndColor: AppColor.black,
+                                onDetailsTap: () {
+                                  // Example: show details bottomsheet
+                                  // _showAnnouncementDetails(context, item);
+                                },
                               ),
-                              gradientEndColor: AppColor.black,
-                              onDetailsTap: () {
-                                // Example: show details bottomsheet
-                                // _showAnnouncementDetails(context, item);
-                              },
-                            ),
-                          );
-                        }).toList(),
-                  ),
-                ],
+                            );
+                          }).toList(),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

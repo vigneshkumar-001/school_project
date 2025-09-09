@@ -5,6 +5,7 @@ import 'package:st_school_project/api/data_source/apiDataSource.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 
 import '../../../../../Core/Utility/app_color.dart';
+import '../model/announcement_details_response.dart';
 
 class AnnouncementController extends GetxController {
   ApiDataSource apiDataSource = ApiDataSource();
@@ -12,7 +13,8 @@ class AnnouncementController extends GetxController {
 
   RxBool isLoading = false.obs;
   String accessToken = '';
-  Rx<AnnouncementData?>  announcementData = Rx<AnnouncementData?>(null);
+  Rx<AnnouncementData?> announcementData = Rx<AnnouncementData?>(null);
+  Rx<AnnouncementDetails?> announcementDetails = Rx<AnnouncementDetails?>(null);
 
   @override
   void onInit() {
@@ -32,6 +34,31 @@ class AnnouncementController extends GetxController {
         (response) async {
           isLoading.value = false;
           announcementData.value = response.data;
+          AppLogger.log.i(response.toString());
+        },
+      );
+    } catch (e) {
+      isLoading.value = false;
+      AppLogger.log.e(e);
+    }
+    return null;
+  }
+
+  Future<String?> getAnnouncementDetails({
+    bool showLoader = true,
+    required int id,
+  }) async {
+    try {
+      isLoading.value = true;
+      final results = await apiDataSource.getAnnouncementDetails(id: id);
+      return results.fold(
+        (failure) {
+          isLoading.value = false;
+          AppLogger.log.e(failure.message);
+        },
+        (response) async {
+          isLoading.value = false;
+          announcementDetails.value = response.data;
           AppLogger.log.i(response.toString());
         },
       );
