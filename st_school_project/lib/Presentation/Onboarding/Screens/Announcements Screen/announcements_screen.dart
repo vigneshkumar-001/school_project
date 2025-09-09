@@ -587,8 +587,6 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                   } else if (item.type == "announcement" ||
                                       item.type == "holiday") {
                                     _showAnnouncementDetails(context, item.id);
-
-                                    // Navigate to details screen
                                   }
 
                                   // Example: show details bottomsheet
