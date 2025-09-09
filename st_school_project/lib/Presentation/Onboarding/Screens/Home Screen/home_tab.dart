@@ -41,13 +41,13 @@ class _HomeScreenState extends State<HomeTab>
   @override
   void initState() {
     super.initState();
-    controller.getStudentHome();
-    controller.getSiblingsData();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   if (controller.studentHomeData.value == null) {
-    //     controller.getStudentHome();
-    //   }
-    // });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (controller.studentHomeData.value == null) {
+        controller.getStudentHome();
+        controller.getSiblingsData();
+      }
+    });
   }
 
   final List<String> subjects = [

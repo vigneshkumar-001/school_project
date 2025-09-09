@@ -1,8 +1,11 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:st_school_project/Core/Utility/app_color.dart';
+import 'package:st_school_project/Core/Utility/app_loader.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/controller/announcement_controller.dart';
 
 import '../../../../Core/Utility/app_images.dart' show AppImages;
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
@@ -17,6 +20,7 @@ class AnnouncementsScreen extends StatefulWidget {
 }
 
 class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
+  final AnnouncementController controller = Get.put(AnnouncementController());
   final List<Map<String, String>> subjects = [
     {'subject': 'Tamil', 'mark': '70'},
     {'subject': 'English', 'mark': '70'},
@@ -350,109 +354,200 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     );
   }
 
+
+
+
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (controller.announcementData.value == null) {
+        controller.getAnnouncement();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.white,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(15),
-            child: Column(
-              children: [
-                Center(
-                  child: Text(
-                    'Announcements',
-                    style: GoogleFont.ibmPlexSans(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 26,
-                      color: AppColor.black,
+        child: Obx(() {
+          final data = controller.announcementData.value;
+
+          // Loader
+          if (controller.isLoading.value) {
+            return Center(child: AppLoader.circularLoader());
+          }
+
+          // Empty State
+          if (data == null || data.items.isEmpty) {
+            return const Center(child: Text("No announcements available"));
+          }
+
+          return RefreshIndicator(
+            onRefresh: ()async{
+              await controller.getAnnouncement();
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Text(
+                        'Announcements',
+                        style: GoogleFont.ibmPlexSans(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 26,
+                          color: AppColor.black,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Dynamic list of announcements
+                    Column(
+                      children:
+                          data.items.map((item) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: CustomContainer.announcementsScreen(
+                                mainText: item.announcementCategory,
+                                backRoundImage: AppImages.announcement2,
+                                iconData: CupertinoIcons.clock_fill,
+                                additionalText1: "Date",
+                                additionalText2: '18-Jun-25',
+                                verticalPadding: 12,
+                                gradientStartColor: AppColor.black.withOpacity(
+                                  0.01,
+                                ),
+                                gradientEndColor: AppColor.black,
+                                onDetailsTap: () {
+                                  // Example: show details bottomsheet
+                                  // _showAnnouncementDetails(context, item);
+                                },
+                              ),
+                            );
+                          }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+    return Scaffold(
+      backgroundColor: AppColor.white,
+      body: SafeArea(
+        child: Obx(() {
+          final data = controller.announcementData.value;
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  Center(
+                    child: Text(
+                      'Announcements',
+                      style: GoogleFont.ibmPlexSans(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 26,
+                        color: AppColor.black,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 20),
-                CustomContainer.announcementsScreen(
-                  mainText: 'Today Special',
-                  backRoundImage: AppImages.announcement1,
-                  additionalText1: '',
-                  additionalText2: '',
-                  verticalPadding: 12,
-                  gradientStartColor: AppColor.black.withOpacity(0.1),
-                  gradientEndColor: AppColor.black,
-                ),
+                  SizedBox(height: 20),
+                  CustomContainer.announcementsScreen(
+                    mainText: 'Today Special',
+                    backRoundImage: AppImages.announcement1,
+                    additionalText1: '',
+                    additionalText2: '',
+                    verticalPadding: 12,
+                    gradientStartColor: AppColor.black.withOpacity(0.1),
+                    gradientEndColor: AppColor.black,
+                  ),
 
-                SizedBox(height: 20),
-                CustomContainer.announcementsScreen(
-                  mainText: 'Third-Term Fees',
-                  backRoundImage: AppImages.announcement2,
-                  iconData: CupertinoIcons.clock_fill,
-                  additionalText1: 'Due date',
-                  additionalText2: '12-Dec-25',
-                  verticalPadding: 6,
-                  gradientStartColor: AppColor.black.withOpacity(0.1),
-                  gradientEndColor: AppColor.black,
-                  onDetailsTap: () => _feessSheet(context),
-                ),
-                SizedBox(height: 20),
-                CustomContainer.announcementsScreen(
-                  mainText: 'Result- First Term',
-                  backRoundImage: AppImages.announcement6,
-                  iconData: CupertinoIcons.clock_fill,
-                  additionalText1: '',
-                  additionalText2: '18-Jun-25',
-                  verticalPadding: 12,
-                  gradientStartColor: AppColor.black.withOpacity(0.01),
-                  gradientEndColor: AppColor.black,
-                  onDetailsTap: () => _examResult(context),
-                ),
-                SizedBox(height: 20),
-                CustomContainer.announcementsScreen(
-                  mainText: 'Heavy Rain Holiday',
-                  backRoundImage: AppImages.announcement7,
-                  iconData: CupertinoIcons.clock_fill,
-                  additionalText1: '',
-                  additionalText2: '11-Jun-25',
-                  verticalPadding: 12,
-                  gradientStartColor: AppColor.black.withOpacity(0.01),
-                  gradientEndColor: AppColor.black,
-                ),
-                SizedBox(height: 20),
-                CustomContainer.announcementsScreen(
-                  mainText: 'Sports Day',
-                  backRoundImage: AppImages.announcement3,
-                  iconData: CupertinoIcons.clock_fill,
-                  additionalText1: '',
-                  additionalText2: '18-Jun-25',
-                  verticalPadding: 12,
-                  gradientStartColor: AppColor.black.withOpacity(0.1),
-                  gradientEndColor: AppColor.black,
-                ),
-                SizedBox(height: 20),
-                CustomContainer.announcementsScreen(
-                  mainText: 'Parents Meeting',
-                  backRoundImage: AppImages.announcement4,
-                  iconData: CupertinoIcons.clock_fill,
-                  additionalText1: '',
-                  additionalText2: '20-Jun-25',
-                  verticalPadding: 15,
-                  gradientStartColor: AppColor.black.withOpacity(0.01),
-                  gradientEndColor: AppColor.black,
-                ),
-                SizedBox(height: 20),
-                CustomContainer.announcementsScreen(
-                  mainText: 'Mid-Term Exam',
-                  backRoundImage: AppImages.announcement5,
-                  iconData: CupertinoIcons.clock_fill,
-                  additionalText1: 'Starts on',
-                  additionalText2: '20-Jun-25',
-                  verticalPadding: 1,
-                  gradientStartColor: AppColor.black.withOpacity(0.05),
-                  gradientEndColor: AppColor.black,
-                ),
-              ],
+                  SizedBox(height: 20),
+                  CustomContainer.announcementsScreen(
+                    mainText: 'Third-Term Fees',
+                    backRoundImage: AppImages.announcement2,
+                    iconData: CupertinoIcons.clock_fill,
+                    additionalText1: 'Due date',
+                    additionalText2: '12-Dec-25',
+                    verticalPadding: 6,
+                    gradientStartColor: AppColor.black.withOpacity(0.1),
+                    gradientEndColor: AppColor.black,
+                    onDetailsTap: () => _feessSheet(context),
+                  ),
+                  SizedBox(height: 20),
+                  CustomContainer.announcementsScreen(
+                    mainText: 'Result- First Term',
+                    backRoundImage: AppImages.announcement6,
+                    iconData: CupertinoIcons.clock_fill,
+                    additionalText1: '',
+                    additionalText2: '18-Jun-25',
+                    verticalPadding: 12,
+                    gradientStartColor: AppColor.black.withOpacity(0.01),
+                    gradientEndColor: AppColor.black,
+                    onDetailsTap: () => _examResult(context),
+                  ),
+                  SizedBox(height: 20),
+                  CustomContainer.announcementsScreen(
+                    mainText: 'Heavy Rain Holiday',
+                    backRoundImage: AppImages.announcement7,
+                    iconData: CupertinoIcons.clock_fill,
+                    additionalText1: '',
+                    additionalText2: '11-Jun-25',
+                    verticalPadding: 12,
+                    gradientStartColor: AppColor.black.withOpacity(0.01),
+                    gradientEndColor: AppColor.black,
+                  ),
+                  SizedBox(height: 20),
+                  CustomContainer.announcementsScreen(
+                    mainText: 'Sports Day',
+                    backRoundImage: AppImages.announcement3,
+                    iconData: CupertinoIcons.clock_fill,
+                    additionalText1: '',
+                    additionalText2: '18-Jun-25',
+                    verticalPadding: 12,
+                    gradientStartColor: AppColor.black.withOpacity(0.1),
+                    gradientEndColor: AppColor.black,
+                  ),
+                  SizedBox(height: 20),
+                  CustomContainer.announcementsScreen(
+                    mainText: 'Parents Meeting',
+                    backRoundImage: AppImages.announcement4,
+                    iconData: CupertinoIcons.clock_fill,
+                    additionalText1: '',
+                    additionalText2: '20-Jun-25',
+                    verticalPadding: 15,
+                    gradientStartColor: AppColor.black.withOpacity(0.01),
+                    gradientEndColor: AppColor.black,
+                  ),
+                  SizedBox(height: 20),
+                  CustomContainer.announcementsScreen(
+                    mainText: 'Mid-Term Exam',
+                    backRoundImage: AppImages.announcement5,
+                    iconData: CupertinoIcons.clock_fill,
+                    additionalText1: 'Starts on',
+                    additionalText2: '20-Jun-25',
+                    verticalPadding: 1,
+                    gradientStartColor: AppColor.black.withOpacity(0.05),
+                    gradientEndColor: AppColor.black,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        }),
       ),
     );
   }

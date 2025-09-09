@@ -4,10 +4,12 @@ import 'dart:io';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 
 import 'package:intl/intl.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/model/announcement_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/model/student_home_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/model/home_work_id_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/model/task_response.dart';
 
+import '../../Presentation/Onboarding/Screens/Announcements Screen/model/announcement_details_response.dart';
 import '../../Presentation/Onboarding/Screens/Attendence Screen/model/attendance_response.dart';
 import '../../Presentation/Onboarding/Screens/Home Screen/model/sibling_switch_response.dart';
 import '../../Presentation/Onboarding/Screens/Home Screen/model/siblings_list_response.dart';
@@ -415,7 +417,7 @@ class ApiDataSource extends BaseApiDataSource {
 
       final response = await Request.formData(url, formData, 'POST', true);
       Map<String, dynamic> responseData =
-      jsonDecode(response.data) as Map<String, dynamic>;
+          jsonDecode(response.data) as Map<String, dynamic>;
       if (response.statusCode == 200) {
         if (responseData['status'] == true) {
           return Right(UserImageModels.fromJson(responseData));
@@ -436,8 +438,9 @@ class ApiDataSource extends BaseApiDataSource {
     }
   }
 
-  Future<Either<Failure, StudentProfileImageData>>
-  studentProfileInsert({String? image}) async {
+  Future<Either<Failure, StudentProfileImageData>> studentProfileInsert({
+    String? image,
+  }) async {
     try {
       String url = ApiUrl.profileImage;
 
@@ -467,5 +470,53 @@ class ApiDataSource extends BaseApiDataSource {
     }
   }
 
+  Future<Either<Failure, AnnouncementResponse>> getAnnouncement() async {
+    try {
+      String url = ApiUrl.announcementList;
 
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(response);
+
+      // Accept both 200 and 201 as success
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(AnnouncementResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, AnnouncementDetailsResponse>> getAnnouncementDetails({required int id}) async {
+    try {
+      String url = ApiUrl.announcementDetails(id: id );
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(response);
+
+      // Accept both 200 and 201 as success
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(AnnouncementDetailsResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 }
