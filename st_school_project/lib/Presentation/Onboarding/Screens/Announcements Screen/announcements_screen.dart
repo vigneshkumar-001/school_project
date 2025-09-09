@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:intl/intl.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/controller/announcement_controller.dart';
@@ -11,6 +12,7 @@ import '../../../../Core/Utility/app_images.dart' show AppImages;
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/custom_container.dart' show CustomContainer;
 import '../../../../Core/Widgets/custom_textfield.dart';
+import 'model/announcement_details_response.dart';
 
 class AnnouncementsScreen extends StatefulWidget {
   const AnnouncementsScreen({super.key});
@@ -354,10 +356,162 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     );
   }
 
+  void _showAnnouncementDetails(BuildContext context, int id) async {
+    AnnouncementDetails? details;
 
+    // If already fetched for the same ID, use it directly
+    if (controller.announcementDetails.value != null &&
+        controller.announcementDetails.value!.id == id) {
+      details = controller.announcementDetails.value;
+    } else {
+      // Otherwise fetch from API
+      details = await controller.getAnnouncementDetails(id: id);
+    }
 
+    if (details == null) return;
 
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.75,
+          minChildSize: 0.4,
+          maxChildSize: 0.95,
+          builder: (_, controller) {
+            return SingleChildScrollView(
+              controller: controller,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Grab Handle
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
 
+                  // Image (if exists)
+                  if (details!.contents.isNotEmpty &&
+                      details.contents.first.type == "image")
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.network(
+                        details.contents.first.content ?? "",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+
+                  const SizedBox(height: 20),
+
+                  // Title
+                  Text(
+                    details.title,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Date
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        DateFormat(
+                          'dd-MMM-yyyy',
+                        ).format(DateTime.parse(details.notifyDate)),
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Content
+                  Text(
+                    details.content,
+                    style: const TextStyle(fontSize: 16, height: 1.5),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Extra dynamic contents
+                  if (details.contents.isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children:
+                          details.contents.map((c) {
+                            if (c.type == "paragraph") {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: Text(
+                                  c.content ?? "",
+                                  style: const TextStyle(fontSize: 15),
+                                ),
+                              );
+                            } else if (c.type == "list") {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children:
+                                    c.items
+                                        ?.map(
+                                          (e) => Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.check,
+                                                color: Colors.green,
+                                                size: 18,
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Expanded(child: Text(e)),
+                                            ],
+                                          ),
+                                        )
+                                        .toList() ??
+                                    [],
+                              );
+                            } else if (c.type == "image") {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.network(c.content ?? ""),
+                                ),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          }).toList(),
+                    ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -389,7 +543,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
           }
 
           return RefreshIndicator(
-            onRefresh: ()async{
+            onRefresh: () async {
               await controller.getAnnouncement();
             },
             child: SingleChildScrollView(
@@ -411,7 +565,6 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Dynamic list of announcements
                     Column(
                       children:
                           data.items.map((item) {
@@ -428,7 +581,16 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                   0.01,
                                 ),
                                 gradientEndColor: AppColor.black,
-                                onDetailsTap: () {
+                                onDetailsTap: () async {
+                                  if (item.type == "exammark") {
+                                    _examResult(context);
+                                  } else if (item.type == "announcement" ||
+                                      item.type == "holiday") {
+                                    _showAnnouncementDetails(context, item.id);
+
+                                    // Navigate to details screen
+                                  }
+
                                   // Example: show details bottomsheet
                                   // _showAnnouncementDetails(context, item);
                                 },

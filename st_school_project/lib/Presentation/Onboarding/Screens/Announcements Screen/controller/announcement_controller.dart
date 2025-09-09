@@ -33,6 +33,7 @@ class AnnouncementController extends GetxController {
         },
         (response) async {
           isLoading.value = false;
+          AppLogger.log.i('announcementData List ');
           announcementData.value = response.data;
           AppLogger.log.i(response.toString());
         },
@@ -44,29 +45,33 @@ class AnnouncementController extends GetxController {
     return null;
   }
 
-  Future<String?> getAnnouncementDetails({
+  Future<AnnouncementDetails?> getAnnouncementDetails({
     bool showLoader = true,
     required int id,
   }) async {
     try {
-      isLoading.value = true;
+      if (showLoader) showPopupLoader();
+
       final results = await apiDataSource.getAnnouncementDetails(id: id);
+
       return results.fold(
         (failure) {
-          isLoading.value = false;
+          if (showLoader) hidePopupLoader();
           AppLogger.log.e(failure.message);
+          return null;
         },
-        (response) async {
-          isLoading.value = false;
-          announcementDetails.value = response.data;
-          AppLogger.log.i(response.toString());
+        (response) {
+          if (showLoader) hidePopupLoader();
+          AppLogger.log.i('Announcement Details Fetched ✅');
+          announcementDetails.value = response.data; // store in observable
+          return response.data; // return data for UI
         },
       );
     } catch (e) {
-      isLoading.value = false;
+      if (showLoader) hidePopupLoader();
       AppLogger.log.e(e);
+      return null;
     }
-    return null;
   }
 
   void showPopupLoader() {
