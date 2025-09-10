@@ -273,7 +273,9 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
 
                             /*7904005315*/
                             /*9894143252*/
-                            loginController.mobileNumberLogin(mbl);
+                            widget.page == 'splash'
+                                ? loginController.mobileNumberLogin(mbl)
+                                : loginController.changeMobileNumber(mbl);
                             // Get.to(
                             //   OtpScreen(mobileNumber: mbl, pages: 'splash'),
                             // );

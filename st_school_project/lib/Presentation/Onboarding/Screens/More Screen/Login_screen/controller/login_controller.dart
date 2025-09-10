@@ -46,6 +46,32 @@ class LoginController extends GetxController {
     return null;
   }
 
+  Future<String?> changeMobileNumber(String phone) async {
+    try {
+      isLoading.value = true;
+      final results = await apiDataSource.changeMobileNumber(phone);
+      results.fold(
+        (failure) {
+          isLoading.value = false;
+          AppLogger.log.e(failure.message);
+          CustomSnackBar.showError(failure.message);
+        },
+        (response) async {
+          isLoading.value = false;
+
+          AppLogger.log.i(response.message);
+
+          Get.to(() => OtpScreen(mobileNumber: phone, pages: ''));
+        },
+      );
+    } catch (e) {
+      isLoading.value = false;
+      AppLogger.log.e(e);
+      return e.toString();
+    }
+    return null;
+  }
+
   Future<String?> otpLogin({required String phone, required String otp}) async {
     try {
       isOtpLoading.value = true;
@@ -65,6 +91,41 @@ class LoginController extends GetxController {
           prefs.setString('token', accessToken);
           String? token = prefs.getString('token');
           AppLogger.log.i('token = $token');
+        },
+      );
+    } catch (e) {
+      isOtpLoading.value = false;
+      AppLogger.log.e(e);
+      return e.toString();
+    }
+    return null;
+  }
+
+  Future<String?> changeNumberOtpLogin({
+    required String phone,
+    required String otp,
+  }) async {
+    try {
+      isOtpLoading.value = true;
+      final results = await apiDataSource.changeOtpLogin(
+        otp: otp,
+        phone: phone,
+      );
+      results.fold(
+        (failure) {
+          isOtpLoading.value = false;
+          CustomSnackBar.showError(failure.message);
+          AppLogger.log.e(failure.message);
+        },
+        (response) async {
+          Get.offAll(CommonBottomNavigation(initialIndex: 4));
+          isOtpLoading.value = false;
+          AppLogger.log.i(response.message);
+          // final prefs = await SharedPreferences.getInstance();
+          // accessToken = response.token;
+          // prefs.setString('token', accessToken);
+          // String? token = prefs.getString('token');
+          // AppLogger.log.i('token = $token');
         },
       );
     } catch (e) {
