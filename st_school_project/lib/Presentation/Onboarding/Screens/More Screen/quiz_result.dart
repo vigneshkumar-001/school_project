@@ -405,14 +405,21 @@
 // }
 
 // lib/Presentation/Onboarding/Screens/More Screen/Quiz Screen/quiz_result_screen.dart
+import 'package:dotted_border/dotted_border.dart' as dotted;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+// project imports
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
+
+// your model
 import 'Quiz Screen/Model/quiz_result_response.dart';
+
+// dotted border
+import 'package:dotted_border/dotted_border.dart' as d;
 
 class QuizResultScreen extends StatefulWidget {
   final QuizResultData data;
@@ -447,6 +454,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
               _header(context, d, pct),
               const SizedBox(height: 20),
 
+              // Questions / Options
               const SizedBox(height: 12),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -463,6 +471,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                   ],
                 ),
               ),
+
               const SizedBox(height: 8),
               Center(
                 child: GestureDetector(
@@ -490,7 +499,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     );
   }
 
-  // —————————————————— HEADER ——————————————————
+  // ---------------- Header ----------------
   Widget _header(BuildContext context, QuizResultData d, double pct) {
     return Container(
       width: double.infinity,
@@ -593,6 +602,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     return 'Keep going!';
   }
 
+
   Widget _questionBlock({
     required int index,
     required QuestionResult q,
@@ -658,13 +668,12 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
         const SizedBox(height: 2),
         Align(
           alignment: Alignment.centerLeft,
-          child: _correctBadge(q.isCorrect),
+          // You can add a "Correct/Incorrect" badge here if you want
         ),
       ],
     );
   }
 
-  // State: correct (green), selectedWrong (red), neutral (transparent border)
   _OptionState _stateForOption(QuestionResult q, OptionResult? opt) {
     if (opt == null) return _OptionState.placeholder;
     if (opt.isCorrect) return _OptionState.correct;
@@ -672,39 +681,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     return _OptionState.neutral;
   }
 
-  Widget _correctBadge(bool isCorrect) {
-    final bg =
-        isCorrect ? AppColor.quizGreen.withOpacity(0.2) : Colors.transparent;
-    final fg = isCorrect ? AppColor.greenMore1 : AppColor.grey;
-    final icon =
-        isCorrect
-            ? CupertinoIcons.check_mark_circled_solid
-            : CupertinoIcons.xmark_circle;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: fg),
-          const SizedBox(width: 6),
-          Text(
-            isCorrect ? 'Correct' : 'Incorrect',
-            style: GoogleFont.ibmPlexSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: fg,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // —————————————————— SMALL HELPERS ——————————————————
+  // --------------- Small helpers ---------------
   bool _isShort(String s) {
     final t = s.trim();
     return t.length <= 30 && !t.contains('\n');
@@ -717,7 +694,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
   }
 }
 
-// —————————————————— OPTION VIEW MODELS / WIDGETS ——————————————————
+// --------------- Option widgets ---------------
 
 enum _OptionState { correct, selectedWrong, neutral, placeholder }
 
@@ -789,45 +766,43 @@ class _OptionTile extends StatelessWidget {
 
     final colors = _colorsFor(state);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-      decoration: BoxDecoration(
-        color: colors.bg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: colors.border, width: 2),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: CustomTextField.textWithSmall(
-              text: letter,
-              color: colors.letter,
+    return _borderWrapper(
+      p: colors,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+        child: Row(
+          children: [
+            Expanded(
+              child: CustomTextField.textWithSmall(
+                text: letter,
+                color: colors.letter,
+              ),
             ),
-          ),
-          Expanded(
-            flex: 3,
-            child: CustomTextField.textWithSmall(
-              text: text,
-              color: colors.text,
-              fontWeight:
-                  state == _OptionState.correct
-                      ? FontWeight.w700
-                      : FontWeight.w500,
+            Expanded(
+              flex: 3,
+              child: CustomTextField.textWithSmall(
+                text: text,
+                color: colors.text,
+                fontWeight:
+                    state == _OptionState.correct
+                        ? FontWeight.w700
+                        : FontWeight.w500,
+              ),
             ),
-          ),
-          if (state == _OptionState.correct)
-            Icon(
-              CupertinoIcons.checkmark_alt_circle_fill,
-              size: 18,
-              color: colors.icon,
-            ),
-          if (state == _OptionState.selectedWrong)
-            Icon(
-              CupertinoIcons.xmark_circle_fill,
-              size: 18,
-              color: colors.icon,
-            ),
-        ],
+            if (state == _OptionState.correct)
+              Icon(
+                CupertinoIcons.checkmark_alt_circle_fill,
+                size: 18,
+                color: colors.icon,
+              ),
+            if (state == _OptionState.selectedWrong)
+              Icon(
+                CupertinoIcons.xmark_circle_fill,
+                size: 18,
+                color: colors.icon,
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -859,83 +834,46 @@ class _OptionTileLong extends StatelessWidget {
 
     final colors = _colorsFor(state);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-      decoration: BoxDecoration(
-        color: colors.bg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: colors.border, width: 2),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomTextField.textWithSmall(text: letter, color: colors.letter),
-          const SizedBox(width: 12),
-          Expanded(
-            child: CustomTextField.textWithSmall(
-              text: text,
-              color: colors.text,
-              fontWeight:
-                  state == _OptionState.correct
-                      ? FontWeight.w700
-                      : FontWeight.w500,
+    return _borderWrapper(
+      p: colors,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomTextField.textWithSmall(text: letter, color: colors.letter),
+            const SizedBox(width: 12),
+            Expanded(
+              child: CustomTextField.textWithSmall(
+                text: text,
+                color: colors.text,
+                fontWeight:
+                    state == _OptionState.correct
+                        ? FontWeight.w700
+                        : FontWeight.w500,
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          if (state == _OptionState.correct)
-            Icon(
-              CupertinoIcons.checkmark_alt_circle_fill,
-              size: 18,
-              color: colors.icon,
-            ),
-          if (state == _OptionState.selectedWrong)
-            Icon(
-              CupertinoIcons.xmark_circle_fill,
-              size: 18,
-              color: colors.icon,
-            ),
-        ],
+            const SizedBox(width: 8),
+            if (state == _OptionState.correct)
+              Icon(
+                CupertinoIcons.checkmark_alt_circle_fill,
+                size: 18,
+                color: colors.icon,
+              ),
+            if (state == _OptionState.selectedWrong)
+              Icon(
+                CupertinoIcons.xmark_circle_fill,
+                size: 18,
+                color: colors.icon,
+              ),
+          ],
+        ),
       ),
     );
   }
 }
 
-_OptionPalette _colorsFor(_OptionState s) {
-  switch (s) {
-    case _OptionState.correct:
-      return _OptionPalette(
-        border: AppColor.greenMore1,
-        bg: AppColor.quizGreen.withOpacity(0.08),
-        text: AppColor.black,
-        letter: AppColor.greenMore1,
-        icon: AppColor.greenMore1,
-      );
-    case _OptionState.selectedWrong:
-      return _OptionPalette(
-        border: Colors.redAccent,
-        bg: Colors.redAccent.withOpacity(0.06),
-        text: AppColor.black,
-        letter: Colors.redAccent,
-        icon: Colors.redAccent,
-      );
-    case _OptionState.neutral:
-      return _OptionPalette(
-        border: AppColor.lightGrey,
-        bg: Colors.transparent,
-        text: AppColor.black,
-        letter: AppColor.grey,
-        icon: AppColor.grey,
-      );
-    case _OptionState.placeholder:
-      return _OptionPalette(
-        border: Colors.transparent,
-        bg: Colors.transparent,
-        text: AppColor.black,
-        letter: AppColor.grey,
-        icon: AppColor.grey,
-      );
-  }
-}
+// ---------------- Palette + borders ----------------
 
 class _OptionPalette {
   final Color border;
@@ -943,11 +881,92 @@ class _OptionPalette {
   final Color text;
   final Color letter;
   final Color icon;
-  _OptionPalette({
+  final bool dotted; // if true, use dotted border
+
+  const _OptionPalette({
     required this.border,
     required this.bg,
     required this.text,
     required this.letter,
     required this.icon,
+    this.dotted = false,
   });
+}
+
+_OptionPalette _colorsFor(_OptionState s) {
+  switch (s) {
+    case _OptionState.correct:
+      return const _OptionPalette(
+        border: AppColor.greenMore1, // solid bg only for correct
+        bg: AppColor.white,
+        text: AppColor.greenMore1,
+        letter: AppColor.grayop,
+        icon: AppColor.greenMore1,
+        dotted: false,
+      );
+    case _OptionState.selectedWrong:
+      return const _OptionPalette(
+        border: Colors.redAccent, // red dotted
+        bg: AppColor.white,
+        text: Colors.redAccent,
+        letter: AppColor.grayop,
+        icon: Colors.redAccent,
+        dotted: true, // <— key
+      );
+    case _OptionState.neutral:
+      return const _OptionPalette(
+        border: AppColor.lightGrey,
+        bg: AppColor.lightGrey,
+        text: AppColor.black,
+        letter: AppColor.grayop,
+        icon: AppColor.grey,
+        dotted: false,
+      );
+    case _OptionState.placeholder:
+      return const _OptionPalette(
+        border: AppColor.greenMore1,
+        bg: Colors.transparent,
+        text: AppColor.greenMore1,
+        letter: AppColor.grayop,
+        icon: AppColor.grey,
+        dotted: false,
+      );
+  }
+}
+
+Widget _borderWrapper({
+  required _OptionPalette p,
+  required Widget child,
+  double radius = 16,
+  double strokeWidth = 2,
+}) {
+  if (p.dotted) {
+    // Red dotted border for wrong answers
+    return dotted.DottedBorder(
+      color: p.border, // ✅ exists
+      strokeWidth: strokeWidth, // ✅ double
+      dashPattern: const [6.0, 3.0], // ✅ List<double>
+      borderType: dotted.BorderType.RRect, // ✅ enum from dotted_border
+      radius: Radius.circular(radius), // ✅ Radius
+      strokeCap: StrokeCap.round, // (optional) nicer dots
+      padding: EdgeInsets.zero, // ✅
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: Container(color: p.bg, child: child),
+      ),
+    );
+  }
+
+  // Solid/transparent for other states
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(radius),
+      border: Border.all(
+        color: p.border,
+        width: p.border == Colors.transparent ? 0 : strokeWidth,
+      ),
+      color: p.bg,
+    ),
+    child: child,
+  );
 }
