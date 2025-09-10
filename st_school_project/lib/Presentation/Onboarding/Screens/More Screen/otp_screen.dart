@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/home_tab.dart';
 import '../../../../Core/Utility/app_color.dart';
 import '../../../../Core/Utility/app_loader.dart';
 import '../../../../Core/Utility/google_font.dart';
@@ -38,7 +40,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
       body: Obx(() {
         if (otpController.isOtpLoading.value) {
-          return AppLoader.circularLoader( );
+          return AppLoader.circularLoader();
         }
         return SafeArea(
           child: Padding(
@@ -191,10 +193,13 @@ class _OtpScreenState extends State<OtpScreen> {
                       //   ),
                       // );
                     } else {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => QuizScreen()),
-                      // );
+                      String Otp = otp.text.toString();
+                      String mobileNumber =
+                          widget.mobileNumber.toString() ?? '';
+                      otpController.changeNumberOtpLogin(
+                        phone: mobileNumber,
+                        otp: Otp,
+                      );
                     }
                   },
                   imagePath: AppImages.tick,

@@ -3,7 +3,9 @@ class ApiUrl {
   static String baseUrl1 = 'https://9kt7pzw3-4000.inc1.devtunnels.ms';
   static String teacherInfo = '$baseUrl/student-teacher-info';
   static String login = '$baseUrl/student-auth/login';
+  static String changePhoneNumber = '$baseUrl/student/change-phone/request';
   static String verifyOtp = '$baseUrl/student-auth/verify-otp';
+  static String changePhoneVerify = '$baseUrl/student/change-phone/verify';
   static String studentHome = '$baseUrl/student-home';
   static String classList = '$baseUrl/teacher-student-attendance/class-list';
   static String task = '$baseUrl/student-home/tasks?';
