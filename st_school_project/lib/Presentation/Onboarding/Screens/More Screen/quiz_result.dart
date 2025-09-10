@@ -598,12 +598,13 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
   }
 
   String _titleForScore(int score, int total) {
-    if (total == 0) return 'Great!';
+    if (total <= 0) return 'No score yet';
+
     final p = score / total;
-    if (p >= 0.9) return 'Outstanding!';
-    if (p >= 0.7) return 'Well done!';
-    if (p >= 0.5) return 'Good!';
-    return 'Keep going!';
+    if (p >= 0.9) return 'Great';
+    if (p >= 0.7) return 'Average';
+    if (p >= 0.5) return 'Need Attention';
+    return 'Need Attention';
   }
 
   Widget _questionBlock({

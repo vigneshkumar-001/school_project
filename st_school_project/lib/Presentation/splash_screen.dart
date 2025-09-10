@@ -5,6 +5,7 @@ import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/controller/student_home_controller.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/Login_screen/controller/login_controller.dart';
 import '../Core/Utility/app_color.dart';
 import 'Onboarding/Screens/Announcements Screen/controller/announcement_controller.dart';
 import 'Onboarding/Screens/Home Screen/home_tab.dart';
@@ -23,6 +24,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   double _progress = 0.0;
   final StudentHomeController controller = Get.put(StudentHomeController());
+  final LoginController loginController = Get.put(LoginController());
   final AnnouncementController announcementController = Get.put(
     AnnouncementController(),
   );
@@ -32,12 +34,25 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    controller.getStudentHome();
-    controller.getSiblingsData();
-    teacherListController.teacherListData();
-    announcementController.getAnnouncement();
+    _checkLoginStatus();
+  }
 
-    _startLoading();
+  void _checkLoginStatus() async {
+    final isLoggedIn = await loginController.isLoggedIn();
+    if (isLoggedIn) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CommonBottomNavigation(initialIndex: 0),
+        ),
+      );
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        teacherListController.teacherListData();
+        announcementController.getAnnouncement();
+      });
+      _startLoading();
+    }
   }
 
   void _startLoading() {
