@@ -5,6 +5,7 @@ import 'package:st_school_project/Core/Widgets/consents.dart';
 
 import 'package:intl/intl.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/model/announcement_response.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/model/exam_result_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/model/student_home_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/model/home_work_id_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/model/task_response.dart';
@@ -495,9 +496,11 @@ class ApiDataSource extends BaseApiDataSource {
     }
   }
 
-  Future<Either<Failure, AnnouncementDetailsResponse>> getAnnouncementDetails({required int id}) async {
+  Future<Either<Failure, AnnouncementDetailsResponse>> getAnnouncementDetails({
+    required int id,
+  }) async {
     try {
-      String url = ApiUrl.announcementDetails(id: id );
+      String url = ApiUrl.announcementDetails(id: id);
 
       dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
       AppLogger.log.i(response);
@@ -507,6 +510,33 @@ class ApiDataSource extends BaseApiDataSource {
           (response.statusCode == 200 || response.statusCode == 201)) {
         if (response.data['status'] == true) {
           return Right(AnnouncementDetailsResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, ExamResultResponse>> getExamResultData({
+    required int id,
+  }) async {
+    try {
+      String url = ApiUrl.getExamResultData(id: id);
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(response);
+
+      // Accept both 200 and 201 as success
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(ExamResultResponse.fromJson(response.data));
         } else {
           return Left(ServerFailure(response.data['message']));
         }

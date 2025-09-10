@@ -88,4 +88,5 @@ class AppImages {
   static String profilePicture= 'assets/images/Profile Picture.png';
   static String attendanceTick= 'assets/images/attendanceTick.png';
   static String attendanceAbsent= 'assets/images/attendanceAbsent.png';
+   
 }

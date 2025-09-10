@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/controller/announcement_controller.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/model/exam_result_response.dart';
 
 import '../../../../Core/Utility/app_images.dart' show AppImages;
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
@@ -184,8 +185,168 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
       },
     );
   }
+  /*Future<void> _examResult(BuildContext context, int id) async {
+    final details = await controller.getExamResultData(id: id);
+    if (details == null) return;
 
-  void _examResult(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.65,
+          minChildSize: 0.20,
+          maxChildSize: 0.65,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: AppColor.grayop,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        details.exam.heading ?? '',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.lightBlack,
+                        ),
+                      ),
+                      const SizedBox(height: 7),
+                      RichText(
+                        text: TextSpan(
+                          text: details.totals?.grade ?? '',
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 43,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.greenMore1,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: ' Grade',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 43,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 26),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 35.0),
+                        child: DottedLine(
+                          dashColor: AppColor.grayop,
+                          dashGapLength: 6,
+                          dashLength: 7,
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: details.subjects?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          final subject = details.subjects![index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8.0,
+                              horizontal: 16,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    subject.subjectName ?? '',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColor.grey,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  subject.obtainedMarks?.toString() ?? '-',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColor.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 35.0),
+                        child: DottedLine(
+                          dashColor: AppColor.grayop,
+                          dashGapLength: 6,
+                          dashLength: 7,
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 30,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: AppColor.blue,
+                                width: 1,
+                              ),
+                            ),
+                            child: CustomTextField.textWithSmall(
+                              text: 'Close',
+                              color: AppColor.blue,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }*/
+  Future<void> _examResult(BuildContext context, int id) async {
+    ExamResultData? details;
+
+    details = await controller.getExamResultData(id: id);
+    if (details == null) return;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -221,7 +382,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Third term fees Result',
+                        details?.exam.heading ?? '',
                         style: GoogleFont.ibmPlexSans(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -231,7 +392,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                       SizedBox(height: 7),
                       RichText(
                         text: TextSpan(
-                          text: 'A+',
+                          text: details?.totals?.grade.toString() ?? '',
                           style: GoogleFont.ibmPlexSans(
                             fontSize: 43,
                             fontWeight: FontWeight.w600,
@@ -272,13 +433,13 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                           ListView.builder(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
-                            itemCount: subjects.length,
+                            itemCount: details?.subjects?.length ?? 0,
                             itemBuilder: (context, index) {
-                              final subject = subjects[index];
+                              final subject = details?.subjects![index];
                               return Padding(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 8.0,
-                                  horizontal: 16,
+
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -287,7 +448,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                   child: Row(
                                     children: [
                                       Text(
-                                        subject['subject']!,
+                                        subject?.subjectName ?? '',
                                         style: GoogleFont.ibmPlexSans(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
@@ -296,7 +457,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                       ),
                                       SizedBox(width: 30),
                                       Text(
-                                        subject['mark']!,
+                                        subject?.obtainedMarks?.toString() ?? '-',
                                         style: GoogleFont.ibmPlexSans(
                                           fontSize: 20,
                                           fontWeight: FontWeight.w500,
@@ -490,7 +651,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                         .toList() ??
                                     [],
                               );
-                            } else if (c.type == "image") {
+                            } /*else if (c.type == "image") {
                               return Padding(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 10,
@@ -500,7 +661,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                   child: Image.network(c.content ?? ""),
                                 ),
                               );
-                            }
+                            }*/
                             return const SizedBox.shrink();
                           }).toList(),
                     ),
@@ -568,14 +729,20 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                     Column(
                       children:
                           data.items.map((item) {
+                            final formattedDate = DateFormat(
+                              "dd-MMM-yy",
+                            ).format(
+                              DateTime.parse(item.notifyDate.toString()),
+                            );
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 16),
                               child: CustomContainer.announcementsScreen(
-                                mainText: item.announcementCategory,
+                                mainText: item.type,
                                 backRoundImage: AppImages.announcement2,
                                 iconData: CupertinoIcons.clock_fill,
                                 additionalText1: "Date",
-                                additionalText2: '18-Jun-25',
+                                additionalText2:
+                                    formattedDate, // 👈 dynamic date
                                 verticalPadding: 12,
                                 gradientStartColor: AppColor.black.withOpacity(
                                   0.01,
@@ -583,9 +750,8 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                 gradientEndColor: AppColor.black,
                                 onDetailsTap: () async {
                                   if (item.type == "exammark") {
-                                    _examResult(context);
-                                  } else if (item.type == "announcement" ||
-                                      item.type == "holiday") {
+                                    _examResult(context, item.id);
+                                  } else if (item.type == "announcement") {
                                     _showAnnouncementDetails(context, item.id);
                                   }
 
@@ -598,112 +764,6 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                     ),
                   ],
                 ),
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-    return Scaffold(
-      backgroundColor: AppColor.white,
-      body: SafeArea(
-        child: Obx(() {
-          final data = controller.announcementData.value;
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                children: [
-                  Center(
-                    child: Text(
-                      'Announcements',
-                      style: GoogleFont.ibmPlexSans(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 26,
-                        color: AppColor.black,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  CustomContainer.announcementsScreen(
-                    mainText: 'Today Special',
-                    backRoundImage: AppImages.announcement1,
-                    additionalText1: '',
-                    additionalText2: '',
-                    verticalPadding: 12,
-                    gradientStartColor: AppColor.black.withOpacity(0.1),
-                    gradientEndColor: AppColor.black,
-                  ),
-
-                  SizedBox(height: 20),
-                  CustomContainer.announcementsScreen(
-                    mainText: 'Third-Term Fees',
-                    backRoundImage: AppImages.announcement2,
-                    iconData: CupertinoIcons.clock_fill,
-                    additionalText1: 'Due date',
-                    additionalText2: '12-Dec-25',
-                    verticalPadding: 6,
-                    gradientStartColor: AppColor.black.withOpacity(0.1),
-                    gradientEndColor: AppColor.black,
-                    onDetailsTap: () => _feessSheet(context),
-                  ),
-                  SizedBox(height: 20),
-                  CustomContainer.announcementsScreen(
-                    mainText: 'Result- First Term',
-                    backRoundImage: AppImages.announcement6,
-                    iconData: CupertinoIcons.clock_fill,
-                    additionalText1: '',
-                    additionalText2: '18-Jun-25',
-                    verticalPadding: 12,
-                    gradientStartColor: AppColor.black.withOpacity(0.01),
-                    gradientEndColor: AppColor.black,
-                    onDetailsTap: () => _examResult(context),
-                  ),
-                  SizedBox(height: 20),
-                  CustomContainer.announcementsScreen(
-                    mainText: 'Heavy Rain Holiday',
-                    backRoundImage: AppImages.announcement7,
-                    iconData: CupertinoIcons.clock_fill,
-                    additionalText1: '',
-                    additionalText2: '11-Jun-25',
-                    verticalPadding: 12,
-                    gradientStartColor: AppColor.black.withOpacity(0.01),
-                    gradientEndColor: AppColor.black,
-                  ),
-                  SizedBox(height: 20),
-                  CustomContainer.announcementsScreen(
-                    mainText: 'Sports Day',
-                    backRoundImage: AppImages.announcement3,
-                    iconData: CupertinoIcons.clock_fill,
-                    additionalText1: '',
-                    additionalText2: '18-Jun-25',
-                    verticalPadding: 12,
-                    gradientStartColor: AppColor.black.withOpacity(0.1),
-                    gradientEndColor: AppColor.black,
-                  ),
-                  SizedBox(height: 20),
-                  CustomContainer.announcementsScreen(
-                    mainText: 'Parents Meeting',
-                    backRoundImage: AppImages.announcement4,
-                    iconData: CupertinoIcons.clock_fill,
-                    additionalText1: '',
-                    additionalText2: '20-Jun-25',
-                    verticalPadding: 15,
-                    gradientStartColor: AppColor.black.withOpacity(0.01),
-                    gradientEndColor: AppColor.black,
-                  ),
-                  SizedBox(height: 20),
-                  CustomContainer.announcementsScreen(
-                    mainText: 'Mid-Term Exam',
-                    backRoundImage: AppImages.announcement5,
-                    iconData: CupertinoIcons.clock_fill,
-                    additionalText1: 'Starts on',
-                    additionalText2: '20-Jun-25',
-                    verticalPadding: 1,
-                    gradientStartColor: AppColor.black.withOpacity(0.05),
-                    gradientEndColor: AppColor.black,
-                  ),
-                ],
               ),
             ),
           );
