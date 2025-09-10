@@ -48,7 +48,9 @@ class _TaskDetailState extends State<TaskDetail> {
           final allImages = tasks.where((t) => t.type == 'image').toList();
           final allParagraphs =
               tasks.where((t) => t.type == 'paragraph').toList();
+
           final allLists = tasks.where((t) => t.type == 'list').toList();
+
 
           // First image for top
           final topImage = allImages.isNotEmpty ? allImages.first : null;
