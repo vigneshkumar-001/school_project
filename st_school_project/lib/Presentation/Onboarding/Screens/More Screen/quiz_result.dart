@@ -521,7 +521,8 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
             // Top row
             Row(
               children: [
-                GestureDetector(onTap: () => Navigator.pop(context),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
                   child: Container(
                     decoration: BoxDecoration(
                       color: AppColor.lightGrey,
@@ -604,7 +605,6 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     if (p >= 0.5) return 'Good!';
     return 'Keep going!';
   }
-
 
   Widget _questionBlock({
     required int index,
@@ -778,6 +778,7 @@ class _OptionTile extends StatelessWidget {
             Expanded(
               child: CustomTextField.textWithSmall(
                 text: letter,
+
                 color: colors.letter,
               ),
             ),
@@ -948,7 +949,7 @@ Widget _borderWrapper({
     return dotted.DottedBorder(
       color: p.border, // ✅ exists
       strokeWidth: strokeWidth, // ✅ double
-      dashPattern: const [6.0, 3.0], // ✅ List<double>
+      dashPattern: [6.0, 3.0], // ✅ List<double>
       borderType: dotted.BorderType.RRect, // ✅ enum from dotted_border
       radius: Radius.circular(radius), // ✅ Radius
       strokeCap: StrokeCap.round, // (optional) nicer dots
