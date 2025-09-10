@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 import '../../../../Core/Utility/app_color.dart';
 import '../../../../Core/Utility/google_font.dart';
+import '../../../../Core/Widgets/date_and_time_convert.dart';
 import 'controller/task_controller.dart';
 
 class TaskDetail extends StatefulWidget {
@@ -38,7 +39,7 @@ class _TaskDetailState extends State<TaskDetail> {
         child: Obx(() {
           final homework = taskController.homeworkDetail.value;
           if (homework == null) {
-            return Center(child: AppLoader.circularLoader( ));
+            return Center(child: AppLoader.circularLoader());
           }
 
           final tasks = homework.tasks ?? [];
@@ -46,14 +47,15 @@ class _TaskDetailState extends State<TaskDetail> {
           // Filter all images and paragraphs
           final allImages = tasks.where((t) => t.type == 'image').toList();
           final allParagraphs =
-          tasks.where((t) => t.type == 'paragraph').toList();
+              tasks.where((t) => t.type == 'paragraph').toList();
+          final allLists = tasks.where((t) => t.type == 'list').toList();
 
           // First image for top
           final topImage = allImages.isNotEmpty ? allImages.first : null;
 
           // Remaining images for horizontal scroll
           final remainingImages =
-          allImages.length > 1 ? allImages.sublist(1) : [];
+              allImages.length > 1 ? allImages.sublist(1) : [];
 
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -115,11 +117,11 @@ class _TaskDetailState extends State<TaskDetail> {
                               fit: BoxFit.cover,
                               errorBuilder:
                                   (_, __, ___) => Image.asset(
-                                AppImages.tdhs1,
-                                height: 200,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
+                                    AppImages.tdhs1,
+                                    height: 200,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
                             ),
                           ),
                         const SizedBox(height: 15),
@@ -165,10 +167,10 @@ class _TaskDetailState extends State<TaskDetail> {
                                         fit: BoxFit.cover,
                                         errorBuilder:
                                             (_, __, ___) => Container(
-                                          width: 200,
-                                          height: 150,
-                                          color: Colors.grey[200],
-                                        ),
+                                              width: 200,
+                                              height: 150,
+                                              color: Colors.grey[200],
+                                            ),
                                       ),
                                     ),
                                   );
@@ -177,25 +179,68 @@ class _TaskDetailState extends State<TaskDetail> {
                               const SizedBox(height: 20),
                             ],
                           ),
-
+                        // Paragraphs
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children:
-                          allParagraphs.map<Widget>((p) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 8,
-                              ),
-                              child: Text(
-                                p.content ?? '',
-                                style: GoogleFont.inter(
-                                  fontSize: 14,
-                                  color: AppColor.lightBlack,
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                              allParagraphs.map<Widget>((p) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
+                                  child: Text(
+                                    p.content ?? '',
+                                    style: GoogleFont.inter(
+                                      fontSize: 14,
+                                      color: AppColor.lightBlack,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
                         ),
+
+                        // Lists
+                        if (allLists.isNotEmpty) ...[
+                          const SizedBox(height: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children:
+                                allLists.asMap().entries.map<Widget>((entry) {
+                                  final index =
+                                      entry.key + 1; // 1-based numbering
+                                  final item = entry.value;
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 6,
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "$index. ", // numbering
+                                          style: GoogleFont.inter(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColor.lightBlack,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            item.content ?? '',
+                                            style: GoogleFont.inter(
+                                              fontSize: 14,
+                                              color: AppColor.lightBlack,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                          ),
+                        ],
+
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Padding(
@@ -246,20 +291,26 @@ class _TaskDetailState extends State<TaskDetail> {
                                         ),
                                         SizedBox(width: 10),
                                         Text(
-                                          homework.time.toString() ?? '',
+                                          DateAndTimeConvert.formatDateTime(
+                                            homework.time.toString() ?? '',
+
+                                            showDate: true,
+                                            showTime: true,
+                                          ),
+
                                           style: GoogleFont.inter(
                                             fontSize: 12,
                                             color: AppColor.lightBlack,
                                           ),
                                         ),
-                                        SizedBox(width: 10),
-                                        Text(
-                                          homework.date.toString() ?? '',
-                                          style: GoogleFont.inter(
-                                            fontSize: 12,
-                                            color: AppColor.grey,
-                                          ),
-                                        ),
+                                        // SizedBox(width: 10),
+                                        // Text(
+                                        //   homework.date.toString() ?? '',
+                                        //   style: GoogleFont.inter(
+                                        //     fontSize: 12,
+                                        //     color: AppColor.grey,
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                   ),

@@ -618,8 +618,8 @@ class _MoreScreenState extends State<MoreScreen>
                       ),
                       SizedBox(width: 10),
                       InkWell(
-                        onTap: () {
-                          loginController.logout();
+                        onTap: () async {
+                       await   loginController.logout();
                         },
                         child: Image.asset(AppImages.logOut, height: 26),
                       ),
@@ -1122,7 +1122,8 @@ class _MoreScreenState extends State<MoreScreen>
                           controller.selectStudent(student);
                         },
                         onLogout: () async {
-                          await controller.clearData();
+
+                          await   loginController.logout();
                         },
                       );
                     },
