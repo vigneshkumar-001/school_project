@@ -38,7 +38,7 @@ class _TaskDetailState extends State<TaskDetail> {
         child: Obx(() {
           final homework = taskController.homeworkDetail.value;
           if (homework == null) {
-            return Center(child: AppLoader.circularLoader( ));
+            return Center(child: AppLoader.circularLoader());
           }
 
           final tasks = homework.tasks ?? [];
@@ -46,14 +46,14 @@ class _TaskDetailState extends State<TaskDetail> {
           // Filter all images and paragraphs
           final allImages = tasks.where((t) => t.type == 'image').toList();
           final allParagraphs =
-          tasks.where((t) => t.type == 'paragraph').toList();
+              tasks.where((t) => t.type == 'paragraph').toList();
 
           // First image for top
           final topImage = allImages.isNotEmpty ? allImages.first : null;
 
           // Remaining images for horizontal scroll
           final remainingImages =
-          allImages.length > 1 ? allImages.sublist(1) : [];
+              allImages.length > 1 ? allImages.sublist(1) : [];
 
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -115,11 +115,11 @@ class _TaskDetailState extends State<TaskDetail> {
                               fit: BoxFit.cover,
                               errorBuilder:
                                   (_, __, ___) => Image.asset(
-                                AppImages.tdhs1,
-                                height: 200,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
+                                    AppImages.tdhs1,
+                                    height: 200,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
                             ),
                           ),
                         const SizedBox(height: 15),
@@ -165,10 +165,10 @@ class _TaskDetailState extends State<TaskDetail> {
                                         fit: BoxFit.cover,
                                         errorBuilder:
                                             (_, __, ___) => Container(
-                                          width: 200,
-                                          height: 150,
-                                          color: Colors.grey[200],
-                                        ),
+                                              width: 200,
+                                              height: 150,
+                                              color: Colors.grey[200],
+                                            ),
                                       ),
                                     ),
                                   );
@@ -181,20 +181,20 @@ class _TaskDetailState extends State<TaskDetail> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children:
-                          allParagraphs.map<Widget>((p) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 8,
-                              ),
-                              child: Text(
-                                p.content ?? '',
-                                style: GoogleFont.inter(
-                                  fontSize: 14,
-                                  color: AppColor.lightBlack,
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                              allParagraphs.map<Widget>((p) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
+                                  child: Text(
+                                    p.content ?? '',
+                                    style: GoogleFont.inter(
+                                      fontSize: 14,
+                                      color: AppColor.lightBlack,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
                         ),
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,

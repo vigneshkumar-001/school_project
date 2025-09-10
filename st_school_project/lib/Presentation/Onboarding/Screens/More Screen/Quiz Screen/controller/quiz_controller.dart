@@ -459,7 +459,7 @@ class QuizController extends GetxController {
     _startTimerFrom(data);
   }
 
-/*  QuizResultData? _asQuizResultData(dynamic raw) {
+  /*  QuizResultData? _asQuizResultData(dynamic raw) {
     if (raw == null) return null;
     if (raw is QuizResultData) return raw;
 
@@ -498,13 +498,13 @@ class QuizController extends GetxController {
 
       // If you're using dartz Either
       return either.fold(
-            (failure) {
+        (failure) {
           // if backend says "not found / not attempted yet", treat as no result
           // if ((failure.code ?? 0) == 404) return null;
-              AppLogger.log.e(failure.message);
+          AppLogger.log.e(failure.message);
           return null;
         },
-            (response) {
+        (response) {
           // Expecting response.data to be QuizResultData
           return response.data;
         },
