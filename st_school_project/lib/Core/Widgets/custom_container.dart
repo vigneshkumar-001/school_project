@@ -208,7 +208,7 @@ class CustomContainer {
       onTap: onDetailsTap,
       child: Stack(
         children: [
-          Image.asset(backRoundImage),
+          Image.network(backRoundImage),
           Positioned(
             bottom: 0,
             right: 0,

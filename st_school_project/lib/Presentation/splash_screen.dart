@@ -50,6 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         teacherListController.teacherListData();
         announcementController.getAnnouncement();
+
       });
       _startLoading();
     }

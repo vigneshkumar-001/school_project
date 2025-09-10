@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 import '../../../../Core/Utility/app_color.dart';
 import '../../../../Core/Utility/google_font.dart';
+import '../../../../Core/Widgets/date_and_time_convert.dart';
 import 'controller/task_controller.dart';
 
 class TaskDetail extends StatefulWidget {
@@ -47,6 +48,9 @@ class _TaskDetailState extends State<TaskDetail> {
           final allImages = tasks.where((t) => t.type == 'image').toList();
           final allParagraphs =
               tasks.where((t) => t.type == 'paragraph').toList();
+
+          final allLists = tasks.where((t) => t.type == 'list').toList();
+
 
           // First image for top
           final topImage = allImages.isNotEmpty ? allImages.first : null;
@@ -177,7 +181,7 @@ class _TaskDetailState extends State<TaskDetail> {
                               const SizedBox(height: 20),
                             ],
                           ),
-
+                        // Paragraphs
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children:
@@ -196,6 +200,49 @@ class _TaskDetailState extends State<TaskDetail> {
                                 );
                               }).toList(),
                         ),
+
+                        // Lists
+                        if (allLists.isNotEmpty) ...[
+                          const SizedBox(height: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children:
+                                allLists.asMap().entries.map<Widget>((entry) {
+                                  final index =
+                                      entry.key + 1; // 1-based numbering
+                                  final item = entry.value;
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 6,
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "$index. ", // numbering
+                                          style: GoogleFont.inter(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColor.lightBlack,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            item.content ?? '',
+                                            style: GoogleFont.inter(
+                                              fontSize: 14,
+                                              color: AppColor.lightBlack,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                          ),
+                        ],
+
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Padding(
@@ -246,20 +293,26 @@ class _TaskDetailState extends State<TaskDetail> {
                                         ),
                                         SizedBox(width: 10),
                                         Text(
-                                          homework.time.toString() ?? '',
+                                          DateAndTimeConvert.formatDateTime(
+                                            homework.time.toString() ?? '',
+
+                                            showDate: true,
+                                            showTime: true,
+                                          ),
+
                                           style: GoogleFont.inter(
                                             fontSize: 12,
                                             color: AppColor.lightBlack,
                                           ),
                                         ),
-                                        SizedBox(width: 10),
-                                        Text(
-                                          homework.date.toString() ?? '',
-                                          style: GoogleFont.inter(
-                                            fontSize: 12,
-                                            color: AppColor.grey,
-                                          ),
-                                        ),
+                                        // SizedBox(width: 10),
+                                        // Text(
+                                        //   homework.date.toString() ?? '',
+                                        //   style: GoogleFont.inter(
+                                        //     fontSize: 12,
+                                        //     color: AppColor.grey,
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                   ),

@@ -1819,6 +1819,7 @@ import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/swicth_profile_sheet.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/Login_screen/controller/login_controller.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/controller/task_controller.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_detail.dart';
 
@@ -1840,6 +1841,7 @@ class TaskScreen extends StatefulWidget {
 class _TaskScreenState extends State<TaskScreen>
     with AutomaticKeepAliveClientMixin {
   final TaskController taskController = Get.put(TaskController());
+  final LoginController loginController = Get.put(LoginController());
   DateTime selectedDate = DateTime.now();
   final StudentHomeController controller = Get.put(StudentHomeController());
   DateTime currentMonth = DateTime(DateTime.now().year, DateTime.now().month);
@@ -2274,8 +2276,8 @@ class _TaskScreenState extends State<TaskScreen>
                                                     );
                                                   },
                                                   onLogout: () async {
-                                                    await controller
-                                                        .clearData();
+                                                    await loginController
+                                                        .logout();
                                                     // Get.offAllNamed('/login');
                                                   },
                                                 );

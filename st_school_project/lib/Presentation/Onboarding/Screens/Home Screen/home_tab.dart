@@ -6,6 +6,7 @@ import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
 import 'package:st_school_project/Core/Widgets/swicth_profile_sheet.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/Login_screen/controller/login_controller.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_detail.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
@@ -16,6 +17,9 @@ import '../../../Admssion/Screens/check_admission_status.dart';
 import '../Attendence Screen/attendence_screen.dart';
 import 'package:get/get.dart';
 
+import '../More Screen/Quiz Screen/controller/quiz_controller.dart';
+import '../More Screen/quiz_result.dart';
+import '../More Screen/quiz_screen.dart';
 import 'controller/student_home_controller.dart';
 import 'model/student_home_response.dart';
 
@@ -33,6 +37,7 @@ class _HomeScreenState extends State<HomeTab>
   String selectedDay = 'Today';
   DateTime selectedDate = DateTime.now();
   final StudentHomeController controller = Get.put(StudentHomeController());
+  final LoginController loginController = Get.put(LoginController());
   int index = 0;
 
   String selectedSubject = 'All'; // default selected
@@ -273,7 +278,7 @@ class _HomeScreenState extends State<HomeTab>
           }
           final data = controller.studentHomeData.value;
           final tasks = data?.tasks ?? [];
-          final subjects = <String>{'All'}; // Start with "All"
+          final subjects = <String>{'All'};
           for (var task in tasks) {
             if (task.subject != null && task.subject.isNotEmpty) {
               subjects.add(task.subject);
@@ -398,7 +403,7 @@ class _HomeScreenState extends State<HomeTab>
                                 controller.selectStudent(student);
                               },
                               onLogout: () async {
-                                await controller.clearData();
+                                await loginController.logout();
                                 // Get.offAllNamed('/login');
                               },
                             );
@@ -1646,7 +1651,87 @@ class _HomeScreenState extends State<HomeTab>
                                                         ),
                                                       ),
                                                       TextButton(
-                                                        onPressed: () {},
+                                                        onPressed: () async {
+                                                          if (task.type ==
+                                                              'Quiz') {
+                                                            // Optional: quick loader
+                                                            showDialog(
+                                                              context: context,
+                                                              barrierDismissible:
+                                                                  false,
+                                                              builder:
+                                                                  (_) => Center(
+                                                                    child: AppLoader.circularLoader(
+                                                                      color:
+                                                                          AppColor
+                                                                              .black,
+                                                                    ),
+                                                                  ),
+                                                            );
+
+                                                            final result =
+                                                                await Get.find<
+                                                                      QuizController
+                                                                    >()
+                                                                    .tryGetResult(
+                                                                      task.id,
+                                                                    );
+
+                                                            if (Navigator.canPop(
+                                                              context,
+                                                            ))
+                                                              Navigator.pop(
+                                                                context,
+                                                              );
+
+                                                            if (!context
+                                                                .mounted)
+                                                              return;
+
+                                                            if (result !=
+                                                                null) {
+                                                              // Already submitted => go to result screen
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (
+                                                                        _,
+                                                                      ) => QuizResultScreen(
+                                                                        data:
+                                                                            result,
+                                                                      ),
+                                                                ),
+                                                              );
+                                                            } else {
+                                                              // Not attempted => go to quiz screen
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (
+                                                                        _,
+                                                                      ) => QuizScreen(
+                                                                        quizId:
+                                                                            task.id,
+                                                                      ),
+                                                                ),
+                                                              );
+                                                            }
+                                                          } else {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (
+                                                                      _,
+                                                                    ) => TaskDetail(
+                                                                      id: task.id,
+                                                                    ),
+                                                              ),
+                                                            );
+                                                          }
+                                                        },
                                                         child: Row(
                                                           children: [
                                                             Text(

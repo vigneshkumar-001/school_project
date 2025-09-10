@@ -738,7 +738,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                               padding: const EdgeInsets.only(bottom: 16),
                               child: CustomContainer.announcementsScreen(
                                 mainText: item.type,
-                                backRoundImage: AppImages.announcement2,
+                                backRoundImage: item.image,
                                 iconData: CupertinoIcons.clock_fill,
                                 additionalText1: "Date",
                                 additionalText2:
