@@ -521,21 +521,24 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
             // Top row
             Row(
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColor.lightGrey,
-                    border: Border.all(color: AppColor.lightGrey, width: 1),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Image.asset(
-                      AppImages.leftArrow,
-                      height: 17,
-                      width: 17,
+                GestureDetector(onTap: () => Navigator.pop(context),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColor.lightGrey,
+                      border: Border.all(color: AppColor.lightGrey, width: 1),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Image.asset(
+                        AppImages.leftArrow,
+                        height: 17,
+                        width: 17,
+                      ),
                     ),
                   ),
                 ),
+
                 const SizedBox(width: 15),
                 Text(
                   '${d.heading} Result',

@@ -213,6 +213,7 @@ import '../Model/quiz_submit.dart'; // QuizSubmit / SubmitData
 class QuizController extends GetxController {
   final ApiDataSource apiDataSource = ApiDataSource();
   final quizResult = Rxn<QuizResultData>();
+  final isBusy = false.obs;
   // Flags
   final RxBool isLoading = false.obs;
   final RxBool loadQuizLoading = false.obs;
@@ -458,7 +459,7 @@ class QuizController extends GetxController {
     _startTimerFrom(data);
   }
 
-  QuizResultData? _asQuizResultData(dynamic raw) {
+/*  QuizResultData? _asQuizResultData(dynamic raw) {
     if (raw == null) return null;
     if (raw is QuizResultData) return raw;
 
@@ -486,5 +487,33 @@ class QuizController extends GetxController {
       return raw.data;
     }
     return null;
+  }*/
+
+  Future<QuizResultData?> tryGetResult(int quizId) async {
+    try {
+      isBusy.value = true;
+
+      // Whatever your API returns; adjust names to your codebase
+      final either = await apiDataSource.loadQuizResult(quizId: quizId);
+
+      // If you're using dartz Either
+      return either.fold(
+            (failure) {
+          // if backend says "not found / not attempted yet", treat as no result
+          // if ((failure.code ?? 0) == 404) return null;
+              AppLogger.log.e(failure.message);
+          return null;
+        },
+            (response) {
+          // Expecting response.data to be QuizResultData
+          return response.data;
+        },
+      );
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+      return null;
+    } finally {
+      isBusy.value = false;
+    }
   }
 }
