@@ -161,9 +161,10 @@ class LoginController extends GetxController {
   }
 
   Future<void> logout() async {
+    Get.offAll(() => ChangeMobileNumber(page: 'splash'));
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
     accessToken = '';
-    Get.offAll(() => ChangeMobileNumber(page: 'splash'));
+
   }
 }
