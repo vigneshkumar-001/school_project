@@ -1,13 +1,15 @@
 import 'package:get/get.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/model/student_home_response.dart';
+
 import '../../../../../../api/data_source/apiDataSource.dart';
 import '../model/siblings_list_response.dart';
+import '../model/student_home_response.dart';
 
 class StudentHomeController extends GetxController {
   RxBool isLoading = false.obs;
   String accessToken = '';
+  final hasLoadedOnce = false.obs;
   RxBool isOtpLoading = false.obs;
   ApiDataSource apiDataSource = ApiDataSource();
 
@@ -18,12 +20,11 @@ class StudentHomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-  getStudentHome();
+    getStudentHome();
   }
 
   Future<String?> getStudentHome() async {
     try {
-
       isLoading.value = true;
 
       final results = await apiDataSource.getStudentHomeDetails();
@@ -31,14 +32,15 @@ class StudentHomeController extends GetxController {
       results.fold(
         (failure) {
           isLoading.value = false;
+          if (!hasLoadedOnce.value) {
+            studentHomeData.value = null;
+          }
           AppLogger.log.e(failure.message);
         },
         (response) async {
           isLoading.value = false;
 
           AppLogger.log.i(response.message);
-
-
 
           studentHomeData.value = response.data; // assign to observable
 
@@ -49,11 +51,18 @@ class StudentHomeController extends GetxController {
       );
     } catch (e) {
       isLoading.value = false;
+      if (!hasLoadedOnce.value) {
+        studentHomeData.value = null;
+      }
       AppLogger.log.e(e);
       return e.toString();
+    } finally {
+      hasLoadedOnce.value = true;
+      isLoading.value = false;
     }
     return null;
   }
+
   Future<void> switchSiblings({required int id}) async {
     try {
       isLoading.value = true;
@@ -61,11 +70,11 @@ class StudentHomeController extends GetxController {
       final results = await apiDataSource.switchSiblings(id: id);
 
       results.fold(
-            (failure) {
+        (failure) {
           isLoading.value = false;
           AppLogger.log.e(failure.message);
         },
-            (response) async {
+        (response) async {
           isLoading.value = false;
 
           // Override token in SharedPreferences
@@ -109,14 +118,14 @@ class StudentHomeController extends GetxController {
       final results = await apiDataSource.getSiblingsDetails();
 
       results.fold(
-            (failure) {
+        (failure) {
           isLoading.value = false;
           AppLogger.log.e(failure.message);
         },
-            (response) async {
+        (response) async {
           isLoading.value = false;
           selectedStudent.value = response.data.firstWhere(
-                (student) => student.isActive,
+            (student) => student.isActive,
             orElse: () => response.data.first,
           );
           siblingsList.value = response.data;
@@ -127,5 +136,4 @@ class StudentHomeController extends GetxController {
       AppLogger.log.e(e);
     }
   }
-
 }

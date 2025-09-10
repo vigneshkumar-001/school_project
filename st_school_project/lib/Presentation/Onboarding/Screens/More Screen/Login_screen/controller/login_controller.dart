@@ -93,13 +93,17 @@ class LoginController extends GetxController {
           AppLogger.log.e(failure.message);
         },
         (response) async {
-          Get.offAll(CommonBottomNavigation(initialIndex: 0));
-          isOtpLoading.value = false;
           AppLogger.log.i(response.message);
           final prefs = await SharedPreferences.getInstance();
           accessToken = response.token;
+
           prefs.setString('token', accessToken);
           String? token = prefs.getString('token');
+          await controller.getStudentHome();
+          await controller.getSiblingsData();
+          await teacherListController.teacherListData();
+          Get.offAll(CommonBottomNavigation(initialIndex: 0));
+          isOtpLoading.value = false;
           AppLogger.log.i('token = $token');
         },
       );
@@ -165,6 +169,5 @@ class LoginController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
     accessToken = '';
-
   }
 }

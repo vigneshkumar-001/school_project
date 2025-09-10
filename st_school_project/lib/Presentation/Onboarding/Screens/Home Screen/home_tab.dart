@@ -7,6 +7,7 @@ import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
 import 'package:st_school_project/Core/Widgets/swicth_profile_sheet.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/Login_screen/controller/login_controller.dart';
+
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_detail.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
@@ -18,6 +19,7 @@ import '../Attendence Screen/attendence_screen.dart';
 import 'package:get/get.dart';
 
 import '../More Screen/Quiz Screen/controller/quiz_controller.dart';
+import '../More Screen/profile_screen/controller/teacher_list_controller.dart';
 import '../More Screen/quiz_result.dart';
 import '../More Screen/quiz_screen.dart';
 import 'controller/student_home_controller.dart';
@@ -38,6 +40,9 @@ class _HomeScreenState extends State<HomeTab>
   DateTime selectedDate = DateTime.now();
   final StudentHomeController controller = Get.put(StudentHomeController());
   final LoginController loginController = Get.put(LoginController());
+  final TeacherListController teacherListController = Get.put(
+    TeacherListController(),
+  );
   int index = 0;
 
   String selectedSubject = 'All'; // default selected
@@ -51,6 +56,7 @@ class _HomeScreenState extends State<HomeTab>
       if (controller.studentHomeData.value == null) {
         controller.getStudentHome();
         controller.getSiblingsData();
+        teacherListController.teacherListData();
       }
     });
   }
@@ -273,10 +279,25 @@ class _HomeScreenState extends State<HomeTab>
       backgroundColor: AppColor.white,
       body: SafeArea(
         child: Obx(() {
-          if (controller.isLoading.value) {
+          final isLoading = controller.isLoading.value;
+          final hasLoadedOnce = controller.hasLoadedOnce.value;
+          final data = controller.studentHomeData.value;
+          final img = teacherListController.teacherListResponse.value;
+
+          // 1) First load or refresh with no cached data → loader
+          if (isLoading && data == null) {
             return AppLoader.circularLoader();
           }
-          final data = controller.studentHomeData.value;
+
+          // 2) Only after first load completes, if still null → empty state
+          if (!isLoading && !hasLoadedOnce) {
+            // defensive, but shouldn't hit because isLoading starts true
+            return AppLoader.circularLoader();
+          }
+
+          if (data == null) {
+            return Center(child: Text("No student data available"));
+          }
           final tasks = data?.tasks ?? [];
           final subjects = <String>{'All'};
           for (var task in tasks) {
@@ -285,17 +306,15 @@ class _HomeScreenState extends State<HomeTab>
             }
           }
 
-          // Convert to list for UI
           final subjectsList = subjects.toList();
-          if (data == null) {
-            return Center(child: Text("No student data available"));
-          }
 
           return RefreshIndicator(
             onRefresh: () async {
               await controller.getStudentHome();
+              await teacherListController.teacherListData();
             },
             child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
                   Padding(
@@ -382,39 +401,62 @@ class _HomeScreenState extends State<HomeTab>
                           ],
                         ),
                         trailing: SizedBox(
-                          child: Image.asset(
-                            AppImages.moreSimage2,
-                            height: 30,
-                            width: 30,
+                          child: InkWell(
+                            onTap: () {
+                              SwitchProfileSheet.show(
+                                context,
+                                students: controller.siblingsList,
+                                selectedStudent: controller.selectedStudent,
+                                onSwitch: (student) async {
+                                  await controller.switchSiblings(
+                                    id: student.id,
+                                  );
+                                  controller.selectStudent(student);
+                                },
+                                onLogout: () async {
+                                  await loginController.logout();
+                                  // Get.offAllNamed('/login');
+                                },
+                              );
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image.network(
+                                img?.data?.student_image.toString() ?? 'g',
+                                height: 55,
+                                fit: BoxFit.cover,
+                                width: 55,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                      Positioned(
-                        right: 34,
-                        bottom: 17,
-                        child: InkWell(
-                          onTap: () {
-                            SwitchProfileSheet.show(
-                              context,
-                              students: controller.siblingsList,
-                              selectedStudent: controller.selectedStudent,
-                              onSwitch: (student) async {
-                                await controller.switchSiblings(id: student.id);
-                                controller.selectStudent(student);
-                              },
-                              onLogout: () async {
-                                await loginController.logout();
-                                // Get.offAllNamed('/login');
-                              },
-                            );
-                          },
-                          child: Image.asset(
-                            AppImages.moreSimage1,
-                            height: 49,
-                            width: 49,
-                          ),
-                        ),
-                      ),
+                      // Positioned(
+                      //   right: 34,
+                      //   bottom: 17,
+                      //   child: InkWell(
+                      //     onTap: () {
+                      //       SwitchProfileSheet.show(
+                      //         context,
+                      //         students: controller.siblingsList,
+                      //         selectedStudent: controller.selectedStudent,
+                      //         onSwitch: (student) async {
+                      //           await controller.switchSiblings(id: student.id);
+                      //           controller.selectStudent(student);
+                      //         },
+                      //         onLogout: () async {
+                      //           await loginController.logout();
+                      //           // Get.offAllNamed('/login');
+                      //         },
+                      //       );
+                      //     },
+                      //     child: Image.asset(
+                      //       AppImages.moreSimage1,
+                      //       height: 49,
+                      //       width: 49,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
 
@@ -1479,8 +1521,8 @@ class _HomeScreenState extends State<HomeTab>
                                       children: [
                                         // Add "All" button always
                                         Padding(
-                                          padding: const EdgeInsets.only(
-                                            right: 8.0,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0,
                                           ),
                                           child: ElevatedButton(
                                             style: ButtonStyle(

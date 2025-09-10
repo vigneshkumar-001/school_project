@@ -1827,6 +1827,7 @@ import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/date_and_time_convert.dart';
 import '../Home Screen/controller/student_home_controller.dart';
 import '../More Screen/Quiz Screen/controller/quiz_controller.dart';
+import '../More Screen/profile_screen/controller/teacher_list_controller.dart';
 import '../More Screen/quiz_result.dart';
 import '../More Screen/quiz_screen.dart';
 import 'package:get/get.dart';
@@ -1841,6 +1842,9 @@ class TaskScreen extends StatefulWidget {
 class _TaskScreenState extends State<TaskScreen>
     with AutomaticKeepAliveClientMixin {
   final TaskController taskController = Get.put(TaskController());
+  final TeacherListController teacherListController = Get.put(
+    TeacherListController(),
+  );
   final LoginController loginController = Get.put(LoginController());
   DateTime selectedDate = DateTime.now();
   final StudentHomeController controller = Get.put(StudentHomeController());
@@ -2130,7 +2134,8 @@ class _TaskScreenState extends State<TaskScreen>
                         itemBuilder: (context, index) {
                           final item = getFullMonthDates(currentMonth)[index];
                           final date = item['fullDate'] as DateTime;
-
+                          final img =
+                              teacherListController.teacherListResponse.value;
                           // Check if this date is selected
                           final isSelected =
                               selectedDate.year == date.year &&
@@ -2240,55 +2245,106 @@ class _TaskScreenState extends State<TaskScreen>
                                                 ),
                                               ),
                                               Spacer(),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 22.0,
-                                                      vertical: 8,
-                                                    ),
-                                                child: Image.asset(
-                                                  AppImages.moreSimage2,
-                                                  height: 20,
-                                                  width: 20,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Positioned(
-                                            right: 0,
-                                            bottom: 3,
-                                            child: InkWell(
-                                              onTap: () {
-                                                SwitchProfileSheet.show(
-                                                  context,
-                                                  students:
-                                                      controller.siblingsList,
-                                                  selectedStudent:
-                                                      controller
-                                                          .selectedStudent,
-                                                  onSwitch: (student) async {
-                                                    await controller
-                                                        .switchSiblings(
-                                                          id: student.id,
-                                                        );
-                                                    controller.selectStudent(
-                                                      student,
+                                              Obx(() {
+                                                final img =
+                                                    teacherListController
+                                                        .teacherListResponse
+                                                        .value;
+                                                return InkWell(
+                                                  onTap: () {
+                                                    SwitchProfileSheet.show(
+                                                      context,
+                                                      students:
+                                                          controller
+                                                              .siblingsList,
+                                                      selectedStudent:
+                                                          controller
+                                                              .selectedStudent,
+                                                      onSwitch: (
+                                                        student,
+                                                      ) async {
+                                                        await controller
+                                                            .switchSiblings(
+                                                              id: student.id,
+                                                            );
+                                                        controller
+                                                            .selectStudent(
+                                                              student,
+                                                            );
+                                                      },
+                                                      onLogout: () async {
+                                                        await loginController
+                                                            .logout();
+                                                        // Get.offAllNamed('/login');
+                                                      },
                                                     );
                                                   },
-                                                  onLogout: () async {
-                                                    await loginController
-                                                        .logout();
-                                                    // Get.offAllNamed('/login');
-                                                  },
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          20,
+                                                        ),
+                                                    child: Image.network(
+                                                      img?.data?.student_image
+                                                              .toString() ??
+                                                          'g',
+                                                      height: 55,
+                                                      fit: BoxFit.cover,
+                                                      width: 55,
+                                                    ),
+                                                  ),
                                                 );
-                                              },
-                                              child: Image.asset(
-                                                AppImages.moreSimage1,
-                                                height: 30,
-                                                width: 40,
-                                              ),
-                                            ),
+                                              }),
+
+                                              // Padding(
+                                              //   padding:
+                                              //       const EdgeInsets.symmetric(
+                                              //         horizontal: 22.0,
+                                              //         vertical: 8,
+                                              //       ),
+                                              //   child: Image.asset(
+                                              //     AppImages.moreSimage2,
+                                              //     height: 20,
+                                              //     width: 20,
+                                              //   ),
+                                              // ),
+                                            ],
                                           ),
+                                          // Positioned(
+                                          //   right: 0,
+                                          //   bottom: 3,
+                                          //   child: InkWell(
+                                          //     onTap: () {
+                                          //       SwitchProfileSheet.show(
+                                          //         context,
+                                          //         students:
+                                          //             controller.siblingsList,
+                                          //         selectedStudent:
+                                          //             controller
+                                          //                 .selectedStudent,
+                                          //         onSwitch: (student) async {
+                                          //           await controller
+                                          //               .switchSiblings(
+                                          //                 id: student.id,
+                                          //               );
+                                          //           controller.selectStudent(
+                                          //             student,
+                                          //           );
+                                          //         },
+                                          //         onLogout: () async {
+                                          //           await loginController
+                                          //               .logout();
+                                          //           // Get.offAllNamed('/login');
+                                          //         },
+                                          //       );
+                                          //     },
+                                          //     child: Image.asset(
+                                          //       AppImages.moreSimage1,
+                                          //       height: 30,
+                                          //       width: 40,
+                                          //     ),
+                                          //   ),
+                                          // ),
                                         ],
                                       ),
                                     ),

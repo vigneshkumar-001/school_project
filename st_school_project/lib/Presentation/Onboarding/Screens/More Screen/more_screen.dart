@@ -187,7 +187,16 @@ class _MoreScreenState extends State<MoreScreen>
                         );
                       },
                       child: ListTile(
-                        leading: Image.asset(AppImages.moreSimage1, height: 58),
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.network(
+                            data?.student_image.toString() ?? '',
+                            height: 55,
+                            fit: BoxFit.cover,
+                            width: 55,
+                          ),
+                        ),
+
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -619,7 +628,7 @@ class _MoreScreenState extends State<MoreScreen>
                       SizedBox(width: 10),
                       InkWell(
                         onTap: () async {
-                       await   loginController.logout();
+                          await loginController.logout();
                         },
                         child: Image.asset(AppImages.logOut, height: 26),
                       ),
@@ -1096,11 +1105,32 @@ class _MoreScreenState extends State<MoreScreen>
                                 ),
                               ],
                             ),
-                            trailing: Image.asset(
-                              AppImages.moreSimage2,
-                              height: 58,
-                              width: 58,
-                              fit: BoxFit.cover,
+                            trailing: InkWell(
+                              onTap: () {
+                                SwitchProfileSheet.show(
+                                  context,
+                                  students: controller.siblingsList,
+                                  selectedStudent: controller.selectedStudent,
+                                  onSwitch: (student) async {
+                                    await controller.switchSiblings(
+                                      id: student.id,
+                                    );
+                                    controller.selectStudent(student);
+                                  },
+                                  onLogout: () async {
+                                    await loginController.logout();
+                                  },
+                                );
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: Image.network(
+                                  data?.student_image.toString() ?? '',
+                                  height: 95,
+                                  fit: BoxFit.cover,
+                                  width: 70,
+                                ),
+                              ),
                             ),
                           );
                         }),
@@ -1108,32 +1138,31 @@ class _MoreScreenState extends State<MoreScreen>
                     ),
                   ),
                 ),
-                Positioned(
-                  right: 58,
-                  bottom: 35,
-                  child: InkWell(
-                    onTap: () {
-                      SwitchProfileSheet.show(
-                        context,
-                        students: controller.siblingsList,
-                        selectedStudent: controller.selectedStudent,
-                        onSwitch: (student) async {
-                          await controller.switchSiblings(id: student.id);
-                          controller.selectStudent(student);
-                        },
-                        onLogout: () async {
-
-                          await   loginController.logout();
-                        },
-                      );
-                    },
-                    child: Image.asset(
-                      AppImages.moreSimage1,
-                      height: 95,
-                      width: 95,
-                    ),
-                  ),
-                ),
+                // Positioned(
+                //   right: 58,
+                //   bottom: 35,
+                //   child: InkWell(
+                //     onTap: () {
+                //       SwitchProfileSheet.show(
+                //         context,
+                //         students: controller.siblingsList,
+                //         selectedStudent: controller.selectedStudent,
+                //         onSwitch: (student) async {
+                //           await controller.switchSiblings(id: student.id);
+                //           controller.selectStudent(student);
+                //         },
+                //         onLogout: () async {
+                //           await loginController.logout();
+                //         },
+                //       );
+                //     },
+                //     child: Image.asset(
+                //       AppImages.moreSimage1,
+                //       height: 95,
+                //       width: 95,
+                //     ),
+                //   ),
+                // ),
               ],
             ),
             const SizedBox(height: 15),

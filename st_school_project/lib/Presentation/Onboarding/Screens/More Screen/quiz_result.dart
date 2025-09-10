@@ -574,11 +574,18 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
             // Progress
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: LinearProgressIndicator(
-                minHeight: 6,
-                value: pct.clamp(0.0, 1.0),
-                backgroundColor: AppColor.lowGery1,
-                valueColor: AlwaysStoppedAnimation<Color>(AppColor.greenMore1),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+
+                child: LinearProgressIndicator(
+                  minHeight: 6,
+                  value: pct.clamp(0.0, 1.0),
+                  borderRadius: BorderRadius.circular(16),
+                  backgroundColor: AppColor.lowGery1,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppColor.greenMore1,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 12),
