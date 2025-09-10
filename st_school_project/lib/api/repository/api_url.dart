@@ -47,6 +47,9 @@ class ApiUrl {
   static String getHomeWorkIdDetails({required int id}) {
     return '$baseUrl/student-home/homework/$id';
   }
+  static String getExamResultData({required int id}) {
+    return '$baseUrl/student-exams/$id/result';
+  }
 
   static String getAttendanceMonth({required int month, required int year}) {
     return '$baseUrl/student-home/monthly-attendance-by-student?year=$year&month=$month';

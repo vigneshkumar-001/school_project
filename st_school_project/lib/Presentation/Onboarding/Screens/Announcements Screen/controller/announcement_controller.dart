@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/model/announcement_response.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/model/exam_result_response.dart';
 import 'package:st_school_project/api/data_source/apiDataSource.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 
@@ -15,6 +16,8 @@ class AnnouncementController extends GetxController {
   String accessToken = '';
   Rx<AnnouncementData?> announcementData = Rx<AnnouncementData?>(null);
   Rx<AnnouncementDetails?> announcementDetails = Rx<AnnouncementDetails?>(null);
+  Rx<ExamResultData?> examResultData = Rx<ExamResultData?>(null);
+  int? lastFetchedExamId;
 
   @override
   void onInit() {
@@ -49,6 +52,7 @@ class AnnouncementController extends GetxController {
     bool showLoader = true,
     required int id,
   }) async {
+
     try {
       if (showLoader) showPopupLoader();
 
@@ -64,6 +68,39 @@ class AnnouncementController extends GetxController {
           if (showLoader) hidePopupLoader();
           AppLogger.log.i('Announcement Details Fetched ✅');
           announcementDetails.value = response.data; // store in observable
+          return response.data; // return data for UI
+        },
+      );
+    } catch (e) {
+      if (showLoader) hidePopupLoader();
+      AppLogger.log.e(e);
+      return null;
+    }
+  }
+
+  Future<ExamResultData?> getExamResultData({
+    bool showLoader = true,
+    required int id,
+  }) async {
+    if (lastFetchedExamId == id && examResultData.value != null) {
+      return examResultData.value;
+    }
+    try {
+      if (showLoader) showPopupLoader();
+
+      final results = await apiDataSource.getExamResultData(id: id);
+
+      return results.fold(
+        (failure) {
+          if (showLoader) hidePopupLoader();
+          AppLogger.log.e(failure.message);
+          return null;
+        },
+        (response) {
+          if (showLoader) hidePopupLoader();
+          AppLogger.log.i('examResultData  Fetched ✅');
+          examResultData.value = response.data; // store in observable
+          lastFetchedExamId = id; // store last fetched id
           return response.data; // return data for UI
         },
       );
