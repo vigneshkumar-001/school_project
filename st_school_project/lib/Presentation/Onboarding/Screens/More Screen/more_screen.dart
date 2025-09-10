@@ -13,6 +13,7 @@ import '../../../../Core/Utility/app_color.dart' show AppColor;
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../Admssion/Screens/admission_1.dart';
 import '../Home Screen/controller/student_home_controller.dart';
+import 'Login_screen/controller/login_controller.dart';
 import 'change_mobile_number.dart' show ChangeMobileNumber;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -33,6 +34,7 @@ class _MoreScreenState extends State<MoreScreen>
   final double longitude = 78.12740990716632;
 
   final StudentHomeController controller = Get.put(StudentHomeController());
+  final LoginController loginController = Get.put(LoginController());
   final TeacherListController teacherListController = Get.put(
     TeacherListController(),
   );
@@ -61,7 +63,7 @@ class _MoreScreenState extends State<MoreScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 1, vsync: this);
     teacherListController.teacherListData();
   }
 
@@ -616,7 +618,9 @@ class _MoreScreenState extends State<MoreScreen>
                       ),
                       SizedBox(width: 10),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          loginController.logout();
+                        },
                         child: Image.asset(AppImages.logOut, height: 26),
                       ),
                     ],
@@ -1134,13 +1138,12 @@ class _MoreScreenState extends State<MoreScreen>
             const SizedBox(height: 15),
             // Tab Bar Row
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: TabBar(
                     controller: _tabController,
                     tabs: const [
-                      Tab(text: 'Payment History'),
+                      // Tab(text: 'Payment History'),
                       Tab(text: 'Teachers'),
                     ],
                     labelColor: AppColor.lightBlack,
@@ -1153,19 +1156,21 @@ class _MoreScreenState extends State<MoreScreen>
                     dividerColor: Colors.transparent,
                   ),
                 ),
-                GestureDetector(
-                  onTap: () => _showContactSchoolSheet(context),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 10,
-                    ),
-                    child: Text(
-                      'Contact School',
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.grey,
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => _showContactSchoolSheet(context),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      child: Text(
+                        'Contact School',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.grey,
+                        ),
                       ),
                     ),
                   ),
@@ -1178,37 +1183,37 @@ class _MoreScreenState extends State<MoreScreen>
                 controller: _tabController,
                 children: [
                   // Payment History Tab
-                  SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 20,
-                    ),
-                    child: Column(
-                      children: [
-                        CustomContainer.moreScreen(
-                          termTitle: 'Third-Term Fees',
-                          timeDate: '8 Jan 26',
-                          amount: 'Rs. 15000',
-                          isPaid: false,
-                          onDetailsTap: () => _feessSheet(context),
-                        ),
-                        CustomContainer.moreScreen(
-                          termTitle: 'Second-Term Fees',
-                          timeDate: '12.30Pm - 8 Dec 25',
-                          amount: 'Rs. 15000',
-                          isPaid: true,
-                          onDetailsTap: () => _paymentReceipt(context),
-                        ),
-                        CustomContainer.moreScreen(
-                          termTitle: 'First-Term Fees',
-                          timeDate: '12.30Pm - 2 Jun 25',
-                          amount: 'Rs. 15000',
-                          isPaid: true,
-                          onDetailsTap: () => _paymentReceipt(context),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // SingleChildScrollView(
+                  //   padding: const EdgeInsets.symmetric(
+                  //     horizontal: 15,
+                  //     vertical: 20,
+                  //   ),
+                  //   child: Column(
+                  //     children: [
+                  //       CustomContainer.moreScreen(
+                  //         termTitle: 'Third-Term Fees',
+                  //         timeDate: '8 Jan 26',
+                  //         amount: 'Rs. 15000',
+                  //         isPaid: false,
+                  //         onDetailsTap: () => _feessSheet(context),
+                  //       ),
+                  //       CustomContainer.moreScreen(
+                  //         termTitle: 'Second-Term Fees',
+                  //         timeDate: '12.30Pm - 8 Dec 25',
+                  //         amount: 'Rs. 15000',
+                  //         isPaid: true,
+                  //         onDetailsTap: () => _paymentReceipt(context),
+                  //       ),
+                  //       CustomContainer.moreScreen(
+                  //         termTitle: 'First-Term Fees',
+                  //         timeDate: '12.30Pm - 2 Jun 25',
+                  //         amount: 'Rs. 15000',
+                  //         isPaid: true,
+                  //         onDetailsTap: () => _paymentReceipt(context),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   // Teachers Tab
                   SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(
@@ -1245,7 +1250,6 @@ class _MoreScreenState extends State<MoreScreen>
                               .teachers;
 
                       return Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           for (int i = 0; i < teachers.length; i += 2)
                             Padding(

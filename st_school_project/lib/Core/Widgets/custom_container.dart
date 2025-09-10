@@ -457,6 +457,8 @@ class CustomContainer {
             child: Column(
               children: [
                 Text(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   teachresName,
                   style: GoogleFont.ibmPlexSans(
                     fontSize: 15,
@@ -473,7 +475,14 @@ class CustomContainer {
                   ),
                 ),
                 SizedBox(height: 10),
-                Image.network(teacherImage,  fit: BoxFit.contain,),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(
+                    teacherImage,
+                    fit: BoxFit.cover, // or contain if you prefer
+                  ),
+                )
+
               ],
             ),
           ),
@@ -481,7 +490,6 @@ class CustomContainer {
       ],
     );
   }
-
 
   static checkMark({required VoidCallback onTap, String? imagePath}) {
     return Center(
