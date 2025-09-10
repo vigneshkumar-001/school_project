@@ -233,7 +233,7 @@ class QuizController extends GetxController {
   // Timer
   final RxInt remainingSeconds = 0.obs;
   Timer? _timer;
-
+  final RxMap<int, bool> _submitted = <int, bool>{}.obs;
   // Derived
   int get totalQuestions => quiz?.questions.length ?? 0;
   int get answeredCount => selections.length;
