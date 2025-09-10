@@ -521,21 +521,25 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
             // Top row
             Row(
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColor.lightGrey,
-                    border: Border.all(color: AppColor.lightGrey, width: 1),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Image.asset(
-                      AppImages.leftArrow,
-                      height: 17,
-                      width: 17,
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColor.lightGrey,
+                      border: Border.all(color: AppColor.lightGrey, width: 1),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Image.asset(
+                        AppImages.leftArrow,
+                        height: 17,
+                        width: 17,
+                      ),
                     ),
                   ),
                 ),
+
                 const SizedBox(width: 15),
                 Text(
                   '${d.heading} Result',
@@ -601,7 +605,6 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     if (p >= 0.5) return 'Good!';
     return 'Keep going!';
   }
-
 
   Widget _questionBlock({
     required int index,
@@ -775,6 +778,7 @@ class _OptionTile extends StatelessWidget {
             Expanded(
               child: CustomTextField.textWithSmall(
                 text: letter,
+
                 color: colors.letter,
               ),
             ),
@@ -945,7 +949,7 @@ Widget _borderWrapper({
     return dotted.DottedBorder(
       color: p.border, // ✅ exists
       strokeWidth: strokeWidth, // ✅ double
-      dashPattern: const [6.0, 3.0], // ✅ List<double>
+      dashPattern: [6.0, 3.0], // ✅ List<double>
       borderType: dotted.BorderType.RRect, // ✅ enum from dotted_border
       radius: Radius.circular(radius), // ✅ Radius
       strokeCap: StrokeCap.round, // (optional) nicer dots

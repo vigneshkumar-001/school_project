@@ -33,6 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     controller.getStudentHome();
+    controller.getSiblingsData();
     teacherListController.teacherListData();
     announcementController.getAnnouncement();
 

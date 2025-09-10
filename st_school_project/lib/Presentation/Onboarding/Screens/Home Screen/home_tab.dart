@@ -1647,17 +1647,6 @@ class _HomeScreenState extends State<HomeTab>
                                                       ),
                                                       TextButton(
                                                         onPressed: () {
-                                                          Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder:
-                                                                  (
-                                                                    context,
-                                                                  ) => TaskDetail(
-                                                                    id: task.id,
-                                                                  ),
-                                                            ),
-                                                          );
                                                         },
                                                         child: Row(
                                                           children: [

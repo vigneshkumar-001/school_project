@@ -1825,6 +1825,8 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/date_and_time_convert.dart';
 import '../Home Screen/controller/student_home_controller.dart';
+import '../More Screen/Quiz Screen/controller/quiz_controller.dart';
+import '../More Screen/quiz_result.dart';
 import '../More Screen/quiz_screen.dart';
 import 'package:get/get.dart';
 
@@ -2235,17 +2237,24 @@ class _TaskScreenState extends State<TaskScreen>
                                                   color: Colors.black,
                                                 ),
                                               ),
-                                              SizedBox(width: 177),
-                                              Image.asset(
-                                                AppImages.moreSimage2,
-                                                height: 20,
-                                                width: 20,
+                                              Spacer(),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 22.0,
+                                                      vertical: 8,
+                                                    ),
+                                                child: Image.asset(
+                                                  AppImages.moreSimage2,
+                                                  height: 20,
+                                                  width: 20,
+                                                ),
                                               ),
                                             ],
                                           ),
                                           Positioned(
                                             right: 0,
-                                            bottom: 6,
+                                            bottom: 3,
                                             child: InkWell(
                                               onTap: () {
                                                 SwitchProfileSheet.show(
@@ -2517,7 +2526,8 @@ class _TaskScreenState extends State<TaskScreen>
                                                                         .black,
                                                                   ],
                                                                 ),
-                                                            onIconTap: () {
+
+                                                            /*  onIconTap: () {
                                                               AppLogger.log.i(
                                                                 task.id,
                                                               );
@@ -2545,6 +2555,95 @@ class _TaskScreenState extends State<TaskScreen>
                                                                     builder:
                                                                         (
                                                                           context,
+                                                                        ) => TaskDetail(
+                                                                          id:
+                                                                              task.id,
+                                                                        ),
+                                                                  ),
+                                                                );
+                                                              }
+                                                            },*/
+                                                            onIconTap: () async {
+                                                              AppLogger.log.i(
+                                                                task.id,
+                                                              );
+                                                              AppLogger.log.i(
+                                                                task.type,
+                                                              );
+
+                                                              if (task.type ==
+                                                                  'Quiz') {
+                                                                // Optional: quick loader
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  barrierDismissible:
+                                                                      false,
+                                                                  builder:
+                                                                      (
+                                                                        _,
+                                                                      ) => const Center(
+                                                                        child:
+                                                                            CircularProgressIndicator(),
+                                                                      ),
+                                                                );
+
+                                                                final result =
+                                                                    await Get.find<
+                                                                          QuizController
+                                                                        >()
+                                                                        .tryGetResult(
+                                                                          task.id,
+                                                                        );
+
+                                                                if (Navigator.canPop(
+                                                                  context,
+                                                                ))
+                                                                  Navigator.pop(
+                                                                    context,
+                                                                  ); // close loader
+
+                                                                if (!context
+                                                                    .mounted)
+                                                                  return;
+
+                                                                if (result !=
+                                                                    null) {
+                                                                  // Already submitted => go to result screen
+                                                                  Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder:
+                                                                          (
+                                                                            _,
+                                                                          ) => QuizResultScreen(
+                                                                            data:
+                                                                                result,
+                                                                          ),
+                                                                    ),
+                                                                  );
+                                                                } else {
+                                                                  // Not attempted => go to quiz screen
+                                                                  Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder:
+                                                                          (
+                                                                            _,
+                                                                          ) => QuizScreen(
+                                                                            quizId:
+                                                                                task.id,
+                                                                          ),
+                                                                    ),
+                                                                  );
+                                                                }
+                                                              } else {
+                                                                Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (
+                                                                          _,
                                                                         ) => TaskDetail(
                                                                           id:
                                                                               task.id,
