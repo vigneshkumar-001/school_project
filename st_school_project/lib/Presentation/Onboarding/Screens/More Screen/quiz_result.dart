@@ -602,7 +602,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     return 'Keep going!';
   }
 
-  // --------------- Question + Options ---------------
+
   Widget _questionBlock({
     required int index,
     required QuestionResult q,

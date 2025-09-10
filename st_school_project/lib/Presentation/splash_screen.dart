@@ -6,6 +6,7 @@ import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/controller/student_home_controller.dart';
 import '../Core/Utility/app_color.dart';
+import 'Onboarding/Screens/Announcements Screen/controller/announcement_controller.dart';
 import 'Onboarding/Screens/Home Screen/home_tab.dart';
 import 'Onboarding/Screens/More Screen/change_mobile_number.dart';
 import 'package:get/get.dart';
@@ -22,6 +23,9 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   double _progress = 0.0;
   final StudentHomeController controller = Get.put(StudentHomeController());
+  final AnnouncementController announcementController = Get.put(
+    AnnouncementController(),
+  );
   final TeacherListController teacherListController = Get.put(
     TeacherListController(),
   );
@@ -30,6 +34,8 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     controller.getStudentHome();
     teacherListController.teacherListData();
+    announcementController.getAnnouncement();
+
     _startLoading();
   }
 
