@@ -4,14 +4,13 @@ import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class Request {
   static Future<dynamic> sendRequest(
-      String url,
-      Map<String, dynamic> body,
-      String? method,
-      bool isTokenRequired,
-      ) async {
+    String url,
+    Map<String, dynamic> body,
+    String? method,
+    bool isTokenRequired,
+  ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? userId = prefs.getString('userId');
@@ -30,9 +29,9 @@ class Request {
           return handler.next(options);
         },
         onResponse: (
-            Response<dynamic> response,
-            ResponseInterceptorHandler handler,
-            ) {
+          Response<dynamic> response,
+          ResponseInterceptorHandler handler,
+        ) {
           AppLogger.log.i(
             "sendPostRequest \n API: $url \n RESPONSE: ${response.toString()}",
           );
@@ -61,22 +60,22 @@ class Request {
     try {
       final response = await dio
           .post(
-        url,
-        data: body,
-        options: Options(
-          headers: {"Authorization": token != null ? "Bearer $token" : ""},
-          validateStatus: (status) {
-            // Allow all status codes below 500 to be handled manually
-            return status != null && status < 503;
-          },
-        ),
-      )
+            url,
+            data: body,
+            options: Options(
+              headers: {"Authorization": token != null ? "Bearer $token" : ""},
+              validateStatus: (status) {
+                // Allow all status codes below 500 to be handled manually
+                return status != null && status < 503;
+              },
+            ),
+          )
           .timeout(
-        const Duration(seconds: 10),
-        onTimeout: () {
-          throw TimeoutException("Request timed out after 10 seconds");
-        },
-      );
+            const Duration(seconds: 10),
+            onTimeout: () {
+              throw TimeoutException("Request timed out after 10 seconds");
+            },
+          );
 
       AppLogger.log.i(
         "RESPONSE \n API: $url \n RESPONSE: ${response.toString()}",
@@ -93,11 +92,11 @@ class Request {
   }
 
   static Future<dynamic> formData(
-      String url,
-      dynamic body,
-      String? method,
-      bool isTokenRequired,
-      ) async {
+    String url,
+    dynamic body,
+    String? method,
+    bool isTokenRequired,
+  ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? userId = prefs.getString('userId');
@@ -111,9 +110,9 @@ class Request {
           return handler.next(options);
         },
         onResponse: (
-            Response<dynamic> response,
-            ResponseInterceptorHandler handler,
-            ) {
+          Response<dynamic> response,
+          ResponseInterceptorHandler handler,
+        ) {
           AppLogger.log.i(
             "sendPostRequest \n API: $url \n RESPONSE: ${response.toString()}",
           );
@@ -147,7 +146,7 @@ class Request {
           headers: {
             "Authorization": token != null ? "Bearer $token" : "",
             "Content-Type":
-            body is FormData ? "multipart/form-data" : "application/json",
+                body is FormData ? "multipart/form-data" : "application/json",
           },
           validateStatus: (status) {
             // Allow all status codes below 500 to be handled manually
@@ -171,11 +170,11 @@ class Request {
   }
 
   static Future<Response?> sendGetRequest(
-      String url,
-      Map<String, dynamic> queryParams,
-      String method,
-      bool isTokenRequired,
-      ) async {
+    String url,
+    Map<String, dynamic> queryParams,
+    String method,
+    bool isTokenRequired,
+  ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? userId = prefs.getString('userId');
@@ -188,11 +187,11 @@ class Request {
           return handler.next(options);
         },
         onResponse: (
-            Response<dynamic> response,
-            ResponseInterceptorHandler handler,
-            ) {
+          Response<dynamic> response,
+          ResponseInterceptorHandler handler,
+        ) {
           AppLogger.log.i(
-            "GET Request \n API: $url \n RESPONSE: ${response.toString()}",
+            "GET Request \n API: $url \n Token: $token \n RESPONSE: ${response.toString()}",
           );
           return handler.next(response);
         },
@@ -219,9 +218,9 @@ class Request {
         options: Options(
           headers: {
             "Authorization":
-            token != null
-                ? "Bearer $token"
-                : "", // Only the token in the header
+                token != null
+                    ? "Bearer $token"
+                    : "", // Only the token in the header
           },
           validateStatus: (status) {
             return status != null && status < 500;

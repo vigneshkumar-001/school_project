@@ -1,8 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../../api/data_source/apiDataSource.dart';
+import '../../../../../Core/Utility/app_color.dart';
+import '../../More Screen/profile_screen/controller/teacher_list_controller.dart';
 import '../model/siblings_list_response.dart';
 import '../model/student_home_response.dart';
 
@@ -17,6 +20,7 @@ class StudentHomeController extends GetxController {
   Rx<StudentHomeData?> studentHomeData = Rx<StudentHomeData?>(null);
   RxList<SiblingsData> siblingsList = RxList<SiblingsData>([]);
   Rx<SiblingsData?> selectedStudent = Rx<SiblingsData?>(null);
+
   @override
   void onInit() {
     super.onInit();
@@ -63,29 +67,29 @@ class StudentHomeController extends GetxController {
     return null;
   }
 
-  Future<void> switchSiblings({required int id}) async {
+  Future<void> switchSiblings({required int id, bool showLoader = true}) async {
     try {
-      isLoading.value = true;
+      if (showLoader) showPopupLoader();
 
       final results = await apiDataSource.switchSiblings(id: id);
 
       results.fold(
         (failure) {
-          isLoading.value = false;
+          if (showLoader) hidePopupLoader();
           AppLogger.log.e(failure.message);
         },
         (response) async {
-          isLoading.value = false;
-
-          // Override token in SharedPreferences
           final prefs = await SharedPreferences.getInstance();
           if (response.data != null && response.data.token != null) {
             accessToken = response.data.token;
             await prefs.setString('token', accessToken);
             AppLogger.log.i("New token saved: $accessToken");
           }
-          getStudentHome();
-          getSiblingsData();
+          await getStudentHome();
+          await getSiblingsData();
+          final teacherListController = Get.find<TeacherListController>();
+          await teacherListController.teacherListData();
+          if (showLoader) hidePopupLoader();
           // Optionally clear previous student data
           // studentHomeData.value = null;
           // selectedStudent.value = null;
@@ -95,7 +99,7 @@ class StudentHomeController extends GetxController {
         },
       );
     } catch (e) {
-      isLoading.value = false;
+      if (showLoader) hidePopupLoader();
       AppLogger.log.e(e);
     }
   }
@@ -134,6 +138,35 @@ class StudentHomeController extends GetxController {
     } catch (e) {
       isLoading.value = false;
       AppLogger.log.e(e);
+    }
+  }
+
+  void showPopupLoader() {
+    Get.dialog(
+      Center(
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CircularProgressIndicator(
+              color: AppColor.black,
+              strokeAlign: 1,
+            ),
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+      barrierColor: Colors.black.withOpacity(0.3), // transparent background
+    );
+  }
+
+  void hidePopupLoader() {
+    if (Get.isDialogOpen ?? false) {
+      Get.back();
     }
   }
 }

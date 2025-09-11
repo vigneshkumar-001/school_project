@@ -14,6 +14,7 @@ import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/custom_container.dart' show CustomContainer;
 import '../../../../Core/Widgets/custom_textfield.dart';
 import 'model/announcement_details_response.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class AnnouncementsScreen extends StatefulWidget {
   const AnnouncementsScreen({super.key});
@@ -31,6 +32,25 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     {'subject': 'Science', 'mark': '70'},
     {'subject': 'Social Science', 'mark': '70'},
   ];
+  void _openFullScreenNetwork(String url) {
+    if (url.isEmpty) return;
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.9),
+      builder:
+          (_) => GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Center(
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 5,
+                child: Image.network(url),
+              ),
+            ),
+          ),
+    );
+  }
+
   void _feessSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -185,6 +205,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
       },
     );
   }
+
   /*Future<void> _examResult(BuildContext context, int id) async {
     final details = await controller.getExamResultData(id: id);
     if (details == null) return;
@@ -439,7 +460,6 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                               return Padding(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 8.0,
-
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -457,7 +477,8 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                       ),
                                       SizedBox(width: 30),
                                       Text(
-                                        subject?.obtainedMarks?.toString() ?? '-',
+                                        subject?.obtainedMarks?.toString() ??
+                                            '-',
                                         style: GoogleFont.ibmPlexSans(
                                           fontSize: 20,
                                           fontWeight: FontWeight.w500,
@@ -567,11 +588,18 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                   // Image (if exists)
                   if (details!.contents.isNotEmpty &&
                       details.contents.first.type == "image")
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.network(
-                        details.contents.first.content ?? "",
-                        fit: BoxFit.cover,
+                    GestureDetector(
+                      onTap: () {
+                        _openFullScreenNetwork(
+                          details?.contents.first.content ?? "",
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.network(
+                          details.contents.first.content ?? "",
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
 

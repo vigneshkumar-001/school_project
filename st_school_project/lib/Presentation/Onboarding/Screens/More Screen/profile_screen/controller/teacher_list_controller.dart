@@ -8,6 +8,7 @@ import 'package:st_school_project/api/data_source/apiDataSource.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 
 import '../../../../../../Core/Utility/snack_bar.dart';
+import '../../../Home Screen/controller/student_home_controller.dart';
 
 class TeacherListController extends GetxController {
   ApiDataSource apiDataSource = ApiDataSource();
@@ -15,7 +16,7 @@ class TeacherListController extends GetxController {
   RxString frontImageUrl = ''.obs;
   RxBool isLoading = false.obs;
   RxBool isPresentLoading = false.obs;
-
+  final StudentHomeController controller = Get.put(StudentHomeController());
   Rx<TeacherListResponse?> teacherListResponse = Rx<TeacherListResponse?>(null);
   @override
   void onInit() {
@@ -79,6 +80,7 @@ class TeacherListController extends GetxController {
           AppLogger.log.e(failure.message);
         },
         (response) async {
+        await  controller.getSiblingsData();
           if (showLoader) hidePopupLoader();
           Get.back();
           AppLogger.log.i(response);

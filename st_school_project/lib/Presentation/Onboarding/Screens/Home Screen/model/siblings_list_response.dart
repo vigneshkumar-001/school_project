@@ -1,5 +1,4 @@
-
-class  SiblingsListResponse   {
+class SiblingsListResponse {
   bool status;
   int code;
   String message;
@@ -17,10 +16,12 @@ class  SiblingsListResponse   {
       status: json['status'] ?? false,
       code: json['code'] ?? 0,
       message: json['message'] ?? '',
-      data: json['data'] != null
-          ? List<SiblingsData>.from(
-          json['data'].map((x) => SiblingsData.fromJson(x)))
-          : [],
+      data:
+          json['data'] != null
+              ? List<SiblingsData>.from(
+                json['data'].map((x) => SiblingsData.fromJson(x)),
+              )
+              : [],
     );
   }
 

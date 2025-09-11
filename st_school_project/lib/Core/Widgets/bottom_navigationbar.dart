@@ -4,6 +4,7 @@ import 'package:st_school_project/Core/Utility/google_font.dart';
 
 import '../../Presentation/Onboarding/Screens/Announcements Screen/announcements_screen.dart';
 import '../../Presentation/Onboarding/Screens/Attendence Screen/attendence_screen.dart';
+import '../../Presentation/Onboarding/Screens/Home Screen/controller/student_home_controller.dart';
 import '../../Presentation/Onboarding/Screens/Home Screen/home_tab.dart';
 import '../../Presentation/Onboarding/Screens/More Screen/more_screen.dart';
 import '../../Presentation/Onboarding/Screens/More Screen/profile_screen/controller/teacher_list_controller.dart';
@@ -26,6 +27,8 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
   final TeacherListController teacherListController = Get.put(
     TeacherListController(),
   );
+
+  final StudentHomeController controller = Get.put(StudentHomeController());
   late final List<Widget> _pages;
 
   int _selectedIndex = 0;
@@ -111,6 +114,17 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
                 .value
                 ?.data
                 ?.student_image;
+
+        final siblings = controller.siblingsList;
+        final activeStudent = siblings.firstWhere(
+          (s) => s.isActive == true,
+          orElse: () => siblings.first,
+        );
+        final remainingStudent = siblings.firstWhere(
+          (s) => s.id != activeStudent.id,
+          orElse: () => siblings.first,
+        );
+
         return BottomNavigationBar(
           backgroundColor: AppColor.white,
           type: BottomNavigationBarType.fixed,
@@ -149,42 +163,46 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
             ),
             BottomNavigationBarItem(
               icon:
-                  _isValidUrl(profileUrl)
+                  (activeStudent.avatar != null &&
+                          activeStudent.avatar.isNotEmpty)
                       ? ClipOval(
                         child: Image.network(
-                          profileUrl!, // safe because _isValidUrl true
+                          activeStudent.avatar,
                           height: 30,
                           width: 30,
                           fit: BoxFit.cover,
-                          // if network fails, fall back to asset
-                          errorBuilder:
-                              (_, __, ___) => Image.asset(
-                                AppImages.moreSimage1,
-                                height: 30,
-                                width: 30,
-                              ),
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              AppImages.moreSimage1,
+                              height: 49,
+                              width: 30,
+                              fit: BoxFit.cover,
+                            );
+                          },
                         ),
                       )
                       : Image.asset(
                         AppImages.moreSimage1,
                         height: 30,
                         width: 30,
-                      ), //
+                      ), // f
               activeIcon:
-                  _isValidUrl(profileUrl)
+                  (activeStudent.avatar != null &&
+                          activeStudent.avatar.isNotEmpty)
                       ? ClipOval(
                         child: Image.network(
-                          profileUrl!, // safe because _isValidUrl true
+                          activeStudent.avatar,
                           height: 30,
                           width: 30,
                           fit: BoxFit.cover,
-                          // if network fails, fall back to asset
-                          errorBuilder:
-                              (_, __, ___) => Image.asset(
-                                AppImages.moreSimage1,
-                                height: 30,
-                                width: 30,
-                              ),
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              AppImages.moreSimage1,
+                              height: 49,
+                              width: 30,
+                              fit: BoxFit.cover,
+                            );
+                          },
                         ),
                       )
                       : Image.asset(

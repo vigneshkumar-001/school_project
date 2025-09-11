@@ -9,6 +9,8 @@ import '../../Presentation/Admssion/Screens/student_info_screen.dart';
 import '../Utility/app_color.dart';
 import '../Utility/app_images.dart';
 import '../Utility/google_font.dart' show GoogleFont;
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class InputFormatterUtil {
   static List<TextInputFormatter> languageFormatter({required bool isTamil}) {
@@ -107,7 +109,19 @@ class CustomContainer {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      CircleAvatar(radius: 25, child: Image.asset(avatarImage)),
+                      CircleAvatar(
+                        radius: 20, // smaller than 25
+                        backgroundColor: Colors.transparent, // optional: remove background
+                        child: ClipOval(
+                          child: Image.network(
+                            avatarImage,
+                            fit: BoxFit.cover,
+                            width: 40,  // control size of image
+                            height: 40, // same as width
+                          ),
+                        ),
+                      ),
+
 
                       SizedBox(height: 4),
                       Row(
@@ -192,7 +206,118 @@ class CustomContainer {
       ),
     );
   }
+  static announcementsScreen({
+    required String mainText,
+    required String backRoundImage,
+    required String additionalText1,
+    required String additionalText2,
+    VoidCallback? onDetailsTap,
+    IconData? iconData,
+    double verticalPadding = 9,
+    Color? gradientStartColor,
+    Color? gradientEndColor,
+  }) {
+    return InkWell(
+      onTap: onDetailsTap,
+      child: Stack(
+        children: [
+          // ✅ Network image with loader + error handling
+          ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: CachedNetworkImage(
+              imageUrl: backRoundImage,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              placeholder: (context, url) => Container(
+                height: 180, // adjust to your card height
+                alignment: Alignment.center,
+                child: const SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+              errorWidget: (context, url, error) =>
+              const Icon(Icons.broken_image, size: 40, color: Colors.grey),
+            ),
+          ),
 
+          // ✅ Gradient overlay
+          Positioned(
+            bottom: 0,
+            right: 0,
+            left: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    gradientStartColor ?? AppColor.black.withOpacity(0.01),
+                    gradientEndColor ?? AppColor.black,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(22),
+                  bottomRight: Radius.circular(22),
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 25,
+                  vertical: verticalPadding,
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          mainText,
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.white,
+                          ),
+                        ),
+                        const Spacer(),
+                        if (iconData != null)
+                          Icon(iconData, size: 22, color: AppColor.white),
+                        const SizedBox(width: 8),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (additionalText1.isNotEmpty)
+                              Text(
+                                additionalText1,
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 12,
+                                  color: AppColor.lightGrey,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            Text(
+                              additionalText2,
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 14,
+                                color: AppColor.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+/*
   static announcementsScreen({
     required String mainText,
     required String backRoundImage,
@@ -283,6 +408,7 @@ class CustomContainer {
       ),
     );
   }
+*/
 
   static moreScreen({
     required String termTitle,

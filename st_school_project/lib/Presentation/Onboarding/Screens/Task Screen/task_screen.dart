@@ -2232,25 +2232,148 @@ class _TaskScreenState extends State<TaskScreen>
                                         horizontal: 16,
                                         vertical: 16,
                                       ),
-                                      child: Stack(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                'Your Tasks',
-                                                style: GoogleFont.ibmPlexSans(
-                                                  fontSize: 28,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.black,
+                                      child: /*Obx(() {
+                                        final siblings =
+                                            controller.siblingsList;
+                                        final activeStudent = siblings
+                                            .firstWhere(
+                                              (s) => s.isActive == true,
+                                              orElse: () => siblings.first,
+                                            );
+
+                                        // find first "other" student (if exists)
+                                        final remainingStudent = siblings
+                                            .firstWhere(
+                                              (s) => s.id != activeStudent.id,
+                                              orElse: () => siblings.first,
+                                            );
+                                        return Stack(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  'Your Tasks',
+                                                  style: GoogleFont.ibmPlexSans(
+                                                    fontSize: 28,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.black,
+                                                  ),
                                                 ),
-                                              ),
-                                              Spacer(),
-                                              Obx(() {
-                                                final img =
-                                                    teacherListController
-                                                        .teacherListResponse
-                                                        .value;
-                                                return InkWell(
+                                                Spacer(),
+
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 15.0,
+                                                        vertical: 10,
+                                                      ),
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      SwitchProfileSheet.show(
+                                                        context,
+                                                        students:
+                                                            controller
+                                                                .siblingsList,
+                                                        selectedStudent:
+                                                            controller
+                                                                .selectedStudent,
+                                                        onSwitch: (
+                                                          student,
+                                                        ) async {
+                                                          await controller
+                                                              .switchSiblings(
+                                                                id: student.id,
+                                                              );
+                                                          controller
+                                                              .selectStudent(
+                                                                student,
+                                                              );
+                                                        },
+                                                        onLogout: () async {
+                                                          await loginController
+                                                              .logout();
+                                                        },
+                                                      );
+                                                    },
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            10,
+                                                          ),
+                                                      child:
+                                                          (remainingStudent
+                                                                          .avatar !=
+                                                                      null &&
+                                                                  remainingStudent
+                                                                      .avatar
+                                                                      .isNotEmpty)
+                                                              ? Image.network(
+                                                                remainingStudent
+                                                                    .avatar,
+                                                                height: 30,
+                                                                width: 30,
+                                                                fit:
+                                                                    BoxFit
+                                                                        .cover,
+                                                                errorBuilder: (
+                                                                  context,
+                                                                  error,
+                                                                  stackTrace,
+                                                                ) {
+                                                                  return Image.asset(
+                                                                    AppImages
+                                                                        .moreSimage1,
+                                                                    height: 30,
+                                                                    width: 30,
+                                                                    fit:
+                                                                        BoxFit
+                                                                            .cover,
+                                                                  );
+                                                                },
+                                                              )
+                                                              : Image.asset(
+                                                                AppImages
+                                                                    .moreSimage1,
+                                                                height: 30,
+                                                                width: 30,
+                                                                fit:
+                                                                    BoxFit
+                                                                        .cover,
+                                                              ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Positioned(
+                                              right: 30,
+                                              top: 7,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  SwitchProfileSheet.show(
+                                                    context,
+                                                    students:
+                                                        controller.siblingsList,
+                                                    selectedStudent:
+                                                        controller
+                                                            .selectedStudent,
+                                                    onSwitch: (student) async {
+                                                      await controller
+                                                          .switchSiblings(
+                                                            id: student.id,
+                                                          );
+                                                      controller.selectStudent(
+                                                        student,
+                                                      );
+                                                    },
+                                                    onLogout: () async {
+                                                      await loginController
+                                                          .logout();
+                                                      // Get.offAllNamed('/login');
+                                                    },
+                                                  );
+                                                },
+                                                child: InkWell(
                                                   onTap: () {
                                                     SwitchProfileSheet.show(
                                                       context,
@@ -2275,78 +2398,251 @@ class _TaskScreenState extends State<TaskScreen>
                                                       onLogout: () async {
                                                         await loginController
                                                             .logout();
-                                                        // Get.offAllNamed('/login');
                                                       },
                                                     );
                                                   },
                                                   child: ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                          20,
+                                                          10,
                                                         ),
-                                                    child: Image.network(
-                                                      img?.data?.student_image
-                                                              .toString() ??
-                                                          'g',
-                                                      height: 55,
-                                                      fit: BoxFit.cover,
-                                                      width: 55,
+                                                    child:
+                                                        (activeStudent.avatar !=
+                                                                    null &&
+                                                                activeStudent
+                                                                    .avatar
+                                                                    .isNotEmpty)
+                                                            ? Image.network(
+                                                              activeStudent
+                                                                  .avatar,
+                                                              height: 40,
+                                                              width: 40,
+                                                              fit: BoxFit.cover,
+                                                              errorBuilder: (
+                                                                context,
+                                                                error,
+                                                                stackTrace,
+                                                              ) {
+                                                                return Image.asset(
+                                                                  AppImages
+                                                                      .moreSimage1,
+                                                                  height: 49,
+                                                                  width: 49,
+                                                                  fit:
+                                                                      BoxFit
+                                                                          .cover,
+                                                                );
+                                                              },
+                                                            )
+                                                            : Image.asset(
+                                                              AppImages
+                                                                  .moreSimage1,
+                                                              height: 30,
+                                                              width: 40,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }),*/ Obx(() {
+                                        final siblings =
+                                            controller.siblingsList;
+
+                                        if (siblings.isEmpty) {
+                                          return SizedBox.shrink();
+                                        }
+
+                                        final activeStudent = siblings
+                                            .firstWhere(
+                                              (s) => s.isActive == true,
+                                              orElse: () => siblings.first,
+                                            );
+
+                                        // find first "other" student (if exists)
+                                        final remainingStudent = siblings
+                                            .firstWhere(
+                                              (s) => s.id != activeStudent.id,
+                                              orElse: () => siblings.first,
+                                            );
+
+                                        return Stack(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  'Your Tasks',
+                                                  style: GoogleFont.ibmPlexSans(
+                                                    fontSize: 28,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                                const Spacer(),
+
+                                                /// 👉 Show small avatar ONLY if more than 1 sibling
+                                                if (siblings.length > 1)
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 15.0,
+                                                          vertical: 10,
+                                                        ),
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        SwitchProfileSheet.show(
+                                                          context,
+                                                          students:
+                                                              controller
+                                                                  .siblingsList,
+                                                          selectedStudent:
+                                                              controller
+                                                                  .selectedStudent,
+                                                          onSwitch: (
+                                                            student,
+                                                          ) async {
+                                                            await controller
+                                                                .switchSiblings(
+                                                                  id:
+                                                                      student
+                                                                          .id,
+                                                                );
+                                                            controller
+                                                                .selectStudent(
+                                                                  student,
+                                                                );
+                                                          },
+                                                          onLogout: () async {
+                                                            await loginController
+                                                                .logout();
+                                                          },
+                                                        );
+                                                      },
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              10,
+                                                            ),
+                                                        child:
+                                                            (remainingStudent
+                                                                            .avatar !=
+                                                                        null &&
+                                                                    remainingStudent
+                                                                        .avatar
+                                                                        .isNotEmpty)
+                                                                ? Image.network(
+                                                                  remainingStudent
+                                                                      .avatar,
+                                                                  height: 30,
+                                                                  width: 30,
+                                                                  fit:
+                                                                      BoxFit
+                                                                          .cover,
+                                                                  errorBuilder: (
+                                                                    context,
+                                                                    error,
+                                                                    stackTrace,
+                                                                  ) {
+                                                                    return Image.asset(
+                                                                      AppImages
+                                                                          .moreSimage1,
+                                                                      height:
+                                                                          30,
+                                                                      width: 30,
+                                                                      fit:
+                                                                          BoxFit
+                                                                              .cover,
+                                                                    );
+                                                                  },
+                                                                )
+                                                                : Image.asset(
+                                                                  AppImages
+                                                                      .moreSimage1,
+                                                                  height: 30,
+                                                                  width: 30,
+                                                                  fit:
+                                                                      BoxFit
+                                                                          .cover,
+                                                                ),
+                                                      ),
                                                     ),
                                                   ),
-                                                );
-                                              }),
+                                              ],
+                                            ),
 
-                                              // Padding(
-                                              //   padding:
-                                              //       const EdgeInsets.symmetric(
-                                              //         horizontal: 22.0,
-                                              //         vertical: 8,
-                                              //       ),
-                                              //   child: Image.asset(
-                                              //     AppImages.moreSimage2,
-                                              //     height: 20,
-                                              //     width: 20,
-                                              //   ),
-                                              // ),
-                                            ],
-                                          ),
-                                          // Positioned(
-                                          //   right: 0,
-                                          //   bottom: 3,
-                                          //   child: InkWell(
-                                          //     onTap: () {
-                                          //       SwitchProfileSheet.show(
-                                          //         context,
-                                          //         students:
-                                          //             controller.siblingsList,
-                                          //         selectedStudent:
-                                          //             controller
-                                          //                 .selectedStudent,
-                                          //         onSwitch: (student) async {
-                                          //           await controller
-                                          //               .switchSiblings(
-                                          //                 id: student.id,
-                                          //               );
-                                          //           controller.selectStudent(
-                                          //             student,
-                                          //           );
-                                          //         },
-                                          //         onLogout: () async {
-                                          //           await loginController
-                                          //               .logout();
-                                          //           // Get.offAllNamed('/login');
-                                          //         },
-                                          //       );
-                                          //     },
-                                          //     child: Image.asset(
-                                          //       AppImages.moreSimage1,
-                                          //       height: 30,
-                                          //       width: 40,
-                                          //     ),
-                                          //   ),
-                                          // ),
-                                        ],
-                                      ),
+                                            Positioned(
+                                              right: 30,
+                                              bottom: 0,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  SwitchProfileSheet.show(
+                                                    context,
+                                                    students:
+                                                        controller.siblingsList,
+                                                    selectedStudent:
+                                                        controller
+                                                            .selectedStudent,
+                                                    onSwitch: (student) async {
+                                                      await controller
+                                                          .switchSiblings(
+                                                            id: student.id,
+                                                          );
+                                                      controller.selectStudent(
+                                                        student,
+                                                      );
+                                                    },
+                                                    onLogout: () async {
+                                                      await loginController
+                                                          .logout();
+                                                    },
+                                                  );
+                                                },
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  child:
+                                                      (activeStudent.avatar !=
+                                                                  null &&
+                                                              activeStudent
+                                                                  .avatar
+                                                                  .isNotEmpty)
+                                                          ? Image.network(
+                                                            activeStudent
+                                                                .avatar,
+                                                            height: 40,
+                                                            width: 40,
+                                                            fit: BoxFit.cover,
+                                                            errorBuilder: (
+                                                              context,
+                                                              error,
+                                                              stackTrace,
+                                                            ) {
+                                                              return Image.asset(
+                                                                AppImages
+                                                                    .moreSimage1,
+                                                                height: 40,
+                                                                width: 40,
+                                                                fit:
+                                                                    BoxFit
+                                                                        .cover,
+                                                              );
+                                                            },
+                                                          )
+                                                          : Image.asset(
+                                                            AppImages
+                                                                .moreSimage1,
+                                                            height: 40,
+                                                            width: 40,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }),
                                     ),
                                     Expanded(
                                       child: Column(
@@ -2560,8 +2856,7 @@ class _TaskScreenState extends State<TaskScreen>
                                                             homeWorkText:
                                                                 task.subject,
                                                             avatarImage:
-                                                                AppImages
-                                                                    .avatar1, // provide avatar if needed
+                                                                task.teacher_image, // provide avatar if needed
                                                             smaleText:
                                                                 task.type,
                                                             time: DateAndTimeConvert.formatDateTime(
@@ -2703,6 +2998,7 @@ class _TaskScreenState extends State<TaskScreen>
                                                                         (
                                                                           _,
                                                                         ) => TaskDetail(
+                                                                          teacherImage: task.teacher_image, // pass image here
                                                                           id:
                                                                               task.id,
                                                                         ),
