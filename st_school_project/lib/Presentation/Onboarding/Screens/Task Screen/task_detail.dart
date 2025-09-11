@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:photo_view/photo_view.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
@@ -31,6 +32,29 @@ class _TaskDetailState extends State<TaskDetail> {
     });
   }
 
+  void _showFullImage(BuildContext context, String imageUrl) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (_) => Scaffold(
+              backgroundColor: Colors.black,
+              body: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Center(
+                  child: PhotoView(
+                    imageProvider: NetworkImage(imageUrl),
+                    backgroundDecoration: const BoxDecoration(
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +74,6 @@ class _TaskDetailState extends State<TaskDetail> {
               tasks.where((t) => t.type == 'paragraph').toList();
 
           final allLists = tasks.where((t) => t.type == 'list').toList();
-
 
           // First image for top
           final topImage = allImages.isNotEmpty ? allImages.first : null;
@@ -83,9 +106,271 @@ class _TaskDetailState extends State<TaskDetail> {
                 ),
                 const SizedBox(height: 20),
 
+                // Container(
+                //   decoration: BoxDecoration(
+                //     // color: AppColor.lowLightYellow,
+                //     gradient: LinearGradient(
+                //       colors: [
+                //         AppColor.lowLightYellow,
+                //         AppColor.lowLightYellow,
+                //         AppColor.lowLightYellow,
+                //         AppColor.lowLightYellow,
+                //         AppColor.lowLightYellow,
+                //         AppColor.lowLightYellow,
+                //         AppColor.lowLightYellow.withOpacity(0.2),
+                //       ], // gradient top to bottom
+                //       begin: Alignment.topCenter,
+                //       end: Alignment.bottomCenter,
+                //     ),
+                //     borderRadius: BorderRadius.circular(25),
+                //   ),
+                //   child: Padding(
+                //     padding: const EdgeInsets.symmetric(
+                //       vertical: 30,
+                //       horizontal: 20,
+                //     ),
+                //     child: Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         // if (topImage != null)
+                //         /*  ClipRRect(
+                //             borderRadius: BorderRadius.circular(12),
+                //             child: Image.network(
+                //               topImage.content ?? '',
+                //               height: 200,
+                //               width: double.infinity,
+                //               fit: BoxFit.cover,
+                //               errorBuilder:
+                //                   (_, __, ___) => Image.asset(
+                //                     AppImages.tdhs1,
+                //                     height: 200,
+                //                     width: double.infinity,
+                //                     fit: BoxFit.cover,
+                //                   ),
+                //             ),
+                //           ),*/
+                //
+                //           if (topImage != null)
+                //             GestureDetector(
+                //               onTap: () => _showFullImage(context, topImage.content ?? ''),
+                //               child: ClipRRect(
+                //                 borderRadius: BorderRadius.circular(12),
+                //                 child: Image.network(
+                //                   topImage.content ?? '',
+                //                   height: 200,
+                //                   width: double.infinity,
+                //                   fit: BoxFit.cover,
+                //                   errorBuilder: (_, __, ___) => Image.asset(
+                //                     AppImages.tdhs1,
+                //                     height: 200,
+                //                     width: double.infinity,
+                //                     fit: BoxFit.cover,
+                //                   ),
+                //                 ),
+                //               ),
+                //             ),
+                //
+                //         const SizedBox(height: 15),
+                //         Text(
+                //           homework.title ?? '',
+                //           style: GoogleFont.inter(
+                //             fontWeight: FontWeight.w600,
+                //             fontSize: 24,
+                //             color: AppColor.lightBlack,
+                //           ),
+                //         ),
+                //         const SizedBox(height: 10),
+                //         Text(
+                //           homework.description ?? '',
+                //           style: GoogleFont.inter(
+                //             fontSize: 12,
+                //             color: AppColor.grey,
+                //           ),
+                //         ),
+                //         const SizedBox(height: 20),
+                //
+                //         // Horizontal scroll of remaining images with counter
+                //         if (remainingImages.isNotEmpty)
+                //           Column(
+                //             crossAxisAlignment: CrossAxisAlignment.start,
+                //             children: [
+                //               const SizedBox(height: 10),
+                //               ListView.builder(
+                //                 shrinkWrap: true,
+                //                 physics: NeverScrollableScrollPhysics(),
+                //
+                //                 itemCount: remainingImages.length,
+                //                 itemBuilder: (context, index) {
+                //                   final img = remainingImages[index];
+                //                   return Padding(
+                //                     padding: const EdgeInsets.only(right: 12),
+                //                     child: ClipRRect(
+                //                       borderRadius: BorderRadius.circular(12),
+                //                       child: Image.network(
+                //                         img.content ?? '',
+                //                         width: 200,
+                //                         height: 150,
+                //                         fit: BoxFit.cover,
+                //                         errorBuilder:
+                //                             (_, __, ___) => Container(
+                //                               width: 200,
+                //                               height: 150,
+                //                               color: Colors.grey[200],
+                //                             ),
+                //                       ),
+                //                     ),
+                //                   );
+                //                 },
+                //               ),
+                //               const SizedBox(height: 20),
+                //             ],
+                //           ),
+                //         // Paragraphs
+                //         Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children:
+                //               allParagraphs.map<Widget>((p) {
+                //                 return Padding(
+                //                   padding: const EdgeInsets.symmetric(
+                //                     vertical: 8,
+                //                   ),
+                //                   child: Text(
+                //                     p.content ?? '',
+                //                     style: GoogleFont.inter(
+                //                       fontSize: 14,
+                //                       color: AppColor.lightBlack,
+                //                     ),
+                //                   ),
+                //                 );
+                //               }).toList(),
+                //         ),
+                //
+                //         // Lists
+                //         if (allLists.isNotEmpty) ...[
+                //           const SizedBox(height: 10),
+                //           Column(
+                //             crossAxisAlignment: CrossAxisAlignment.start,
+                //             children:
+                //                 allLists.asMap().entries.map<Widget>((entry) {
+                //                   final index =
+                //                       entry.key + 1; // 1-based numbering
+                //                   final item = entry.value;
+                //                   return Padding(
+                //                     padding: const EdgeInsets.symmetric(
+                //                       vertical: 6,
+                //                     ),
+                //                     child: Row(
+                //                       crossAxisAlignment:
+                //                           CrossAxisAlignment.start,
+                //                       children: [
+                //                         Text(
+                //                           "$index. ", // numbering
+                //                           style: GoogleFont.inter(
+                //                             fontSize: 14,
+                //                             fontWeight: FontWeight.w600,
+                //                             color: AppColor.lightBlack,
+                //                           ),
+                //                         ),
+                //                         Expanded(
+                //                           child: Text(
+                //                             item.content ?? '',
+                //                             style: GoogleFont.inter(
+                //                               fontSize: 14,
+                //                               color: AppColor.lightBlack,
+                //                             ),
+                //                           ),
+                //                         ),
+                //                       ],
+                //                     ),
+                //                   );
+                //                 }).toList(),
+                //           ),
+                //         ],
+                //
+                //         SingleChildScrollView(
+                //           scrollDirection: Axis.horizontal,
+                //           child: Padding(
+                //             padding: const EdgeInsets.symmetric(vertical: 15),
+                //             child: Row(
+                //               children: [
+                //                 Container(
+                //                   decoration: BoxDecoration(
+                //                     color: AppColor.black.withOpacity(0.05),
+                //                     borderRadius: BorderRadius.circular(50),
+                //                   ),
+                //                   child: Padding(
+                //                     padding: const EdgeInsets.all(8.0),
+                //                     child: Row(
+                //                       children: [
+                //                         CircleAvatar(
+                //                           child: Image.asset(AppImages.avatar1),
+                //                         ),
+                //                         SizedBox(width: 10),
+                //                         Text(
+                //                           homework.subject.name.toString() ??
+                //                               '',
+                //                           style: GoogleFont.inter(
+                //                             fontSize: 12,
+                //                             color: AppColor.lightBlack,
+                //                           ),
+                //                         ),
+                //                         SizedBox(width: 20),
+                //                       ],
+                //                     ),
+                //                   ),
+                //                 ),
+                //                 SizedBox(width: 20),
+                //                 Container(
+                //                   decoration: BoxDecoration(
+                //                     color: AppColor.black.withOpacity(0.05),
+                //                     borderRadius: BorderRadius.circular(50),
+                //                   ),
+                //                   child: Padding(
+                //                     padding: const EdgeInsets.all(10),
+                //                     child: Row(
+                //                       children: [
+                //                         Icon(
+                //                           CupertinoIcons.clock_fill,
+                //                           size: 35,
+                //                           color: AppColor.lightBlack
+                //                               .withOpacity(0.3),
+                //                         ),
+                //                         SizedBox(width: 10),
+                //                         Text(
+                //                           DateAndTimeConvert.formatDateTime(
+                //                             homework.time.toString() ?? '',
+                //
+                //                             showDate: true,
+                //                             showTime: true,
+                //                           ),
+                //
+                //                           style: GoogleFont.inter(
+                //                             fontSize: 12,
+                //                             color: AppColor.lightBlack,
+                //                           ),
+                //                         ),
+                //                         // SizedBox(width: 10),
+                //                         // Text(
+                //                         //   homework.date.toString() ?? '',
+                //                         //   style: GoogleFont.inter(
+                //                         //     fontSize: 12,
+                //                         //     color: AppColor.grey,
+                //                         //   ),
+                //                         // ),
+                //                       ],
+                //                     ),
+                //                   ),
+                //                 ),
+                //               ],
+                //             ),
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
                 Container(
                   decoration: BoxDecoration(
-                    // color: AppColor.lowLightYellow,
                     gradient: LinearGradient(
                       colors: [
                         AppColor.lowLightYellow,
@@ -95,7 +380,7 @@ class _TaskDetailState extends State<TaskDetail> {
                         AppColor.lowLightYellow,
                         AppColor.lowLightYellow,
                         AppColor.lowLightYellow.withOpacity(0.2),
-                      ], // gradient top to bottom
+                      ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -109,24 +394,34 @@ class _TaskDetailState extends State<TaskDetail> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // 🔹 Top image with zoom
                         if (topImage != null)
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              topImage.content ?? '',
-                              height: 200,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              errorBuilder:
-                                  (_, __, ___) => Image.asset(
-                                    AppImages.tdhs1,
-                                    height: 200,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
+                          GestureDetector(
+                            onTap:
+                                () => _showFullImage(
+                                  context,
+                                  topImage.content ?? '',
+                                ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                topImage.content ?? '',
+                                height: 200,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                errorBuilder:
+                                    (_, __, ___) => Image.asset(
+                                      AppImages.tdhs1,
+                                      height: 200,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    ),
+                              ),
                             ),
                           ),
+
                         const SizedBox(height: 15),
+
                         Text(
                           homework.title ?? '',
                           style: GoogleFont.inter(
@@ -135,7 +430,8 @@ class _TaskDetailState extends State<TaskDetail> {
                             color: AppColor.lightBlack,
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 15),
+
                         Text(
                           homework.description ?? '',
                           style: GoogleFont.inter(
@@ -143,36 +439,43 @@ class _TaskDetailState extends State<TaskDetail> {
                             color: AppColor.grey,
                           ),
                         ),
+
                         const SizedBox(height: 20),
 
-                        // Horizontal scroll of remaining images with counter
+                        // 🔹 Remaining images with zoom
                         if (remainingImages.isNotEmpty)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 15),
                               ListView.builder(
                                 shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-
+                                physics: const NeverScrollableScrollPhysics(),
                                 itemCount: remainingImages.length,
                                 itemBuilder: (context, index) {
                                   final img = remainingImages[index];
                                   return Padding(
-                                    padding: const EdgeInsets.only(right: 12),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.network(
-                                        img.content ?? '',
-                                        width: 200,
-                                        height: 150,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (_, __, ___) => Container(
-                                              width: 200,
-                                              height: 150,
-                                              color: Colors.grey[200],
-                                            ),
+                                    padding: const EdgeInsets.only(bottom: 15),
+                                    child: GestureDetector(
+                                      onTap:
+                                          () => _showFullImage(
+                                            context,
+                                            img.content ?? '',
+                                          ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Image.network(
+                                          img.content ?? '',
+                                          width: double.infinity,
+                                          height: 150,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (_, __, ___) => Container(
+                                                width: double.infinity,
+                                                height: 150,
+                                                color: Colors.grey[200],
+                                              ),
+                                        ),
                                       ),
                                     ),
                                   );
@@ -181,7 +484,8 @@ class _TaskDetailState extends State<TaskDetail> {
                               const SizedBox(height: 20),
                             ],
                           ),
-                        // Paragraphs
+
+                        // 🔹 Paragraphs
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children:
@@ -201,15 +505,14 @@ class _TaskDetailState extends State<TaskDetail> {
                               }).toList(),
                         ),
 
-                        // Lists
+                        // 🔹 Lists
                         if (allLists.isNotEmpty) ...[
-                          const SizedBox(height: 10),
+                          SizedBox(height: 15),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children:
                                 allLists.asMap().entries.map<Widget>((entry) {
-                                  final index =
-                                      entry.key + 1; // 1-based numbering
+                                  final index = entry.key + 1;
                                   final item = entry.value;
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -220,7 +523,7 @@ class _TaskDetailState extends State<TaskDetail> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "$index. ", // numbering
+                                          "$index. ",
                                           style: GoogleFont.inter(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600,
@@ -242,85 +545,6 @@ class _TaskDetailState extends State<TaskDetail> {
                                 }).toList(),
                           ),
                         ],
-
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: Row(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: AppColor.black.withOpacity(0.05),
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        CircleAvatar(
-                                          child: Image.asset(AppImages.avatar1),
-                                        ),
-                                        SizedBox(width: 10),
-                                        Text(
-                                          homework.subject.name.toString() ??
-                                              '',
-                                          style: GoogleFont.inter(
-                                            fontSize: 12,
-                                            color: AppColor.lightBlack,
-                                          ),
-                                        ),
-                                        SizedBox(width: 20),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 20),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: AppColor.black.withOpacity(0.05),
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          CupertinoIcons.clock_fill,
-                                          size: 35,
-                                          color: AppColor.lightBlack
-                                              .withOpacity(0.3),
-                                        ),
-                                        SizedBox(width: 10),
-                                        Text(
-                                          DateAndTimeConvert.formatDateTime(
-                                            homework.time.toString() ?? '',
-
-                                            showDate: true,
-                                            showTime: true,
-                                          ),
-
-                                          style: GoogleFont.inter(
-                                            fontSize: 12,
-                                            color: AppColor.lightBlack,
-                                          ),
-                                        ),
-                                        // SizedBox(width: 10),
-                                        // Text(
-                                        //   homework.date.toString() ?? '',
-                                        //   style: GoogleFont.inter(
-                                        //     fontSize: 12,
-                                        //     color: AppColor.grey,
-                                        //   ),
-                                        // ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
