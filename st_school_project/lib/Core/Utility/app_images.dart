@@ -38,6 +38,7 @@ class AppImages {
   static String announcement5 = 'assets/images/Announcement5.png';
   static String announcement6 = 'assets/images/Announcement6.png';
   static String announcement7 = 'assets/images/Announcement7.png';
+  static String myProfile = 'asset/Images/My Profile.png';
   static String moreStopImage = 'assets/images/MoreStopImage.png';
   static String moreSimage1 = 'assets/images/MoreSimage1.png';
   static String moreSimage2 = 'assets/images/MoreSimage2.png';

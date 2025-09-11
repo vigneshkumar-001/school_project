@@ -7,6 +7,7 @@ import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
 import 'package:st_school_project/Core/Widgets/swicth_profile_sheet.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/Login_screen/controller/login_controller.dart';
+
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_detail.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
@@ -18,6 +19,7 @@ import '../Attendence Screen/attendence_screen.dart';
 import 'package:get/get.dart';
 
 import '../More Screen/Quiz Screen/controller/quiz_controller.dart';
+import '../More Screen/profile_screen/controller/teacher_list_controller.dart';
 import '../More Screen/quiz_result.dart';
 import '../More Screen/quiz_screen.dart';
 import 'controller/student_home_controller.dart';
@@ -38,6 +40,9 @@ class _HomeScreenState extends State<HomeTab>
   DateTime selectedDate = DateTime.now();
   final StudentHomeController controller = Get.put(StudentHomeController());
   final LoginController loginController = Get.put(LoginController());
+  final TeacherListController teacherListController = Get.put(
+    TeacherListController(),
+  );
   int index = 0;
 
   String selectedSubject = 'All'; // default selected
@@ -51,6 +56,7 @@ class _HomeScreenState extends State<HomeTab>
       if (controller.studentHomeData.value == null) {
         controller.getStudentHome();
         controller.getSiblingsData();
+        teacherListController.teacherListData();
       }
     });
   }
@@ -273,10 +279,26 @@ class _HomeScreenState extends State<HomeTab>
       backgroundColor: AppColor.white,
       body: SafeArea(
         child: Obx(() {
-          if (controller.isLoading.value) {
+          final isLoading = controller.isLoading.value;
+          final hasLoadedOnce = controller.hasLoadedOnce.value;
+          final data = controller.studentHomeData.value;
+
+          final img = controller.siblingsList;
+
+          // 1) First load or refresh with no cached data → loader
+          if (isLoading && data == null) {
             return AppLoader.circularLoader();
           }
-          final data = controller.studentHomeData.value;
+
+          // 2) Only after first load completes, if still null → empty state
+          if (!isLoading && !hasLoadedOnce) {
+            // defensive, but shouldn't hit because isLoading starts true
+            return AppLoader.circularLoader();
+          }
+
+          // if (data == null) {
+          //   return Center(child: Text("No student data available"));
+          // }
           final tasks = data?.tasks ?? [];
           final subjects = <String>{'All'};
           for (var task in tasks) {
@@ -285,17 +307,25 @@ class _HomeScreenState extends State<HomeTab>
             }
           }
 
-          // Convert to list for UI
+          final siblings = controller.siblingsList;
+          final activeStudent = siblings.firstWhere(
+            (s) => s.isActive == true,
+            orElse: () => siblings.first,
+          );
+          final remainingStudent = siblings.firstWhere(
+            (s) => s.id != activeStudent.id,
+            orElse: () => siblings.first,
+          );
+
           final subjectsList = subjects.toList();
-          if (data == null) {
-            return Center(child: Text("No student data available"));
-          }
 
           return RefreshIndicator(
             onRefresh: () async {
               await controller.getStudentHome();
+              await teacherListController.teacherListData();
             },
             child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
                   Padding(
@@ -308,6 +338,195 @@ class _HomeScreenState extends State<HomeTab>
                   ),
                   SizedBox(height: 20),
                   Stack(
+                    children: [
+                      ListTile(
+                        title: RichText(
+                          text: TextSpan(
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 28,
+                              color: AppColor.black,
+                            ),
+                            text: 'Hi ',
+                            children: [
+                              TextSpan(
+                                text: data?.name ?? "Welcome",
+                                style: GoogleFont.ibmPlexSans(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 28,
+                                ),
+                              ),
+                              TextSpan(
+                                text: '!',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColor.blue,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 5),
+                            RichText(
+                              text: TextSpan(
+                                text: data?.className ?? '',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 14,
+                                  color: AppColor.grey,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: 'th ',
+                                    style: GoogleFont.ibmPlexSans(fontSize: 10),
+                                  ),
+                                  TextSpan(
+                                    text: 'Grade - ',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 14,
+                                      color: AppColor.grey,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: data?.section ?? '',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 14,
+                                      color: AppColor.grey,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' Section',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        trailing:
+                            (controller.siblingsList.length > 1)
+                                ? SizedBox(
+                                  child: InkWell(
+                                    onTap: () {
+                                      SwitchProfileSheet.show(
+                                        context,
+                                        students: controller.siblingsList,
+                                        selectedStudent:
+                                            controller.selectedStudent,
+                                        onSwitch: (student) async {
+                                          await controller.switchSiblings(
+                                            id: student.id,
+                                          );
+                                          controller.selectStudent(student);
+                                        },
+                                        onLogout: () async {
+                                          await loginController.logout();
+                                        },
+                                      );
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child:
+                                          (remainingStudent.avatar != null &&
+                                                  remainingStudent
+                                                      .avatar
+                                                      .isNotEmpty)
+                                              ? Image.network(
+                                                remainingStudent.avatar,
+                                                height: 30,
+                                                width: 30,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (
+                                                  context,
+                                                  error,
+                                                  stackTrace,
+                                                ) {
+                                                  return Image.asset(
+                                                    AppImages.moreSimage1,
+                                                    height: 30,
+                                                    width: 30,
+                                                    fit: BoxFit.cover,
+                                                  );
+                                                },
+                                              )
+                                              : Image.asset(
+                                                AppImages.moreSimage1,
+                                                height: 30,
+                                                width: 30,
+                                                fit: BoxFit.cover,
+                                              ),
+                                    ),
+                                  ),
+                                )
+                                : null, // hide trailing if only one student
+                      ),
+
+                      if (controller
+                          .siblingsList
+                          .isNotEmpty) // show positioned always if one+ student
+                        Positioned(
+                          right: 34,
+                          bottom: 17,
+                          child: InkWell(
+                            onTap: () {
+                              SwitchProfileSheet.show(
+                                context,
+                                students: controller.siblingsList,
+                                selectedStudent: controller.selectedStudent,
+                                onSwitch: (student) async {
+                                  await controller.switchSiblings(
+                                    id: student.id,
+                                  );
+                                  controller.selectStudent(student);
+                                },
+                                onLogout: () async {
+                                  await loginController.logout();
+                                },
+                              );
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child:
+                                  (activeStudent.avatar != null &&
+                                          activeStudent.avatar.isNotEmpty)
+                                      ? Image.network(
+                                        activeStudent.avatar,
+                                        height: 49,
+                                        width: 49,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (
+                                          context,
+                                          error,
+                                          stackTrace,
+                                        ) {
+                                          return Image.asset(
+                                            AppImages.moreSimage1,
+                                            height: 49,
+                                            width: 49,
+                                            fit: BoxFit.cover,
+                                          );
+                                        },
+                                      )
+                                      : Image.asset(
+                                        AppImages.moreSimage1,
+                                        height: 49,
+                                        width: 49,
+                                        fit: BoxFit.cover,
+                                      ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+
+                  /*   Stack(
                     children: [
                       ListTile(
                         title: RichText(
@@ -363,7 +582,7 @@ class _HomeScreenState extends State<HomeTab>
                                     ),
                                   ),
                                   TextSpan(
-                                    text: data.section ?? '',
+                                    text: data?.section ?? '',
                                     style: GoogleFont.ibmPlexSans(
                                       fontSize: 14,
                                       color: AppColor.grey,
@@ -382,10 +601,53 @@ class _HomeScreenState extends State<HomeTab>
                           ],
                         ),
                         trailing: SizedBox(
-                          child: Image.asset(
-                            AppImages.moreSimage2,
-                            height: 30,
-                            width: 30,
+                          child: InkWell(
+                            onTap: () {
+                              SwitchProfileSheet.show(
+                                context,
+                                students: controller.siblingsList,
+                                selectedStudent: controller.selectedStudent,
+                                onSwitch: (student) async {
+                                  await controller.switchSiblings(
+                                    id: student.id,
+                                  );
+                                  controller.selectStudent(student);
+                                },
+                                onLogout: () async {
+                                  await loginController.logout();
+                                },
+                              );
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child:
+                                  (remainingStudent.avatar != null &&
+                                          remainingStudent.avatar.isNotEmpty)
+                                      ? Image.network(
+                                        remainingStudent.avatar,
+                                        height: 30,
+                                        width: 30,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (
+                                          context,
+                                          error,
+                                          stackTrace,
+                                        ) {
+                                          return Image.asset(
+                                            AppImages.moreSimage1,
+                                            height: 30,
+                                            width: 30,
+                                            fit: BoxFit.cover,
+                                          );
+                                        },
+                                      )
+                                      : Image.asset(
+                                        AppImages.moreSimage1,
+                                        height: 30,
+                                        width: 30,
+                                        fit: BoxFit.cover,
+                                      ),
+                            ),
                           ),
                         ),
                       ),
@@ -404,20 +666,43 @@ class _HomeScreenState extends State<HomeTab>
                               },
                               onLogout: () async {
                                 await loginController.logout();
-                                // Get.offAllNamed('/login');
                               },
                             );
                           },
-                          child: Image.asset(
-                            AppImages.moreSimage1,
-                            height: 49,
-                            width: 49,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child:
+                                (activeStudent.avatar != null &&
+                                        activeStudent.avatar.isNotEmpty)
+                                    ? Image.network(
+                                      activeStudent.avatar,
+                                      height: 49,
+                                      width: 49,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) {
+                                        return Image.asset(
+                                          AppImages.moreSimage1,
+                                          height: 49,
+                                          width: 49,
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                    )
+                                    : Image.asset(
+                                      AppImages.moreSimage1,
+                                      height: 49,
+                                      width: 49,
+                                      fit: BoxFit.cover,
+                                    ),
                           ),
                         ),
                       ),
                     ],
-                  ),
-
+                  ),*/
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -653,7 +938,7 @@ class _HomeScreenState extends State<HomeTab>
                                       top: 90,
                                       left: 35,
                                       child: Image.asset(
-                                        data.attendance.morning == true
+                                        data?.attendance.morning == true
                                             ? AppImages.greenTick
                                             : AppImages.failedImage,
                                         height: 18,
@@ -663,7 +948,7 @@ class _HomeScreenState extends State<HomeTab>
                                       top: 90,
                                       right: 32,
                                       child: Image.asset(
-                                        data.attendance.afternoon == true
+                                        data?.attendance.afternoon == true
                                             ? AppImages.greenTick
                                             : AppImages.failedImage,
                                         height: 18,
@@ -1479,8 +1764,8 @@ class _HomeScreenState extends State<HomeTab>
                                       children: [
                                         // Add "All" button always
                                         Padding(
-                                          padding: const EdgeInsets.only(
-                                            right: 8.0,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0,
                                           ),
                                           child: ElevatedButton(
                                             style: ButtonStyle(

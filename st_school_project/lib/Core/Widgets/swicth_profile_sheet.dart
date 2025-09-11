@@ -97,14 +97,14 @@ class SwitchProfileSheet extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color:
-                        isActive
-                            ? Colors.blue.withOpacity(0.2)
-                            : Colors.transparent,
+                            isActive
+                                ? Colors.blue.withOpacity(0.2)
+                                : Colors.transparent,
                         borderRadius: BorderRadius.circular(12),
                         border:
-                        isActive
-                            ? Border.all(color: Colors.blue, width: 1.5)
-                            : null,
+                            isActive
+                                ? Border.all(color: Colors.blue, width: 1.5)
+                                : null,
                       ),
                       child: Row(
                         children: [
@@ -125,30 +125,35 @@ class SwitchProfileSheet extends StatelessWidget {
                             ),
                           ),
                           SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                student.name ?? '',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  student.name ?? '',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                'Class ${student.studentClass ?? ''} - ${student.section ?? ''}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[700],
+                                Text(
+                                  'Class ${student.studentClass ?? ''} - ${student.section ?? ''}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[700],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                          Spacer(),
+
+                          SizedBox(width: 10),
                           if (isActive)
                             Container(
                               padding: EdgeInsets.symmetric(
-                                horizontal: 16,
+                                horizontal: 10,
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
@@ -180,25 +185,24 @@ class SwitchProfileSheet extends StatelessWidget {
     );
   }
 
-  // Static helper to show the bottom sheet
   static void show(
-      BuildContext context, {
-        required RxList students,
-        required Rx selectedStudent,
-        required Function(dynamic student) onSwitch,
-        required VoidCallback onLogout,
-      }) {
+    BuildContext context, {
+    required RxList students,
+    required Rx selectedStudent,
+    required Function(dynamic student) onSwitch,
+    required VoidCallback onLogout,
+  }) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder:
           (_) => SwitchProfileSheet(
-        students: students,
-        selectedStudent: selectedStudent,
-        onSwitch: onSwitch,
-        onLogout: onLogout,
-      ),
+            students: students,
+            selectedStudent: selectedStudent,
+            onSwitch: onSwitch,
+            onLogout: onLogout,
+          ),
     );
   }
 }

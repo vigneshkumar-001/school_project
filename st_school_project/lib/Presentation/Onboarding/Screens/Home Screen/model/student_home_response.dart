@@ -1,8 +1,8 @@
 class StudentHomeResponse {
-  bool status;
-  int code;
-  String message;
-  StudentHomeData data;
+  final bool status;
+  final int code;
+  final String message;
+  final StudentHomeData data;
 
   StudentHomeResponse({
     required this.status,
@@ -13,10 +13,10 @@ class StudentHomeResponse {
 
   factory StudentHomeResponse.fromJson(Map<String, dynamic> json) {
     return StudentHomeResponse(
-      status: json['status'],
-      code: json['code'],
-      message: json['message'],
-      data: StudentHomeData.fromJson(json['data']),
+      status: json['status'] == true,
+      code: (json['code'] as int?) ?? 0,
+      message: (json['message'] as String?) ?? '',
+      data: StudentHomeData.fromJson((json['data'] as Map<String, dynamic>?) ?? const {}),
     );
   }
 
@@ -29,12 +29,12 @@ class StudentHomeResponse {
 }
 
 class StudentHomeData {
-  String name;
-  String className;
-  String section;
-  Attendance attendance;
-  List<Announcement> announcements;
-  List<Task> tasks;
+  final String name;
+  final String className; // API key: "class"
+  final String section;
+  final Attendance attendance;
+  final List<Announcement> announcements;
+  final List<Task> tasks;
 
   StudentHomeData({
     required this.name,
@@ -46,16 +46,15 @@ class StudentHomeData {
   });
 
   factory StudentHomeData.fromJson(Map<String, dynamic> json) {
+    final anns = (json['announcements'] as List?) ?? const [];
+    final tks = (json['tasks'] as List?) ?? const [];
     return StudentHomeData(
-      name: json['name'],
-      className: json['class'],
-      section: json['section'],
-      attendance: Attendance.fromJson(json['attendance']),
-      announcements:
-          (json['announcements'] as List)
-              .map((e) => Announcement.fromJson(e))
-              .toList(),
-      tasks: (json['tasks'] as List).map((e) => Task.fromJson(e)).toList(),
+      name: (json['name'] as String?) ?? '',
+      className: (json['class'] as String?) ?? '',
+      section: (json['section'] as String?) ?? '',
+      attendance: Attendance.fromJson((json['attendance'] as Map<String, dynamic>?) ?? const {}),
+      announcements: anns.map((e) => Announcement.fromJson((e as Map<String, dynamic>?) ?? const {})).toList(),
+      tasks: tks.map((e) => Task.fromJson((e as Map<String, dynamic>?) ?? const {})).toList(),
     );
   }
 
@@ -70,46 +69,50 @@ class StudentHomeData {
 }
 
 class Attendance {
-  bool morning;
-  bool afternoon;
+  final bool morning;
+  final bool afternoon;
 
   Attendance({required this.morning, required this.afternoon});
 
   factory Attendance.fromJson(Map<String, dynamic> json) {
-    return Attendance(morning: json['morning'], afternoon: json['afternoon']);
+    return Attendance(
+      morning: json['morning'] == true,
+      afternoon: json['afternoon'] == true,
+    );
   }
 
   Map<String, dynamic> toJson() => {'morning': morning, 'afternoon': afternoon};
 }
 
 class Announcement {
-  bool? newAdmissionStatus;
-  bool? admissionStatus;
-  bool? examStatus;
-  bool? noticeBoardStatus;
-  bool? termFeesStatus;
-  String message;
-  String submessage;
+  // API keys (note the “addmission” spelling)
+  final bool newAdmissionStatus;
+  final bool admissionStatus;
+  final bool examStatus;
+  final bool noticeBoardStatus;
+  final bool termFeesStatus;
+  final String message;
+  final String submessage;
 
   Announcement({
-    this.newAdmissionStatus,
-    this.admissionStatus,
-    this.examStatus,
-    this.noticeBoardStatus,
-    this.termFeesStatus,
-    required this.message,
-    required this.submessage,
+    this.newAdmissionStatus = false,
+    this.admissionStatus = false,
+    this.examStatus = false,
+    this.noticeBoardStatus = false,
+    this.termFeesStatus = false,
+    this.message = '',
+    this.submessage = '',
   });
 
   factory Announcement.fromJson(Map<String, dynamic> json) {
     return Announcement(
-      newAdmissionStatus: json['new_addmission_status'],
-      admissionStatus: json['addmission_status'],
-      examStatus: json['exam_status'],
-      noticeBoardStatus: json['notice_board_status'],
-      termFeesStatus: json['term_fees_status'],
-      message: json['message'],
-      submessage: json['submessage'],
+      newAdmissionStatus: json['new_addmission_status'] == true,
+      admissionStatus: json['addmission_status'] == true,
+      examStatus: json['exam_status'] == true,
+      noticeBoardStatus: json['notice_board_status'] == true,
+      termFeesStatus: json['term_fees_status'] == true,
+      message: (json['message'] as String?) ?? '',
+      submessage: (json['submessage'] as String?) ?? '',
     );
   }
 
@@ -125,15 +128,15 @@ class Announcement {
 }
 
 class Task {
-  int id;
-  String title;
-  String description;
-  DateTime date;
-  DateTime time;
-  String assignedByName;
-  String subject;
-  int subjectId;
-  String type;
+  final int id;
+  final String title;
+  final String description;     // default ''
+  final DateTime date;          // parsed safely
+  final DateTime time;          // parsed safely
+  final String assignedByName;  // default ''
+  final String subject;         // default ''
+  final int subjectId;          // default 0
+  final String type;            // default ''
 
   Task({
     required this.id,
@@ -148,17 +151,35 @@ class Task {
   });
 
   factory Task.fromJson(Map<String, dynamic> json) {
-    return Task(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'] ?? '',
-      date: DateTime.parse(json['date']),
-      time: DateTime.parse(json['time']),
-      assignedByName: json['assigned_by_name'],
-      subject: json['subject'],
-      subjectId: json['subject_id'],
-      type: json['type'],
-    );
+    try {
+      return Task(
+        id: (json['id'] as int?) ?? 0,
+        title: (json['title'] as String?) ?? '',
+        description: (json['description'] as String?) ?? '',
+        date: _parseDate(json['date']),
+        time: _parseDate(json['time']),
+        assignedByName: (json['assigned_by_name'] as String?) ?? '',
+        subject: (json['subject'] as String?) ?? '',
+        subjectId: (json['subject_id'] as int?) ?? 0,
+        type: (json['type'] as String?) ?? '',
+      );
+    } catch (e, st) {
+      // Helpful debug if a new null/shape appears
+      // ignore: avoid_print
+      print('Task parse error: $e\nJSON: $json\n$st');
+      // Fail soft with a minimal object
+      return Task(
+        id: (json['id'] as int?) ?? 0,
+        title: (json['title'] as String?) ?? '',
+        description: (json['description'] as String?) ?? '',
+        date: DateTime.now(),
+        time: DateTime.now(),
+        assignedByName: (json['assigned_by_name'] as String?) ?? '',
+        subject: (json['subject'] as String?) ?? '',
+        subjectId: (json['subject_id'] as int?) ?? 0,
+        type: (json['type'] as String?) ?? '',
+      );
+    }
   }
 
   Map<String, dynamic> toJson() => {
@@ -172,4 +193,12 @@ class Task {
     'subject_id': subjectId,
     'type': type,
   };
+
+  static DateTime _parseDate(dynamic v) {
+    if (v is String) {
+      final dt = DateTime.tryParse(v);
+      if (dt != null) return dt;
+    }
+    return DateTime.now();
+  }
 }

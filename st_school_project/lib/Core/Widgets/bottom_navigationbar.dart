@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 
 import '../../Presentation/Onboarding/Screens/Announcements Screen/announcements_screen.dart';
 import '../../Presentation/Onboarding/Screens/Attendence Screen/attendence_screen.dart';
+import '../../Presentation/Onboarding/Screens/Home Screen/controller/student_home_controller.dart';
 import '../../Presentation/Onboarding/Screens/Home Screen/home_tab.dart';
 import '../../Presentation/Onboarding/Screens/More Screen/more_screen.dart';
+import '../../Presentation/Onboarding/Screens/More Screen/profile_screen/controller/teacher_list_controller.dart';
 import '../../Presentation/Onboarding/Screens/Task Screen/task_screen.dart';
 import '../Utility/app_color.dart';
 import '../Utility/app_images.dart';
@@ -21,7 +24,11 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
     with TickerProviderStateMixin {
   late final AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+  final TeacherListController teacherListController = Get.put(
+    TeacherListController(),
+  );
 
+  final StudentHomeController controller = Get.put(StudentHomeController());
   late final List<Widget> _pages;
 
   int _selectedIndex = 0;
@@ -53,9 +60,10 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
 
   void _updateSlideAnimation() {
     _slideAnimation = Tween<Offset>(
-      begin: _selectedIndex > _prevIndex
-          ? const Offset(1.0, 0.0)
-          : const Offset(-1.0, 0.0),
+      begin:
+          _selectedIndex > _prevIndex
+              ? const Offset(1.0, 0.0)
+              : const Offset(-1.0, 0.0),
       end: Offset.zero,
     ).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
@@ -81,6 +89,12 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
     super.dispose();
   }
 
+  bool _isValidUrl(String? s) {
+    if (s == null || s.trim().isEmpty) return false;
+    final u = Uri.tryParse(s.trim());
+    return u != null && (u.scheme == 'http' || u.scheme == 'https');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,50 +107,125 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: AppColor.white,
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
-        onTap: _onTabTapped,
-        selectedItemColor: AppColor.blueG2,
-        unselectedItemColor: AppColor.lightBlack,
-        selectedLabelStyle: GoogleFont.ibmPlexSans(fontWeight: FontWeight.bold),
-        unselectedLabelStyle: GoogleFont.ibmPlexSans(
-          fontWeight: FontWeight.w500,
-          fontSize: 10,
-        ),
-        items: [
-          BottomNavigationBarItem(
-            icon: Image.asset(AppImages.bottum0, height: 26),
-            activeIcon: Image.asset(AppImages.bottum0select, height: 30),
-            label: 'Home',
+      bottomNavigationBar: Obx(() {
+        final String? profileUrl =
+            teacherListController
+                .teacherListResponse
+                .value
+                ?.data
+                ?.student_image;
+
+        final siblings = controller.siblingsList;
+        final activeStudent = siblings.firstWhere(
+          (s) => s.isActive == true,
+          orElse: () => siblings.first,
+        );
+        final remainingStudent = siblings.firstWhere(
+          (s) => s.id != activeStudent.id,
+          orElse: () => siblings.first,
+        );
+
+        return BottomNavigationBar(
+          backgroundColor: AppColor.white,
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _selectedIndex,
+          onTap: _onTabTapped,
+          selectedItemColor: AppColor.blueG2,
+          unselectedItemColor: AppColor.lightBlack,
+          selectedLabelStyle: GoogleFont.ibmPlexSans(
+            fontWeight: FontWeight.bold,
           ),
-          BottomNavigationBarItem(
-            icon: Image.asset(AppImages.bottum3, height: 26),
-            activeIcon: Image.asset(AppImages.bottum3select, height: 30),
-            label: 'Announcements',
+          unselectedLabelStyle: GoogleFont.ibmPlexSans(
+            fontWeight: FontWeight.w500,
+            fontSize: 10,
           ),
-          BottomNavigationBarItem(
-            icon: Image.asset(AppImages.bottum1, height: 26),
-            activeIcon: Image.asset(AppImages.bottum1select, height: 30),
-            label: 'Tasks',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset(AppImages.bottum2, height: 26),
-            activeIcon: Image.asset(AppImages.bottum2select, height: 30),
-            label: 'Attendance',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset(AppImages.moreSimage1, height: 26, width: 26),
-            activeIcon: Image.asset(AppImages.moreSimage1, height: 30),
-            label: 'More',
-          ),
-        ],
-      ),
+
+          items: [
+            BottomNavigationBarItem(
+              icon: Image.asset(AppImages.bottum0, height: 26),
+              activeIcon: Image.asset(AppImages.bottum0select, height: 30),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(AppImages.bottum3, height: 26),
+              activeIcon: Image.asset(AppImages.bottum3select, height: 30),
+              label: 'Announcements',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(AppImages.bottum1, height: 26),
+              activeIcon: Image.asset(AppImages.bottum1select, height: 30),
+              label: 'Tasks',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(AppImages.bottum2, height: 26),
+              activeIcon: Image.asset(AppImages.bottum2select, height: 30),
+              label: 'Attendance',
+            ),
+            BottomNavigationBarItem(
+              icon:
+                  (activeStudent.avatar != null &&
+                          activeStudent.avatar.isNotEmpty)
+                      ? ClipOval(
+                        child: Image.network(
+                          activeStudent.avatar,
+                          height: 30,
+                          width: 30,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              AppImages.moreSimage1,
+                              height: 49,
+                              width: 30,
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        ),
+                      )
+                      : Image.asset(
+                        AppImages.moreSimage1,
+                        height: 30,
+                        width: 30,
+                      ), // f
+              activeIcon:
+                  (activeStudent.avatar != null &&
+                          activeStudent.avatar.isNotEmpty)
+                      ? ClipOval(
+                        child: Image.network(
+                          activeStudent.avatar,
+                          height: 30,
+                          width: 30,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              AppImages.moreSimage1,
+                              height: 49,
+                              width: 30,
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        ),
+                      )
+                      : Image.asset(
+                        AppImages.moreSimage1,
+                        height: 30,
+                        width: 30,
+                      ), // fallback
+              label: 'More',
+            ),
+            // BottomNavigationBarItem(
+            //   icon: Image.asset(AppImages.moreSimage1, height: 26, width: 26),
+            //   activeIcon: Image.network(
+            //     profileUrl.toString() ?? '',
+            //     height: 30,
+            //   ),
+            //   label: 'More',
+            // ),
+          ],
+        );
+      }),
     );
   }
 }
-
 
 // import 'package:flutter/material.dart';
 // import 'package:st_school_project/Core/Utility/google_font.dart';

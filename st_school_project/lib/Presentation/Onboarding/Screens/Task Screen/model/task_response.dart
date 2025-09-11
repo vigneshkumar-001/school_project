@@ -136,6 +136,7 @@ class YourTask {
   final String subject;
   final int subjectId;
   final String type;
+  final String teacher_image;
 
   YourTask({
     required this.id,
@@ -147,6 +148,7 @@ class YourTask {
     required this.subject,
     required this.subjectId,
     required this.type,
+    required this.teacher_image,
   });
 
   // factory YourTask.fromJson(Map<String, dynamic> json) {
@@ -189,7 +191,6 @@ class YourTask {
   //   );
   // }
 
-
   factory YourTask.fromJson(Map<String, dynamic> json) {
     // --- Safe helpers ---
     String _toStr(dynamic v) => v?.toString() ?? '';
@@ -201,8 +202,8 @@ class YourTask {
 
     String _yyyyMmDd(DateTime d) =>
         '${d.year.toString().padLeft(4, '0')}-'
-            '${d.month.toString().padLeft(2, '0')}-'
-            '${d.day.toString().padLeft(2, '0')}';
+        '${d.month.toString().padLeft(2, '0')}-'
+        '${d.day.toString().padLeft(2, '0')}';
 
     String _padClock(String clock) {
       final parts = clock.split(':');
@@ -214,8 +215,12 @@ class YourTask {
       return clock;
     }
 
-    final String dateStr = _toStr(json['date']); // may be "YYYY-MM-DD", ISO, or null
-    final String timeStr = _toStr(json['time']); // may be "HH:mm[:ss]", ISO, or null
+    final String dateStr = _toStr(
+      json['date'],
+    ); // may be "YYYY-MM-DD", ISO, or null
+    final String timeStr = _toStr(
+      json['time'],
+    ); // may be "HH:mm[:ss]", ISO, or null
 
     // 1) Date
     DateTime parsedDate = DateTime.now();
@@ -233,16 +238,21 @@ class YourTask {
       } else {
         // Combine clock-only with parsedDate
         final combined1 = '${_yyyyMmDd(parsedDate)}T$timeStr';
-        parsedTime = DateTime.tryParse(combined1) ??
-            DateTime.tryParse('${_yyyyMmDd(parsedDate)}T${_padClock(timeStr)}') ??
+        parsedTime =
+            DateTime.tryParse(combined1) ??
+            DateTime.tryParse(
+              '${_yyyyMmDd(parsedDate)}T${_padClock(timeStr)}',
+            ) ??
             parsedDate;
       }
     }
 
     return YourTask(
       id: _toInt(json['id']),
-      title: _toStr(json['title']),                // safe ('' if null)
-      description: _toStr(json['description']),    // safe ('' if null)
+
+      title: _toStr(json['title']), // safe ('' if null)
+      teacher_image: _toStr(json['teacher_image']), // safe ('' if null)
+      description: _toStr(json['description']), // safe ('' if null)
       date: parsedDate,
       time: parsedTime,
       assignedByName: _toStr(json['assigned_by_name']),
