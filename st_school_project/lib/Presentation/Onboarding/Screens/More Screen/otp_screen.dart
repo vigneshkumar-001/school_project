@@ -84,80 +84,77 @@ class _OtpScreenState extends State<OtpScreen> {
                 ),
                 SizedBox(height: 25),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: PinCodeTextField(
-                    onCompleted: (value) async {},
+                PinCodeTextField(
+                  onCompleted: (value) async {},
 
-                    autoFocus: otp.text.isEmpty,
-                    appContext: context,
-                    // pastedTextStyle: TextStyle(
-                    //   color: Colors.green.shade600,
-                    //   fontWeight: FontWeight.bold,
-                    // ),
-                    length: 4,
+                  autoFocus: otp.text.isEmpty,
+                  appContext: context,
+                  // pastedTextStyle: TextStyle(
+                  //   color: Colors.green.shade600,
+                  //   fontWeight: FontWeight.bold,
+                  // ),
+                  length: 4,
 
-                    // obscureText: true,
-                    // obscuringCharacter: '*',
-                    // obscuringWidget: const FlutterLogo(size: 24,),
-                    blinkWhenObscuring: true,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    autoDisposeControllers: false,
+                  // obscureText: true,
+                  // obscuringCharacter: '*',
+                  // obscuringWidget: const FlutterLogo(size: 24,),
+                  blinkWhenObscuring: true,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  autoDisposeControllers: false,
 
-                    // validator: (v) {
-                    //   if (v == null || v.length != 4)
-                    //     return 'Enter valid 4-digit OTP';
-                    //   return null;
-                    // },
-                    pinTheme: PinTheme(
-                      shape: PinCodeFieldShape.box,
-                      borderRadius: BorderRadius.circular(17),
-                      fieldHeight: 60,
-                      fieldWidth: 60,
-                      selectedColor: AppColor.black,
-                      activeColor: AppColor.white,
-                      activeFillColor: AppColor.lowGery1,
-                      inactiveColor: AppColor.lowGery1,
-                      selectedFillColor: AppColor.white,
-                      fieldOuterPadding: EdgeInsets.symmetric(horizontal: 12),
-                      inactiveFillColor: AppColor.lowGery1,
-                    ),
-                    cursorColor: AppColor.black,
-                    animationDuration: const Duration(milliseconds: 300),
-                    enableActiveFill: true,
-                    // errorAnimationController: errorController,
-                    controller: otp,
-                    keyboardType: TextInputType.number,
-                    boxShadows: const [
-                      BoxShadow(
-                        offset: Offset(0, 1),
-                        color: AppColor.lightBlack,
-                        blurRadius: 5,
-                      ),
-                    ],
-                    // validator: (value) {
-                    //   if (value == null || value.length != 4) {
-                    //     return 'Please enter a valid 4-digit OTP';
-                    //   }
-                    //   return null;
-                    // },
-                    // onCompleted: (value) async {},
-                    onChanged: (value) {
-                      debugPrint(value);
-                      verifyCode = value;
-
-                      if (otpError != null && value.isNotEmpty) {
-                        setState(() {
-                          otpError = null;
-                        });
-                      }
-                    },
-
-                    beforeTextPaste: (text) {
-                      debugPrint("Allowing to paste $text");
-                      return true;
-                    },
+                  // validator: (v) {
+                  //   if (v == null || v.length != 4)
+                  //     return 'Enter valid 4-digit OTP';
+                  //   return null;
+                  // },
+                  pinTheme: PinTheme(
+                    shape: PinCodeFieldShape.box,
+                    borderRadius: BorderRadius.circular(17),
+                    fieldHeight: 55,
+                    fieldWidth: 55,
+                    selectedColor: AppColor.black,
+                    activeColor: AppColor.white,
+                    activeFillColor: AppColor.lowGery1,
+                    inactiveColor: AppColor.lowGery1,
+                    selectedFillColor: AppColor.white,
+                    fieldOuterPadding: EdgeInsets.symmetric(horizontal: 9),
+                    inactiveFillColor: AppColor.lowGery1,
                   ),
+                  cursorColor: AppColor.black,
+                  animationDuration: const Duration(milliseconds: 300),
+                  enableActiveFill: true,
+                  // errorAnimationController: errorController,
+                  controller: otp,
+                  keyboardType: TextInputType.number,
+                  boxShadows: const [
+                    BoxShadow(
+                      offset: Offset(0, 1),
+                      color: AppColor.lightBlack,
+                      blurRadius: 5,
+                    ),
+                  ],
+                  // validator: (value) {
+                  //   if (value == null || value.length != 4) {
+                  //     return 'Please enter a valid 4-digit OTP';
+                  //   }
+                  //   return null;
+                  // },
+                  // onCompleted: (value) async {},
+                  onChanged: (value) {
+                    debugPrint(value);
+                    verifyCode = value;
+
+                    if (otpError != null && value.isNotEmpty) {
+                      setState(() {
+                        otpError = null;
+                      });
+                    }
+                  },
+
+                  beforeTextPaste: (text) {
+                    debugPrint("Allowing to paste $text");
+                    return true;
+                  },
                 ),
                 if (otpError != null)
                   Center(

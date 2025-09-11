@@ -14,7 +14,8 @@ import 'controller/task_controller.dart';
 
 class TaskDetail extends StatefulWidget {
   final int id;
-  const TaskDetail({super.key, required this.id});
+  final String? teacherImage;
+  const TaskDetail({super.key, required this.id, this.teacherImage});
 
   @override
   State<TaskDetail> createState() => _TaskDetailState();
@@ -30,7 +31,27 @@ class _TaskDetailState extends State<TaskDetail> {
       taskController.homeWorkIdDetails(id: widget.id);
     });
   }
+  void _openFullScreenNetwork(String url) {
+    if (url.isEmpty) return;
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.9),
+      builder:
+          (_) => GestureDetector(
+        onTap: () => Navigator.pop(context),
+        child: Center(
+          child: InteractiveViewer(
+            minScale: 0.5,
+            maxScale: 5,
+            child: Image.network(
+              url,
 
+            ),
+          ),
+        ),
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +71,6 @@ class _TaskDetailState extends State<TaskDetail> {
               tasks.where((t) => t.type == 'paragraph').toList();
 
           final allLists = tasks.where((t) => t.type == 'list').toList();
-
 
           // First image for top
           final topImage = allImages.isNotEmpty ? allImages.first : null;
@@ -110,20 +130,25 @@ class _TaskDetailState extends State<TaskDetail> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (topImage != null)
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              topImage.content ?? '',
-                              height: 200,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              errorBuilder:
-                                  (_, __, ___) => Image.asset(
-                                    AppImages.tdhs1,
-                                    height: 200,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
+                          GestureDetector(
+                            onTap: (){
+                              _openFullScreenNetwork(topImage.content);
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                topImage.content ?? '',
+                                height: 200,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                errorBuilder:
+                                    (_, __, ___) => Image.asset(
+                                      AppImages.tdhs1,
+                                      height: 200,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    ),
+                              ),
                             ),
                           ),
                         const SizedBox(height: 15),
@@ -160,19 +185,24 @@ class _TaskDetailState extends State<TaskDetail> {
                                   final img = remainingImages[index];
                                   return Padding(
                                     padding: const EdgeInsets.only(right: 12),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.network(
-                                        img.content ?? '',
-                                        width: 200,
-                                        height: 150,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (_, __, ___) => Container(
-                                              width: 200,
-                                              height: 150,
-                                              color: Colors.grey[200],
-                                            ),
+                                    child: GestureDetector(
+                                      onTap: (){
+                                        _openFullScreenNetwork(img.content);
+                                      },
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Image.network(
+                                          img.content ?? '',
+                                          width: 200,
+                                          height: 150,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (_, __, ___) => Container(
+                                                width: 200,
+                                                height: 150,
+                                                color: Colors.grey[200],
+                                              ),
+                                        ),
                                       ),
                                     ),
                                   );
@@ -259,7 +289,17 @@ class _TaskDetailState extends State<TaskDetail> {
                                     child: Row(
                                       children: [
                                         CircleAvatar(
-                                          child: Image.asset(AppImages.avatar1),
+                                          radius: 20, // smaller than 25
+                                          backgroundColor: Colors.transparent,
+                                          child: ClipOval(
+                                            child: Image.network(
+                                              widget.teacherImage .toString() ?? '',
+                                              fit: BoxFit.cover,
+                                              width:
+                                                  40,
+                                              height: 40,
+                                            ),
+                                          ),
                                         ),
                                         SizedBox(width: 10),
                                         Text(

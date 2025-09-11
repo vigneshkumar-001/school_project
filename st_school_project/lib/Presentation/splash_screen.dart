@@ -34,7 +34,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus();
+    _startLoading();
+    // _checkLoginStatus();
   }
 
   void _checkLoginStatus() async {
@@ -50,7 +51,6 @@ class _SplashScreenState extends State<SplashScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         teacherListController.teacherListData();
         announcementController.getAnnouncement();
-
       });
       _startLoading();
     }
@@ -70,13 +70,6 @@ class _SplashScreenState extends State<SplashScreen> {
               builder: (context) => ChangeMobileNumber(page: 'splash'),
             ),
           );
-
-          // Navigator.pushReplacement(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => CommonBottomNavigation(initialIndex: 0),
-          //   ),
-          // );
         }
       });
     });
@@ -156,3 +149,155 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
+
+/*
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import 'package:st_school_project/Core/Utility/app_images.dart';
+import 'package:st_school_project/Core/Utility/google_font.dart';
+import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Home Screen/controller/student_home_controller.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/More Screen/Login_screen/controller/login_controller.dart';
+import '../Core/Utility/app_color.dart';
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  final StudentHomeController controller = Get.put(StudentHomeController());
+  final LoginController loginController = Get.put(LoginController());
+
+  double _progress = 0.0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startSlowLoading();
+  }
+
+  void _startSlowLoading() {
+    // slow loader: total duration 6 seconds
+    const totalDuration = Duration(seconds: 15);
+    const interval = Duration(milliseconds: 50); // update every 50ms
+    final increment = interval.inMilliseconds / totalDuration.inMilliseconds;
+
+    _timer = Timer.periodic(interval, (timer) {
+      setState(() {
+        _progress += increment;
+        if (_progress >= 1.0) {
+          _progress = 1.0;
+          timer.cancel();
+          _navigateNext();
+        }
+      });
+    });
+  }
+
+  Future<void> _navigateNext() async {
+    final isLoggedIn = await loginController.isLoggedIn();
+
+    if (!mounted) return;
+
+    if (isLoggedIn) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CommonBottomNavigation(initialIndex: 0),
+        ),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const CommonBottomNavigation(initialIndex: 0),
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width * 0.7;
+
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(AppImages.splashBackImage1),
+                    Image.asset(AppImages.schoolLogo),
+                    Image.asset(AppImages.splashBackImage2),
+                  ],
+                ),
+              ),
+
+              // very slow linear progress bar
+              Container(
+                width: width,
+                height: 12,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: AppColor.blueG2, width: 2),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(1.5),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Stack(
+                      children: [
+                        Container(color: AppColor.white),
+                        FractionallySizedBox(
+                          alignment: Alignment.centerLeft,
+                          widthFactor: _progress,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              gradient: LinearGradient(
+                                colors: [AppColor.blueG1, AppColor.blueG2],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 35),
+              Text(
+                'V 1.2',
+                style: GoogleFont.ibmPlexSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppColor.lowGrey,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+*/
