@@ -7,6 +7,7 @@ import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
 import 'package:st_school_project/Core/Widgets/swicth_profile_sheet.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/Login_screen/controller/login_controller.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/controller/task_controller.dart';
 
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/task_detail.dart';
 
@@ -39,6 +40,7 @@ class _HomeScreenState extends State<HomeTab>
   String selectedDay = 'Today';
   DateTime selectedDate = DateTime.now();
   final StudentHomeController controller = Get.put(StudentHomeController());
+  final TaskController taskController = Get.put(TaskController());
   final LoginController loginController = Get.put(LoginController());
   final TeacherListController teacherListController = Get.put(
     TeacherListController(),
@@ -2011,6 +2013,7 @@ class _HomeScreenState extends State<HomeTab>
                                                                     (
                                                                       _,
                                                                     ) => TaskDetail(
+
                                                                       id: task.id,
                                                                     ),
                                                               ),

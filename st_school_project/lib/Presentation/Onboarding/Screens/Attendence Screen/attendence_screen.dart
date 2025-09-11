@@ -530,33 +530,20 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                           Row(
                             children: [
                               Obx(
-                                () => Text(
-                                  '${controller.attendanceData.value?.monthName.toString() ?? ''} ',
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColor.lightBlack,
+                                () => Expanded(
+                                  child: Text(
+                                    '${controller.attendanceData.value?.monthName.toString() ?? ''} Overall Attendance',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColor.lightBlack,
+                                    ),
                                   ),
                                 ),
                               ),
 
-                              Text(
-                                'Overall ',
-                                style: GoogleFont.ibmPlexSans(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColor.lightBlack,
-                                ),
-                              ),
-                              Text(
-                                'Attendance',
-                                style: GoogleFont.ibmPlexSans(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColor.lightBlack,
-                                ),
-                              ),
-                              Spacer(),
+
+
                               Text(
                                 'Average',
                                 style: GoogleFont.ibmPlexSans(

@@ -2998,7 +2998,8 @@ class _TaskScreenState extends State<TaskScreen>
                                                                         (
                                                                           _,
                                                                         ) => TaskDetail(
-                                                                          teacherImage: task.teacher_image, // pass image here
+                                                                          teacherImage:
+                                                                              task.teacher_image, // pass image here
                                                                           id:
                                                                               task.id,
                                                                         ),

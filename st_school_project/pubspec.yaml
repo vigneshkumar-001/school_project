@@ -55,6 +55,7 @@ dependencies:
   equatable: any
   dartz: any
   dotted_border: ^2.1.0
+  cached_network_image: ^3.4.1
 
 
 
