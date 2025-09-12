@@ -99,9 +99,7 @@ class LoginController extends GetxController {
 
           prefs.setString('token', accessToken);
           String? token = prefs.getString('token');
-          await controller.getStudentHome();
-          await controller.getSiblingsData();
-          await teacherListController.teacherListData();
+          await _loadInitialData();
           Get.offAll(CommonBottomNavigation(initialIndex: 0));
           isOtpLoading.value = false;
           AppLogger.log.i('token = $token');
@@ -150,24 +148,31 @@ class LoginController extends GetxController {
     return null;
   }
 
+  Future<void> _loadInitialData() async {
+    await Future.wait([
+      controller.getStudentHome(),
+      controller.getSiblingsData(),
+      teacherListController.teacherListData(),
+      announcementController.getAnnouncement(),
+    ]);
+  }
+
   Future<bool> isLoggedIn() async {
     final prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
+    final token = prefs.getString('token');
+
     if (token != null && token.isNotEmpty) {
       accessToken = token;
-      await controller.getStudentHome();
-      await controller.getSiblingsData();
-      await teacherListController.teacherListData();
-      await announcementController.getAnnouncement();
+      await _loadInitialData();
       return true;
     }
     return false;
   }
 
   Future<void> logout() async {
-    Get.offAll(() => ChangeMobileNumber(page: 'splash'));
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
     accessToken = '';
+    Get.offAll(() => ChangeMobileNumber(page: 'splash'));
   }
 }

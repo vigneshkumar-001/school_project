@@ -277,202 +277,388 @@ class _HomeScreenState extends State<HomeTab>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return Scaffold(
-      backgroundColor: AppColor.white,
-      body: SafeArea(
-        child: Obx(() {
-          final isLoading = controller.isLoading.value;
-          final hasLoadedOnce = controller.hasLoadedOnce.value;
-          final data = controller.studentHomeData.value;
+    return WillPopScope(
+      onWillPop: () async {
+        return await false;
+      },
+      child: Scaffold(
+        backgroundColor: AppColor.white,
+        body: SafeArea(
+          child: Obx(() {
+            final isLoading = controller.isLoading.value;
+            final hasLoadedOnce = controller.hasLoadedOnce.value;
+            final data = controller.studentHomeData.value;
 
-          final img = controller.siblingsList;
+            final img = controller.siblingsList;
 
-          // 1) First load or refresh with no cached data → loader
-          if (isLoading && data == null) {
-            return AppLoader.circularLoader();
-          }
-
-          // 2) Only after first load completes, if still null → empty state
-          if (!isLoading && !hasLoadedOnce) {
-            // defensive, but shouldn't hit because isLoading starts true
-            return AppLoader.circularLoader();
-          }
-
-          // if (data == null) {
-          //   return Center(child: Text("No student data available"));
-          // }
-          final tasks = data?.tasks ?? [];
-          final subjects = <String>{'All'};
-          for (var task in tasks) {
-            if (task.subject != null && task.subject.isNotEmpty) {
-              subjects.add(task.subject);
+            // 1) First load or refresh with no cached data → loader
+            if (isLoading && data == null) {
+              return AppLoader.circularLoader();
             }
-          }
 
-          final siblings = controller.siblingsList;
-          final activeStudent = siblings.firstWhere(
-            (s) => s.isActive == true,
-            orElse: () => siblings.first,
-          );
-          final remainingStudent = siblings.firstWhere(
-            (s) => s.id != activeStudent.id,
-            orElse: () => siblings.first,
-          );
+            // 2) Only after first load completes, if still null → empty state
+            if (!isLoading && !hasLoadedOnce) {
+              // defensive, but shouldn't hit because isLoading starts true
+              return AppLoader.circularLoader();
+            }
 
-          final subjectsList = subjects.toList();
+            // if (data == null) {
+            //   return Center(child: Text("No student data available"));
+            // }
+            final tasks = data?.tasks ?? [];
+            final subjects = <String>{'All'};
+            for (var task in tasks) {
+              if (task.subject != null && task.subject.isNotEmpty) {
+                subjects.add(task.subject);
+              }
+            }
 
-          return RefreshIndicator(
-            onRefresh: () async {
-              await controller.getStudentHome();
-              await teacherListController.teacherListData();
-            },
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(
-                      AppImages.schoolLogo,
-                      height: 58,
-                      width: double.infinity,
+            final siblings = controller.siblingsList;
+            final activeStudent = siblings.firstWhere(
+              (s) => s.isActive == true,
+              orElse: () => siblings.first,
+            );
+            final remainingStudent = siblings.firstWhere(
+              (s) => s.id != activeStudent.id,
+              orElse: () => siblings.first,
+            );
+
+            final subjectsList = subjects.toList();
+
+            return RefreshIndicator(
+              onRefresh: () async {
+                await controller.getStudentHome();
+                await teacherListController.teacherListData();
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset(
+                        AppImages.schoolLogo,
+                        height: 58,
+                        width: double.infinity,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  Stack(
-                    children: [
-                      ListTile(
-                        title: RichText(
-                          text: TextSpan(
-                            style: GoogleFont.ibmPlexSans(
-                              fontSize: 28,
-                              color: AppColor.black,
-                            ),
-                            text: 'Hi ',
-                            children: [
-                              TextSpan(
-                                text: data?.name ?? "Welcome",
-                                style: GoogleFont.ibmPlexSans(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 28,
-                                ),
+                    SizedBox(height: 20),
+                    Stack(
+                      children: [
+                        ListTile(
+                          title: RichText(
+                            text: TextSpan(
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 28,
+                                color: AppColor.black,
                               ),
-                              TextSpan(
-                                text: '!',
-                                style: GoogleFont.ibmPlexSans(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColor.blue,
+                              text: 'Hi ',
+                              children: [
+                                TextSpan(
+                                  text: data?.name ?? "Welcome",
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 28,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: '!',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColor.blue,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 5),
+                              RichText(
+                                text: TextSpan(
+                                  text: data?.className ?? '',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 14,
+                                    color: AppColor.grey,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: 'th ',
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: 'Grade - ',
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontSize: 14,
+                                        color: AppColor.grey,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: data?.section ?? '',
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontSize: 14,
+                                        color: AppColor.grey,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: ' Section',
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
+                          trailing:
+                              (controller.siblingsList.length > 1)
+                                  ? SizedBox(
+                                    child: InkWell(
+                                      onTap: () {
+                                        SwitchProfileSheet.show(
+                                          context,
+                                          students: controller.siblingsList,
+                                          selectedStudent:
+                                              controller.selectedStudent,
+                                          onSwitch: (student) async {
+                                            await controller.switchSiblings(
+                                              id: student.id,
+                                            );
+                                            controller.selectStudent(student);
+                                          },
+                                          onLogout: () async {
+                                            await loginController.logout();
+                                          },
+                                        );
+                                      },
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child:
+                                            (remainingStudent.avatar != null &&
+                                                    remainingStudent
+                                                        .avatar
+                                                        .isNotEmpty)
+                                                ? Image.network(
+                                                  remainingStudent.avatar,
+                                                  height: 30,
+                                                  width: 30,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) {
+                                                    return Image.asset(
+                                                      AppImages.moreSimage1,
+                                                      height: 30,
+                                                      width: 30,
+                                                      fit: BoxFit.cover,
+                                                    );
+                                                  },
+                                                )
+                                                : Image.asset(
+                                                  AppImages.moreSimage1,
+                                                  height: 30,
+                                                  width: 30,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                      ),
+                                    ),
+                                  )
+                                  : null, // hide trailing if only one student
                         ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 5),
-                            RichText(
-                              text: TextSpan(
-                                text: data?.className ?? '',
-                                style: GoogleFont.ibmPlexSans(
-                                  fontSize: 14,
-                                  color: AppColor.grey,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                                children: [
-                                  TextSpan(
-                                    text: 'th ',
-                                    style: GoogleFont.ibmPlexSans(fontSize: 10),
-                                  ),
-                                  TextSpan(
-                                    text: 'Grade - ',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontSize: 14,
-                                      color: AppColor.grey,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: data?.section ?? '',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontSize: 14,
-                                      color: AppColor.grey,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: ' Section',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ],
+
+                        if (controller
+                            .siblingsList
+                            .isNotEmpty) // show positioned always if one+ student
+                          Positioned(
+                            right: 34,
+                            bottom: 17,
+                            child: InkWell(
+                              onTap: () {
+                                SwitchProfileSheet.show(
+                                  context,
+                                  students: controller.siblingsList,
+                                  selectedStudent: controller.selectedStudent,
+                                  onSwitch: (student) async {
+                                    await controller.switchSiblings(
+                                      id: student.id,
+                                    );
+                                    controller.selectStudent(student);
+                                  },
+                                  onLogout: () async {
+                                    await loginController.logout();
+                                  },
+                                );
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child:
+                                    (activeStudent.avatar != null &&
+                                            activeStudent.avatar.isNotEmpty)
+                                        ? Image.network(
+                                          activeStudent.avatar,
+                                          height: 49,
+                                          width: 49,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (
+                                            context,
+                                            error,
+                                            stackTrace,
+                                          ) {
+                                            return Image.asset(
+                                              AppImages.moreSimage1,
+                                              height: 49,
+                                              width: 49,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
+                                        )
+                                        : Image.asset(
+                                          AppImages.moreSimage1,
+                                          height: 49,
+                                          width: 49,
+                                          fit: BoxFit.cover,
+                                        ),
                               ),
                             ),
-                          ],
-                        ),
-                        trailing:
-                            (controller.siblingsList.length > 1)
-                                ? SizedBox(
-                                  child: InkWell(
-                                    onTap: () {
-                                      SwitchProfileSheet.show(
-                                        context,
-                                        students: controller.siblingsList,
-                                        selectedStudent:
-                                            controller.selectedStudent,
-                                        onSwitch: (student) async {
-                                          await controller.switchSiblings(
-                                            id: student.id,
-                                          );
-                                          controller.selectStudent(student);
-                                        },
-                                        onLogout: () async {
-                                          await loginController.logout();
-                                        },
-                                      );
-                                    },
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child:
-                                          (remainingStudent.avatar != null &&
-                                                  remainingStudent
-                                                      .avatar
-                                                      .isNotEmpty)
-                                              ? Image.network(
-                                                remainingStudent.avatar,
-                                                height: 30,
-                                                width: 30,
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (
-                                                  context,
-                                                  error,
-                                                  stackTrace,
-                                                ) {
-                                                  return Image.asset(
-                                                    AppImages.moreSimage1,
-                                                    height: 30,
-                                                    width: 30,
-                                                    fit: BoxFit.cover,
-                                                  );
-                                                },
-                                              )
-                                              : Image.asset(
-                                                AppImages.moreSimage1,
-                                                height: 30,
-                                                width: 30,
-                                                fit: BoxFit.cover,
-                                              ),
-                                    ),
-                                  ),
-                                )
-                                : null, // hide trailing if only one student
-                      ),
+                          ),
+                      ],
+                    ),
 
-                      if (controller
-                          .siblingsList
-                          .isNotEmpty) // show positioned always if one+ student
+                    /*   Stack(
+                      children: [
+                        ListTile(
+                          title: RichText(
+                            text: TextSpan(
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 28,
+                                color: AppColor.black,
+                              ),
+                              text: 'Hi ',
+                              children: [
+                                TextSpan(
+                                  text: data?.name ?? "Welcome",
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 28,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: '!',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColor.blue,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 5),
+                              RichText(
+                                text: TextSpan(
+                                  text: data?.className ?? '',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 14,
+                                    color: AppColor.grey,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: 'th ',
+                                      style: GoogleFont.ibmPlexSans(fontSize: 10),
+                                    ),
+                                    TextSpan(
+                                      text: 'Grade - ',
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontSize: 14,
+                                        color: AppColor.grey,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: data?.section ?? '',
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontSize: 14,
+                                        color: AppColor.grey,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: ' Section',
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          trailing: SizedBox(
+                            child: InkWell(
+                              onTap: () {
+                                SwitchProfileSheet.show(
+                                  context,
+                                  students: controller.siblingsList,
+                                  selectedStudent: controller.selectedStudent,
+                                  onSwitch: (student) async {
+                                    await controller.switchSiblings(
+                                      id: student.id,
+                                    );
+                                    controller.selectStudent(student);
+                                  },
+                                  onLogout: () async {
+                                    await loginController.logout();
+                                  },
+                                );
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child:
+                                    (remainingStudent.avatar != null &&
+                                            remainingStudent.avatar.isNotEmpty)
+                                        ? Image.network(
+                                          remainingStudent.avatar,
+                                          height: 30,
+                                          width: 30,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (
+                                            context,
+                                            error,
+                                            stackTrace,
+                                          ) {
+                                            return Image.asset(
+                                              AppImages.moreSimage1,
+                                              height: 30,
+                                              width: 30,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
+                                        )
+                                        : Image.asset(
+                                          AppImages.moreSimage1,
+                                          height: 30,
+                                          width: 30,
+                                          fit: BoxFit.cover,
+                                        ),
+                              ),
+                            ),
+                          ),
+                        ),
                         Positioned(
                           right: 34,
                           bottom: 17,
@@ -483,9 +669,7 @@ class _HomeScreenState extends State<HomeTab>
                                 students: controller.siblingsList,
                                 selectedStudent: controller.selectedStudent,
                                 onSwitch: (student) async {
-                                  await controller.switchSiblings(
-                                    id: student.id,
-                                  );
+                                  await controller.switchSiblings(id: student.id);
                                   controller.selectStudent(student);
                                 },
                                 onLogout: () async {
@@ -525,1303 +709,1105 @@ class _HomeScreenState extends State<HomeTab>
                             ),
                           ),
                         ),
-                    ],
-                  ),
-
-                  /*   Stack(
-                    children: [
-                      ListTile(
-                        title: RichText(
-                          text: TextSpan(
-                            style: GoogleFont.ibmPlexSans(
-                              fontSize: 28,
-                              color: AppColor.black,
-                            ),
-                            text: 'Hi ',
+                      ],
+                    ),*/
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            AppColor.white,
+                            AppColor.lightWhite, // cyan
+                          ],
+                        ),
+                      ),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 15,
+                            horizontal: 12,
+                          ),
+                          child: Row(
                             children: [
-                              TextSpan(
-                                text: data?.name ?? "Welcome",
-                                style: GoogleFont.ibmPlexSans(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 28,
+                              Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topRight,
+                                    end: Alignment.bottomLeft,
+                                    colors: [AppColor.blueG1, AppColor.blueG2],
+                                  ),
+                                  // border: Border.all(color: Colors.black12),
+                                  //  color: AppColor.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 10,
+                                    left: 10,
+                                    top: 10,
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: AppColor.white.withOpacity(
+                                                0.1,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 20,
+                                                vertical: 15,
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Column(
+                                                    children: [
+                                                      Image.asset(
+                                                        AppImages.morning,
+                                                        height: 39,
+                                                        width: 47.5,
+                                                      ),
+                                                      SizedBox(height: 3),
+                                                      Text(
+                                                        'Morning',
+                                                        style:
+                                                            GoogleFont.ibmPlexSans(
+                                                              fontSize: 10,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              color:
+                                                                  AppColor
+                                                                      .white,
+                                                            ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(width: 9),
+                                                  SizedBox(
+                                                    height: 70,
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: List.generate(7, (
+                                                        index,
+                                                      ) {
+                                                        return Container(
+                                                          width: 2,
+                                                          height: 8,
+                                                          decoration: BoxDecoration(
+                                                            gradient: LinearGradient(
+                                                              colors: [
+                                                                AppColor
+                                                                    .lightGrey
+                                                                    .withOpacity(
+                                                                      0.05,
+                                                                    ),
+                                                                AppColor.white
+                                                                    .withOpacity(
+                                                                      0.05,
+                                                                    ),
+                                                              ], // gradient top to bottom
+                                                              begin:
+                                                                  Alignment
+                                                                      .topCenter,
+                                                              end:
+                                                                  Alignment
+                                                                      .bottomCenter,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 9),
+                                                  Column(
+                                                    children: [
+                                                      Image.asset(
+                                                        AppImages.afternoon,
+                                                        height: 39,
+                                                        width: 47.5,
+                                                      ),
+                                                      SizedBox(height: 3),
+                                                      Text(
+                                                        'Afternon',
+                                                        style:
+                                                            GoogleFont.ibmPlexSans(
+                                                              fontSize: 10,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              color:
+                                                                  AppColor
+                                                                      .white,
+                                                            ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 10,
+                                              vertical: 15,
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Today',
+                                                  style: GoogleFont.ibmPlexSans(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: AppColor.white,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  'Attendence',
+                                                  style: GoogleFont.ibmPlexSans(
+                                                    fontSize: 18,
+                                                    color: AppColor.white,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+
+                                          Row(
+                                            children: [
+                                              Container(
+                                                width: 150,
+                                                height: 1,
+                                                decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomRight,
+                                                    colors: [
+                                                      AppColor.lightGrey
+                                                          .withOpacity(0.3),
+                                                      AppColor.lightGrey
+                                                          .withOpacity(0.2),
+
+                                                      AppColor.white
+                                                          .withOpacity(0.1),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (context) =>
+                                                          CommonBottomNavigation(
+                                                            initialIndex: 3,
+                                                          ),
+                                                ),
+                                              );
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  'View All',
+                                                  style: GoogleFont.ibmPlexSans(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColor.lightGrey,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 2),
+                                                Image.asset(
+                                                  AppImages.rightArrow,
+                                                  height: 9,
+                                                  color: AppColor.lightGrey,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Positioned(
+                                        top: 90,
+                                        left: 35,
+                                        child: Image.asset(
+                                          data?.attendance.morning == true
+                                              ? AppImages.greenTick
+                                              : AppImages.failedImage,
+                                          height: 18,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 90,
+                                        right: 32,
+                                        child: Image.asset(
+                                          data?.attendance.afternoon == true
+                                              ? AppImages.greenTick
+                                              : AppImages.failedImage,
+                                          height: 18,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              TextSpan(
-                                text: '!',
-                                style: GoogleFont.ibmPlexSans(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColor.blue,
+                              SizedBox(width: 15),
+
+                              Stack(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topRight,
+                                        end: Alignment.centerRight,
+                                        colors: [
+                                          AppColor.lightBlueG1,
+                                          AppColor.lightBlueG1.withOpacity(0.5),
+                                          AppColor.lightBlueG2,
+                                        ],
+                                      ),
+                                      // border: Border.all(color: Colors.black12),
+                                      // color: AppColor.white,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 70,
+                                        right: 8,
+                                        left: 8,
+                                        bottom: 8,
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: AppColor.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                top: 26,
+                                                right: 50,
+                                                left: 15,
+                                                bottom: 15,
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '2025-26 LKG',
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          fontSize: 16,
+                                                          color:
+                                                              AppColor
+                                                                  .lightBlack,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                  ),
+
+                                                  Text(
+                                                    'Admission \nStarted',
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          color: AppColor.black,
+                                                        ),
+                                                  ),
+
+                                                  SizedBox(height: 10),
+                                                  Divider(
+                                                    color: AppColor.lightGrey,
+                                                  ),
+                                                  SizedBox(height: 6),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder:
+                                                              (context) =>
+                                                                  Admission1(),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          'Open Now',
+                                                          style:
+                                                              GoogleFont.ibmPlexSans(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    AppColor
+                                                                        .blueG2,
+                                                              ),
+                                                        ),
+                                                        SizedBox(width: 7),
+                                                        Image.asset(
+                                                          AppImages.rightArrow,
+                                                          height: 10,
+                                                          color:
+                                                              AppColor.blueG2,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    child: Image.asset(
+                                      AppImages.homeScreenCont2,
+                                      height: 67,
+                                      width: 77.31,
+                                    ),
+                                    left: 20,
+                                    top: 33,
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(width: 15),
+                              Stack(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topRight,
+                                        end: Alignment.centerRight,
+                                        colors: [
+                                          AppColor.lightBlueG1,
+                                          AppColor.lightBlueG1.withOpacity(0.5),
+                                          AppColor.lightBlueG2,
+                                        ],
+                                      ),
+                                      // border: Border.all(color: Colors.black12),
+                                      // color: AppColor.white,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 60,
+                                        right: 8,
+                                        left: 8,
+                                        bottom: 8,
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: AppColor.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                top: 38,
+                                                right: 50,
+                                                left: 15,
+                                                bottom: 15,
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '2025-26 LKG',
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          fontSize: 16,
+                                                          color:
+                                                              AppColor
+                                                                  .lightBlack,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                  ),
+
+                                                  Text(
+                                                    'Admission \nStarted',
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          color: AppColor.black,
+                                                        ),
+                                                  ),
+                                                  SizedBox(height: 8),
+                                                  Divider(
+                                                    color: AppColor.lightGrey,
+                                                  ),
+                                                  SizedBox(height: 6),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder:
+                                                              (context) =>
+                                                                  CheckAdmissionStatus(),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          'Check Now',
+                                                          style:
+                                                              GoogleFont.ibmPlexSans(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    AppColor
+                                                                        .blueG2,
+                                                              ),
+                                                        ),
+                                                        SizedBox(width: 7),
+                                                        Image.asset(
+                                                          AppImages.rightArrow,
+                                                          height: 10,
+                                                          color:
+                                                              AppColor.blueG2,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    left: 20,
+                                    top: 19,
+                                    child: Image.asset(
+                                      AppImages.homeScreenCont3,
+                                      height: 75,
+                                      width: 73.5,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(width: 15),
+                              Stack(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topRight,
+                                        end: Alignment.centerRight,
+                                        colors: [
+                                          AppColor.orangeG1, // light blue
+                                          AppColor.orangeG2, // cyan
+                                          AppColor.orangeG3, // cyan
+                                        ],
+                                      ),
+                                      // border: Border.all(color: Colors.black12),
+                                      // color: AppColor.white,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 60,
+                                        right: 10,
+                                        left: 10,
+                                        bottom: 15,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: AppColor.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 40,
+                                                right: 15,
+                                                left: 20,
+                                                bottom: 20,
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Prepare for',
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color:
+                                                              AppColor
+                                                                  .lightBlack,
+                                                        ),
+                                                  ),
+                                                  Text(
+                                                    'Examinations',
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          color: AppColor.black,
+                                                        ),
+                                                  ),
+                                                  SizedBox(height: 7),
+                                                  Text(
+                                                    'First Term Exam will \nbe conducted on \n11.Jun.25 ',
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          color: AppColor.grey,
+                                                          fontSize: 12,
+                                                        ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    child: Image.asset(
+                                      AppImages.clock,
+                                      height: 72,
+                                      width: 60.3,
+                                    ),
+                                    left: 20,
+                                    top: 15,
+                                  ),
+                                  Positioned(
+                                    child: SizedBox(
+                                      height: 22,
+                                      width: 58,
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          color: AppColor.brown,
+                                          borderRadius: BorderRadius.circular(
+                                            15,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'Jun 11',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 12,
+                                            color: AppColor.yellow,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    right: 25,
+                                    top: 48,
+                                  ),
+                                  // Positioned(
+                                  //   child: TextButton(
+                                  //     style: ButtonStyle(
+                                  //       backgroundColor: WidgetStatePropertyAll(
+                                  //         AppColor.brown,
+                                  //       ),
+                                  //     ),
+                                  //     onPressed: () {},
+                                  //     child: Text(
+                                  //       'Jun 11',
+                                  //       style: TextStyle(
+                                  //         fontSize: 12,
+                                  //         color: AppColor.yellow,
+                                  //         fontWeight: FontWeight.bold,
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                  //   right: 25,
+                                  //   top: 70,
+                                  // ),
+                                ],
+                              ),
+
+                              SizedBox(width: 15),
+                              Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topRight,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      AppColor.greenG4.withOpacity(0.2),
+                                      AppColor.greenG2.withOpacity(0.4),
+                                      AppColor.greenG1.withOpacity(0.9),
+                                      AppColor.greenG1.withOpacity(0.9),
+                                    ],
+                                  ),
+                                  // border: Border.all(color: Colors.black12),
+                                  //  color: AppColor.white,
+                                  borderRadius: BorderRadius.circular(15),
                                 ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 8,
+                                    left: 8,
+                                    right: 8,
+                                    bottom: 20,
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topRight,
+                                                end: Alignment.bottomRight,
+                                                colors: [
+                                                  AppColor.white,
+                                                  AppColor.white,
+                                                  AppColor.white,
+                                                  AppColor.white,
+                                                  AppColor.white,
+                                                  AppColor.white.withOpacity(
+                                                    0.1,
+                                                  ),
+                                                ],
+                                              ),
+
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 18,
+                                                left: 15,
+                                                right: 20,
+                                                bottom: 50,
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Upcoming Saturday\nHalf day School',
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          fontSize: 12,
+                                                          color: AppColor.black,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                  ),
+                                                  SizedBox(height: 5),
+                                                  Text(
+                                                    '16-Jun-25',
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          fontSize: 10,
+                                                          color: AppColor.grey,
+                                                        ),
+                                                  ),
+                                                  SizedBox(height: 21),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                      left: 45.0,
+                                                    ),
+                                                    child: InkWell(
+                                                      onTap: () {},
+                                                      child: Image.asset(
+                                                        AppImages
+                                                            .greenButtomArrow,
+                                                        height: 24,
+                                                        width: 23,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 20),
+                                          Text(
+                                            'Notice Board',
+                                            style: GoogleFont.ibmPlexSans(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColor.lightBlack,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Positioned(
+                                        child: Image.asset(
+                                          AppImages.bag,
+                                          height: 45,
+                                          width: 43.75,
+                                        ),
+                                        top: 140,
+                                        left: 50,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 15),
+                              Stack(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topRight,
+                                        end: Alignment.centerRight,
+                                        colors: [
+                                          AppColor.blueCG1, // light blue
+                                          AppColor.blueCG2, // cyan
+                                          AppColor.blueCG3, // cyan
+                                        ],
+                                      ),
+                                      // border: Border.all(color: Colors.black12),
+                                      // color: AppColor.white,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 60,
+                                        right: 10,
+                                        left: 10,
+                                        bottom: 8,
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: AppColor.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                top: 30,
+                                                right: 20,
+                                                left: 15,
+                                                bottom: 15,
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                    height: 22,
+                                                    width: 58,
+                                                    child: Container(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            AppColor.lightBlue,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              15,
+                                                            ),
+                                                      ),
+                                                      child: Text(
+                                                        'Jun 11',
+                                                        style:
+                                                            GoogleFont.ibmPlexSans(
+                                                              fontSize: 12,
+                                                              color:
+                                                                  AppColor
+                                                                      .textBlue,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 6),
+                                                  Text(
+                                                    'Second-Term \nFees',
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: AppColor.black,
+                                                        ),
+                                                  ),
+                                                  SizedBox(height: 8),
+                                                  Divider(),
+                                                  SizedBox(height: 6),
+                                                  InkWell(
+                                                    onTap: () {},
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          'Know More',
+                                                          style:
+                                                              GoogleFont.ibmPlexSans(
+                                                                fontSize: 11,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    AppColor
+                                                                        .blueG2,
+                                                              ),
+                                                        ),
+                                                        SizedBox(width: 5),
+                                                        Image.asset(
+                                                          AppImages.rightArrow,
+                                                          height: 7,
+                                                          color:
+                                                              AppColor.blueG2,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    child: Image.asset(
+                                      AppImages.wallet,
+                                      height: 81,
+                                      width: 67.84,
+                                    ),
+                                    left: 20,
+                                    top: 15,
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ),
-
-                        subtitle: Column(
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomRight,
+                          end: Alignment.centerRight,
+                          colors: [
+                            AppColor.lightGrey,
+                            AppColor.lightGrey,
+                            AppColor.lightGrey,
+                            AppColor.white,
+                          ],
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(height: 5),
-                            RichText(
-                              text: TextSpan(
-                                text: data?.className ?? '',
-                                style: GoogleFont.ibmPlexSans(
-                                  fontSize: 14,
-                                  color: AppColor.grey,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                            // ---------- Header ----------
+                            Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: Row(
                                 children: [
-                                  TextSpan(
-                                    text: 'th ',
-                                    style: GoogleFont.ibmPlexSans(fontSize: 10),
-                                  ),
-                                  TextSpan(
-                                    text: 'Grade - ',
+                                  Text(
+                                    'Your Tasks',
                                     style: GoogleFont.ibmPlexSans(
-                                      fontSize: 14,
-                                      color: AppColor.grey,
-                                      fontWeight: FontWeight.w700,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColor.black,
                                     ),
                                   ),
-                                  TextSpan(
-                                    text: data?.section ?? '',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontSize: 14,
-                                      color: AppColor.grey,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: ' Section',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontWeight: FontWeight.normal,
+                                  const Spacer(),
+                                  PopupMenuButton<String>(
+                                    color: AppColor.white,
+                                    onSelected: (value) async {
+                                      setState(() {
+                                        selectedDay = value;
+                                      });
+
+                                      if (value == 'Today') {
+                                        selectedDate = DateTime.now();
+                                      } else if (value == 'Yesterday') {
+                                        selectedDate = DateTime.now().subtract(
+                                          const Duration(days: 1),
+                                        );
+                                      } else if (value == 'Custom Date') {
+                                        DateTime? picked = await showDatePicker(
+                                          context: context,
+                                          initialDate:
+                                              selectedDate ?? DateTime.now(),
+                                          firstDate: DateTime(2000),
+                                          lastDate: DateTime(2100),
+                                          builder: (context, child) {
+                                            return Theme(
+                                              data: Theme.of(context).copyWith(
+                                                dialogBackgroundColor:
+                                                    AppColor.white,
+                                                colorScheme: ColorScheme.light(
+                                                  primary: AppColor.blueG2,
+                                                  onPrimary: Colors.white,
+                                                  onSurface: AppColor.black,
+                                                ),
+                                                textButtonTheme:
+                                                    TextButtonThemeData(
+                                                      style:
+                                                          TextButton.styleFrom(
+                                                            foregroundColor:
+                                                                AppColor.blueG2,
+                                                          ),
+                                                    ),
+                                              ),
+                                              child: child!,
+                                            );
+                                          },
+                                        );
+
+                                        if (picked != null) {
+                                          setState(() {
+                                            selectedDate = picked;
+                                          });
+                                        }
+                                      }
+                                    },
+                                    itemBuilder:
+                                        (context) => [
+                                          _buildMenuItem('Today'),
+                                          _buildMenuItem('Yesterday'),
+                                          _buildMenuItem('Custom Date'),
+                                        ],
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColor.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            selectedDay ?? 'Select Date',
+                                            style: GoogleFont.ibmPlexSans(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColor.black,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Icon(
+                                            Icons.keyboard_arrow_down_outlined,
+                                            size: 20,
+                                            color: AppColor.black,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                        trailing: SizedBox(
-                          child: InkWell(
-                            onTap: () {
-                              SwitchProfileSheet.show(
-                                context,
-                                students: controller.siblingsList,
-                                selectedStudent: controller.selectedStudent,
-                                onSwitch: (student) async {
-                                  await controller.switchSiblings(
-                                    id: student.id,
-                                  );
-                                  controller.selectStudent(student);
-                                },
-                                onLogout: () async {
-                                  await loginController.logout();
-                                },
-                              );
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child:
-                                  (remainingStudent.avatar != null &&
-                                          remainingStudent.avatar.isNotEmpty)
-                                      ? Image.network(
-                                        remainingStudent.avatar,
-                                        height: 30,
-                                        width: 30,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (
-                                          context,
-                                          error,
-                                          stackTrace,
-                                        ) {
-                                          return Image.asset(
-                                            AppImages.moreSimage1,
-                                            height: 30,
-                                            width: 30,
-                                            fit: BoxFit.cover,
-                                          );
-                                        },
-                                      )
-                                      : Image.asset(
-                                        AppImages.moreSimage1,
-                                        height: 30,
-                                        width: 30,
-                                        fit: BoxFit.cover,
-                                      ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        right: 34,
-                        bottom: 17,
-                        child: InkWell(
-                          onTap: () {
-                            SwitchProfileSheet.show(
-                              context,
-                              students: controller.siblingsList,
-                              selectedStudent: controller.selectedStudent,
-                              onSwitch: (student) async {
-                                await controller.switchSiblings(id: student.id);
-                                controller.selectStudent(student);
-                              },
-                              onLogout: () async {
-                                await loginController.logout();
-                              },
-                            );
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child:
-                                (activeStudent.avatar != null &&
-                                        activeStudent.avatar.isNotEmpty)
-                                    ? Image.network(
-                                      activeStudent.avatar,
-                                      height: 49,
-                                      width: 49,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (
-                                        context,
-                                        error,
-                                        stackTrace,
-                                      ) {
-                                        return Image.asset(
-                                          AppImages.moreSimage1,
-                                          height: 49,
-                                          width: 49,
-                                          fit: BoxFit.cover,
-                                        );
-                                      },
-                                    )
-                                    : Image.asset(
-                                      AppImages.moreSimage1,
-                                      height: 49,
-                                      width: 49,
-                                      fit: BoxFit.cover,
-                                    ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),*/
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          AppColor.white,
-                          AppColor.lightWhite, // cyan
-                        ],
-                      ),
-                    ),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 15,
-                          horizontal: 12,
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topRight,
-                                  end: Alignment.bottomLeft,
-                                  colors: [AppColor.blueG1, AppColor.blueG2],
-                                ),
-                                // border: Border.all(color: Colors.black12),
-                                //  color: AppColor.white,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  right: 10,
-                                  left: 10,
-                                  top: 10,
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: AppColor.white.withOpacity(
-                                              0.1,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 20,
-                                              vertical: 15,
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Column(
-                                                  children: [
-                                                    Image.asset(
-                                                      AppImages.morning,
-                                                      height: 39,
-                                                      width: 47.5,
-                                                    ),
-                                                    SizedBox(height: 3),
-                                                    Text(
-                                                      'Morning',
-                                                      style:
-                                                          GoogleFont.ibmPlexSans(
-                                                            fontSize: 10,
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            color:
-                                                                AppColor.white,
-                                                          ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(width: 9),
-                                                SizedBox(
-                                                  height: 70,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: List.generate(7, (
-                                                      index,
-                                                    ) {
-                                                      return Container(
-                                                        width: 2,
-                                                        height: 8,
-                                                        decoration: BoxDecoration(
-                                                          gradient: LinearGradient(
-                                                            colors: [
-                                                              AppColor.lightGrey
-                                                                  .withOpacity(
-                                                                    0.05,
-                                                                  ),
-                                                              AppColor.white
-                                                                  .withOpacity(
-                                                                    0.05,
-                                                                  ),
-                                                            ], // gradient top to bottom
-                                                            begin:
-                                                                Alignment
-                                                                    .topCenter,
-                                                            end:
-                                                                Alignment
-                                                                    .bottomCenter,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }),
-                                                  ),
-                                                ),
-                                                SizedBox(width: 9),
-                                                Column(
-                                                  children: [
-                                                    Image.asset(
-                                                      AppImages.afternoon,
-                                                      height: 39,
-                                                      width: 47.5,
-                                                    ),
-                                                    SizedBox(height: 3),
-                                                    Text(
-                                                      'Afternon',
-                                                      style:
-                                                          GoogleFont.ibmPlexSans(
-                                                            fontSize: 10,
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            color:
-                                                                AppColor.white,
-                                                          ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
 
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 15,
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Today',
-                                                style: GoogleFont.ibmPlexSans(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: AppColor.white,
-                                                ),
-                                              ),
-                                              Text(
-                                                'Attendence',
-                                                style: GoogleFont.ibmPlexSans(
-                                                  fontSize: 18,
-                                                  color: AppColor.white,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                            const SizedBox(height: 20),
 
-                                        Row(
-                                          children: [
-                                            Container(
-                                              width: 150,
-                                              height: 1,
-                                              decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  begin: Alignment.topLeft,
-                                                  end: Alignment.bottomRight,
-                                                  colors: [
-                                                    AppColor.lightGrey
-                                                        .withOpacity(0.3),
-                                                    AppColor.lightGrey
-                                                        .withOpacity(0.2),
+                            // ---------- Task List with Subject Filter ----------
+                            Obx(() {
+                              if (controller.isLoading.value) {
+                                return AppLoader.circularLoader();
+                              }
 
-                                                    AppColor.white.withOpacity(
-                                                      0.1,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                              final tasks =
+                                  controller.studentHomeData.value?.tasks ?? [];
 
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder:
-                                                    (context) =>
-                                                        CommonBottomNavigation(
-                                                          initialIndex: 3,
-                                                        ),
-                                              ),
-                                            );
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                'View All',
-                                                style: GoogleFont.ibmPlexSans(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: AppColor.lightGrey,
-                                                ),
-                                              ),
-                                              SizedBox(width: 2),
-                                              Image.asset(
-                                                AppImages.rightArrow,
-                                                height: 9,
-                                                color: AppColor.lightGrey,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Positioned(
-                                      top: 90,
-                                      left: 35,
-                                      child: Image.asset(
-                                        data?.attendance.morning == true
-                                            ? AppImages.greenTick
-                                            : AppImages.failedImage,
-                                        height: 18,
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 90,
-                                      right: 32,
-                                      child: Image.asset(
-                                        data?.attendance.afternoon == true
-                                            ? AppImages.greenTick
-                                            : AppImages.failedImage,
-                                        height: 18,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 15),
+                              // filter tasks by selected date first
+                              final dateFilteredTasks =
+                                  tasks.where((task) {
+                                    if (selectedDate == null) return true;
 
-                            Stack(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topRight,
-                                      end: Alignment.centerRight,
-                                      colors: [
-                                        AppColor.lightBlueG1,
-                                        AppColor.lightBlueG1.withOpacity(0.5),
-                                        AppColor.lightBlueG2,
-                                      ],
-                                    ),
-                                    // border: Border.all(color: Colors.black12),
-                                    // color: AppColor.white,
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: 70,
-                                      right: 8,
-                                      left: 8,
-                                      bottom: 8,
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: AppColor.white,
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                              top: 26,
-                                              right: 50,
-                                              left: 15,
-                                              bottom: 15,
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  '2025-26 LKG',
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    fontSize: 16,
-                                                    color: AppColor.lightBlack,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
+                                    final taskDate =
+                                        DateTime.parse(
+                                          task.date.toString(),
+                                        ).toLocal();
+                                    return taskDate.year ==
+                                            selectedDate!.year &&
+                                        taskDate.month == selectedDate!.month &&
+                                        taskDate.day == selectedDate!.day;
+                                  }).toList();
 
-                                                Text(
-                                                  'Admission \nStarted',
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: AppColor.black,
-                                                  ),
-                                                ),
+                              // subjects available only for that date
+                              final validSubjects =
+                                  dateFilteredTasks
+                                      .map((e) => e.subject)
+                                      .toSet()
+                                      .toList();
 
-                                                SizedBox(height: 10),
-                                                Divider(
-                                                  color: AppColor.lightGrey,
-                                                ),
-                                                SizedBox(height: 6),
-                                                InkWell(
-                                                  onTap: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder:
-                                                            (context) =>
-                                                                Admission1(),
-                                                      ),
-                                                    );
-                                                  },
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        'Open Now',
-                                                        style:
-                                                            GoogleFont.ibmPlexSans(
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  AppColor
-                                                                      .blueG2,
-                                                            ),
-                                                      ),
-                                                      SizedBox(width: 7),
-                                                      Image.asset(
-                                                        AppImages.rightArrow,
-                                                        height: 10,
-                                                        color: AppColor.blueG2,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  child: Image.asset(
-                                    AppImages.homeScreenCont2,
-                                    height: 67,
-                                    width: 77.31,
-                                  ),
-                                  left: 20,
-                                  top: 33,
-                                ),
-                              ],
-                            ),
+                              // apply subject filter
+                              final filteredTasks =
+                                  dateFilteredTasks.where((task) {
+                                    return selectedSubject == null ||
+                                        selectedSubject == 'All' ||
+                                        task.subject == selectedSubject;
+                                  }).toList();
 
-                            SizedBox(width: 15),
-                            Stack(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topRight,
-                                      end: Alignment.centerRight,
-                                      colors: [
-                                        AppColor.lightBlueG1,
-                                        AppColor.lightBlueG1.withOpacity(0.5),
-                                        AppColor.lightBlueG2,
-                                      ],
-                                    ),
-                                    // border: Border.all(color: Colors.black12),
-                                    // color: AppColor.white,
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: 60,
-                                      right: 8,
-                                      left: 8,
-                                      bottom: 8,
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: AppColor.white,
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                              top: 38,
-                                              right: 50,
-                                              left: 15,
-                                              bottom: 15,
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  '2025-26 LKG',
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    fontSize: 16,
-                                                    color: AppColor.lightBlack,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-
-                                                Text(
-                                                  'Admission \nStarted',
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: AppColor.black,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 8),
-                                                Divider(
-                                                  color: AppColor.lightGrey,
-                                                ),
-                                                SizedBox(height: 6),
-                                                InkWell(
-                                                  onTap: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder:
-                                                            (context) =>
-                                                                CheckAdmissionStatus(),
-                                                      ),
-                                                    );
-                                                  },
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        'Check Now',
-                                                        style:
-                                                            GoogleFont.ibmPlexSans(
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  AppColor
-                                                                      .blueG2,
-                                                            ),
-                                                      ),
-                                                      SizedBox(width: 7),
-                                                      Image.asset(
-                                                        AppImages.rightArrow,
-                                                        height: 10,
-                                                        color: AppColor.blueG2,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  left: 20,
-                                  top: 19,
-                                  child: Image.asset(
-                                    AppImages.homeScreenCont3,
-                                    height: 75,
-                                    width: 73.5,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(width: 15),
-                            Stack(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topRight,
-                                      end: Alignment.centerRight,
-                                      colors: [
-                                        AppColor.orangeG1, // light blue
-                                        AppColor.orangeG2, // cyan
-                                        AppColor.orangeG3, // cyan
-                                      ],
-                                    ),
-                                    // border: Border.all(color: Colors.black12),
-                                    // color: AppColor.white,
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: 60,
-                                      right: 10,
-                                      left: 10,
-                                      bottom: 15,
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: AppColor.white,
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 40,
-                                              right: 15,
-                                              left: 20,
-                                              bottom: 20,
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Prepare for',
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: AppColor.lightBlack,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  'Examinations',
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: AppColor.black,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 7),
-                                                Text(
-                                                  'First Term Exam will \nbe conducted on \n11.Jun.25 ',
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    color: AppColor.grey,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  child: Image.asset(
-                                    AppImages.clock,
-                                    height: 72,
-                                    width: 60.3,
-                                  ),
-                                  left: 20,
-                                  top: 15,
-                                ),
-                                Positioned(
-                                  child: SizedBox(
-                                    height: 22,
-                                    width: 58,
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        color: AppColor.brown,
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                      child: Text(
-                                        'Jun 11',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontSize: 12,
-                                          color: AppColor.yellow,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  right: 25,
-                                  top: 48,
-                                ),
-                                // Positioned(
-                                //   child: TextButton(
-                                //     style: ButtonStyle(
-                                //       backgroundColor: WidgetStatePropertyAll(
-                                //         AppColor.brown,
-                                //       ),
-                                //     ),
-                                //     onPressed: () {},
-                                //     child: Text(
-                                //       'Jun 11',
-                                //       style: TextStyle(
-                                //         fontSize: 12,
-                                //         color: AppColor.yellow,
-                                //         fontWeight: FontWeight.bold,
-                                //       ),
-                                //     ),
-                                //   ),
-                                //   right: 25,
-                                //   top: 70,
-                                // ),
-                              ],
-                            ),
-
-                            SizedBox(width: 15),
-                            Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topRight,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    AppColor.greenG4.withOpacity(0.2),
-                                    AppColor.greenG2.withOpacity(0.4),
-                                    AppColor.greenG1.withOpacity(0.9),
-                                    AppColor.greenG1.withOpacity(0.9),
-                                  ],
-                                ),
-                                // border: Border.all(color: Colors.black12),
-                                //  color: AppColor.white,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 8,
-                                  left: 8,
-                                  right: 8,
-                                  bottom: 20,
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              begin: Alignment.topRight,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                AppColor.white,
-                                                AppColor.white,
-                                                AppColor.white,
-                                                AppColor.white,
-                                                AppColor.white,
-                                                AppColor.white.withOpacity(0.1),
-                                              ],
-                                            ),
-
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                          ),
-
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 18,
-                                              left: 15,
-                                              right: 20,
-                                              bottom: 50,
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Upcoming Saturday\nHalf day School',
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    fontSize: 12,
-                                                    color: AppColor.black,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 5),
-                                                Text(
-                                                  '16-Jun-25',
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    fontSize: 10,
-                                                    color: AppColor.grey,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 21),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                    left: 45.0,
-                                                  ),
-                                                  child: InkWell(
-                                                    onTap: () {},
-                                                    child: Image.asset(
-                                                      AppImages
-                                                          .greenButtomArrow,
-                                                      height: 24,
-                                                      width: 23,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 20),
-                                        Text(
-                                          'Notice Board',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColor.lightBlack,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Positioned(
-                                      child: Image.asset(
-                                        AppImages.bag,
-                                        height: 45,
-                                        width: 43.75,
-                                      ),
-                                      top: 140,
-                                      left: 50,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 15),
-                            Stack(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topRight,
-                                      end: Alignment.centerRight,
-                                      colors: [
-                                        AppColor.blueCG1, // light blue
-                                        AppColor.blueCG2, // cyan
-                                        AppColor.blueCG3, // cyan
-                                      ],
-                                    ),
-                                    // border: Border.all(color: Colors.black12),
-                                    // color: AppColor.white,
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: 60,
-                                      right: 10,
-                                      left: 10,
-                                      bottom: 8,
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: AppColor.white,
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                              top: 30,
-                                              right: 20,
-                                              left: 15,
-                                              bottom: 15,
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(
-                                                  height: 22,
-                                                  width: 58,
-                                                  child: Container(
-                                                    alignment: Alignment.center,
-                                                    decoration: BoxDecoration(
-                                                      color: AppColor.lightBlue,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            15,
-                                                          ),
-                                                    ),
-                                                    child: Text(
-                                                      'Jun 11',
-                                                      style:
-                                                          GoogleFont.ibmPlexSans(
-                                                            fontSize: 12,
-                                                            color:
-                                                                AppColor
-                                                                    .textBlue,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(height: 6),
-                                                Text(
-                                                  'Second-Term \nFees',
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: AppColor.black,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 8),
-                                                Divider(),
-                                                SizedBox(height: 6),
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        'Know More',
-                                                        style:
-                                                            GoogleFont.ibmPlexSans(
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  AppColor
-                                                                      .blueG2,
-                                                            ),
-                                                      ),
-                                                      SizedBox(width: 5),
-                                                      Image.asset(
-                                                        AppImages.rightArrow,
-                                                        height: 7,
-                                                        color: AppColor.blueG2,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  child: Image.asset(
-                                    AppImages.wallet,
-                                    height: 81,
-                                    width: 67.84,
-                                  ),
-                                  left: 20,
-                                  top: 15,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomRight,
-                        end: Alignment.centerRight,
-                        colors: [
-                          AppColor.lightGrey,
-                          AppColor.lightGrey,
-                          AppColor.lightGrey,
-                          AppColor.white,
-                        ],
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // ---------- Header ----------
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Your Tasks',
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColor.black,
-                                  ),
-                                ),
-                                const Spacer(),
-                                PopupMenuButton<String>(
-                                  color: AppColor.white,
-                                  onSelected: (value) async {
-                                    setState(() {
-                                      selectedDay = value;
-                                    });
-
-                                    if (value == 'Today') {
-                                      selectedDate = DateTime.now();
-                                    } else if (value == 'Yesterday') {
-                                      selectedDate = DateTime.now().subtract(
-                                        const Duration(days: 1),
-                                      );
-                                    } else if (value == 'Custom Date') {
-                                      DateTime? picked = await showDatePicker(
-                                        context: context,
-                                        initialDate:
-                                            selectedDate ?? DateTime.now(),
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime(2100),
-                                        builder: (context, child) {
-                                          return Theme(
-                                            data: Theme.of(context).copyWith(
-                                              dialogBackgroundColor:
-                                                  AppColor.white,
-                                              colorScheme: ColorScheme.light(
-                                                primary: AppColor.blueG2,
-                                                onPrimary: Colors.white,
-                                                onSurface: AppColor.black,
-                                              ),
-                                              textButtonTheme:
-                                                  TextButtonThemeData(
-                                                    style: TextButton.styleFrom(
-                                                      foregroundColor:
-                                                          AppColor.blueG2,
-                                                    ),
-                                                  ),
-                                            ),
-                                            child: child!,
-                                          );
-                                        },
-                                      );
-
-                                      if (picked != null) {
-                                        setState(() {
-                                          selectedDate = picked;
-                                        });
-                                      }
-                                    }
-                                  },
-                                  itemBuilder:
-                                      (context) => [
-                                        _buildMenuItem('Today'),
-                                        _buildMenuItem('Yesterday'),
-                                        _buildMenuItem('Custom Date'),
-                                      ],
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 8,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColor.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          selectedDay ?? 'Select Date',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColor.black,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Icon(
-                                          Icons.keyboard_arrow_down_outlined,
-                                          size: 20,
-                                          color: AppColor.black,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          // ---------- Task List with Subject Filter ----------
-                          Obx(() {
-                            if (controller.isLoading.value) {
-                              return AppLoader.circularLoader();
-                            }
-
-                            final tasks =
-                                controller.studentHomeData.value?.tasks ?? [];
-
-                            // filter tasks by selected date first
-                            final dateFilteredTasks =
-                                tasks.where((task) {
-                                  if (selectedDate == null) return true;
-
-                                  final taskDate =
-                                      DateTime.parse(
-                                        task.date.toString(),
-                                      ).toLocal();
-                                  return taskDate.year == selectedDate!.year &&
-                                      taskDate.month == selectedDate!.month &&
-                                      taskDate.day == selectedDate!.day;
-                                }).toList();
-
-                            // subjects available only for that date
-                            final validSubjects =
-                                dateFilteredTasks
-                                    .map((e) => e.subject)
-                                    .toSet()
-                                    .toList();
-
-                            // apply subject filter
-                            final filteredTasks =
-                                dateFilteredTasks.where((task) {
-                                  return selectedSubject == null ||
-                                      selectedSubject == 'All' ||
-                                      task.subject == selectedSubject;
-                                }).toList();
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // ---------- Subject Filter Row ----------
-                                if (validSubjects.isNotEmpty) ...[
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: [
-                                        // Add "All" button always
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0,
-                                          ),
-                                          child: ElevatedButton(
-                                            style: ButtonStyle(
-                                              elevation:
-                                                  const MaterialStatePropertyAll(
-                                                    0,
-                                                  ),
-                                              backgroundColor:
-                                                  MaterialStatePropertyAll(
-                                                    selectedSubject == 'All'
-                                                        ? AppColor.white
-                                                        : AppColor.lightGrey,
-                                                  ),
-                                              side: MaterialStatePropertyAll(
-                                                BorderSide(
-                                                  color:
-                                                      selectedSubject == 'All'
-                                                          ? AppColor.blue
-                                                          : AppColor.lightGrey,
-                                                  width: 2,
-                                                ),
-                                              ),
-                                              shape: MaterialStatePropertyAll(
-                                                RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                ),
-                                              ),
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                selectedSubject = 'All';
-                                              });
-                                            },
-                                            child: Text(
-                                              'All',
-                                              style: GoogleFont.ibmPlexSans(
-                                                color:
-                                                    selectedSubject == 'All'
-                                                        ? AppColor.blue
-                                                        : AppColor.grey,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-
-                                        // Render only subjects having tasks for selected date
-                                        ...validSubjects.map((subject) {
-                                          final isSelected =
-                                              selectedSubject == subject;
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                              right: 8.0,
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // ---------- Subject Filter Row ----------
+                                  if (validSubjects.isNotEmpty) ...[
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: [
+                                          // Add "All" button always
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0,
                                             ),
                                             child: ElevatedButton(
                                               style: ButtonStyle(
@@ -1831,14 +1817,14 @@ class _HomeScreenState extends State<HomeTab>
                                                     ),
                                                 backgroundColor:
                                                     MaterialStatePropertyAll(
-                                                      isSelected
+                                                      selectedSubject == 'All'
                                                           ? AppColor.white
                                                           : AppColor.lightGrey,
                                                     ),
                                                 side: MaterialStatePropertyAll(
                                                   BorderSide(
                                                     color:
-                                                        isSelected
+                                                        selectedSubject == 'All'
                                                             ? AppColor.blue
                                                             : AppColor
                                                                 .lightGrey,
@@ -1856,253 +1842,318 @@ class _HomeScreenState extends State<HomeTab>
                                               ),
                                               onPressed: () {
                                                 setState(() {
-                                                  selectedSubject = subject;
+                                                  selectedSubject = 'All';
                                                 });
                                               },
                                               child: Text(
-                                                subject,
+                                                'All',
                                                 style: GoogleFont.ibmPlexSans(
                                                   color:
-                                                      isSelected
+                                                      selectedSubject == 'All'
                                                           ? AppColor.blue
                                                           : AppColor.grey,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
-                                          );
-                                        }).toList(),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 25),
-                                ],
+                                          ),
 
-                                // ---------- Tasks or Empty State ----------
-                                if (filteredTasks.isEmpty)
-                                  Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: Center(
-                                      child: Text(
-                                        'No tasks available',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontSize: 14,
-                                          color: AppColor.grey,
-                                        ),
+                                          // Render only subjects having tasks for selected date
+                                          ...validSubjects.map((subject) {
+                                            final isSelected =
+                                                selectedSubject == subject;
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                right: 8.0,
+                                              ),
+                                              child: ElevatedButton(
+                                                style: ButtonStyle(
+                                                  elevation:
+                                                      const MaterialStatePropertyAll(
+                                                        0,
+                                                      ),
+                                                  backgroundColor:
+                                                      MaterialStatePropertyAll(
+                                                        isSelected
+                                                            ? AppColor.white
+                                                            : AppColor
+                                                                .lightGrey,
+                                                      ),
+                                                  side: MaterialStatePropertyAll(
+                                                    BorderSide(
+                                                      color:
+                                                          isSelected
+                                                              ? AppColor.blue
+                                                              : AppColor
+                                                                  .lightGrey,
+                                                      width: 2,
+                                                    ),
+                                                  ),
+                                                  shape: MaterialStatePropertyAll(
+                                                    RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            20,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedSubject = subject;
+                                                  });
+                                                },
+                                                child: Text(
+                                                  subject,
+                                                  style: GoogleFont.ibmPlexSans(
+                                                    color:
+                                                        isSelected
+                                                            ? AppColor.blue
+                                                            : AppColor.grey,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ],
                                       ),
                                     ),
-                                  )
-                                else
-                                  Column(
-                                    children:
-                                        filteredTasks.map((task) {
-                                          final taskDate =
-                                              DateTime.parse(
-                                                task.date.toString(),
-                                              ).toLocal();
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                              bottom: 16,
-                                            ),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: AppColor.white,
-                                                border: Border.all(
-                                                  color: AppColor.grey
-                                                      .withOpacity(0.1),
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
+                                    const SizedBox(height: 25),
+                                  ],
+
+                                  // ---------- Tasks or Empty State ----------
+                                  if (filteredTasks.isEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: Center(
+                                        child: Text(
+                                          'No tasks available',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 14,
+                                            color: AppColor.grey,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    Column(
+                                      children:
+                                          filteredTasks.map((task) {
+                                            final taskDate =
+                                                DateTime.parse(
+                                                  task.date.toString(),
+                                                ).toLocal();
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                bottom: 16,
                                               ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 20,
-                                                    vertical: 15,
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: AppColor.white,
+                                                  border: Border.all(
+                                                    color: AppColor.grey
+                                                        .withOpacity(0.1),
                                                   ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: Text(
-                                                          task.title,
-                                                          style:
-                                                              GoogleFont.ibmPlexSans(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                fontSize: 16,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () async {
-                                                          if (task.type ==
-                                                              'Quiz') {
-                                                            // Optional: quick loader
-                                                            showDialog(
-                                                              context: context,
-                                                              barrierDismissible:
-                                                                  false,
-                                                              builder:
-                                                                  (_) => Center(
-                                                                    child: AppLoader.circularLoader(
-                                                                      color:
-                                                                          AppColor
-                                                                              .black,
-                                                                    ),
-                                                                  ),
-                                                            );
-
-                                                            final result =
-                                                                await Get.find<
-                                                                      QuizController
-                                                                    >()
-                                                                    .tryGetResult(
-                                                                      task.id,
-                                                                    );
-
-                                                            if (Navigator.canPop(
-                                                              context,
-                                                            ))
-                                                              Navigator.pop(
-                                                                context,
-                                                              );
-
-                                                            if (!context
-                                                                .mounted)
-                                                              return;
-
-                                                            if (result !=
-                                                                null) {
-                                                              // Already submitted => go to result screen
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (
-                                                                        _,
-                                                                      ) => QuizResultScreen(
-                                                                        data:
-                                                                            result,
-                                                                      ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 20,
+                                                      vertical: 15,
+                                                    ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Text(
+                                                            task.title,
+                                                            style:
+                                                                GoogleFont.ibmPlexSans(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize: 16,
                                                                 ),
+                                                          ),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () async {
+                                                            if (task.type ==
+                                                                'Quiz') {
+                                                              // Optional: quick loader
+                                                              showDialog(
+                                                                context:
+                                                                    context,
+                                                                barrierDismissible:
+                                                                    false,
+                                                                builder:
+                                                                    (
+                                                                      _,
+                                                                    ) => Center(
+                                                                      child: AppLoader.circularLoader(
+                                                                        color:
+                                                                            AppColor.black,
+                                                                      ),
+                                                                    ),
                                                               );
+
+                                                              final result =
+                                                                  await Get.find<
+                                                                        QuizController
+                                                                      >()
+                                                                      .tryGetResult(
+                                                                        task.id,
+                                                                      );
+
+                                                              if (Navigator.canPop(
+                                                                context,
+                                                              ))
+                                                                Navigator.pop(
+                                                                  context,
+                                                                );
+
+                                                              if (!context
+                                                                  .mounted)
+                                                                return;
+
+                                                              if (result !=
+                                                                  null) {
+                                                                // Already submitted => go to result screen
+                                                                Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (
+                                                                          _,
+                                                                        ) => QuizResultScreen(
+                                                                          data:
+                                                                              result,
+                                                                        ),
+                                                                  ),
+                                                                );
+                                                              } else {
+                                                                // Not attempted => go to quiz screen
+                                                                Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (
+                                                                          _,
+                                                                        ) => QuizScreen(
+                                                                          quizId:
+                                                                              task.id,
+                                                                        ),
+                                                                  ),
+                                                                );
+                                                              }
                                                             } else {
-                                                              // Not attempted => go to quiz screen
                                                               Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
                                                                   builder:
                                                                       (
                                                                         _,
-                                                                      ) => QuizScreen(
-                                                                        quizId:
+                                                                      ) => TaskDetail(
+                                                                        teacherImage:
+                                                                            task.teacher_image,
+                                                                        id:
                                                                             task.id,
                                                                       ),
                                                                 ),
                                                               );
                                                             }
-                                                          } else {
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (
-                                                                      _,
-                                                                    ) => TaskDetail(
-
-                                                                      id: task.id,
-                                                                    ),
+                                                          },
+                                                          child: Row(
+                                                            children: [
+                                                              Text(
+                                                                'View',
+                                                                style: GoogleFont.ibmPlexSans(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color:
+                                                                      AppColor
+                                                                          .blue,
+                                                                ),
                                                               ),
-                                                            );
-                                                          }
-                                                        },
-                                                        child: Row(
-                                                          children: [
-                                                            Text(
-                                                              'View',
-                                                              style: GoogleFont.ibmPlexSans(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
+                                                              const SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              Icon(
+                                                                Icons
+                                                                    .arrow_forward_ios_outlined,
                                                                 color:
                                                                     AppColor
                                                                         .blue,
+                                                                size: 11,
                                                               ),
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Icon(
-                                                              Icons
-                                                                  .arrow_forward_ios_outlined,
-                                                              color:
-                                                                  AppColor.blue,
-                                                              size: 11,
-                                                            ),
-                                                          ],
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(height: 6),
-                                                  Text(
-                                                    task.description,
-                                                    style:
-                                                        GoogleFont.ibmPlexSans(
-                                                          fontSize: 12,
-                                                          color: AppColor.grey,
+                                                      ],
+                                                    ),
+                                                    const SizedBox(height: 6),
+                                                    Text(
+                                                      task.description,
+                                                      style:
+                                                          GoogleFont.ibmPlexSans(
+                                                            fontSize: 12,
+                                                            color:
+                                                                AppColor.grey,
+                                                          ),
+                                                    ),
+                                                    const SizedBox(height: 10),
+                                                    const Divider(),
+                                                    const SizedBox(height: 6),
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Text(
+                                                            'Assigned By: ${task.assignedByName}',
+                                                            style:
+                                                                GoogleFont.ibmPlexSans(
+                                                                  fontSize: 12,
+                                                                ),
+                                                          ),
                                                         ),
-                                                  ),
-                                                  const SizedBox(height: 10),
-                                                  const Divider(),
-                                                  const SizedBox(height: 6),
-                                                  Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: Text(
-                                                          'Assigned By: ${task.assignedByName}',
+                                                        Text(
+                                                          DateFormat(
+                                                            'hh:mm a',
+                                                          ).format(taskDate),
                                                           style:
                                                               GoogleFont.ibmPlexSans(
+                                                                color:
+                                                                    AppColor
+                                                                        .lowGrey,
                                                                 fontSize: 12,
                                                               ),
                                                         ),
-                                                      ),
-                                                      Text(
-                                                        DateFormat(
-                                                          'hh:mm a',
-                                                        ).format(taskDate),
-                                                        style:
-                                                            GoogleFont.ibmPlexSans(
-                                                              color:
-                                                                  AppColor
-                                                                      .lowGrey,
-                                                              fontSize: 12,
-                                                            ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          );
-                                        }).toList(),
-                                  ),
-                              ],
-                            );
-                          }),
-                        ],
+                                            );
+                                          }).toList(),
+                                    ),
+                                ],
+                              );
+                            }),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }

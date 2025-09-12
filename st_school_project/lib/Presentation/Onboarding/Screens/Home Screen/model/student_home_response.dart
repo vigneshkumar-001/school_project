@@ -137,6 +137,7 @@ class Task {
   final String subject;         // default ''
   final int subjectId;          // default 0
   final String type;            // default ''
+  final String teacher_image;            // default ''
 
   Task({
     required this.id,
@@ -145,6 +146,7 @@ class Task {
     required this.date,
     required this.time,
     required this.assignedByName,
+    required this.teacher_image,
     required this.subject,
     required this.subjectId,
     required this.type,
@@ -155,6 +157,7 @@ class Task {
       return Task(
         id: (json['id'] as int?) ?? 0,
         title: (json['title'] as String?) ?? '',
+        teacher_image: (json['teacher_image'] as String?) ?? '',
         description: (json['description'] as String?) ?? '',
         date: _parseDate(json['date']),
         time: _parseDate(json['time']),
@@ -171,6 +174,7 @@ class Task {
       return Task(
         id: (json['id'] as int?) ?? 0,
         title: (json['title'] as String?) ?? '',
+        teacher_image: (json['teacher_image'] as String?) ?? '',
         description: (json['description'] as String?) ?? '',
         date: DateTime.now(),
         time: DateTime.now(),
@@ -190,6 +194,7 @@ class Task {
     'time': time.toIso8601String(),
     'assigned_by_name': assignedByName,
     'subject': subject,
+    'teacher_image': teacher_image,
     'subject_id': subjectId,
     'type': type,
   };

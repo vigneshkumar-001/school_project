@@ -97,132 +97,137 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          _pages[_prevIndex],
-          SlideTransition(
-            position: _slideAnimation,
-            child: _pages[_selectedIndex],
-          ),
-        ],
-      ),
-      bottomNavigationBar: Obx(() {
-        final String? profileUrl =
-            teacherListController
-                .teacherListResponse
-                .value
-                ?.data
-                ?.student_image;
-
-        final siblings = controller.siblingsList;
-        final activeStudent = siblings.firstWhere(
-          (s) => s.isActive == true,
-          orElse: () => siblings.first,
-        );
-        final remainingStudent = siblings.firstWhere(
-          (s) => s.id != activeStudent.id,
-          orElse: () => siblings.first,
-        );
-
-        return BottomNavigationBar(
-          backgroundColor: AppColor.white,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: _selectedIndex,
-          onTap: _onTabTapped,
-          selectedItemColor: AppColor.blueG2,
-          unselectedItemColor: AppColor.lightBlack,
-          selectedLabelStyle: GoogleFont.ibmPlexSans(
-            fontWeight: FontWeight.bold,
-          ),
-          unselectedLabelStyle: GoogleFont.ibmPlexSans(
-            fontWeight: FontWeight.w500,
-            fontSize: 10,
-          ),
-
-          items: [
-            BottomNavigationBarItem(
-              icon: Image.asset(AppImages.bottum0, height: 26),
-              activeIcon: Image.asset(AppImages.bottum0select, height: 30),
-              label: 'Home',
+    return WillPopScope(
+      onWillPop: () async {
+        return await false;
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            _pages[_prevIndex],
+            SlideTransition(
+              position: _slideAnimation,
+              child: _pages[_selectedIndex],
             ),
-            BottomNavigationBarItem(
-              icon: Image.asset(AppImages.bottum3, height: 26),
-              activeIcon: Image.asset(AppImages.bottum3select, height: 30),
-              label: 'Announcements',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset(AppImages.bottum1, height: 26),
-              activeIcon: Image.asset(AppImages.bottum1select, height: 30),
-              label: 'Tasks',
-            ),
-            BottomNavigationBarItem(
-              icon: Image.asset(AppImages.bottum2, height: 26),
-              activeIcon: Image.asset(AppImages.bottum2select, height: 30),
-              label: 'Attendance',
-            ),
-            BottomNavigationBarItem(
-              icon:
-                  (activeStudent.avatar != null &&
-                          activeStudent.avatar.isNotEmpty)
-                      ? ClipOval(
-                        child: Image.network(
-                          activeStudent.avatar,
-                          height: 30,
-                          width: 30,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              AppImages.moreSimage1,
-                              height: 49,
-                              width: 30,
-                              fit: BoxFit.cover,
-                            );
-                          },
-                        ),
-                      )
-                      : Image.asset(
-                        AppImages.moreSimage1,
-                        height: 30,
-                        width: 30,
-                      ), // f
-              activeIcon:
-                  (activeStudent.avatar != null &&
-                          activeStudent.avatar.isNotEmpty)
-                      ? ClipOval(
-                        child: Image.network(
-                          activeStudent.avatar,
-                          height: 30,
-                          width: 30,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              AppImages.moreSimage1,
-                              height: 49,
-                              width: 30,
-                              fit: BoxFit.cover,
-                            );
-                          },
-                        ),
-                      )
-                      : Image.asset(
-                        AppImages.moreSimage1,
-                        height: 30,
-                        width: 30,
-                      ), // fallback
-              label: 'More',
-            ),
-            // BottomNavigationBarItem(
-            //   icon: Image.asset(AppImages.moreSimage1, height: 26, width: 26),
-            //   activeIcon: Image.network(
-            //     profileUrl.toString() ?? '',
-            //     height: 30,
-            //   ),
-            //   label: 'More',
-            // ),
           ],
-        );
-      }),
+        ),
+        bottomNavigationBar: Obx(() {
+          final String? profileUrl =
+              teacherListController
+                  .teacherListResponse
+                  .value
+                  ?.data
+                  ?.student_image;
+
+          final siblings = controller.siblingsList;
+          final activeStudent = siblings.firstWhere(
+            (s) => s.isActive == true,
+            orElse: () => siblings.first,
+          );
+          final remainingStudent = siblings.firstWhere(
+            (s) => s.id != activeStudent.id,
+            orElse: () => siblings.first,
+          );
+
+          return BottomNavigationBar(
+            backgroundColor: AppColor.white,
+            type: BottomNavigationBarType.fixed,
+            currentIndex: _selectedIndex,
+            onTap: _onTabTapped,
+            selectedItemColor: AppColor.blueG2,
+            unselectedItemColor: AppColor.lightBlack,
+            selectedLabelStyle: GoogleFont.ibmPlexSans(
+              fontWeight: FontWeight.bold,
+            ),
+            unselectedLabelStyle: GoogleFont.ibmPlexSans(
+              fontWeight: FontWeight.w500,
+              fontSize: 10,
+            ),
+
+            items: [
+              BottomNavigationBarItem(
+                icon: Image.asset(AppImages.bottum0, height: 26),
+                activeIcon: Image.asset(AppImages.bottum0select, height: 30),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset(AppImages.bottum3, height: 26),
+                activeIcon: Image.asset(AppImages.bottum3select, height: 30),
+                label: 'Announcements',
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset(AppImages.bottum1, height: 26),
+                activeIcon: Image.asset(AppImages.bottum1select, height: 30),
+                label: 'Tasks',
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset(AppImages.bottum2, height: 26),
+                activeIcon: Image.asset(AppImages.bottum2select, height: 30),
+                label: 'Attendance',
+              ),
+              BottomNavigationBarItem(
+                icon:
+                    (activeStudent.avatar != null &&
+                            activeStudent.avatar.isNotEmpty)
+                        ? ClipOval(
+                          child: Image.network(
+                            activeStudent.avatar,
+                            height: 30,
+                            width: 30,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                AppImages.moreSimage1,
+                                height: 49,
+                                width: 30,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          ),
+                        )
+                        : Image.asset(
+                          AppImages.moreSimage1,
+                          height: 30,
+                          width: 30,
+                        ), // f
+                activeIcon:
+                    (activeStudent.avatar != null &&
+                            activeStudent.avatar.isNotEmpty)
+                        ? ClipOval(
+                          child: Image.network(
+                            activeStudent.avatar,
+                            height: 30,
+                            width: 30,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                AppImages.moreSimage1,
+                                height: 49,
+                                width: 30,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          ),
+                        )
+                        : Image.asset(
+                          AppImages.moreSimage1,
+                          height: 30,
+                          width: 30,
+                        ), // fallback
+                label: 'More',
+              ),
+              // BottomNavigationBarItem(
+              //   icon: Image.asset(AppImages.moreSimage1, height: 26, width: 26),
+              //   activeIcon: Image.network(
+              //     profileUrl.toString() ?? '',
+              //     height: 30,
+              //   ),
+              //   label: 'More',
+              // ),
+            ],
+          );
+        }),
+      ),
     );
   }
 }
