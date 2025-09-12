@@ -1542,11 +1542,17 @@ class _QuizScreenState extends State<QuizScreen> {
             const SizedBox(height: 22),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: LinearProgressIndicator(
-                minHeight: 6,
-                value: pct.clamp(0.0, 1.0),
-                backgroundColor: AppColor.lowGery1,
-                valueColor: AlwaysStoppedAnimation<Color>(AppColor.greenMore1),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: LinearProgressIndicator(
+                  minHeight: 6,
+                  value: pct.clamp(0.0, 1.0),
+                  borderRadius: BorderRadius.circular(16),
+                  backgroundColor: AppColor.lowGery1,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppColor.greenMore1,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 30),
@@ -1562,11 +1568,15 @@ class _QuizScreenState extends State<QuizScreen> {
     final value = total == 0 ? 0.0 : answered / total;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: LinearProgressIndicator(
-        minHeight: 6,
-        value: value.clamp(0.0, 1.0),
-        backgroundColor: AppColor.lowGery1,
-        valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: LinearProgressIndicator(
+          minHeight: 6,
+          value: value.clamp(0.0, 1.0),
+          borderRadius: BorderRadius.circular(16),
+          backgroundColor: AppColor.lowGery1,
+          valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
+        ),
       ),
     );
   }

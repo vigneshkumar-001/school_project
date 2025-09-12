@@ -14,7 +14,7 @@ import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/custom_container.dart' show CustomContainer;
 import '../../../../Core/Widgets/custom_textfield.dart';
 import 'model/announcement_details_response.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
 
 class AnnouncementsScreen extends StatefulWidget {
   const AnnouncementsScreen({super.key});

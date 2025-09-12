@@ -31,6 +31,7 @@ class _TaskDetailState extends State<TaskDetail> {
       taskController.homeWorkIdDetails(id: widget.id);
     });
   }
+
   void _openFullScreenNetwork(String url) {
     if (url.isEmpty) return;
     showDialog(
@@ -38,20 +39,18 @@ class _TaskDetailState extends State<TaskDetail> {
       barrierColor: Colors.black.withOpacity(0.9),
       builder:
           (_) => GestureDetector(
-        onTap: () => Navigator.pop(context),
-        child: Center(
-          child: InteractiveViewer(
-            minScale: 0.5,
-            maxScale: 5,
-            child: Image.network(
-              url,
-
+            onTap: () => Navigator.pop(context),
+            child: Center(
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 5,
+                child: Image.network(url),
+              ),
             ),
           ),
-        ),
-      ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,7 +130,7 @@ class _TaskDetailState extends State<TaskDetail> {
                       children: [
                         if (topImage != null)
                           GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               _openFullScreenNetwork(topImage.content);
                             },
                             child: ClipRRect(
@@ -186,7 +185,7 @@ class _TaskDetailState extends State<TaskDetail> {
                                   return Padding(
                                     padding: const EdgeInsets.only(right: 12),
                                     child: GestureDetector(
-                                      onTap: (){
+                                      onTap: () {
                                         _openFullScreenNetwork(img.content);
                                       },
                                       child: ClipRRect(
@@ -293,10 +292,10 @@ class _TaskDetailState extends State<TaskDetail> {
                                           backgroundColor: Colors.transparent,
                                           child: ClipOval(
                                             child: Image.network(
-                                              widget.teacherImage .toString() ?? '',
+                                              widget.teacherImage.toString() ??
+                                                  '',
                                               fit: BoxFit.cover,
-                                              width:
-                                                  40,
+                                              width: 40,
                                               height: 40,
                                             ),
                                           ),
