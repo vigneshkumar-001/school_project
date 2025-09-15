@@ -11,7 +11,6 @@ import '../Utility/app_images.dart';
 import '../Utility/google_font.dart' show GoogleFont;
 import 'package:cached_network_image/cached_network_image.dart';
 
-
 class InputFormatterUtil {
   static List<TextInputFormatter> languageFormatter({required bool isTamil}) {
     return [
@@ -111,17 +110,17 @@ class CustomContainer {
                     children: [
                       CircleAvatar(
                         radius: 20, // smaller than 25
-                        backgroundColor: Colors.transparent, // optional: remove background
+                        backgroundColor:
+                            Colors.transparent, // optional: remove background
                         child: ClipOval(
                           child: Image.network(
                             avatarImage,
                             fit: BoxFit.cover,
-                            width: 40,  // control size of image
+                            width: 40, // control size of image
                             height: 40, // same as width
                           ),
                         ),
                       ),
-
 
                       SizedBox(height: 4),
                       Row(
@@ -206,6 +205,145 @@ class CustomContainer {
       ),
     );
   }
+
+  static Widget messageScreen({
+    required String time,
+    required String Date, // keep same param name to avoid breaking calls
+    String? Reacts, // optional
+    required Color backRoundColor,
+    required String mainText,
+    String? ImagePath, // optional
+    String sentTo = 'Kalai Selvi',
+    VoidCallback? IconOntap,
+  }) {
+    final bool hasReacts = (Reacts != null && Reacts.trim().isNotEmpty);
+    final bool hasImage = (ImagePath != null && ImagePath.trim().isNotEmpty);
+    final bool hasExtras = hasReacts || hasImage; // controls alignment
+
+    return Container(
+      decoration: BoxDecoration(
+        color: backRoundColor,
+        border: Border.all(color: AppColor.lightGrey, width: 1),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // top caption
+            Row(
+              children: [
+                Text(
+                  'Sent to ',
+                  style: GoogleFont.ibmPlexSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.grey,
+                  ),
+                ),
+                Text(
+                  sentTo,
+                  style: GoogleFont.ibmPlexSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: AppColor.grey,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // main text
+            Text(
+              mainText,
+              style: GoogleFont.ibmPlexSans(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: AppColor.black,
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // ===== META ROW =====
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment:
+                  hasExtras
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.center,
+              children: [
+                // date+time pill
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColor.black.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 10,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // date
+                        Text(
+                          Date,
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.grey,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        // time
+                        Text(
+                          time,
+                          style: GoogleFont.inter(
+                            fontSize: 12,
+                            color: AppColor.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // reacts (only if provided)
+                if (hasReacts) const SizedBox(width: 17),
+                if (hasReacts)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 11.0),
+                    child: Text(
+                      Reacts!,
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: AppColor.grey,
+                      ),
+                    ),
+                  ),
+
+                // image (only if provided)
+                if (hasImage) const SizedBox(width: 10),
+                if (hasImage)
+                  InkWell(
+                    onTap: IconOntap,
+                    child: Image.asset(
+                      ImagePath!,
+                      height: 42,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   static announcementsScreen({
     required String mainText,
     required String backRoundImage,
@@ -228,17 +366,22 @@ class CustomContainer {
               imageUrl: backRoundImage,
               fit: BoxFit.cover,
               width: double.infinity,
-              placeholder: (context, url) => Container(
-                height: 180, // adjust to your card height
-                alignment: Alignment.center,
-                child: const SizedBox(
-                  height: 24,
-                  width: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              ),
-              errorWidget: (context, url, error) =>
-              const Icon(Icons.broken_image, size: 40, color: Colors.grey),
+              placeholder:
+                  (context, url) => Container(
+                    height: 180, // adjust to your card height
+                    alignment: Alignment.center,
+                    child: const SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+              errorWidget:
+                  (context, url, error) => const Icon(
+                    Icons.broken_image,
+                    size: 40,
+                    color: Colors.grey,
+                  ),
             ),
           ),
 
@@ -317,7 +460,7 @@ class CustomContainer {
       ),
     );
   }
-/*
+  /*
   static announcementsScreen({
     required String mainText,
     required String backRoundImage,
@@ -607,8 +750,7 @@ class CustomContainer {
                     teacherImage,
                     fit: BoxFit.cover, // or contain if you prefer
                   ),
-                )
-
+                ),
               ],
             ),
           ),

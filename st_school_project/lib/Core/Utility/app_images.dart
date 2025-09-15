@@ -49,11 +49,13 @@ class AppImages {
   static String teacher3 = 'assets/images/Teacher3.png';
   static String teacher4 = 'assets/images/Teacher4.png';
   static String phoneIcon = 'assets/images/PhoneIcon.png';
+  static String likeImage = 'assets/images/Like Image.png';
 
   static String clockIcon = 'assets/images/clockIcon.png';
   static String phoneGreenIcon = 'assets/images/PhoneGreenIcon.png';
   static String tick = 'assets/images/tick.png';
   static String leftArrow = 'assets/images/leftArrow.png';
+  static String messageIcon = 'assets/images/Message Icon.png';
 
   static String admissionTop = 'assets/images/AdmissionTop.png';
   static String logOut = 'assets/images/LogOut.png';
