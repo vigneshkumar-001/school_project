@@ -1850,7 +1850,9 @@ class _TaskScreenState extends State<TaskScreen>
   final StudentHomeController controller = Get.put(StudentHomeController());
   DateTime currentMonth = DateTime(DateTime.now().year, DateTime.now().month);
   late ScrollController _scrollController;
-
+  ScrollController? _sheetScrollController;
+  final DraggableScrollableController _dragController =
+      DraggableScrollableController();
   final List<String> months = List.generate(
     12,
     (index) => DateFormat.MMMM().format(DateTime(0, index + 6)),
@@ -1891,12 +1893,29 @@ class _TaskScreenState extends State<TaskScreen>
 
     _scrollController = ScrollController();
 
+    _listScrollController =
+        ScrollController()..addListener(() {
+          final scrolled =
+              _listScrollController.hasClients &&
+              _listScrollController.offset > 0.5;
+          if (scrolled != _bodyScrolled) {
+            setState(() => _bodyScrolled = scrolled);
+          }
+        });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (taskController.tasks.isEmpty) {
         taskController.getTaskDetails();
       }
       scrollToSelectedDate();
     });
+  }
+
+  @override
+  void dispose() {
+    _listScrollController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void scrollToSelectedDate() {
@@ -1914,6 +1933,24 @@ class _TaskScreenState extends State<TaskScreen>
       if (scrollOffset < 0) scrollOffset = 0;
 
       _scrollController.jumpTo(scrollOffset);
+    }
+  }
+
+  void _scrollTop() {
+    // ensure sheet is fully expanded (optional)
+    _dragController.animateTo(
+      1.0,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOut,
+    );
+
+    final c = _sheetScrollController;
+    if (c != null && c.hasClients) {
+      c.animateTo(
+        0,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
+      );
     }
   }
 
@@ -2072,6 +2109,1138 @@ class _TaskScreenState extends State<TaskScreen>
   int index = 0;
   String selectedSubject = 'All';
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   super.build(context);
+  //   return Scaffold(
+  //     backgroundColor: AppColor.white,
+  //     body: Container(
+  //       decoration: BoxDecoration(
+  //         gradient: LinearGradient(
+  //           begin: Alignment.topLeft,
+  //           end: Alignment.centerRight,
+  //           colors: [AppColor.blueG1, AppColor.blueG2],
+  //         ),
+  //       ),
+  //       child: SafeArea(
+  //         child: SizedBox.expand(
+  //           child: Stack(
+  //             children: [
+  //               Positioned.fill(
+  //                 child: Image.asset(AppImages.jbg, fit: BoxFit.cover),
+  //               ),
+  //               Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   const SizedBox(height: 16),
+  //                   Padding(
+  //                     padding: const EdgeInsets.symmetric(horizontal: 16),
+  //                     child: Row(
+  //                       children: [
+  //                         GestureDetector(
+  //                           onTap: showMonthPicker,
+  //                           child: Row(
+  //                             mainAxisSize: MainAxisSize.min,
+  //                             children: [
+  //                               Text(
+  //                                 DateFormat('MMMM dd').format(selectedDate),
+  //                                 style: GoogleFont.ibmPlexSans(
+  //                                   color: Colors.white,
+  //                                   fontSize: 32,
+  //                                   fontWeight: FontWeight.bold,
+  //                                 ),
+  //                               ),
+  //                               SizedBox(width: 4),
+  //                               Icon(
+  //                                 Icons.keyboard_arrow_down,
+  //                                 color: AppColor.white,
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                   SizedBox(height: 20),
+  //                   SizedBox(
+  //                     height: 90,
+  //                     child: ListView.builder(
+  //                       controller: _scrollController,
+  //                       scrollDirection: Axis.horizontal,
+  //                       itemCount: getFullMonthDates(currentMonth).length,
+  //                       itemBuilder: (context, index) {
+  //                         final item = getFullMonthDates(currentMonth)[index];
+  //                         final date = item['fullDate'] as DateTime;
+  //                         final img =
+  //                             teacherListController.teacherListResponse.value;
+  //                         // Check if this date is selected
+  //                         final isSelected =
+  //                             selectedDate.year == date.year &&
+  //                             selectedDate.month == date.month &&
+  //                             selectedDate.day == date.day;
+  //
+  //                         // Count tasks for this date
+  //                         final tasksForDate =
+  //                             taskController.tasks.where((task) {
+  //                               final taskDate = task.date; // already DateTime
+  //                               return taskDate.year == date.year &&
+  //                                   taskDate.month == date.month &&
+  //                                   taskDate.day == date.day;
+  //                             }).toList();
+  //
+  //                         return GestureDetector(
+  //                           onTap: () {
+  //                             setState(() {
+  //                               selectedDate = date;
+  //                               scrollToSelectedDate();
+  //                             });
+  //                           },
+  //                           child: Container(
+  //                             width: 57,
+  //                             decoration:
+  //                                 isSelected
+  //                                     ? BoxDecoration(
+  //                                       color: Colors.white,
+  //                                       borderRadius: BorderRadius.circular(30),
+  //                                     )
+  //                                     : null,
+  //                             alignment: Alignment.center,
+  //                             child: Column(
+  //                               mainAxisAlignment: MainAxisAlignment.center,
+  //                               children: [
+  //                                 Text(
+  //                                   item['day'],
+  //                                   style: GoogleFont.ibmPlexSans(
+  //                                     color:
+  //                                         isSelected
+  //                                             ? Colors.blue
+  //                                             : Colors.white,
+  //                                     fontWeight: FontWeight.bold,
+  //                                   ),
+  //                                 ),
+  //                                 Text(
+  //                                   item['date'].toString(),
+  //                                   style: GoogleFont.ibmPlexSans(
+  //                                     color:
+  //                                         isSelected
+  //                                             ? Colors.blue
+  //                                             : Colors.white,
+  //                                     fontSize: 22,
+  //                                     fontWeight: FontWeight.bold,
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         );
+  //                       },
+  //                     ),
+  //                   ),
+  //
+  //                   const SizedBox(height: 16),
+  //                   Expanded(
+  //                     child: Stack(
+  //                       children: [
+  //                         DraggableScrollableSheet(
+  //                           controller: _dragController, // ⭐ optional but useful
+  //                           initialChildSize: 1.00,
+  //                           minChildSize: 0.60,
+  //                           maxChildSize: 1.00,
+  //                           builder: (context, scrollController) {
+  //                             _sheetScrollController ??= scrollController;
+  //                             return Container(
+  //                               padding: const EdgeInsets.only(top: 20),
+  //
+  //                               decoration: const BoxDecoration(
+  //                                 color: AppColor.white,
+  //                                 borderRadius: BorderRadius.vertical(
+  //                                   top: Radius.circular(30),
+  //                                 ),
+  //                                 boxShadow: [
+  //                                   BoxShadow(
+  //                                     color: Colors.black26,
+  //                                     blurRadius: 8,
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                               child: Column(
+  //                                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                                 children: [
+  //                                   Padding(
+  //                                     padding: const EdgeInsets.symmetric(
+  //                                       horizontal: 16,
+  //                                       vertical: 16,
+  //                                     ),
+  //                                     child: *//*Obx(() {
+  //                                       final siblings =
+  //                                           controller.siblingsList;
+  //                                       final activeStudent = siblings
+  //                                           .firstWhere(
+  //                                             (s) => s.isActive == true,
+  //                                             orElse: () => siblings.first,
+  //                                           );
+  //
+  //                                       // find first "other" student (if exists)
+  //                                       final remainingStudent = siblings
+  //                                           .firstWhere(
+  //                                             (s) => s.id != activeStudent.id,
+  //                                             orElse: () => siblings.first,
+  //                                           );
+  //                                       return Stack(
+  //                                         children: [
+  //                                           Row(
+  //                                             children: [
+  //                                               Text(
+  //                                                 'Your Tasks',
+  //                                                 style: GoogleFont.ibmPlexSans(
+  //                                                   fontSize: 28,
+  //                                                   fontWeight: FontWeight.w600,
+  //                                                   color: Colors.black,
+  //                                                 ),
+  //                                               ),
+  //                                               Spacer(),
+  //
+  //                                               Padding(
+  //                                                 padding:
+  //                                                     const EdgeInsets.symmetric(
+  //                                                       horizontal: 15.0,
+  //                                                       vertical: 10,
+  //                                                     ),
+  //                                                 child: InkWell(
+  //                                                   onTap: () {
+  //                                                     SwitchProfileSheet.show(
+  //                                                       context,
+  //                                                       students:
+  //                                                           controller
+  //                                                               .siblingsList,
+  //                                                       selectedStudent:
+  //                                                           controller
+  //                                                               .selectedStudent,
+  //                                                       onSwitch: (
+  //                                                         student,
+  //                                                       ) async {
+  //                                                         await controller
+  //                                                             .switchSiblings(
+  //                                                               id: student.id,
+  //                                                             );
+  //                                                         controller
+  //                                                             .selectStudent(
+  //                                                               student,
+  //                                                             );
+  //                                                       },
+  //                                                       onLogout: () async {
+  //                                                         await loginController
+  //                                                             .logout();
+  //                                                       },
+  //                                                     );
+  //                                                   },
+  //                                                   child: ClipRRect(
+  //                                                     borderRadius:
+  //                                                         BorderRadius.circular(
+  //                                                           10,
+  //                                                         ),
+  //                                                     child:
+  //                                                         (remainingStudent
+  //                                                                         .avatar !=
+  //                                                                     null &&
+  //                                                                 remainingStudent
+  //                                                                     .avatar
+  //                                                                     .isNotEmpty)
+  //                                                             ? Image.network(
+  //                                                               remainingStudent
+  //                                                                   .avatar,
+  //                                                               height: 30,
+  //                                                               width: 30,
+  //                                                               fit:
+  //                                                                   BoxFit
+  //                                                                       .cover,
+  //                                                               errorBuilder: (
+  //                                                                 context,
+  //                                                                 error,
+  //                                                                 stackTrace,
+  //                                                               ) {
+  //                                                                 return Image.asset(
+  //                                                                   AppImages
+  //                                                                       .moreSimage1,
+  //                                                                   height: 30,
+  //                                                                   width: 30,
+  //                                                                   fit:
+  //                                                                       BoxFit
+  //                                                                           .cover,
+  //                                                                 );
+  //                                                               },
+  //                                                             )
+  //                                                             : Image.asset(
+  //                                                               AppImages
+  //                                                                   .moreSimage1,
+  //                                                               height: 30,
+  //                                                               width: 30,
+  //                                                               fit:
+  //                                                                   BoxFit
+  //                                                                       .cover,
+  //                                                             ),
+  //                                                   ),
+  //                                                 ),
+  //                                               ),
+  //                                             ],
+  //                                           ),
+  //                                           Positioned(
+  //                                             right: 30,
+  //                                             top: 7,
+  //                                             child: InkWell(
+  //                                               onTap: () {
+  //                                                 SwitchProfileSheet.show(
+  //                                                   context,
+  //                                                   students:
+  //                                                       controller.siblingsList,
+  //                                                   selectedStudent:
+  //                                                       controller
+  //                                                           .selectedStudent,
+  //                                                   onSwitch: (student) async {
+  //                                                     await controller
+  //                                                         .switchSiblings(
+  //                                                           id: student.id,
+  //                                                         );
+  //                                                     controller.selectStudent(
+  //                                                       student,
+  //                                                     );
+  //                                                   },
+  //                                                   onLogout: () async {
+  //                                                     await loginController
+  //                                                         .logout();
+  //                                                     // Get.offAllNamed('/login');
+  //                                                   },
+  //                                                 );
+  //                                               },
+  //                                               child: InkWell(
+  //                                                 onTap: () {
+  //                                                   SwitchProfileSheet.show(
+  //                                                     context,
+  //                                                     students:
+  //                                                         controller
+  //                                                             .siblingsList,
+  //                                                     selectedStudent:
+  //                                                         controller
+  //                                                             .selectedStudent,
+  //                                                     onSwitch: (
+  //                                                       student,
+  //                                                     ) async {
+  //                                                       await controller
+  //                                                           .switchSiblings(
+  //                                                             id: student.id,
+  //                                                           );
+  //                                                       controller
+  //                                                           .selectStudent(
+  //                                                             student,
+  //                                                           );
+  //                                                     },
+  //                                                     onLogout: () async {
+  //                                                       await loginController
+  //                                                           .logout();
+  //                                                     },
+  //                                                   );
+  //                                                 },
+  //                                                 child: ClipRRect(
+  //                                                   borderRadius:
+  //                                                       BorderRadius.circular(
+  //                                                         10,
+  //                                                       ),
+  //                                                   child:
+  //                                                       (activeStudent.avatar !=
+  //                                                                   null &&
+  //                                                               activeStudent
+  //                                                                   .avatar
+  //                                                                   .isNotEmpty)
+  //                                                           ? Image.network(
+  //                                                             activeStudent
+  //                                                                 .avatar,
+  //                                                             height: 40,
+  //                                                             width: 40,
+  //                                                             fit: BoxFit.cover,
+  //                                                             errorBuilder: (
+  //                                                               context,
+  //                                                               error,
+  //                                                               stackTrace,
+  //                                                             ) {
+  //                                                               return Image.asset(
+  //                                                                 AppImages
+  //                                                                     .moreSimage1,
+  //                                                                 height: 49,
+  //                                                                 width: 49,
+  //                                                                 fit:
+  //                                                                     BoxFit
+  //                                                                         .cover,
+  //                                                               );
+  //                                                             },
+  //                                                           )
+  //                                                           : Image.asset(
+  //                                                             AppImages
+  //                                                                 .moreSimage1,
+  //                                                             height: 30,
+  //                                                             width: 40,
+  //                                                             fit: BoxFit.cover,
+  //                                                           ),
+  //                                                 ),
+  //                                               ),
+  //                                             ),
+  //                                           ),
+  //                                         ],
+  //                                       );
+  //                                     }),*//* Obx(() {
+  //                                       final siblings =
+  //                                           controller.siblingsList;
+  //
+  //                                       if (siblings.isEmpty) {
+  //                                         return SizedBox.shrink();
+  //                                       }
+  //
+  //                                       final activeStudent = siblings
+  //                                           .firstWhere(
+  //                                             (s) => s.isActive == true,
+  //                                             orElse: () => siblings.first,
+  //                                           );
+  //
+  //                                       // find first "other" student (if exists)
+  //                                       final remainingStudent = siblings
+  //                                           .firstWhere(
+  //                                             (s) => s.id != activeStudent.id,
+  //                                             orElse: () => siblings.first,
+  //                                           );
+  //
+  //                                       return Stack(
+  //                                         children: [
+  //                                           Row(
+  //                                             children: [
+  //                                               Text(
+  //                                                 'Your Tasks',
+  //                                                 style: GoogleFont.ibmPlexSans(
+  //                                                   fontSize: 28,
+  //                                                   fontWeight: FontWeight.w600,
+  //                                                   color: Colors.black,
+  //                                                 ),
+  //                                               ),
+  //                                               const Spacer(),
+  //
+  //                                               /// 👉 Show small avatar ONLY if more than 1 sibling
+  //                                               if (siblings.length > 1)
+  //                                                 Padding(
+  //                                                   padding:
+  //                                                       const EdgeInsets.symmetric(
+  //                                                         horizontal: 15.0,
+  //                                                         vertical: 10,
+  //                                                       ),
+  //                                                   child: InkWell(
+  //                                                     onTap: () {
+  //                                                       SwitchProfileSheet.show(
+  //                                                         context,
+  //                                                         students:
+  //                                                             controller
+  //                                                                 .siblingsList,
+  //                                                         selectedStudent:
+  //                                                             controller
+  //                                                                 .selectedStudent,
+  //                                                         onSwitch: (
+  //                                                           student,
+  //                                                         ) async {
+  //                                                           await controller
+  //                                                               .switchSiblings(
+  //                                                                 id:
+  //                                                                     student
+  //                                                                         .id,
+  //                                                               );
+  //                                                           controller
+  //                                                               .selectStudent(
+  //                                                                 student,
+  //                                                               );
+  //                                                         },
+  //                                                         onLogout: () async {
+  //                                                           await loginController
+  //                                                               .logout();
+  //                                                         },
+  //                                                       );
+  //                                                     },
+  //                                                     child: ClipRRect(
+  //                                                       borderRadius:
+  //                                                           BorderRadius.circular(
+  //                                                             10,
+  //                                                           ),
+  //                                                       child:
+  //                                                           (remainingStudent
+  //                                                                           .avatar !=
+  //                                                                       null &&
+  //                                                                   remainingStudent
+  //                                                                       .avatar
+  //                                                                       .isNotEmpty)
+  //                                                               ? Image.network(
+  //                                                                 remainingStudent
+  //                                                                     .avatar,
+  //                                                                 height: 30,
+  //                                                                 width: 30,
+  //                                                                 fit:
+  //                                                                     BoxFit
+  //                                                                         .cover,
+  //                                                                 errorBuilder: (
+  //                                                                   context,
+  //                                                                   error,
+  //                                                                   stackTrace,
+  //                                                                 ) {
+  //                                                                   return Image.asset(
+  //                                                                     AppImages
+  //                                                                         .moreSimage1,
+  //                                                                     height:
+  //                                                                         30,
+  //                                                                     width: 30,
+  //                                                                     fit:
+  //                                                                         BoxFit
+  //                                                                             .cover,
+  //                                                                   );
+  //                                                                 },
+  //                                                               )
+  //                                                               : Image.asset(
+  //                                                                 AppImages
+  //                                                                     .moreSimage1,
+  //                                                                 height: 30,
+  //                                                                 width: 30,
+  //                                                                 fit:
+  //                                                                     BoxFit
+  //                                                                         .cover,
+  //                                                               ),
+  //                                                     ),
+  //                                                   ),
+  //                                                 ),
+  //                                             ],
+  //                                           ),
+  //
+  //                                           Positioned(
+  //                                             right: 30,
+  //                                             bottom: 0,
+  //                                             child: InkWell(
+  //                                               onTap: () {
+  //                                                 SwitchProfileSheet.show(
+  //                                                   context,
+  //                                                   students:
+  //                                                       controller.siblingsList,
+  //                                                   selectedStudent:
+  //                                                       controller
+  //                                                           .selectedStudent,
+  //                                                   onSwitch: (student) async {
+  //                                                     await controller
+  //                                                         .switchSiblings(
+  //                                                           id: student.id,
+  //                                                         );
+  //                                                     controller.selectStudent(
+  //                                                       student,
+  //                                                     );
+  //                                                   },
+  //                                                   onLogout: () async {
+  //                                                     await loginController
+  //                                                         .logout();
+  //                                                   },
+  //                                                 );
+  //                                               },
+  //                                               child: ClipRRect(
+  //                                                 borderRadius:
+  //                                                     BorderRadius.circular(10),
+  //                                                 child:
+  //                                                     (activeStudent.avatar !=
+  //                                                                 null &&
+  //                                                             activeStudent
+  //                                                                 .avatar
+  //                                                                 .isNotEmpty)
+  //                                                         ? Image.network(
+  //                                                           activeStudent
+  //                                                               .avatar,
+  //                                                           height: 40,
+  //                                                           width: 40,
+  //                                                           fit: BoxFit.cover,
+  //                                                           errorBuilder: (
+  //                                                             context,
+  //                                                             error,
+  //                                                             stackTrace,
+  //                                                           ) {
+  //                                                             return Image.asset(
+  //                                                               AppImages
+  //                                                                   .moreSimage1,
+  //                                                               height: 40,
+  //                                                               width: 40,
+  //                                                               fit:
+  //                                                                   BoxFit
+  //                                                                       .cover,
+  //                                                             );
+  //                                                           },
+  //                                                         )
+  //                                                         : Image.asset(
+  //                                                           AppImages
+  //                                                               .moreSimage1,
+  //                                                           height: 40,
+  //                                                           width: 40,
+  //                                                           fit: BoxFit.cover,
+  //                                                         ),
+  //                                               ),
+  //                                             ),
+  //                                           ),
+  //                                         ],
+  //                                       );
+  //                                     }),
+  //                                   ),
+  //                                   Expanded(
+  //                                     child: Column(
+  //                                       crossAxisAlignment:
+  //                                           CrossAxisAlignment.start,
+  //                                       children: [
+  //                                         Obx(() {
+  //                                           // 1. Filter tasks by selectedDate first
+  //                                           final tasksForDate =
+  //                                               taskController.tasks.where((
+  //                                                 task,
+  //                                               ) {
+  //                                                 final taskDate =
+  //                                                     DateTime.parse(
+  //                                                       task.time.toString(),
+  //                                                     );
+  //                                                 return taskDate.year ==
+  //                                                         selectedDate.year &&
+  //                                                     taskDate.month ==
+  //                                                         selectedDate.month &&
+  //                                                     taskDate.day ==
+  //                                                         selectedDate.day;
+  //                                               }).toList();
+  //
+  //                                           // 2. Build subjects only from tasksForDate
+  //                                           final subjects = <String>{};
+  //                                           if (tasksForDate.isNotEmpty) {
+  //                                             subjects.add('All');
+  //                                             subjects.addAll(
+  //                                               tasksForDate.map(
+  //                                                 (t) => t.subject,
+  //                                               ),
+  //                                             );
+  //                                           }
+  //                                           final subjectList =
+  //                                               subjects.toList();
+  //
+  //                                           // if (subjectList.isEmpty) {
+  //                                           //   return const Padding(
+  //                                           //     padding: EdgeInsets.all(16),
+  //                                           //     child: Text(
+  //                                           //       'No tasks available',
+  //                                           //       style: TextStyle(color: Colors.grey),
+  //                                           //     ),
+  //                                           //   );
+  //                                           // }
+  //
+  //                                           // 3. Subject filter row
+  //                                           return SingleChildScrollView(
+  //                                             scrollDirection: Axis.horizontal,
+  //                                             child: Row(
+  //                                               children:
+  //                                                   subjectList.map((subject) {
+  //                                                     final isSelected =
+  //                                                         selectedSubject ==
+  //                                                         subject;
+  //                                                     return Padding(
+  //                                                       padding:
+  //                                                           const EdgeInsets.symmetric(
+  //                                                             horizontal: 8,
+  //                                                           ),
+  //                                                       child: ElevatedButton(
+  //                                                         style: ButtonStyle(
+  //                                                           elevation:
+  //                                                               MaterialStateProperty.all(
+  //                                                                 0,
+  //                                                               ),
+  //                                                           backgroundColor:
+  //                                                               MaterialStateProperty.all(
+  //                                                                 isSelected
+  //                                                                     ? AppColor
+  //                                                                         .white
+  //                                                                     : AppColor
+  //                                                                         .lightGrey,
+  //                                                               ),
+  //                                                           side: MaterialStateProperty.all(
+  //                                                             BorderSide(
+  //                                                               color:
+  //                                                                   isSelected
+  //                                                                       ? AppColor
+  //                                                                           .black
+  //                                                                       : AppColor
+  //                                                                           .lightGrey,
+  //                                                               width: 2,
+  //                                                             ),
+  //                                                           ),
+  //                                                           shape: MaterialStateProperty.all(
+  //                                                             RoundedRectangleBorder(
+  //                                                               borderRadius:
+  //                                                                   BorderRadius.circular(
+  //                                                                     20,
+  //                                                                   ),
+  //                                                             ),
+  //                                                           ),
+  //                                                         ),
+  //                                                         onPressed: () {
+  //                                                           setState(() {
+  //                                                             selectedSubject =
+  //                                                                 subject;
+  //                                                           });
+  //                                                         },
+  //                                                         child: Text(
+  //                                                           subject,
+  //                                                           style: TextStyle(
+  //                                                             color:
+  //                                                                 isSelected
+  //                                                                     ? AppColor
+  //                                                                         .black
+  //                                                                     : AppColor
+  //                                                                         .grey,
+  //                                                             fontWeight:
+  //                                                                 FontWeight
+  //                                                                     .bold,
+  //                                                           ),
+  //                                                         ),
+  //                                                       ),
+  //                                                     );
+  //                                                   }).toList(),
+  //                                             ),
+  //                                           );
+  //                                         }),
+  //
+  //                                         const SizedBox(height: 20),
+  //                                         Expanded(
+  //                                           child: Obx(() {
+  //                                             if (taskController
+  //                                                 .isLoading
+  //                                                 .value) {
+  //                                               return Center(
+  //                                                 child:
+  //                                                     AppLoader.circularLoader(),
+  //                                               );
+  //                                             }
+  //
+  //                                             const List<Color> colors = [
+  //                                               AppColor.lowLightBlue,
+  //                                               AppColor.lowLightYellow,
+  //                                               AppColor.lowLightNavi,
+  //                                               AppColor.white,
+  //                                               AppColor.lowLightPink,
+  //                                             ];
+  //
+  //                                             final filteredTasks =
+  //                                                 taskController.tasks.where((
+  //                                                   task,
+  //                                                 ) {
+  //                                                   final taskDate = DateTime.parse(
+  //                                                     task.time.toString(),
+  //                                                   ); // convert ISO string to DateTime
+  //                                                   final isSameDate =
+  //                                                       taskDate.year ==
+  //                                                           selectedDate.year &&
+  //                                                       taskDate.month ==
+  //                                                           selectedDate
+  //                                                               .month &&
+  //                                                       taskDate.day ==
+  //                                                           selectedDate.day;
+  //
+  //                                                   final isSameSubject =
+  //                                                       selectedSubject ==
+  //                                                           'All' ||
+  //                                                       task.subject ==
+  //                                                           selectedSubject;
+  //
+  //                                                   return isSameDate &&
+  //                                                       isSameSubject;
+  //                                                 }).toList();
+  //
+  //                                             if (filteredTasks.isEmpty) {
+  //                                               return const Center(
+  //                                                 child: Text(
+  //                                                   'No tasks available',
+  //                                                 ),
+  //                                               );
+  //                                             }
+  //
+  //                                             return RefreshIndicator(
+  //                                               onRefresh: () async {
+  //                                                 await taskController
+  //                                                     .getTaskDetails(); // call your reload API
+  //                                               },
+  //                                               child: SingleChildScrollView(
+  //                                                 controller: _scrollController,
+  //                                                 physics:
+  //                                                     const AlwaysScrollableScrollPhysics(),
+  //                                                 child: Column(
+  //                                                   children:
+  //                                                       filteredTasks.asMap().entries.map<
+  //                                                         Widget
+  //                                                       >((entry) {
+  //                                                         final index =
+  //                                                             entry.key;
+  //                                                         final task =
+  //                                                             entry.value;
+  //                                                         final bgColor =
+  //                                                             colors[index %
+  //                                                                 colors
+  //                                                                     .length];
+  //
+  //                                                         return CustomContainer.taskScreen(
+  //                                                           homeWorkImage:
+  //                                                               task.type ==
+  //                                                                       'Quiz'
+  //                                                                   ? AppImages
+  //                                                                       .taskScreenCont1
+  //                                                                   : null,
+  //                                                           mainText:
+  //                                                               task.title,
+  //                                                           subText:
+  //                                                               task.description,
+  //                                                           homeWorkText:
+  //                                                               task.subject,
+  //                                                           avatarImage:
+  //                                                               task.teacher_image, // provide avatar if needed
+  //                                                           smaleText:
+  //                                                               task.type,
+  //                                                           time: DateAndTimeConvert.formatDateTime(
+  //                                                             task.time
+  //                                                                 .toString(),
+  //                                                             showDate: false,
+  //                                                             showTime: true,
+  //                                                           ),
+  //                                                           aText1: 'By ',
+  //                                                           aText2:
+  //                                                               task.assignedByName,
+  //                                                           backRoundColor:
+  //                                                               bgColor,
+  //                                                           gradient:
+  //                                                               LinearGradient(
+  //                                                                 colors: [
+  //                                                                   Colors
+  //                                                                       .black,
+  //                                                                   Colors
+  //                                                                       .black,
+  //                                                                 ],
+  //                                                               ),
+  //
+  //                                                           *//*  onIconTap: () {
+  //                                                             AppLogger.log.i(
+  //                                                               task.id,
+  //                                                             );
+  //                                                             AppLogger.log.i(
+  //                                                               task.type,
+  //                                                             );
+  //                                                             if (task.type ==
+  //                                                                 'Quiz') {
+  //                                                               Navigator.push(
+  //                                                                 context,
+  //                                                                 MaterialPageRoute(
+  //                                                                   builder:
+  //                                                                       (
+  //                                                                         context,
+  //                                                                       ) => QuizScreen(
+  //                                                                         quizId:
+  //                                                                             task.id,
+  //                                                                       ),
+  //                                                                 ),
+  //                                                               );
+  //                                                             } else {
+  //                                                               Navigator.push(
+  //                                                                 context,
+  //                                                                 MaterialPageRoute(
+  //                                                                   builder:
+  //                                                                       (
+  //                                                                         context,
+  //                                                                       ) => TaskDetail(
+  //                                                                         id:
+  //                                                                             task.id,
+  //                                                                       ),
+  //                                                                 ),
+  //                                                               );
+  //                                                             }
+  //                                                           },*//*
+  //                                                           onIconTap: () async {
+  //                                                             AppLogger.log.i(
+  //                                                               task.id,
+  //                                                             );
+  //                                                             AppLogger.log.i(
+  //                                                               task.type,
+  //                                                             );
+  //
+  //                                                             if (task.type ==
+  //                                                                 'Quiz') {
+  //                                                               // Optional: quick loader
+  //                                                               showDialog(
+  //                                                                 context:
+  //                                                                     context,
+  //                                                                 barrierDismissible:
+  //                                                                     false,
+  //                                                                 builder:
+  //                                                                     (
+  //                                                                       _,
+  //                                                                     ) => const Center(
+  //                                                                       child:
+  //                                                                           CircularProgressIndicator(),
+  //                                                                     ),
+  //                                                               );
+  //
+  //                                                               final result =
+  //                                                                   await Get.find<
+  //                                                                         QuizController
+  //                                                                       >()
+  //                                                                       .tryGetResult(
+  //                                                                         task.id,
+  //                                                                       );
+  //
+  //                                                               if (Navigator.canPop(
+  //                                                                 context,
+  //                                                               ))
+  //                                                                 Navigator.pop(
+  //                                                                   context,
+  //                                                                 ); // close loader
+  //
+  //                                                               if (!context
+  //                                                                   .mounted)
+  //                                                                 return;
+  //
+  //                                                               if (result !=
+  //                                                                   null) {
+  //                                                                 // Already submitted => go to result screen
+  //                                                                 Navigator.push(
+  //                                                                   context,
+  //                                                                   MaterialPageRoute(
+  //                                                                     builder:
+  //                                                                         (
+  //                                                                           _,
+  //                                                                         ) => QuizResultScreen(
+  //                                                                           data:
+  //                                                                               result,
+  //                                                                         ),
+  //                                                                   ),
+  //                                                                 );
+  //                                                               } else {
+  //                                                                 // Not attempted => go to quiz screen
+  //                                                                 Navigator.push(
+  //                                                                   context,
+  //                                                                   MaterialPageRoute(
+  //                                                                     builder:
+  //                                                                         (
+  //                                                                           _,
+  //                                                                         ) => QuizScreen(
+  //                                                                           quizId:
+  //                                                                               task.id,
+  //                                                                         ),
+  //                                                                   ),
+  //                                                                 );
+  //                                                               }
+  //                                                             } else {
+  //                                                               Navigator.push(
+  //                                                                 context,
+  //                                                                 MaterialPageRoute(
+  //                                                                   builder:
+  //                                                                       (
+  //                                                                         _,
+  //                                                                       ) => TaskDetail(
+  //                                                                         teacherImage:
+  //                                                                             task.teacher_image, // pass image here
+  //                                                                         id:
+  //                                                                             task.id,
+  //                                                                       ),
+  //                                                                 ),
+  //                                                               );
+  //                                                             }
+  //                                                           },
+  //                                                         );
+  //                                                       }).toList(),
+  //                                                 ),
+  //                                               ),
+  //                                             );
+  //                                           }),
+  //                                         ),
+  //                                       ],
+  //                                     ),
+  //                                   ),
+  //
+  //                                   *//*  SingleChildScrollView(
+  //                                     scrollDirection: Axis.horizontal,
+  //                                     child: Row(
+  //                                       children:
+  //                                           subjects.map((subject) {
+  //                                             final isSelected =
+  //                                                 selectedSubject == subject;
+  //                                             return Padding(
+  //                                               padding: const EdgeInsets.only(
+  //                                                 left: 16.0,
+  //                                               ),
+  //                                               child: ElevatedButton(
+  //                                                 style: ButtonStyle(
+  //                                                   elevation:
+  //                                                       MaterialStatePropertyAll(
+  //                                                         0,
+  //                                                       ),
+  //                                                   backgroundColor:
+  //                                                       MaterialStatePropertyAll(
+  //                                                         isSelected
+  //                                                             ? AppColor.white
+  //                                                             : AppColor
+  //                                                                 .lightGrey,
+  //                                                       ),
+  //                                                   side: MaterialStatePropertyAll(
+  //                                                     BorderSide(
+  //                                                       color:
+  //                                                           isSelected
+  //                                                               ? AppColor.black
+  //                                                               : AppColor
+  //                                                                   .lightGrey,
+  //                                                       width: 2,
+  //                                                     ),
+  //                                                   ),
+  //                                                   shape: MaterialStatePropertyAll(
+  //                                                     RoundedRectangleBorder(
+  //                                                       borderRadius:
+  //                                                           BorderRadius.circular(
+  //                                                             20,
+  //                                                           ),
+  //                                                     ),
+  //                                                   ),
+  //                                                 ),
+  //                                                 onPressed: () {
+  //                                                   setState(() {
+  //                                                     selectedSubject = subject;
+  //                                                   });
+  //                                                 },
+  //                                                 child: Text(
+  //                                                   subject,
+  //                                                   style:
+  //                                                       GoogleFont.ibmPlexSans(
+  //                                                         color:
+  //                                                             isSelected
+  //                                                                 ? AppColor
+  //                                                                     .black
+  //                                                                 : AppColor
+  //                                                                     .grey,
+  //                                                         fontWeight:
+  //                                                             FontWeight.bold,
+  //                                                       ),
+  //                                                 ),
+  //                                               ),
+  //                                             );
+  //                                           }).toList(),
+  //                                     ),
+  //                                   ),
+  //                                   SizedBox(height: 20),
+  //
+  //                                   Expanded(
+  //                                     child: Obx(() {
+  //                                       if (taskController.isLoading.value) {
+  //                                         return Center(
+  //                                           child: AppLoader.circularLoader(
+  //                                             AppColor.black,
+  //                                           ),
+  //                                         );
+  //                                       }
+  //
+  //                                       const List<Color> colors = [
+  //                                         AppColor.lowLightBlue,
+  //                                         AppColor.lowLightYellow,
+  //                                         AppColor.lowLightNavi,
+  //                                         AppColor.white,
+  //                                         AppColor.lowLightPink,
+  //
+  //                                       ];
+  //
+  //                                       final filteredTasks =
+  //                                           taskController.tasks.where((task) {
+  //                                             return selectedSubject == 'All' ||
+  //                                                 task.subject ==
+  //                                                     selectedSubject;
+  //                                           }).toList();
+  //
+  //                                       if (filteredTasks.isEmpty) {
+  //                                         return const Center(
+  //                                           child: Text('No tasks available'),
+  //                                         );
+  //                                       }
+  //
+  //                                       return SingleChildScrollView(
+  //                                         controller: scrollController,
+  //                                         child: Column(
+  //                                           crossAxisAlignment:
+  //                                               CrossAxisAlignment.start,
+  //                                           children:
+  //                                               filteredTasks.asMap().entries.map<
+  //                                                 Widget
+  //                                               >((entry) {
+  //                                                 final index =
+  //                                                     entry.key; // task index
+  //                                                 final task = entry.value;
+  //                                                 final bgColor =
+  //                                                     colors[index %
+  //                                                         colors
+  //                                                             .length]; // pick color by index
+  //
+  //                                                 return CustomContainer.taskScreen(
+  //                                                   backRoundColors: bgColor,
+  //                                                   subText: task.description,
+  //                                                   homeWorkText: task.subject,
+  //                                                   homeWorkImage: '',
+  //                                                   avatarImage:
+  //                                                       AppImages.avatar1,
+  //                                                   mainText: task.title,
+  //                                                   smaleText: task.type,
+  //                                                   time:
+  //                                                       DateAndTimeConvert.formatDateTime(
+  //                                                         task.time.toString(),
+  //                                                         showDate: false,
+  //                                                         showTime: true,
+  //                                                       ),
+  //                                                   aText1: 'By ',
+  //                                                   aText2: task.assignedByName,
+  //                                                   backRoundColor: bgColor,
+  //                                                   gradient: LinearGradient(
+  //                                                     colors: [
+  //                                                       AppColor.black,
+  //                                                       AppColor.black,
+  //                                                     ],
+  //                                                     begin: Alignment.topLeft,
+  //                                                     end:
+  //                                                         Alignment.bottomRight,
+  //                                                   ),
+  //                                                   onIconTap: () {
+  //                                                     Navigator.push(
+  //                                                       context,
+  //                                                       MaterialPageRoute(
+  //                                                         builder:
+  //                                                             (context) =>
+  //                                                                 TaskDetail(
+  //                                                                   id: task.id,
+  //                                                                 ),
+  //                                                       ),
+  //                                                     );
+  //                                                   },
+  //                                                 );
+  //                                               }).toList(),
+  //                                         ),
+  //                                       );
+  //                                     }),
+  //                                   ),*//*
+  //                                 ],
+  //                               ),
+  //                             );
+  //                           },
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  late final ScrollController _listScrollController;
+  bool _bodyScrolled = false;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -2086,1113 +3255,512 @@ class _TaskScreenState extends State<TaskScreen>
           ),
         ),
         child: SafeArea(
-          child: SizedBox.expand(
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: Image.asset(AppImages.jbg, fit: BoxFit.cover),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 16),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: showMonthPicker,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  DateFormat('MMMM dd').format(selectedDate),
-                                  style: GoogleFont.ibmPlexSans(
-                                    color: Colors.white,
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(width: 4),
-                                Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: AppColor.white,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    SizedBox(
-                      height: 90,
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: getFullMonthDates(currentMonth).length,
-                        itemBuilder: (context, index) {
-                          final item = getFullMonthDates(currentMonth)[index];
-                          final date = item['fullDate'] as DateTime;
-                          final img =
-                              teacherListController.teacherListResponse.value;
-                          // Check if this date is selected
-                          final isSelected =
-                              selectedDate.year == date.year &&
-                              selectedDate.month == date.month &&
-                              selectedDate.day == date.day;
+          child: Stack(
+            children: [
+              // Background image across the top
+              Positioned.fill(
+                child: Image.asset(AppImages.jbg, fit: BoxFit.cover),
+              ),
 
-                          // Count tasks for this date
-                          final tasksForDate =
-                              taskController.tasks.where((task) {
-                                final taskDate = task.date; // already DateTime
-                                return taskDate.year == date.year &&
-                                    taskDate.month == date.month &&
-                                    taskDate.day == date.day;
-                              }).toList();
-
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedDate = date;
-                                scrollToSelectedDate();
-                              });
-                            },
-                            child: Container(
-                              width: 57,
-                              decoration:
-                                  isSelected
-                                      ? BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(30),
-                                      )
-                                      : null,
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+              // Whole page scroll with sticky header + white body that scrolls from top
+              NestedScrollView(
+                // HEADER (stays above the white sheet)
+                headerSliverBuilder:
+                    (context, innerBoxIsScrolled) => [
+                      SliverToBoxAdapter(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 16),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Row(
                                 children: [
-                                  Text(
-                                    item['day'],
-                                    style: GoogleFont.ibmPlexSans(
-                                      color:
-                                          isSelected
-                                              ? Colors.blue
-                                              : Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    item['date'].toString(),
-                                    style: GoogleFont.ibmPlexSans(
-                                      color:
-                                          isSelected
-                                              ? Colors.blue
-                                              : Colors.white,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
+                                  GestureDetector(
+                                    onTap: showMonthPicker,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          DateFormat(
+                                            'MMMM dd',
+                                          ).format(selectedDate),
+                                          style: GoogleFont.ibmPlexSans(
+                                            color: Colors.white,
+                                            fontSize: 32,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        const Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: Colors.white,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    ),
+                            const SizedBox(height: 20),
 
-                    const SizedBox(height: 16),
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          DraggableScrollableSheet(
-                            initialChildSize: 0.99,
-                            minChildSize: 0.99,
-                            maxChildSize: 0.99,
-                            builder: (context, scrollController) {
-                              return Container(
-                                padding: const EdgeInsets.only(top: 20),
+                            // Horizontal date strip
+                            SizedBox(
+                              height: 90,
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                scrollDirection: Axis.horizontal,
+                                itemCount:
+                                    getFullMonthDates(currentMonth).length,
+                                itemBuilder: (context, index) {
+                                  final item =
+                                      getFullMonthDates(currentMonth)[index];
+                                  final date = item['fullDate'] as DateTime;
 
-                                decoration: const BoxDecoration(
-                                  color: AppColor.white,
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(30),
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      blurRadius: 8,
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 16,
-                                      ),
-                                      child: /*Obx(() {
-                                        final siblings =
-                                            controller.siblingsList;
-                                        final activeStudent = siblings
-                                            .firstWhere(
-                                              (s) => s.isActive == true,
-                                              orElse: () => siblings.first,
-                                            );
+                                  final isSelected =
+                                      selectedDate.year == date.year &&
+                                      selectedDate.month == date.month &&
+                                      selectedDate.day == date.day;
 
-                                        // find first "other" student (if exists)
-                                        final remainingStudent = siblings
-                                            .firstWhere(
-                                              (s) => s.id != activeStudent.id,
-                                              orElse: () => siblings.first,
-                                            );
-                                        return Stack(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'Your Tasks',
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    fontSize: 28,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Colors.black,
-                                                  ),
-                                                ),
-                                                Spacer(),
-
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 15.0,
-                                                        vertical: 10,
-                                                      ),
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      SwitchProfileSheet.show(
-                                                        context,
-                                                        students:
-                                                            controller
-                                                                .siblingsList,
-                                                        selectedStudent:
-                                                            controller
-                                                                .selectedStudent,
-                                                        onSwitch: (
-                                                          student,
-                                                        ) async {
-                                                          await controller
-                                                              .switchSiblings(
-                                                                id: student.id,
-                                                              );
-                                                          controller
-                                                              .selectStudent(
-                                                                student,
-                                                              );
-                                                        },
-                                                        onLogout: () async {
-                                                          await loginController
-                                                              .logout();
-                                                        },
-                                                      );
-                                                    },
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            10,
-                                                          ),
-                                                      child:
-                                                          (remainingStudent
-                                                                          .avatar !=
-                                                                      null &&
-                                                                  remainingStudent
-                                                                      .avatar
-                                                                      .isNotEmpty)
-                                                              ? Image.network(
-                                                                remainingStudent
-                                                                    .avatar,
-                                                                height: 30,
-                                                                width: 30,
-                                                                fit:
-                                                                    BoxFit
-                                                                        .cover,
-                                                                errorBuilder: (
-                                                                  context,
-                                                                  error,
-                                                                  stackTrace,
-                                                                ) {
-                                                                  return Image.asset(
-                                                                    AppImages
-                                                                        .moreSimage1,
-                                                                    height: 30,
-                                                                    width: 30,
-                                                                    fit:
-                                                                        BoxFit
-                                                                            .cover,
-                                                                  );
-                                                                },
-                                                              )
-                                                              : Image.asset(
-                                                                AppImages
-                                                                    .moreSimage1,
-                                                                height: 30,
-                                                                width: 30,
-                                                                fit:
-                                                                    BoxFit
-                                                                        .cover,
-                                                              ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Positioned(
-                                              right: 30,
-                                              top: 7,
-                                              child: InkWell(
-                                                onTap: () {
-                                                  SwitchProfileSheet.show(
-                                                    context,
-                                                    students:
-                                                        controller.siblingsList,
-                                                    selectedStudent:
-                                                        controller
-                                                            .selectedStudent,
-                                                    onSwitch: (student) async {
-                                                      await controller
-                                                          .switchSiblings(
-                                                            id: student.id,
-                                                          );
-                                                      controller.selectStudent(
-                                                        student,
-                                                      );
-                                                    },
-                                                    onLogout: () async {
-                                                      await loginController
-                                                          .logout();
-                                                      // Get.offAllNamed('/login');
-                                                    },
-                                                  );
-                                                },
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    SwitchProfileSheet.show(
-                                                      context,
-                                                      students:
-                                                          controller
-                                                              .siblingsList,
-                                                      selectedStudent:
-                                                          controller
-                                                              .selectedStudent,
-                                                      onSwitch: (
-                                                        student,
-                                                      ) async {
-                                                        await controller
-                                                            .switchSiblings(
-                                                              id: student.id,
-                                                            );
-                                                        controller
-                                                            .selectStudent(
-                                                              student,
-                                                            );
-                                                      },
-                                                      onLogout: () async {
-                                                        await loginController
-                                                            .logout();
-                                                      },
-                                                    );
-                                                  },
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          10,
-                                                        ),
-                                                    child:
-                                                        (activeStudent.avatar !=
-                                                                    null &&
-                                                                activeStudent
-                                                                    .avatar
-                                                                    .isNotEmpty)
-                                                            ? Image.network(
-                                                              activeStudent
-                                                                  .avatar,
-                                                              height: 40,
-                                                              width: 40,
-                                                              fit: BoxFit.cover,
-                                                              errorBuilder: (
-                                                                context,
-                                                                error,
-                                                                stackTrace,
-                                                              ) {
-                                                                return Image.asset(
-                                                                  AppImages
-                                                                      .moreSimage1,
-                                                                  height: 49,
-                                                                  width: 49,
-                                                                  fit:
-                                                                      BoxFit
-                                                                          .cover,
-                                                                );
-                                                              },
-                                                            )
-                                                            : Image.asset(
-                                                              AppImages
-                                                                  .moreSimage1,
-                                                              height: 30,
-                                                              width: 40,
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      }),*/ Obx(() {
-                                        final siblings =
-                                            controller.siblingsList;
-
-                                        if (siblings.isEmpty) {
-                                          return SizedBox.shrink();
-                                        }
-
-                                        final activeStudent = siblings
-                                            .firstWhere(
-                                              (s) => s.isActive == true,
-                                              orElse: () => siblings.first,
-                                            );
-
-                                        // find first "other" student (if exists)
-                                        final remainingStudent = siblings
-                                            .firstWhere(
-                                              (s) => s.id != activeStudent.id,
-                                              orElse: () => siblings.first,
-                                            );
-
-                                        return Stack(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'Your Tasks',
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    fontSize: 28,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Colors.black,
-                                                  ),
-                                                ),
-                                                const Spacer(),
-
-                                                /// 👉 Show small avatar ONLY if more than 1 sibling
-                                                if (siblings.length > 1)
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 15.0,
-                                                          vertical: 10,
-                                                        ),
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        SwitchProfileSheet.show(
-                                                          context,
-                                                          students:
-                                                              controller
-                                                                  .siblingsList,
-                                                          selectedStudent:
-                                                              controller
-                                                                  .selectedStudent,
-                                                          onSwitch: (
-                                                            student,
-                                                          ) async {
-                                                            await controller
-                                                                .switchSiblings(
-                                                                  id:
-                                                                      student
-                                                                          .id,
-                                                                );
-                                                            controller
-                                                                .selectStudent(
-                                                                  student,
-                                                                );
-                                                          },
-                                                          onLogout: () async {
-                                                            await loginController
-                                                                .logout();
-                                                          },
-                                                        );
-                                                      },
-                                                      child: ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              10,
-                                                            ),
-                                                        child:
-                                                            (remainingStudent
-                                                                            .avatar !=
-                                                                        null &&
-                                                                    remainingStudent
-                                                                        .avatar
-                                                                        .isNotEmpty)
-                                                                ? Image.network(
-                                                                  remainingStudent
-                                                                      .avatar,
-                                                                  height: 30,
-                                                                  width: 30,
-                                                                  fit:
-                                                                      BoxFit
-                                                                          .cover,
-                                                                  errorBuilder: (
-                                                                    context,
-                                                                    error,
-                                                                    stackTrace,
-                                                                  ) {
-                                                                    return Image.asset(
-                                                                      AppImages
-                                                                          .moreSimage1,
-                                                                      height:
-                                                                          30,
-                                                                      width: 30,
-                                                                      fit:
-                                                                          BoxFit
-                                                                              .cover,
-                                                                    );
-                                                                  },
-                                                                )
-                                                                : Image.asset(
-                                                                  AppImages
-                                                                      .moreSimage1,
-                                                                  height: 30,
-                                                                  width: 30,
-                                                                  fit:
-                                                                      BoxFit
-                                                                          .cover,
-                                                                ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                              ],
-                                            ),
-
-                                            Positioned(
-                                              right: 30,
-                                              bottom: 0,
-                                              child: InkWell(
-                                                onTap: () {
-                                                  SwitchProfileSheet.show(
-                                                    context,
-                                                    students:
-                                                        controller.siblingsList,
-                                                    selectedStudent:
-                                                        controller
-                                                            .selectedStudent,
-                                                    onSwitch: (student) async {
-                                                      await controller
-                                                          .switchSiblings(
-                                                            id: student.id,
-                                                          );
-                                                      controller.selectStudent(
-                                                        student,
-                                                      );
-                                                    },
-                                                    onLogout: () async {
-                                                      await loginController
-                                                          .logout();
-                                                    },
-                                                  );
-                                                },
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  child:
-                                                      (activeStudent.avatar !=
-                                                                  null &&
-                                                              activeStudent
-                                                                  .avatar
-                                                                  .isNotEmpty)
-                                                          ? Image.network(
-                                                            activeStudent
-                                                                .avatar,
-                                                            height: 40,
-                                                            width: 40,
-                                                            fit: BoxFit.cover,
-                                                            errorBuilder: (
-                                                              context,
-                                                              error,
-                                                              stackTrace,
-                                                            ) {
-                                                              return Image.asset(
-                                                                AppImages
-                                                                    .moreSimage1,
-                                                                height: 40,
-                                                                width: 40,
-                                                                fit:
-                                                                    BoxFit
-                                                                        .cover,
-                                                              );
-                                                            },
-                                                          )
-                                                          : Image.asset(
-                                                            AppImages
-                                                                .moreSimage1,
-                                                            height: 40,
-                                                            width: 40,
-                                                            fit: BoxFit.cover,
-                                                          ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      }),
-                                    ),
-                                    Expanded(
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedDate = date;
+                                        scrollToSelectedDate();
+                                      });
+                                    },
+                                    child: Container(
+                                      width: 57,
+                                      decoration:
+                                          isSelected
+                                              ? BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                              )
+                                              : null,
+                                      alignment: Alignment.center,
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          Obx(() {
-                                            // 1. Filter tasks by selectedDate first
-                                            final tasksForDate =
-                                                taskController.tasks.where((
-                                                  task,
-                                                ) {
-                                                  final taskDate =
-                                                      DateTime.parse(
-                                                        task.time.toString(),
-                                                      );
-                                                  return taskDate.year ==
-                                                          selectedDate.year &&
-                                                      taskDate.month ==
-                                                          selectedDate.month &&
-                                                      taskDate.day ==
-                                                          selectedDate.day;
-                                                }).toList();
-
-                                            // 2. Build subjects only from tasksForDate
-                                            final subjects = <String>{};
-                                            if (tasksForDate.isNotEmpty) {
-                                              subjects.add('All');
-                                              subjects.addAll(
-                                                tasksForDate.map(
-                                                  (t) => t.subject,
-                                                ),
-                                              );
-                                            }
-                                            final subjectList =
-                                                subjects.toList();
-
-                                            // if (subjectList.isEmpty) {
-                                            //   return const Padding(
-                                            //     padding: EdgeInsets.all(16),
-                                            //     child: Text(
-                                            //       'No tasks available',
-                                            //       style: TextStyle(color: Colors.grey),
-                                            //     ),
-                                            //   );
-                                            // }
-
-                                            // 3. Subject filter row
-                                            return SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Row(
-                                                children:
-                                                    subjectList.map((subject) {
-                                                      final isSelected =
-                                                          selectedSubject ==
-                                                          subject;
-                                                      return Padding(
-                                                        padding:
-                                                            const EdgeInsets.symmetric(
-                                                              horizontal: 8,
-                                                            ),
-                                                        child: ElevatedButton(
-                                                          style: ButtonStyle(
-                                                            elevation:
-                                                                MaterialStateProperty.all(
-                                                                  0,
-                                                                ),
-                                                            backgroundColor:
-                                                                MaterialStateProperty.all(
-                                                                  isSelected
-                                                                      ? AppColor
-                                                                          .white
-                                                                      : AppColor
-                                                                          .lightGrey,
-                                                                ),
-                                                            side: MaterialStateProperty.all(
-                                                              BorderSide(
-                                                                color:
-                                                                    isSelected
-                                                                        ? AppColor
-                                                                            .black
-                                                                        : AppColor
-                                                                            .lightGrey,
-                                                                width: 2,
-                                                              ),
-                                                            ),
-                                                            shape: MaterialStateProperty.all(
-                                                              RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius.circular(
-                                                                      20,
-                                                                    ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              selectedSubject =
-                                                                  subject;
-                                                            });
-                                                          },
-                                                          child: Text(
-                                                            subject,
-                                                            style: TextStyle(
-                                                              color:
-                                                                  isSelected
-                                                                      ? AppColor
-                                                                          .black
-                                                                      : AppColor
-                                                                          .grey,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }).toList(),
-                                              ),
-                                            );
-                                          }),
-
-                                          const SizedBox(height: 20),
-                                          Expanded(
-                                            child: Obx(() {
-                                              if (taskController
-                                                  .isLoading
-                                                  .value) {
-                                                return Center(
-                                                  child:
-                                                      AppLoader.circularLoader(),
-                                                );
-                                              }
-
-                                              const List<Color> colors = [
-                                                AppColor.lowLightBlue,
-                                                AppColor.lowLightYellow,
-                                                AppColor.lowLightNavi,
-                                                AppColor.white,
-                                                AppColor.lowLightPink,
-                                              ];
-
-                                              final filteredTasks =
-                                                  taskController.tasks.where((
-                                                    task,
-                                                  ) {
-                                                    final taskDate = DateTime.parse(
-                                                      task.time.toString(),
-                                                    ); // convert ISO string to DateTime
-                                                    final isSameDate =
-                                                        taskDate.year ==
-                                                            selectedDate.year &&
-                                                        taskDate.month ==
-                                                            selectedDate
-                                                                .month &&
-                                                        taskDate.day ==
-                                                            selectedDate.day;
-
-                                                    final isSameSubject =
-                                                        selectedSubject ==
-                                                            'All' ||
-                                                        task.subject ==
-                                                            selectedSubject;
-
-                                                    return isSameDate &&
-                                                        isSameSubject;
-                                                  }).toList();
-
-                                              if (filteredTasks.isEmpty) {
-                                                return const Center(
-                                                  child: Text(
-                                                    'No tasks available',
-                                                  ),
-                                                );
-                                              }
-
-                                              return RefreshIndicator(
-                                                onRefresh: () async {
-                                                  await taskController
-                                                      .getTaskDetails(); // call your reload API
-                                                },
-                                                child: SingleChildScrollView(
-                                                  controller: _scrollController,
-                                                  physics:
-                                                      const AlwaysScrollableScrollPhysics(),
-                                                  child: Column(
-                                                    children:
-                                                        filteredTasks.asMap().entries.map<
-                                                          Widget
-                                                        >((entry) {
-                                                          final index =
-                                                              entry.key;
-                                                          final task =
-                                                              entry.value;
-                                                          final bgColor =
-                                                              colors[index %
-                                                                  colors
-                                                                      .length];
-
-                                                          return CustomContainer.taskScreen(
-                                                            homeWorkImage:
-                                                                task.type ==
-                                                                        'Quiz'
-                                                                    ? AppImages
-                                                                        .taskScreenCont1
-                                                                    : null,
-                                                            mainText:
-                                                                task.title,
-                                                            subText:
-                                                                task.description,
-                                                            homeWorkText:
-                                                                task.subject,
-                                                            avatarImage:
-                                                                task.teacher_image, // provide avatar if needed
-                                                            smaleText:
-                                                                task.type,
-                                                            time: DateAndTimeConvert.formatDateTime(
-                                                              task.time
-                                                                  .toString(),
-                                                              showDate: false,
-                                                              showTime: true,
-                                                            ),
-                                                            aText1: 'By ',
-                                                            aText2:
-                                                                task.assignedByName,
-                                                            backRoundColor:
-                                                                bgColor,
-                                                            gradient:
-                                                                LinearGradient(
-                                                                  colors: [
-                                                                    Colors
-                                                                        .black,
-                                                                    Colors
-                                                                        .black,
-                                                                  ],
-                                                                ),
-
-                                                            /*  onIconTap: () {
-                                                              AppLogger.log.i(
-                                                                task.id,
-                                                              );
-                                                              AppLogger.log.i(
-                                                                task.type,
-                                                              );
-                                                              if (task.type ==
-                                                                  'Quiz') {
-                                                                Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (
-                                                                          context,
-                                                                        ) => QuizScreen(
-                                                                          quizId:
-                                                                              task.id,
-                                                                        ),
-                                                                  ),
-                                                                );
-                                                              } else {
-                                                                Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (
-                                                                          context,
-                                                                        ) => TaskDetail(
-                                                                          id:
-                                                                              task.id,
-                                                                        ),
-                                                                  ),
-                                                                );
-                                                              }
-                                                            },*/
-                                                            onIconTap: () async {
-                                                              AppLogger.log.i(
-                                                                task.id,
-                                                              );
-                                                              AppLogger.log.i(
-                                                                task.type,
-                                                              );
-
-                                                              if (task.type ==
-                                                                  'Quiz') {
-                                                                // Optional: quick loader
-                                                                showDialog(
-                                                                  context:
-                                                                      context,
-                                                                  barrierDismissible:
-                                                                      false,
-                                                                  builder:
-                                                                      (
-                                                                        _,
-                                                                      ) => const Center(
-                                                                        child:
-                                                                            CircularProgressIndicator(),
-                                                                      ),
-                                                                );
-
-                                                                final result =
-                                                                    await Get.find<
-                                                                          QuizController
-                                                                        >()
-                                                                        .tryGetResult(
-                                                                          task.id,
-                                                                        );
-
-                                                                if (Navigator.canPop(
-                                                                  context,
-                                                                ))
-                                                                  Navigator.pop(
-                                                                    context,
-                                                                  ); // close loader
-
-                                                                if (!context
-                                                                    .mounted)
-                                                                  return;
-
-                                                                if (result !=
-                                                                    null) {
-                                                                  // Already submitted => go to result screen
-                                                                  Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                      builder:
-                                                                          (
-                                                                            _,
-                                                                          ) => QuizResultScreen(
-                                                                            data:
-                                                                                result,
-                                                                          ),
-                                                                    ),
-                                                                  );
-                                                                } else {
-                                                                  // Not attempted => go to quiz screen
-                                                                  Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                      builder:
-                                                                          (
-                                                                            _,
-                                                                          ) => QuizScreen(
-                                                                            quizId:
-                                                                                task.id,
-                                                                          ),
-                                                                    ),
-                                                                  );
-                                                                }
-                                                              } else {
-                                                                Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (
-                                                                          _,
-                                                                        ) => TaskDetail(
-                                                                          teacherImage:
-                                                                              task.teacher_image, // pass image here
-                                                                          id:
-                                                                              task.id,
-                                                                        ),
-                                                                  ),
-                                                                );
-                                                              }
-                                                            },
-                                                          );
-                                                        }).toList(),
-                                                  ),
-                                                ),
-                                              );
-                                            }),
+                                          Text(
+                                            item['day'],
+                                            style: GoogleFont.ibmPlexSans(
+                                              color:
+                                                  isSelected
+                                                      ? Colors.blue
+                                                      : Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item['date'].toString(),
+                                            style: GoogleFont.ibmPlexSans(
+                                              color:
+                                                  isSelected
+                                                      ? Colors.blue
+                                                      : Colors.white,
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ],
                                       ),
                                     ),
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
+                      ),
+                    ],
 
-                                    /*  SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        children:
-                                            subjects.map((subject) {
-                                              final isSelected =
-                                                  selectedSubject == subject;
-                                              return Padding(
-                                                padding: const EdgeInsets.only(
-                                                  left: 16.0,
-                                                ),
-                                                child: ElevatedButton(
-                                                  style: ButtonStyle(
-                                                    elevation:
-                                                        MaterialStatePropertyAll(
-                                                          0,
-                                                        ),
-                                                    backgroundColor:
-                                                        MaterialStatePropertyAll(
-                                                          isSelected
-                                                              ? AppColor.white
-                                                              : AppColor
-                                                                  .lightGrey,
-                                                        ),
-                                                    side: MaterialStatePropertyAll(
-                                                      BorderSide(
-                                                        color:
-                                                            isSelected
-                                                                ? AppColor.black
-                                                                : AppColor
-                                                                    .lightGrey,
-                                                        width: 2,
-                                                      ),
-                                                    ),
-                                                    shape: MaterialStatePropertyAll(
-                                                      RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              20,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      selectedSubject = subject;
-                                                    });
-                                                  },
-                                                  child: Text(
-                                                    subject,
-                                                    style:
-                                                        GoogleFont.ibmPlexSans(
-                                                          color:
-                                                              isSelected
-                                                                  ? AppColor
-                                                                      .black
-                                                                  : AppColor
-                                                                      .grey,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                  ),
-                                                ),
+                // BODY (WHITE SHEET) — this scrolls from the very top
+                body: AnimatedContainer(
+                  // Make it look like a sheet
+                  duration: const Duration(milliseconds: 180),
+                  curve: Curves.easeOut,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: AppColor.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(_bodyScrolled ? 0 : 30),
+                    ),
+                    boxShadow:
+                        _bodyScrolled
+                            ? const []
+                            : const [
+                              BoxShadow(color: Colors.black26, blurRadius: 8),
+                            ],
+                  ),
+                  // Padding so content doesn't stick to the rounded top
+                  padding: EdgeInsets.only(top: _bodyScrolled ? 0 : 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Top row: "Your Tasks" + avatars (your original Obx kept)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
+                        child: Obx(() {
+                          final siblings = controller.siblingsList;
+                          if (siblings.isEmpty) return const SizedBox.shrink();
+
+                          final activeStudent = siblings.firstWhere(
+                            (s) => s.isActive == true,
+                            orElse: () => siblings.first,
+                          );
+                          final remainingStudent = siblings.firstWhere(
+                            (s) => s.id != activeStudent.id,
+                            orElse: () => siblings.first,
+                          );
+
+                          return Stack(
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Your Tasks',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  if (siblings.length > 1)
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 15.0,
+                                        vertical: 10,
+                                      ),
+                                      child: InkWell(
+                                        onTap: () {
+                                          SwitchProfileSheet.show(
+                                            context,
+                                            students: controller.siblingsList,
+                                            selectedStudent:
+                                                controller.selectedStudent,
+                                            onSwitch: (student) async {
+                                              await controller.switchSiblings(
+                                                id: student.id,
                                               );
-                                            }).toList(),
+                                              controller.selectStudent(student);
+                                            },
+                                            onLogout: () async {
+                                              await loginController.logout();
+                                            },
+                                          );
+                                        },
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                          child:
+                                              (remainingStudent.avatar !=
+                                                          null &&
+                                                      remainingStudent
+                                                          .avatar
+                                                          .isNotEmpty)
+                                                  ? Image.network(
+                                                    remainingStudent.avatar,
+                                                    height: 30,
+                                                    width: 30,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder:
+                                                        (_, __, ___) =>
+                                                            Image.asset(
+                                                              AppImages
+                                                                  .moreSimage1,
+                                                              height: 30,
+                                                              width: 30,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                  )
+                                                  : Image.asset(
+                                                    AppImages.moreSimage1,
+                                                    height: 30,
+                                                    width: 30,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                        ),
                                       ),
                                     ),
-                                    SizedBox(height: 20),
-
-                                    Expanded(
-                                      child: Obx(() {
-                                        if (taskController.isLoading.value) {
-                                          return Center(
-                                            child: AppLoader.circularLoader(
-                                              AppColor.black,
+                                ],
+                              ),
+                              Positioned(
+                                right: 30,
+                                bottom: 0,
+                                child: InkWell(
+                                  onTap: () {
+                                    SwitchProfileSheet.show(
+                                      context,
+                                      students: controller.siblingsList,
+                                      selectedStudent:
+                                          controller.selectedStudent,
+                                      onSwitch: (student) async {
+                                        await controller.switchSiblings(
+                                          id: student.id,
+                                        );
+                                        controller.selectStudent(student);
+                                      },
+                                      onLogout: () async {
+                                        await loginController.logout();
+                                      },
+                                    );
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child:
+                                        (activeStudent.avatar != null &&
+                                                activeStudent.avatar.isNotEmpty)
+                                            ? Image.network(
+                                              activeStudent.avatar,
+                                              height: 40,
+                                              width: 40,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (_, __, ___) => Image.asset(
+                                                    AppImages.moreSimage1,
+                                                    height: 40,
+                                                    width: 40,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                            )
+                                            : Image.asset(
+                                              AppImages.moreSimage1,
+                                              height: 40,
+                                              width: 40,
+                                              fit: BoxFit.cover,
                                             ),
-                                          );
-                                        }
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }),
+                      ),
 
-                                        const List<Color> colors = [
-                                          AppColor.lowLightBlue,
-                                          AppColor.lowLightYellow,
-                                          AppColor.lowLightNavi,
-                                          AppColor.white,
-                                          AppColor.lowLightPink,
+                      // SUBJECT FILTERS (h-scroll)
+                      Obx(() {
+                        final tasksForDate =
+                            taskController.tasks.where((task) {
+                              final taskDate = DateTime.parse(
+                                task.time.toString(),
+                              );
+                              return taskDate.year == selectedDate.year &&
+                                  taskDate.month == selectedDate.month &&
+                                  taskDate.day == selectedDate.day;
+                            }).toList();
 
-                                        ];
+                        final subjects = <String>{};
+                        if (tasksForDate.isNotEmpty) {
+                          subjects.add('All');
+                          subjects.addAll(tasksForDate.map((t) => t.subject));
+                        }
+                        final subjectList = subjects.toList();
 
-                                        final filteredTasks =
-                                            taskController.tasks.where((task) {
-                                              return selectedSubject == 'All' ||
-                                                  task.subject ==
-                                                      selectedSubject;
-                                            }).toList();
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Row(
+                            children:
+                                subjectList.map((subject) {
+                                  final isSelected = selectedSubject == subject;
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                    ),
+                                    child: ElevatedButton(
+                                      style: ButtonStyle(
+                                        elevation:
+                                            const MaterialStatePropertyAll(0),
+                                        backgroundColor:
+                                            MaterialStatePropertyAll(
+                                              isSelected
+                                                  ? AppColor.white
+                                                  : AppColor.lightGrey,
+                                            ),
+                                        side: MaterialStatePropertyAll(
+                                          BorderSide(
+                                            color:
+                                                isSelected
+                                                    ? AppColor.black
+                                                    : AppColor.lightGrey,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        shape: MaterialStatePropertyAll(
+                                          RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        setState(
+                                          () => selectedSubject = subject,
+                                        );
+                                      },
+                                      child: Text(
+                                        subject,
+                                        style: TextStyle(
+                                          color:
+                                              isSelected
+                                                  ? AppColor.black
+                                                  : AppColor.grey,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                          ),
+                        );
+                      }),
 
-                                        if (filteredTasks.isEmpty) {
-                                          return const Center(
-                                            child: Text('No tasks available'),
-                                          );
-                                        }
+                      const SizedBox(height: 12),
 
-                                        return SingleChildScrollView(
-                                          controller: scrollController,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children:
-                                                filteredTasks.asMap().entries.map<
-                                                  Widget
-                                                >((entry) {
-                                                  final index =
-                                                      entry.key; // task index
-                                                  final task = entry.value;
-                                                  final bgColor =
-                                                      colors[index %
-                                                          colors
-                                                              .length]; // pick color by index
+                      // TASK LIST (fills remaining space and scrolls from top)
+                      Expanded(
+                        child: Obx(() {
+                          if (taskController.isLoading.value) {
+                            return Center(child: AppLoader.circularLoader());
+                          }
 
-                                                  return CustomContainer.taskScreen(
-                                                    backRoundColors: bgColor,
-                                                    subText: task.description,
-                                                    homeWorkText: task.subject,
-                                                    homeWorkImage: '',
-                                                    avatarImage:
-                                                        AppImages.avatar1,
-                                                    mainText: task.title,
-                                                    smaleText: task.type,
-                                                    time:
-                                                        DateAndTimeConvert.formatDateTime(
-                                                          task.time.toString(),
-                                                          showDate: false,
-                                                          showTime: true,
-                                                        ),
-                                                    aText1: 'By ',
-                                                    aText2: task.assignedByName,
-                                                    backRoundColor: bgColor,
-                                                    gradient: LinearGradient(
-                                                      colors: [
-                                                        AppColor.black,
-                                                        AppColor.black,
-                                                      ],
-                                                      begin: Alignment.topLeft,
-                                                      end:
-                                                          Alignment.bottomRight,
-                                                    ),
-                                                    onIconTap: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder:
-                                                              (context) =>
-                                                                  TaskDetail(
-                                                                    id: task.id,
-                                                                  ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  );
-                                                }).toList(),
+                          const List<Color> colors = [
+                            AppColor.lowLightBlue,
+                            AppColor.lowLightYellow,
+                            AppColor.lowLightNavi,
+                            AppColor.white,
+                            AppColor.lowLightPink,
+                          ];
+
+                          final filteredTasks =
+                              taskController.tasks.where((task) {
+                                final taskDate = DateTime.parse(
+                                  task.time.toString(),
+                                );
+                                final isSameDate =
+                                    taskDate.year == selectedDate.year &&
+                                    taskDate.month == selectedDate.month &&
+                                    taskDate.day == selectedDate.day;
+                                final isSameSubject =
+                                    selectedSubject == 'All' ||
+                                    task.subject == selectedSubject;
+                                return isSameDate && isSameSubject;
+                              }).toList();
+
+                          if (filteredTasks.isEmpty) {
+                            return const Center(
+                              child: Text('No tasks available'),
+                            );
+                          }
+
+                          // This ListView is the scroller INSIDE the white sheet.
+                          return RefreshIndicator(
+                            onRefresh: () async {
+                              await taskController.getTaskDetails();
+                            },
+                            child: ListView.builder(
+                              padding: const EdgeInsets.only(bottom: 24),
+                              itemCount: filteredTasks.length,
+                              itemBuilder: (context, i) {
+                                final task = filteredTasks[i];
+                                final bgColor = colors[i % colors.length];
+                                return CustomContainer.taskScreen(
+                                  homeWorkImage:
+                                      task.type == 'Quiz'
+                                          ? AppImages.taskScreenCont1
+                                          : null,
+                                  mainText: task.title,
+                                  subText: task.description,
+                                  homeWorkText: task.subject,
+                                  avatarImage: task.teacher_image,
+                                  smaleText: task.type,
+                                  time: DateAndTimeConvert.formatDateTime(
+                                    task.time.toString(),
+                                    showDate: false,
+                                    showTime: true,
+                                  ),
+                                  aText1: 'By ',
+                                  aText2: task.assignedByName,
+                                  backRoundColor: bgColor,
+                                  gradient: const LinearGradient(
+                                    colors: [Colors.black, Colors.black],
+                                  ),
+                                  onIconTap: () async {
+                                    if (task.type == 'Quiz') {
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder:
+                                            (_) => const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                      );
+                                      final result =
+                                          await Get.find<QuizController>()
+                                              .tryGetResult(task.id);
+                                      if (Navigator.canPop(context))
+                                        Navigator.pop(context);
+
+                                      if (!context.mounted) return;
+
+                                      if (result != null) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (_) => QuizResultScreen(
+                                                  data: result,
+                                                ),
                                           ),
                                         );
-                                      }),
-                                    ),*/
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ],
+                                      } else {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (_) =>
+                                                    QuizScreen(quizId: task.id),
+                                          ),
+                                        );
+                                      }
+                                    } else {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (_) => TaskDetail(
+                                                teacherImage:
+                                                    task.teacher_image,
+                                                id: task.id,
+                                              ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                );
+                              },
+                            ),
+                          );
+                        }),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
