@@ -93,6 +93,9 @@ class _HomeScreenState extends State<HomeTab>
     );
   }
 
+  String formatDate(DateTime date) {
+    return DateFormat('dd MMM yyyy').format(date); // e.g., 16 Sep 2025
+  }
   /*  void switchProfileOrLogout(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -1729,6 +1732,7 @@ class _HomeScreenState extends State<HomeTab>
                                         if (picked != null) {
                                           setState(() {
                                             selectedDate = picked;
+                                            selectedDay = formatDate(picked);
                                           });
                                         }
                                       }
@@ -1943,17 +1947,20 @@ class _HomeScreenState extends State<HomeTab>
 
                                   // ---------- Tasks or Empty State ----------
                                   if (filteredTasks.isEmpty)
-                                    Padding(
-                                      padding: const EdgeInsets.all(20),
-                                      child: Center(
-                                        child: Text(
-                                          'No tasks available',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 14,
-                                            color: AppColor.grey,
+                                    Column(
+                                      children: [
+                                        Center(
+                                          child: Text(
+                                            'No Tasks Available',
+                                            style: GoogleFont.ibmPlexSans(
+                                              fontSize: 14,
+                                              color: AppColor.grey,
+                                            ),
                                           ),
                                         ),
-                                      ),
+                                        SizedBox(height: 30),
+                                        Image.asset(AppImages.noDataFound),
+                                      ],
                                     )
                                   else
                                     Column(
