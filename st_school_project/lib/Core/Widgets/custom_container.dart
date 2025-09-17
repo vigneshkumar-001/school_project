@@ -755,13 +755,14 @@ class CustomContainer {
           ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: SizedBox(
-              height: 120,  // Fixed height
-              width: double.infinity,  // Stretch full width of container
+              height: 120, // Fixed height
+              width: double.infinity, // Stretch full width of container
               child: Image.network(
                 teacherImage,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
-                    Container(color: AppColor.grey), // fallback placeholder
+                errorBuilder:
+                    (_, __, ___) =>
+                        Container(color: AppColor.grey), // fallback placeholder
               ),
             ),
           ),
@@ -769,7 +770,6 @@ class CustomContainer {
       ),
     );
   }
-
 
   static checkMark({required VoidCallback onTap, String? imagePath}) {
     return Center(
