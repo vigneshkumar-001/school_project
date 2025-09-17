@@ -24,6 +24,7 @@ import '../More Screen/profile_screen/controller/teacher_list_controller.dart';
 import '../More Screen/quiz_result.dart';
 import '../More Screen/quiz_screen.dart';
 import 'controller/student_home_controller.dart';
+import 'message_screen.dart';
 import 'model/student_home_response.dart';
 
 class HomeTab extends StatefulWidget {
@@ -475,7 +476,25 @@ class _HomeScreenState extends State<HomeTab>
                                   )
                                   : null, // hide trailing if only one student
                         ),
-
+                        Positioned(
+                          right: 98,
+                          top: 25,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MessageScreen(),
+                                ),
+                              );
+                            },
+                            child: Image.asset(
+                              AppImages.messageIcon,
+                              height: 40,
+                              width: 40,
+                            ),
+                          ),
+                        ),
                         if (controller
                             .siblingsList
                             .isNotEmpty) // show positioned always if one+ student
