@@ -607,12 +607,10 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
   String _titleForScore(int score, int total) {
     if (total <= 0) return 'No score yet';
 
-    final p = score / total;
-    final percent = (p * 100).toStringAsFixed(1);
+    final p = (score / total) * 100;
 
-    if (p >= 0.9) return 'Great';
-    if (p >= 0.7) return 'Average';
-    if (p >= 0.4) return 'Need Attention';
+    if (p >= 70) return 'Great';
+    if (p >= 41) return 'Average';
     return 'Need Attention';
   }
 

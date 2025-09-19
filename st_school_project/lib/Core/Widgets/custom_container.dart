@@ -213,7 +213,7 @@ class CustomContainer {
     required Color backRoundColor,
     required String mainText,
     String? ImagePath, // optional
-    String sentTo = 'Kalai Selvi',
+    String sentTo = '',
     VoidCallback? IconOntap,
   }) {
     final bool hasReacts = (Reacts != null && Reacts.trim().isNotEmpty);
@@ -231,11 +231,10 @@ class CustomContainer {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // top caption
             Row(
               children: [
                 Text(
-                  'Sent to ',
+                  'Send To: ',
                   style: GoogleFont.ibmPlexSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -265,69 +264,47 @@ class CustomContainer {
             ),
             const SizedBox(height: 8),
 
-            // ===== META ROW =====
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment:
-                  hasExtras
-                      ? MainAxisAlignment.start
-                      : MainAxisAlignment.center,
               children: [
-                // date+time pill
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColor.black.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 10,
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColor.black.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(50),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // date
-                        Text(
-                          Date,
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: AppColor.grey,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 10,
+                      ),
+                      child: Row(
+                        children: [
+                          // date
+                          Text(
+                            '${Date.toString()} ${time.toString()}',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.grey,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        // time
-                        Text(
-                          time,
-                          style: GoogleFont.inter(
-                            fontSize: 12,
-                            color: AppColor.grey,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
 
-                // reacts (only if provided)
-                if (hasReacts) const SizedBox(width: 17),
-                if (hasReacts)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 11.0),
-                    child: Text(
-                      Reacts!,
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: AppColor.grey,
-                      ),
+                if (hasReacts) ...[
+                  SizedBox(width: 5),
+                  Text(
+                    Reacts!,
+                    style: GoogleFont.ibmPlexSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.grey,
                     ),
                   ),
-
-                // image (only if provided)
-                if (hasImage) const SizedBox(width: 10),
-                if (hasImage)
+                  SizedBox(width: 5),
                   InkWell(
                     onTap: IconOntap,
                     child: Image.asset(
@@ -336,6 +313,7 @@ class CustomContainer {
                       fit: BoxFit.contain,
                     ),
                   ),
+                ],
               ],
             ),
           ],
@@ -714,48 +692,84 @@ class CustomContainer {
     required String classTitle,
     required String teacherImage,
   }) {
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColor.grey.withOpacity(0.1)),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColor.grey.withOpacity(0.1)),
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Teacher Name
+          Text(
+            teachresName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFont.ibmPlexSans(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: AppColor.black,
+            ),
+            textAlign: TextAlign.center,
           ),
-          child: Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  teachresName,
-                  style: GoogleFont.ibmPlexSans(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: AppColor.black,
+
+          // Subject/Class title
+          Text(
+            classTitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFont.ibmPlexSans(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: AppColor.blue,
+            ),
+            textAlign: TextAlign.center,
+          ),
+
+          const SizedBox(height: 10),
+
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: CachedNetworkImage(
+              imageUrl: teacherImage,
+              height: 120,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              placeholder:
+                  (context, url) => Container(
+                    height: 180,
+                    alignment: Alignment.center,
+                    child: const SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
                   ),
-                ),
-                Text(
-                  classTitle,
-                  style: GoogleFont.ibmPlexSans(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: AppColor.blue,
+              errorWidget:
+                  (context, url, error) => const Icon(
+                    Icons.broken_image,
+                    size: 40,
+                    color: Colors.grey,
                   ),
-                ),
-                SizedBox(height: 10),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.network(
-                    teacherImage,
-                    fit: BoxFit.cover, // or contain if you prefer
-                  ),
-                ),
-              ],
             ),
           ),
-        ),
-      ],
+          /* ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: SizedBox(
+              height: 120, // Fixed height
+              width: double.infinity, // Stretch full width of container
+              child: Image.network(
+                teacherImage,
+                fit: BoxFit.cover,
+                errorBuilder:
+                    (_, __, ___) =>
+                        Container(color: AppColor.grey), // fallback placeholder
+              ),
+            ),
+          ),*/
+        ],
+      ),
     );
   }
 
