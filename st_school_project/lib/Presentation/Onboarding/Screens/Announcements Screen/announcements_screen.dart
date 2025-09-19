@@ -15,7 +15,6 @@ import '../../../../Core/Widgets/custom_container.dart' show CustomContainer;
 import '../../../../Core/Widgets/custom_textfield.dart';
 import 'model/announcement_details_response.dart';
 
-
 class AnnouncementsScreen extends StatefulWidget {
   const AnnouncementsScreen({super.key});
 
@@ -702,6 +701,103 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     );
   }
 
+  void showExamTimeTable(BuildContext context, int examId) async {
+    // Fetch details if not already fetched
+    if (controller.examDetails.value == null ||
+        controller.examDetails.value!.exam.id != examId) {
+      await controller.getExamDetailsList(examId: examId);
+    }
+
+    final details = controller.examDetails.value;
+    if (details == null) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.75,
+          minChildSize: 0.4,
+          maxChildSize: 0.95,
+          builder: (_, scrollController) {
+            return SingleChildScrollView(
+              controller: scrollController,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Grab Handle
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Timetable Image
+                  const SizedBox(height: 20),
+
+                  // Exam Title
+                  Text(
+                    details.exam.heading ?? '',
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Exam Dates
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${details.exam.startDate} to ${details.exam.endDate}',
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+                  if (details.exam.timetableUrl != null &&
+                      details.exam.timetableUrl!.isNotEmpty)
+                    GestureDetector(
+                      onTap: () {
+                        _openFullScreenNetwork(details.exam.timetableUrl);
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.network(
+                          details.exam.timetableUrl!,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -736,7 +832,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
               await controller.getAnnouncement();
             },
             child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
+              physics: BouncingScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.all(15),
                 child: Column(
@@ -765,7 +861,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 16),
                               child: CustomContainer.announcementsScreen(
-                                mainText: item.type,
+                                mainText: item.announcementCategory,
                                 backRoundImage: item.image,
                                 iconData: CupertinoIcons.clock_fill,
                                 additionalText1: "Date",
@@ -781,6 +877,8 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                     _examResult(context, item.id);
                                   } else if (item.type == "announcement") {
                                     _showAnnouncementDetails(context, item.id);
+                                  } else if (item.type == "exam") {
+                                    showExamTimeTable(context, item.id);
                                   }
 
                                   // Example: show details bottomsheet

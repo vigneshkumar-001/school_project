@@ -3567,6 +3567,7 @@ class _TaskScreenState extends State<TaskScreen>
                         final subjectList = subjects.toList();
 
                         return SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
                           scrollDirection: Axis.horizontal,
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: Row(
@@ -3667,15 +3668,25 @@ class _TaskScreenState extends State<TaskScreen>
                                 filteredTasks.isEmpty
                                     ? ListView(
                                       // <-- must be scrollable for RefreshIndicator
-                                      physics:
-                                          const AlwaysScrollableScrollPhysics(),
-                                      children: const [
-                                        SizedBox(height: 200),
-                                        Center(
-                                          child: Text(
-                                            'No tasks available',
-                                            style: TextStyle(fontSize: 16),
-                                          ),
+                                      physics: const BouncingScrollPhysics(),
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SizedBox(height: 15),
+                                            Image.asset(AppImages.noDataFound),
+                                            SizedBox(height: 15),
+                                            Center(
+                                              child: Text(
+                                                'No Tasks Available',
+                                                style: GoogleFont.ibmPlexSans(
+                                                  fontSize: 15,
+                                                  color: AppColor.grey,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     )
