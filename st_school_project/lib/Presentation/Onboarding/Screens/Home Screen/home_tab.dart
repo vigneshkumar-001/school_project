@@ -40,6 +40,10 @@ class _HomeScreenState extends State<HomeTab>
     with AutomaticKeepAliveClientMixin {
   String selectedDay = 'Today';
   DateTime selectedDate = DateTime.now();
+  String formatDate(DateTime date) {
+    return DateFormat('dd MMM yyyy').format(date); // e.g., 16 Sep 2025
+  }
+
   final StudentHomeController controller = Get.put(StudentHomeController());
   final TaskController taskController = Get.put(TaskController());
   final LoginController loginController = Get.put(LoginController());
@@ -48,7 +52,7 @@ class _HomeScreenState extends State<HomeTab>
   );
   int index = 0;
 
-  String selectedSubject = 'All'; // default selected
+  String selectedSubject = 'All';
   @override
   bool get wantKeepAlive => true;
   @override
@@ -2470,6 +2474,7 @@ class _HomeScreenState extends State<HomeTab>
                                         if (picked != null) {
                                           setState(() {
                                             selectedDate = picked;
+                                            selectedDay = formatDate(picked);
                                           });
                                         }
                                       }

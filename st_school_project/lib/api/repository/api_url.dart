@@ -16,6 +16,11 @@ class ApiUrl {
       '$baseUrl/student-home/profiles/profile-image-url';
 
 
+  static String examDetails({required int examId}) {
+    return '$baseUrl/student-exams/$examId/details';
+  }
+
+
   static String imageUrl =
       "https://next.fenizotechnologies.com/Adrox/api/image-save";
   static String attendance =

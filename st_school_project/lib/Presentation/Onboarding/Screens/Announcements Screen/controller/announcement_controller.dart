@@ -7,6 +7,7 @@ import 'package:st_school_project/Core/Widgets/consents.dart';
 
 import '../../../../../Core/Utility/app_color.dart';
 import '../model/announcement_details_response.dart';
+import '../model/exam_details_response.dart';
 
 class AnnouncementController extends GetxController {
   ApiDataSource apiDataSource = ApiDataSource();
@@ -17,6 +18,7 @@ class AnnouncementController extends GetxController {
   Rx<AnnouncementData?> announcementData = Rx<AnnouncementData?>(null);
   Rx<AnnouncementDetails?> announcementDetails = Rx<AnnouncementDetails?>(null);
   Rx<ExamResultData?> examResultData = Rx<ExamResultData?>(null);
+  Rx<ExamDetailsDatas?> examDetails = Rx<ExamDetailsDatas?>(null);
   int? lastFetchedExamId;
 
   @override
@@ -47,7 +49,29 @@ class AnnouncementController extends GetxController {
     }
     return null;
   }
+  Future<void> getExamDetailsList({required int examId,    bool showLoader = true,}) async {
+    try {
+      if (showLoader) showPopupLoader();
 
+      final results = await apiDataSource.getExamDetailsList(examId: examId);
+      results.fold(
+            (failure) {
+              if (showLoader) hidePopupLoader();
+          AppLogger.log.e(failure.message);
+        },
+            (response) {
+              if (showLoader) hidePopupLoader();
+          examDetails.value = response.data;
+
+          AppLogger.log.i(response.data);
+
+        },
+      );
+    } catch (e) {
+      if (showLoader) hidePopupLoader();
+      AppLogger.log.e(e);
+    }
+  }
   Future<AnnouncementDetails?> getAnnouncementDetails({
     bool showLoader = true,
     required int id,

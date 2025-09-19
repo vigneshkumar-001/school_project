@@ -11,6 +11,7 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/model/task_response.dart';
 
 import '../../Presentation/Onboarding/Screens/Announcements Screen/model/announcement_details_response.dart';
+import '../../Presentation/Onboarding/Screens/Announcements Screen/model/exam_details_response.dart';
 import '../../Presentation/Onboarding/Screens/Attendence Screen/model/attendance_response.dart';
 import '../../Presentation/Onboarding/Screens/Home Screen/model/message_list_response.dart';
 import '../../Presentation/Onboarding/Screens/Home Screen/model/react_response.dart';
@@ -682,6 +683,29 @@ class ApiDataSource extends BaseApiDataSource {
           return Right(ReactResponse.fromJson(response?.data));
         } else {
           return Left(ServerFailure(response?.data['message']));
+        }
+      } else {
+        return Left(ServerFailure((response as DioException).message ?? ""));
+      }
+    } catch (e) {
+      return Left(ServerFailure(''));
+    }
+  }
+
+  Future<Either<Failure, ExamDetailsResponse>> getExamDetailsList({
+    required int examId,
+  }) async {
+    try {
+      String url = ApiUrl.examDetails(examId: examId);
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(response);
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(ExamDetailsResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
         }
       } else {
         return Left(ServerFailure((response as DioException).message ?? ""));
