@@ -1,6 +1,6 @@
 class ApiUrl {
-  static String baseUrl = 'https://school-back-end-594f59bea6cb.herokuapp.com';
-  static String baseUrl1 = 'https://9kt7pzw3-4000.inc1.devtunnels.ms';
+  static String baseUrl1 = 'https://school-back-end-594f59bea6cb.herokuapp.com';
+  static String baseUrl = 'https://9kt7pzw3-4000.inc1.devtunnels.ms';
   static String teacherInfo = '$baseUrl/student-teacher-info';
   static String login = '$baseUrl/student-auth/login';
   static String changePhoneNumber = '$baseUrl/student/change-phone/request';
@@ -10,8 +10,11 @@ class ApiUrl {
   static String classList = '$baseUrl/teacher-student-attendance/class-list';
   static String task = '$baseUrl/student-home/tasks?';
   static String announcementList = '$baseUrl/student-announcement/list';
+  static String studentMessageList = '$baseUrl/student-messages/history';
+  static String reactMessage = '$baseUrl/student-messages/create';
   static String profileImage =
       '$baseUrl/student-home/profiles/profile-image-url';
+
 
   static String imageUrl =
       "https://next.fenizotechnologies.com/Adrox/api/image-save";
@@ -39,9 +42,11 @@ class ApiUrl {
   static String QuizAttend({required int quizId}) {
     return '$baseUrl/student-quiz/take/$quizId';
   }
+
   static String announcementDetails({required int id}) {
     return '$baseUrl/student-announcement/details/$id';
   }
+
   static String QuizResult({required int quizId}) {
     return '$baseUrl/student-quiz/result/$quizId';
   }
@@ -49,6 +54,7 @@ class ApiUrl {
   static String getHomeWorkIdDetails({required int id}) {
     return '$baseUrl/student-home/homework/$id';
   }
+
   static String getExamResultData({required int id}) {
     return '$baseUrl/student-exams/$id/result';
   }

@@ -91,16 +91,17 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
             return SingleChildScrollView(
               physics: BouncingScrollPhysics(),
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 10,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -109,7 +110,9 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                 Image.asset(AppImages.schoolLogo),
                                 const SizedBox(height: 30),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 15,
+                                  ),
                                   child: Text(
                                     'Enter Mobile Number',
                                     style: GoogleFont.ibmPlexSans(
@@ -125,7 +128,9 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                 ),
                                 const SizedBox(height: 20),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 15,
+                                  ),
                                   child: Text(
                                     'Change to New Mobile Number',
                                     style: GoogleFont.ibmPlexSans(
@@ -138,21 +143,29 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                               ],
                               // Mobile input container
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 11,
+                                ),
                                 decoration: BoxDecoration(
                                   color: AppColor.lightGrey,
                                   borderRadius: BorderRadius.circular(15),
                                   border: Border.all(
-                                    color: mobileNumberController.text.isNotEmpty
-                                        ? AppColor.black
-                                        : AppColor.lightGrey,
-                                    width: mobileNumberController.text.isNotEmpty ? 2 : 1,
+                                    color:
+                                        mobileNumberController.text.isNotEmpty
+                                            ? AppColor.black
+                                            : AppColor.lightGrey,
+                                    width:
+                                        mobileNumberController.text.isNotEmpty
+                                            ? 2
+                                            : 1,
                                   ),
                                 ),
                                 child: Row(
                                   children: [
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           '+91',
@@ -171,12 +184,16 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                       ],
                                     ),
                                     SizedBox(width: 10),
-                                    SizedBox(height: 35, child: VerticalDivider()),
+                                    SizedBox(
+                                      height: 35,
+                                      child: VerticalDivider(),
+                                    ),
                                     SizedBox(width: 10),
                                     Expanded(
                                       flex: 9,
                                       child: TextFormField(
-                                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
                                         controller: mobileNumberController,
                                         keyboardType: TextInputType.phone,
                                         style: GoogleFont.inter(
@@ -184,7 +201,10 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                           fontSize: 20,
                                         ),
                                         maxLength: 12,
-                                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                        ],
                                         onChanged: (value) {
                                           _formatPhoneNumber(value);
                                           setState(() {});
@@ -197,25 +217,38 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                             fontSize: 20,
                                           ),
                                           border: InputBorder.none,
-                                          suffixIcon: mobileNumberController.text.isNotEmpty
-                                              ? GestureDetector(
-                                            onTap: () {
-                                              mobileNumberController.clear();
-                                              setState(() {});
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(top: 12, right: 8),
-                                              child: Text(
-                                                'Clear',
-                                                style: GoogleFont.ibmPlexSans(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: AppColor.grayop,
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                              : null,
+                                          suffixIcon:
+                                              mobileNumberController
+                                                      .text
+                                                      .isNotEmpty
+                                                  ? GestureDetector(
+                                                    onTap: () {
+                                                      mobileNumberController
+                                                          .clear();
+                                                      setState(() {});
+                                                    },
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            top: 12,
+                                                            right: 8,
+                                                          ),
+                                                      child: Text(
+                                                        'Clear',
+                                                        style:
+                                                            GoogleFont.ibmPlexSans(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color:
+                                                                  AppColor
+                                                                      .grayop,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                  : null,
                                         ),
                                       ),
                                     ),
@@ -223,12 +256,18 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(left: 12.0, top: 4),
+                                padding: const EdgeInsets.only(
+                                  left: 12.0,
+                                  top: 4,
+                                ),
                                 child: Align(
                                   alignment: Alignment.topRight,
                                   child: Text(
                                     errorText,
-                                    style: const TextStyle(color: Colors.red, fontSize: 12),
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -236,26 +275,30 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                               Obx(() {
                                 return AppButton.button(
                                   text: 'Get OTP',
-                                  loader: loginController.isLoading.value
-                                      ? SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                      : null,
+                                  loader:
+                                      loginController.isLoading.value
+                                          ? SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                          : null,
                                   width: double.infinity,
                                   onTap: () {
-                                    final String mbl = mobileNumberController.text.replaceAll(' ', '');
+                                    final String mbl = mobileNumberController
+                                        .text
+                                        .replaceAll(' ', '');
                                     if (mbl.isEmpty) {
                                       setState(() {
                                         errorText = 'Mobile Number is Required';
                                       });
                                     } else if (mbl.length != 10) {
                                       setState(() {
-                                        errorText = 'Mobile Number must be exactly 10 digits';
+                                        errorText =
+                                            'Mobile Number must be exactly 10 digits';
                                       });
                                     } else {
                                       setState(() {
@@ -263,8 +306,12 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                       });
 
                                       widget.page == 'splash'
-                                          ? loginController.mobileNumberLogin(mbl)
-                                          : loginController.changeMobileNumber(mbl);
+                                          ? loginController.mobileNumberLogin(
+                                            mbl,
+                                          )
+                                          : loginController.changeMobileNumber(
+                                            mbl,
+                                          );
                                     }
                                   },
                                 );
@@ -275,7 +322,7 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                       ),
 
                       // Bottom carousel / stack
-                      if (widget.page == 'splash' && !isKeyboardOpen)
+                      /*  if (widget.page == 'splash' && !isKeyboardOpen)
                         Stack(
                           children: [
                             Container(
@@ -349,6 +396,151 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                             ),
                           ],
                         ),
+*/
+                      widget.page == 'splash'
+                          ? Stack(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: 50),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [AppColor.splash, Colors.white],
+                                  ),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(25),
+                                    topRight: Radius.circular(25),
+                                  ),
+                                ),
+                                padding: EdgeInsets.only(top: 40),
+                                child: Column(
+                                  children: [
+                                    if (!isKeyboardOpen) ...[
+                                      SizedBox(
+                                        height: 120,
+                                        child: CarouselSlider(
+                                          items:
+                                              images.map((imagePath) {
+                                                return ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  child: Image.asset(
+                                                    imagePath,
+                                                    fit: BoxFit.cover,
+                                                    width:
+                                                        280, // 👈 2 images per screen
+                                                  ),
+                                                );
+                                              }).toList(),
+                                          options: CarouselOptions(
+                                            height: 120,
+                                            autoPlay: true,
+                                            autoPlayInterval: Duration(
+                                              seconds: 3,
+                                            ),
+                                            viewportFraction:
+                                                0.75, // 👈 ensures 2 per screen
+                                            enlargeCenterPage: false,
+                                            padEnds: false,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 25),
+                                      SizedBox(
+                                        height: 120,
+                                        child: CarouselSlider(
+                                          items:
+                                              images1.map((imagePath) {
+                                                return ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  child: Image.asset(
+                                                    imagePath,
+                                                    fit: BoxFit.cover,
+                                                    width:
+                                                        280, // 👈 2 images per screen
+                                                  ),
+                                                );
+                                              }).toList(),
+                                          options: CarouselOptions(
+                                            height: 120,
+                                            autoPlay: true,
+                                            autoPlayInterval: Duration(
+                                              seconds: 3,
+                                            ),
+                                            viewportFraction:
+                                                0.75, // 👈 ensures 2 per screen
+                                            enlargeCenterPage: false,
+                                            padEnds: false,
+                                            reverse: true,
+                                          ),
+                                        ),
+                                      ),
+
+                                      /*  CarouselSlider(
+                              items:
+                                  images.map((imagePath) {
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.asset(
+                                        imagePath,
+                                        fit: BoxFit.cover,
+                                        width: 265,
+                                      ),
+                                    );
+                                  }).toList(),
+                              options: CarouselOptions(
+                                height: 120,
+                                autoPlayInterval: Duration(seconds: 3),
+                                viewportFraction: 0.75,   // 👈 two images fit in one view
+                                enlargeCenterPage: false, // 👈 no zoom on center image
+                                disableCenter: true,      // 👈 removes centering
+                                autoPlay: true,
+                                // viewportFraction: 0.70,
+                                // enlargeCenterPage: false,
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            CarouselSlider(
+                              items:
+                                  images1.map((imagePath) {
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Image.asset(
+                                        imagePath,
+                                        fit: BoxFit.cover,
+                                        width: 320,
+                                      ),
+                                    );
+                                  }).toList(),
+                              options: CarouselOptions(
+                                height: 115,
+                                autoPlay: true,
+                                autoPlayInterval: Duration(seconds: 3),
+                                viewportFraction: 0.85,
+                                enlargeCenterPage: false,
+                                reverse: true,
+                              ),
+                            ),*/
+                                      SizedBox(height: 25),
+                                    ],
+                                  ],
+                                ),
+                              ),
+
+                              Positioned(
+                                top: 0,
+                                right: 15,
+                                child: CustomTextField.textWithSmall(
+                                  text: 'We Are',
+                                  color: AppColor.weAreColor,
+                                  fontSize: 47,
+                                ),
+                              ),
+                            ],
+                          )
+                          : Container(),
                     ],
                   ),
                 ),
@@ -359,7 +551,8 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
       ),
     );
   }
-/*  Widget build(BuildContext context) {
+
+  /*  Widget build(BuildContext context) {
     bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return Scaffold(
@@ -551,8 +744,8 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                               errorText = '';
                             });
 
-                            *//*7904005315*//*
-                            *//*9894143252*//*
+                            */ /*7904005315*/ /*
+                            */ /*9894143252*/ /*
                             widget.page == 'splash'
                                 ? loginController.mobileNumberLogin(mbl)
                                 : loginController.changeMobileNumber(mbl);

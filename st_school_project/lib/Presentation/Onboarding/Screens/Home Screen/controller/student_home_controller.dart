@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:st_school_project/Core/Utility/snack_bar.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../../api/data_source/apiDataSource.dart';
 import '../../../../../Core/Utility/app_color.dart';
 import '../../More Screen/profile_screen/controller/teacher_list_controller.dart';
+import '../model/message_list_response.dart';
 import '../model/siblings_list_response.dart';
 import '../model/student_home_response.dart';
 
 class StudentHomeController extends GetxController {
   RxBool isLoading = false.obs;
+  RxBool isMsgLoading = false.obs;
   String accessToken = '';
   final hasLoadedOnce = false.obs;
   RxBool isOtpLoading = false.obs;
@@ -20,11 +24,94 @@ class StudentHomeController extends GetxController {
   Rx<StudentHomeData?> studentHomeData = Rx<StudentHomeData?>(null);
   RxList<SiblingsData> siblingsList = RxList<SiblingsData>([]);
   Rx<SiblingsData?> selectedStudent = Rx<SiblingsData?>(null);
+  RxList<NotificationItem> messageList = <NotificationItem>[].obs;
 
   @override
   void onInit() {
     super.onInit();
     getStudentHome();
+    getMessageList();
+  }
+
+  Map<String, List<NotificationItem>> get groupedMessages {
+    final Map<String, List<NotificationItem>> grouped = {};
+
+    for (var msg in messageList) {
+      final createdDate = DateUtils.dateOnly(msg.createdAt);
+      final now = DateUtils.dateOnly(DateTime.now());
+      final yesterday = now.subtract(const Duration(days: 1));
+
+      String key;
+      if (createdDate == now) {
+        key = "Today Messages";
+      } else if (createdDate == yesterday) {
+        key = "Yesterday Messages";
+      } else {
+        key = DateFormat("dd MMM yyyy").format(createdDate);
+      }
+
+      grouped.putIfAbsent(key, () => []).add(msg);
+    }
+
+    return grouped;
+  }
+
+  Future<String?> reactForStudentMessage({
+    required String text,
+    bool like = true,
+  }) async {
+    try {
+      isLoading.value = true;
+
+      final results = await apiDataSource.reactForStudentMessage(text: text);
+
+      results.fold(
+        (failure) {
+          AppLogger.log.e(failure.message);
+        },
+        (response) async {
+          CustomSnackBar.showSuccess('Message sent to Class Teacher');
+          await getMessageList(load: false);
+
+          AppLogger.log.i(messageList.toString());
+        },
+      );
+    } catch (e) {
+      AppLogger.log.e(e);
+      return e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+    return null;
+  }
+
+  Future<String?> getMessageList({bool load = true}) async {
+    try {
+      isMsgLoading.value = load;
+      final results = await apiDataSource.getMessageList();
+      results.fold(
+        (failure) {
+          isMsgLoading.value = false;
+          AppLogger.log.e(failure.message);
+        },
+        (response) async {
+          isMsgLoading.value = false;
+
+          // Store in memory
+          // classList.assignAll(response.data);
+          messageList.value = response.data!. items ;
+          AppLogger.log.i(messageList.toString());
+
+          // final prefs = await SharedPreferences.getInstance();
+          // await prefs.setString('token', response.token);
+        },
+      );
+    } catch (e) {
+      isMsgLoading.value = false;
+      AppLogger.log.e(e);
+      return e.toString();
+    }
+    return null;
   }
 
   Future<String?> getStudentHome() async {
