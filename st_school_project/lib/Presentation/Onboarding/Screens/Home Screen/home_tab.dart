@@ -344,7 +344,193 @@ class _HomeScreenState extends State<HomeTab>
                       ),
                     ),
                     SizedBox(height: 20),
-                    Stack(
+
+                    ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 0,
+                      ),
+                      isThreeLine:
+                          true, // give more height so title can wrap nicely
+                      title: Text.rich(
+                        TextSpan(
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 28,
+                            color: AppColor.black,
+                            height: 1.1,
+                          ),
+                          text: 'Hi ',
+                          children: [
+                            TextSpan(
+                              text: data?.name ?? "Welcome",
+                              style: GoogleFont.ibmPlexSans(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 28,
+                                height: 1.1,
+                                color: AppColor.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: '!',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w800,
+                                color: AppColor.blue,
+                              ),
+                            ),
+                          ],
+                        ),
+                        maxLines: 2, // ✅ long name wraps to 2 lines
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 5),
+                          Text.rich(
+                            TextSpan(
+                              text: data?.className ?? '',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 14,
+                                color: AppColor.grey,
+                                fontWeight: FontWeight.w800,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: 'th ',
+                                  style: GoogleFont.ibmPlexSans(fontSize: 10),
+                                ),
+                                TextSpan(
+                                  text: 'Grade - ',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 14,
+                                    color: AppColor.grey,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: data?.section ?? '',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 14,
+                                    color: AppColor.grey,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: ' Section',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // ✅ Icons moved to trailing so they don't overlap the title
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // message button
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MessageScreen(),
+                                ),
+                              );
+                            },
+                            child: Image.asset(
+                              AppImages.messageIcon,
+                              height: 40,
+                              width: 40,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+
+                          // siblings/profile switch (show only if 1+ students)
+                          // ✅ Trailing avatar stack
+                          if (controller.siblingsList.isNotEmpty)
+                            SizedBox(
+                              width: 80, // enough space for stacked avatars
+                              child: Stack(
+                                children: List.generate(
+                                  controller.siblingsList.length.clamp(
+                                    0,
+                                    3,
+                                  ), // show max 3
+                                  (index) {
+                                    final student =
+                                        controller.siblingsList[index];
+                                    final double offset =
+                                        index * 24; // overlap value
+
+                                    return Positioned(
+                                      right: offset,
+                                      child: InkWell(
+                                        onTap: () {
+                                          SwitchProfileSheet.show(
+                                            context,
+                                            students: controller.siblingsList,
+                                            selectedStudent:
+                                                controller.selectedStudent,
+                                            onSwitch: (student) async {
+                                              await controller.switchSiblings(
+                                                id: student.id,
+                                              );
+                                              controller.selectStudent(student);
+                                            },
+                                            onLogout: () async {
+                                              await loginController.logout();
+                                            },
+                                          );
+                                        },
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                          child:
+                                              (student.avatar != null &&
+                                                      student.avatar.isNotEmpty)
+                                                  ? Image.network(
+                                                    student.avatar,
+                                                    height: 49,
+                                                    width: 49,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (
+                                                      context,
+                                                      error,
+                                                      stackTrace,
+                                                    ) {
+                                                      return Image.asset(
+                                                        AppImages.moreSimage1,
+                                                        height: 49,
+                                                        width: 49,
+                                                        fit: BoxFit.cover,
+                                                      );
+                                                    },
+                                                  )
+                                                  : Image.asset(
+                                                    AppImages.moreSimage1,
+                                                    height: 49,
+                                                    width: 49,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+
+                    /*     Stack(
                       children: [
                         ListTile(
                           title: RichText(
@@ -495,63 +681,9 @@ class _HomeScreenState extends State<HomeTab>
                             ),
                           ),
                         ),
-                        if (controller
-                            .siblingsList
-                            .isNotEmpty) // show positioned always if one+ student
-                          Positioned(
-                            right: 34,
-                            bottom: 17,
-                            child: InkWell(
-                              onTap: () {
-                                SwitchProfileSheet.show(
-                                  context,
-                                  students: controller.siblingsList,
-                                  selectedStudent: controller.selectedStudent,
-                                  onSwitch: (student) async {
-                                    await controller.switchSiblings(
-                                      id: student.id,
-                                    );
-                                    controller.selectStudent(student);
-                                  },
-                                  onLogout: () async {
-                                    await loginController.logout();
-                                  },
-                                );
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child:
-                                    (activeStudent.avatar != null &&
-                                            activeStudent.avatar.isNotEmpty)
-                                        ? Image.network(
-                                          activeStudent.avatar,
-                                          height: 49,
-                                          width: 49,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (
-                                            context,
-                                            error,
-                                            stackTrace,
-                                          ) {
-                                            return Image.asset(
-                                              AppImages.moreSimage1,
-                                              height: 49,
-                                              width: 49,
-                                              fit: BoxFit.cover,
-                                            );
-                                          },
-                                        )
-                                        : Image.asset(
-                                          AppImages.moreSimage1,
-                                          height: 49,
-                                          width: 49,
-                                          fit: BoxFit.cover,
-                                        ),
-                              ),
-                            ),
-                          ),
+
                       ],
-                    ),
+                    ),*/
 
                     /*   Stack(
                       children: [
@@ -1945,14 +2077,20 @@ class _HomeScreenState extends State<HomeTab>
                                   if (filteredTasks.isEmpty)
                                     Padding(
                                       padding: const EdgeInsets.all(20),
-                                      child: Center(
-                                        child: Text(
-                                          'No tasks available',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 14,
-                                            color: AppColor.grey,
+                                      child: Column(
+                                        children: [
+                                          Center(
+                                            child: Text(
+                                              'No tasks available',
+                                              style: GoogleFont.ibmPlexSans(
+                                                fontSize: 14,
+                                                color: AppColor.grey,
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                          SizedBox(height: 10),
+                                          Image.asset(AppImages.noDataFound),
+                                        ],
                                       ),
                                     )
                                   else
