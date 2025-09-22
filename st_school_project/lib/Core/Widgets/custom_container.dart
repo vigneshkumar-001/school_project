@@ -714,60 +714,48 @@ class CustomContainer {
     required String classTitle,
     required String teacherImage,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColor.grey.withOpacity(0.1)),
-      ),
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Teacher Name
-          Text(
-            teachresName,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFont.ibmPlexSans(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: AppColor.black,
-            ),
-            textAlign: TextAlign.center,
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColor.grey.withOpacity(0.1)),
           ),
-
-          // Subject/Class title
-          Text(
-            classTitle,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFont.ibmPlexSans(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: AppColor.blue,
-            ),
-            textAlign: TextAlign.center,
-          ),
-
-          const SizedBox(height: 10),
-
-          // Image with fixed size to keep cards equal height
-          ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: SizedBox(
-              height: 120, // Fixed height
-              width: double.infinity, // Stretch full width of container
-              child: Image.network(
-                teacherImage,
-                fit: BoxFit.cover,
-                errorBuilder:
-                    (_, __, ___) =>
-                        Container(color: AppColor.grey), // fallback placeholder
-              ),
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Text(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  teachresName,
+                  style: GoogleFont.ibmPlexSans(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.black,
+                  ),
+                ),
+                Text(
+                  classTitle,
+                  style: GoogleFont.ibmPlexSans(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.blue,
+                  ),
+                ),
+                SizedBox(height: 10),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(
+                    teacherImage,
+                    fit: BoxFit.cover, // or contain if you prefer
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

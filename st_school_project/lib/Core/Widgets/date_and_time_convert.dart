@@ -9,7 +9,7 @@ class DateAndTimeConvert {
     DateTime dateTime =
         DateTime.parse(
           dateTimeString,
-        ).toLocal(); // Convert to Indian local time
+        ).toLocal();
 
     String datePart = showDate ? DateFormat('dd-MM-yyyy').format(dateTime) : '';
     String timePart = showTime ? DateFormat('hh:mm a').format(dateTime) : '';
@@ -23,4 +23,7 @@ class DateAndTimeConvert {
     }
     return '';
   }
+
+
+
 }

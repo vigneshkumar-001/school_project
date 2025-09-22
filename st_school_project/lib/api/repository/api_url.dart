@@ -10,8 +10,16 @@ class ApiUrl {
   static String classList = '$baseUrl/teacher-student-attendance/class-list';
   static String task = '$baseUrl/student-home/tasks?';
   static String announcementList = '$baseUrl/student-announcement/list';
+  static String studentMessageList = '$baseUrl/student-messages/history';
+  static String reactMessage = '$baseUrl/student-messages/create';
   static String profileImage =
       '$baseUrl/student-home/profiles/profile-image-url';
+
+
+  static String examDetails({required int examId}) {
+    return '$baseUrl/student-exams/$examId/details';
+  }
+
 
   static String imageUrl =
       "https://next.fenizotechnologies.com/Adrox/api/image-save";
@@ -39,9 +47,11 @@ class ApiUrl {
   static String QuizAttend({required int quizId}) {
     return '$baseUrl/student-quiz/take/$quizId';
   }
+
   static String announcementDetails({required int id}) {
     return '$baseUrl/student-announcement/details/$id';
   }
+
   static String QuizResult({required int quizId}) {
     return '$baseUrl/student-quiz/result/$quizId';
   }
@@ -49,6 +59,7 @@ class ApiUrl {
   static String getHomeWorkIdDetails({required int id}) {
     return '$baseUrl/student-home/homework/$id';
   }
+
   static String getExamResultData({required int id}) {
     return '$baseUrl/student-exams/$id/result';
   }

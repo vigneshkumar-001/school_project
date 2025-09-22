@@ -11,7 +11,10 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/model/task_response.dart';
 
 import '../../Presentation/Onboarding/Screens/Announcements Screen/model/announcement_details_response.dart';
+import '../../Presentation/Onboarding/Screens/Announcements Screen/model/exam_details_response.dart';
 import '../../Presentation/Onboarding/Screens/Attendence Screen/model/attendance_response.dart';
+import '../../Presentation/Onboarding/Screens/Home Screen/model/message_list_response.dart';
+import '../../Presentation/Onboarding/Screens/Home Screen/model/react_response.dart';
 import '../../Presentation/Onboarding/Screens/Home Screen/model/sibling_switch_response.dart';
 import '../../Presentation/Onboarding/Screens/Home Screen/model/siblings_list_response.dart';
 import '../../Presentation/Onboarding/Screens/More Screen/Login_screen/Model/login_response.dart';
@@ -78,7 +81,9 @@ class ApiDataSource extends BaseApiDataSource {
     }
   }
 
-  Future<Either<Failure, LoginResponse>> changeMobileNumber(String phone) async {
+  Future<Either<Failure, LoginResponse>> changeMobileNumber(
+    String phone,
+  ) async {
     try {
       String url = ApiUrl.changePhoneNumber;
 
@@ -121,7 +126,6 @@ class ApiDataSource extends BaseApiDataSource {
       return Left(ServerFailure(e.toString()));
     }
   }
-
 
   Future<Either<Failure, LoginResponse>> otpLogin({
     required String phone,
@@ -636,6 +640,78 @@ class ApiDataSource extends BaseApiDataSource {
       }
     } catch (e) {
       return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, MessageListResponse>> getMessageList() async {
+    try {
+      String url = ApiUrl.studentMessageList;
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(response);
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(MessageListResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else {
+        return Left(ServerFailure((response as DioException).message ?? ""));
+      }
+    } catch (e) {
+      return Left(ServerFailure(''));
+    }
+  }
+
+  Future<Either<Failure, ReactResponse>> reactForStudentMessage({
+    required String text,
+  }) async {
+    try {
+      String url = ApiUrl.reactMessage;
+
+      final response = await Request.sendRequest(
+        url,
+        {'text': text},
+        'post',
+        true,
+      );
+      AppLogger.log.i(response);
+      if (response is! DioException &&
+          (response?.statusCode == 200 || response?.statusCode == 201)) {
+        if (response?.data['status'] == true) {
+          return Right(ReactResponse.fromJson(response?.data));
+        } else {
+          return Left(ServerFailure(response?.data['message']));
+        }
+      } else {
+        return Left(ServerFailure((response as DioException).message ?? ""));
+      }
+    } catch (e) {
+      return Left(ServerFailure(''));
+    }
+  }
+
+  Future<Either<Failure, ExamDetailsResponse>> getExamDetailsList({
+    required int examId,
+  }) async {
+    try {
+      String url = ApiUrl.examDetails(examId: examId);
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(response);
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(ExamDetailsResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else {
+        return Left(ServerFailure((response as DioException).message ?? ""));
+      }
+    } catch (e) {
+      return Left(ServerFailure(''));
     }
   }
 }

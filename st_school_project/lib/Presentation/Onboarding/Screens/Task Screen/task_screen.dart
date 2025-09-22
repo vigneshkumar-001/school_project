@@ -3264,7 +3264,6 @@ class _TaskScreenState extends State<TaskScreen>
 
               // Whole page scroll with sticky header + white body that scrolls from top
               NestedScrollView(
-                // HEADER (stays above the white sheet)
                 headerSliverBuilder:
                     (context, innerBoxIsScrolled) => [
                       SliverToBoxAdapter(
@@ -3568,6 +3567,7 @@ class _TaskScreenState extends State<TaskScreen>
                         final subjectList = subjects.toList();
 
                         return SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
                           scrollDirection: Axis.horizontal,
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: Row(
@@ -3659,100 +3659,131 @@ class _TaskScreenState extends State<TaskScreen>
                                 return isSameDate && isSameSubject;
                               }).toList();
 
-                          if (filteredTasks.isEmpty) {
-                            return const Center(
-                              child: Text('No tasks available'),
-                            );
-                          }
-
-                          // This ListView is the scroller INSIDE the white sheet.
+                          // ✅ Always wrap with RefreshIndicator
                           return RefreshIndicator(
                             onRefresh: () async {
                               await taskController.getTaskDetails();
                             },
-                            child: ListView.builder(
-                              padding: const EdgeInsets.only(bottom: 24),
-                              itemCount: filteredTasks.length,
-                              itemBuilder: (context, i) {
-                                final task = filteredTasks[i];
-                                final bgColor = colors[i % colors.length];
-                                return CustomContainer.taskScreen(
-                                  homeWorkImage:
-                                      task.type == 'Quiz'
-                                          ? AppImages.taskScreenCont1
-                                          : null,
-                                  mainText: task.title,
-                                  subText: task.description,
-                                  homeWorkText: task.subject,
-                                  avatarImage: task.teacher_image,
-                                  smaleText: task.type,
-                                  time: DateAndTimeConvert.formatDateTime(
-                                    task.time.toString(),
-                                    showDate: false,
-                                    showTime: true,
-                                  ),
-                                  aText1: 'By ',
-                                  aText2: task.assignedByName,
-                                  backRoundColor: bgColor,
-                                  gradient: const LinearGradient(
-                                    colors: [Colors.black, Colors.black],
-                                  ),
-                                  onIconTap: () async {
-                                    if (task.type == 'Quiz') {
-                                      showDialog(
-                                        context: context,
-                                        barrierDismissible: false,
-                                        builder:
-                                            (_) => const Center(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            ),
-                                      );
-                                      final result =
-                                          await Get.find<QuizController>()
-                                              .tryGetResult(task.id);
-                                      if (Navigator.canPop(context))
-                                        Navigator.pop(context);
-
-                                      if (!context.mounted) return;
-
-                                      if (result != null) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder:
-                                                (_) => QuizResultScreen(
-                                                  data: result,
+                            child:
+                                filteredTasks.isEmpty
+                                    ? ListView(
+                                      // <-- must be scrollable for RefreshIndicator
+                                      physics: const BouncingScrollPhysics(),
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SizedBox(height: 15),
+                                            Image.asset(AppImages.noDataFound),
+                                            SizedBox(height: 15),
+                                            Center(
+                                              child: Text(
+                                                'No Tasks Available',
+                                                style: GoogleFont.ibmPlexSans(
+                                                  fontSize: 15,
+                                                  color: AppColor.grey,
                                                 ),
-                                          ),
-                                        );
-                                      } else {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder:
-                                                (_) =>
-                                                    QuizScreen(quizId: task.id),
-                                          ),
-                                        );
-                                      }
-                                    } else {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (_) => TaskDetail(
-                                                teacherImage:
-                                                    task.teacher_image,
-                                                id: task.id,
                                               ),
+                                            ),
+                                          ],
                                         ),
-                                      );
-                                    }
-                                  },
-                                );
-                              },
-                            ),
+                                      ],
+                                    )
+                                    : ListView.builder(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 24,
+                                      ),
+                                      itemCount: filteredTasks.length,
+                                      itemBuilder: (context, i) {
+                                        final task = filteredTasks[i];
+                                        final bgColor =
+                                            colors[i % colors.length];
+                                        return CustomContainer.taskScreen(
+                                          homeWorkImage:
+                                              task.type == 'Quiz'
+                                                  ? AppImages.taskScreenCont1
+                                                  : null,
+                                          mainText: task.title,
+                                          subText: task.description,
+                                          homeWorkText: task.subject,
+                                          avatarImage: task.teacher_image,
+                                          smaleText: task.type,
+                                          time:
+                                              DateAndTimeConvert.formatDateTime(
+                                                task.time.toString(),
+                                                showDate: false,
+                                                showTime: true,
+                                              ),
+                                          aText1: 'By ',
+                                          aText2: task.assignedByName,
+                                          backRoundColor: bgColor,
+                                          gradient: const LinearGradient(
+                                            colors: [
+                                              Colors.black,
+                                              Colors.black,
+                                            ],
+                                          ),
+                                          onIconTap: () async {
+                                            if (task.type == 'Quiz') {
+                                              showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder:
+                                                    (_) => const Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    ),
+                                              );
+
+                                              final result = await Get.find<
+                                                    QuizController
+                                                  >()
+                                                  .tryGetResult(task.id);
+
+                                              if (Navigator.canPop(context))
+                                                Navigator.pop(context);
+
+                                              if (!context.mounted) return;
+
+                                              if (result != null) {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (_) => QuizResultScreen(
+                                                          data: result,
+                                                        ),
+                                                  ),
+                                                );
+                                              } else {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (_) => QuizScreen(
+                                                          quizId: task.id,
+                                                        ),
+                                                  ),
+                                                );
+                                              }
+                                            } else {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (_) => TaskDetail(
+                                                        teacherImage:
+                                                            task.teacher_image,
+                                                        id: task.id,
+                                                      ),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        );
+                                      },
+                                    ),
                           );
                         }),
                       ),

@@ -627,10 +627,81 @@ class _MoreScreenState extends State<MoreScreen>
                       ),
                       SizedBox(width: 10),
                       InkWell(
-                        onTap: () async {
-                          await loginController.logout();
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                backgroundColor: AppColor.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                title: Text(
+                                  'Logout',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                content: Text(
+                                  'Are you sure you want to log out?',
+                                  style: GoogleFont.ibmPlexSans(fontSize: 14),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text(
+                                      'Cancel',
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColor.grey,
+                                      ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      loginController.logout();
+
+                                      // Navigator.pushReplacement(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder:
+                                      //         (context) =>
+                                      //   ChangeMobileNumber(
+                                      //               page: 'splash',
+                                      //             ),
+                                      //
+                                      //   ),
+                                      // );
+                                    },
+                                    child: Text(
+                                      'Log Out',
+                                      style: GoogleFont.ibmPlexSans(
+                                        color: AppColor.red01G1,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         },
-                        child: Image.asset(AppImages.logOut, height: 26),
+                        child: Row(
+                          children: [
+                            Image.asset(AppImages.logOut, height: 20),
+                            SizedBox(width: 15),
+                            Text(
+                              'Logout',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                color: AppColor.red01G1,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -1210,9 +1281,95 @@ class _MoreScreenState extends State<MoreScreen>
                                           controller.selectStudent(student);
                                         },
                                         onLogout: () async {
-                                          await loginController.logout();
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                backgroundColor: AppColor.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                title: Text(
+                                                  'Logout',
+                                                  style: GoogleFont.ibmPlexSans(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                content: Text(
+                                                  'Are you sure you want to log out?',
+                                                  style: GoogleFont.ibmPlexSans(
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(
+                                                        context,
+                                                      ).pop();
+                                                    },
+                                                    child: Text(
+                                                      'Cancel',
+                                                      style:
+                                                          GoogleFont.ibmPlexSans(
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color:
+                                                                AppColor.grey,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      loginController.logout();
+
+                                                      // Navigator.pushReplacement(
+                                                      //   context,
+                                                      //   MaterialPageRoute(
+                                                      //     builder:
+                                                      //         (context) =>
+                                                      //   ChangeMobileNumber(
+                                                      //               page: 'splash',
+                                                      //             ),
+                                                      //
+                                                      //   ),
+                                                      // );
+                                                    },
+                                                    child: Text(
+                                                      'Log Out',
+                                                      style:
+                                                          GoogleFont.ibmPlexSans(
+                                                            color:
+                                                                AppColor
+                                                                    .red01G1,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
                                         },
                                       );
+
+                                      // SwitchProfileSheet.show(
+                                      //   context,
+                                      //   students: controller.siblingsList,
+                                      //   selectedStudent:
+                                      //       controller.selectedStudent,
+                                      //   onSwitch: (student) async {
+                                      //     await controller.switchSiblings(
+                                      //       id: student.id,
+                                      //     );
+                                      //     controller.selectStudent(student);
+                                      //   },
+                                      //   onLogout: () async {
+                                      //     await loginController.logout();
+                                      //   },
+                                      // );
                                     },
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(10),

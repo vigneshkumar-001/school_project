@@ -93,9 +93,6 @@ class _HomeScreenState extends State<HomeTab>
     );
   }
 
-  String formatDate(DateTime date) {
-    return DateFormat('dd MMM yyyy').format(date); // e.g., 16 Sep 2025
-  }
   /*  void switchProfileOrLogout(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -347,44 +344,14 @@ class _HomeScreenState extends State<HomeTab>
                       ),
                     ),
                     SizedBox(height: 20),
-                    Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Hi',
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 28,
-                                color: AppColor.black,
-                                height: 1.1,
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              data?.name ?? "Welcome",
-                              style: GoogleFont.ibmPlexSans(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 28,
-                                height: 1.1,
-                                color: AppColor.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
                     Stack(
                       children: [
                         ListTile(
                           title: RichText(
-                            maxLines: 2,
-                            softWrap: true,
-                            overflow: TextOverflow.ellipsis,
                             text: TextSpan(
                               style: GoogleFont.ibmPlexSans(
                                 fontSize: 28,
                                 color: AppColor.black,
-                                height: 1.1,
                               ),
                               text: 'Hi ',
                               children: [
@@ -393,8 +360,6 @@ class _HomeScreenState extends State<HomeTab>
                                   style: GoogleFont.ibmPlexSans(
                                     fontWeight: FontWeight.w800,
                                     fontSize: 28,
-                                    height: 1.1,
-                                    color: AppColor.black,
                                   ),
                                 ),
                                 TextSpan(
@@ -1764,7 +1729,6 @@ class _HomeScreenState extends State<HomeTab>
                                         if (picked != null) {
                                           setState(() {
                                             selectedDate = picked;
-                                            selectedDay = formatDate(picked);
                                           });
                                         }
                                       }
@@ -1979,20 +1943,17 @@ class _HomeScreenState extends State<HomeTab>
 
                                   // ---------- Tasks or Empty State ----------
                                   if (filteredTasks.isEmpty)
-                                    Column(
-                                      children: [
-                                        Center(
-                                          child: Text(
-                                            'No Tasks Available',
-                                            style: GoogleFont.ibmPlexSans(
-                                              fontSize: 14,
-                                              color: AppColor.grey,
-                                            ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: Center(
+                                        child: Text(
+                                          'No tasks available',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 14,
+                                            color: AppColor.grey,
                                           ),
                                         ),
-                                        SizedBox(height: 30),
-                                        Image.asset(AppImages.noDataFound),
-                                      ],
+                                      ),
                                     )
                                   else
                                     Column(
