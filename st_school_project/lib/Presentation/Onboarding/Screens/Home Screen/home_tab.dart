@@ -351,10 +351,14 @@ class _HomeScreenState extends State<HomeTab>
                       children: [
                         ListTile(
                           title: RichText(
+                            maxLines: 2,
+                            softWrap: true,
+                            overflow: TextOverflow.ellipsis,
                             text: TextSpan(
                               style: GoogleFont.ibmPlexSans(
                                 fontSize: 28,
                                 color: AppColor.black,
+                                height: 1.1,
                               ),
                               text: 'Hi ',
                               children: [
@@ -363,6 +367,8 @@ class _HomeScreenState extends State<HomeTab>
                                   style: GoogleFont.ibmPlexSans(
                                     fontWeight: FontWeight.w800,
                                     fontSize: 28,
+                                    height: 1.1,
+                                    color: AppColor.black,
                                   ),
                                 ),
                                 TextSpan(
