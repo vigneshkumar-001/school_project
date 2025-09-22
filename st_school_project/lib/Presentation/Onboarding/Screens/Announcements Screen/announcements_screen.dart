@@ -797,7 +797,6 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
       },
     );
   }
-
   @override
   void initState() {
     super.initState();
