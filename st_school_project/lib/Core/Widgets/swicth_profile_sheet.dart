@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../Presentation/Onboarding/Screens/More Screen/Login_screen/controller/login_controller.dart';
+import '../Utility/app_color.dart';
 import '../Utility/app_images.dart';
+import '../Utility/google_font.dart';
 
 class SwitchProfileSheet extends StatelessWidget {
+
   final RxList students; // List of student objects
   final Rx selectedStudent; // Currently selected student
   final Function(dynamic student) onSwitch; // Callback when a student is tapped
   final VoidCallback onLogout; // Callback for logout
 
-  const SwitchProfileSheet({
+   SwitchProfileSheet({
     super.key,
     required this.students,
     required this.selectedStudent,
     required this.onSwitch,
     required this.onLogout,
   });
-
+  final LoginController loginController = Get.put(LoginController());
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
@@ -61,6 +65,87 @@ class SwitchProfileSheet extends StatelessWidget {
                     ),
                     Spacer(),
                     InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor: AppColor.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  12,
+                                ),
+                              ),
+                              title: Text(
+                                'Logout',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              content: Text(
+                                'Are you sure you want to log out?',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 14,
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text(
+                                    'Cancel',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColor.grey,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    loginController.logout();
+                                    onLogout();
+                                    // Navigator.pushReplacement(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder:
+                                    //         (context) =>
+                                    //   ChangeMobileNumber(
+                                    //               page: 'splash',
+                                    //             ),
+                                    //
+                                    //   ),
+                                    // );
+                                  },
+                                  child: Text(
+                                    'Log Out',
+                                    style: GoogleFont.ibmPlexSans(
+                                      color: AppColor.red01G1,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Image.asset(AppImages.logOut, height: 20),
+                          SizedBox(width: 15),
+                          Text(
+                            'Logout',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                              color: AppColor.red01G1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                   /* InkWell(
                       onTap: onLogout,
                       child: Row(
                         children: [
@@ -76,7 +161,7 @@ class SwitchProfileSheet extends StatelessWidget {
                           Icon(Icons.logout, color: Colors.redAccent),
                         ],
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
                 SizedBox(height: 32),
