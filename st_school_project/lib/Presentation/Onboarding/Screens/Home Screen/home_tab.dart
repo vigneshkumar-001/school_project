@@ -1992,8 +1992,6 @@ class _HomeScreenState extends State<HomeTab>
                                         ),
                                         SizedBox(height: 30),
                                         Image.asset(AppImages.noDataFound),
-                                        SizedBox(height: 20),
-                                        
                                       ],
                                     )
                                   else
