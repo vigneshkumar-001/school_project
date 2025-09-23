@@ -1685,8 +1685,14 @@ class _MoreScreenState extends State<MoreScreen>
                               .data!
                               .teachers
                               .isEmpty) {
-                        return const Center(
-                          child: Text("No teachers available"),
+                        return Column(
+                          children: [
+                            const Center(
+                              child: Text("No teachers available"),
+                            ),
+                            SizedBox(height: 10),
+                            Image.asset(AppImages.noDataFound),
+                          ],
                         );
                       }
 
@@ -1699,7 +1705,7 @@ class _MoreScreenState extends State<MoreScreen>
 
                       return Column(
                         children: [
-                          for (int i = 0; i < teachers.length; i += 2)
+                        /*  for (int i = 0; i < teachers.length; i += 2)
                             Padding(
                               padding: const EdgeInsets.only(bottom: 15.0),
                               child: Row(
@@ -1708,13 +1714,13 @@ class _MoreScreenState extends State<MoreScreen>
                                     child: CustomContainer.teacherTab(
                                       teachresName: teachers[i].teacherName,
                                       classTitle:
-                                          teachers[i].classTeacher
-                                              ? "${teachers[i].subject} - Class Teacher"
-                                              : teachers[i].subject,
+                                      teachers[i].classTeacher
+                                          ? "${teachers[i].subject} - Class Teacher"
+                                          : teachers[i].subject,
                                       teacherImage:
-                                          teachers[i].teacherImage.isNotEmpty
-                                              ? teachers[i].teacherImage
-                                              : AppImages.teacher1,
+                                      teachers[i].teacherImage.isNotEmpty
+                                          ? teachers[i].teacherImage
+                                          : AppImages.teacher1,
                                     ),
                                   ),
                                   const SizedBox(width: 18),
@@ -1722,24 +1728,64 @@ class _MoreScreenState extends State<MoreScreen>
                                     Expanded(
                                       child: CustomContainer.teacherTab(
                                         teachresName:
-                                            teachers[i + 1].teacherName,
+                                        teachers[i + 1].teacherName,
                                         classTitle:
-                                            teachers[i + 1].classTeacher
-                                                ? "${teachers[i + 1].subject} - Class Teacher"
-                                                : teachers[i + 1].subject,
+                                        teachers[i + 1].classTeacher
+                                            ? "${teachers[i + 1].subject} - Class Teacher"
+                                            : teachers[i + 1].subject,
                                         teacherImage:
-                                            teachers[i + 1]
-                                                    .teacherImage
-                                                    .isNotEmpty
-                                                ? teachers[i + 1].teacherImage
-                                                : AppImages.teacher2,
+                                        teachers[i + 1]
+                                            .teacherImage
+                                            .isNotEmpty
+                                            ? teachers[i + 1].teacherImage
+                                            : AppImages.teacher2,
                                       ),
                                     )
                                   else
-                                    const Spacer(),
+                                    Spacer(),
                                 ],
                               ),
+                            ),*/
+
+                          for (int i = 0; i < teachers.length; i += 2)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 15.0),
+                              child: IntrinsicHeight(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(
+                                      child: CustomContainer.teacherTab(
+                                        teachresName: teachers[i].teacherName,
+                                        classTitle: teachers[i].classTeacher
+                                            ? "${teachers[i].subject} - Class Teacher"
+                                            : teachers[i].subject,
+                                        teacherImage: teachers[i].teacherImage.isNotEmpty
+                                            ? teachers[i].teacherImage
+                                            : AppImages.teacher1,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 18),
+                                    if (i + 1 < teachers.length)
+                                      Expanded(
+                                        child: CustomContainer.teacherTab(
+                                          teachresName: teachers[i + 1].teacherName,
+                                          classTitle: teachers[i + 1].classTeacher
+                                              ? "${teachers[i + 1].subject} - Class Teacher"
+                                              : teachers[i + 1].subject,
+                                          teacherImage: teachers[i + 1].teacherImage.isNotEmpty
+                                              ? teachers[i + 1].teacherImage
+                                              : AppImages.teacher2,
+                                        ),
+                                      )
+                                    else
+                                      const Expanded(child: SizedBox()), // Fill space if odd
+                                  ],
+                                ),
+                              ),
                             ),
+
+
                         ],
                       );
                     }),
