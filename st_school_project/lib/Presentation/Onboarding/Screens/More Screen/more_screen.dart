@@ -1517,8 +1517,14 @@ class _MoreScreenState extends State<MoreScreen>
                               .data!
                               .teachers
                               .isEmpty) {
-                        return const Center(
-                          child: Text("No teachers available"),
+                        return Column(
+                          children: [
+                            const Center(
+                              child: Text("No teachers available"),
+                            ),
+                            SizedBox(height: 10),
+                            Image.asset(AppImages.noDataFound),
+                          ],
                         );
                       }
 

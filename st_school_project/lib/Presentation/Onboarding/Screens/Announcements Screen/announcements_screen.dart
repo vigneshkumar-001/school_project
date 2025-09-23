@@ -823,7 +823,15 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
 
           // Empty State
           if (data == null || data.items.isEmpty) {
-            return const Center(child: Text("No announcements available"));
+            return Column(
+              children: [
+                const Center(child: Text("No announcements available"),
+
+                ),
+                SizedBox(height: 10),
+                Image.asset(AppImages.noDataFound),
+              ],
+            );
           }
 
           return RefreshIndicator(
