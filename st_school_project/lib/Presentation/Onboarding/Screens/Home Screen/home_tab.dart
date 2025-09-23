@@ -97,7 +97,6 @@ class _HomeScreenState extends State<HomeTab>
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -1302,7 +1301,6 @@ class _HomeScreenState extends State<HomeTab>
                       ),
                     ),
 
-
                     Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -1835,5 +1833,3 @@ class _HomeScreenState extends State<HomeTab>
     );
   }
 }
-
-
