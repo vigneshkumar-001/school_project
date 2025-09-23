@@ -218,7 +218,21 @@ class _MessageScreenState extends State<MessageScreen> {
 
                 if (grouped.isEmpty) {
                   return SliverFillRemaining(
-                    child: Center(child: Text("No messages available")),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Text(
+                            'No message available',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 14,
+                              color: AppColor.grey,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Image.asset(AppImages.noDataFound),
+                      ],
+                    ),
                   );
                 }
 

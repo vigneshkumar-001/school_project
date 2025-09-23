@@ -1,6 +1,7 @@
 class ApiUrl {
   static String baseUrl1 = 'https://school-back-end-594f59bea6cb.herokuapp.com';
-  static String baseUrl = 'https://9kt7pzw3-4000.inc1.devtunnels.ms';
+  static String baseUrl =
+      'https://school-backend-v2-19bebceab98e.herokuapp.com';
   static String teacherInfo = '$baseUrl/student-teacher-info';
   static String login = '$baseUrl/student-auth/login';
   static String changePhoneNumber = '$baseUrl/student/change-phone/request';
@@ -15,11 +16,9 @@ class ApiUrl {
   static String profileImage =
       '$baseUrl/student-home/profiles/profile-image-url';
 
-
   static String examDetails({required int examId}) {
     return '$baseUrl/student-exams/$examId/details';
   }
-
 
   static String imageUrl =
       "https://next.fenizotechnologies.com/Adrox/api/image-save";
