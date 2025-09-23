@@ -93,6 +93,8 @@ class _HomeScreenState extends State<HomeTab>
     );
   }
 
+
+
   /*  void switchProfileOrLogout(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -273,6 +275,7 @@ class _HomeScreenState extends State<HomeTab>
       },
     );
   }*/
+
 
   @override
   Widget build(BuildContext context) {
@@ -1779,6 +1782,7 @@ class _HomeScreenState extends State<HomeTab>
                         ),
                       ),
                     ),
+
                     Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -2316,6 +2320,7 @@ class _HomeScreenState extends State<HomeTab>
   }
 }
 
+
 Widget buildAnnouncementCard(Announcement ann, BuildContext context) {
   if (ann.newAdmissionStatus == true) {
     return Stack(
@@ -2611,3 +2616,4 @@ Widget buildAnnouncementCard(Announcement ann, BuildContext context) {
   // Add more for noticeBoardStatus and termFeesStatus if needed
   return SizedBox();
 }
+
