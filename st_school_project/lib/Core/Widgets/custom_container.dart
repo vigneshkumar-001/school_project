@@ -208,7 +208,7 @@ class CustomContainer {
 
   static Widget messageScreen({
     required String time,
-    required String Date, // keep same param name to avoid breaking calls
+    required String Date, // keep same param name
     String? Reacts, // optional
     required Color backRoundColor,
     required String mainText,
@@ -218,7 +218,7 @@ class CustomContainer {
   }) {
     final bool hasReacts = (Reacts != null && Reacts.trim().isNotEmpty);
     final bool hasImage = (ImagePath != null && ImagePath.trim().isNotEmpty);
-    final bool hasExtras = hasReacts || hasImage; // controls alignment
+    final bool hasExtras = hasReacts || hasImage;
 
     return Container(
       decoration: BoxDecoration(
@@ -265,35 +265,27 @@ class CustomContainer {
                 color: AppColor.black,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
 
+            // meta row
             Row(
-              mainAxisSize: MainAxisSize.min, // Row takes only needed width
+              mainAxisAlignment: hasExtras
+                  ? MainAxisAlignment.start
+                  : MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-
-
-            // ===== META ROW =====
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment:
-                  hasExtras
-                      ? MainAxisAlignment.start
-                      : MainAxisAlignment.center,
-              children: [
-                // date+time pill
-
+                // date + time pill
                 Container(
                   decoration: BoxDecoration(
                     color: AppColor.black.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(50),
                   ),
-
                   padding: const EdgeInsets.symmetric(
                     horizontal: 15,
                     vertical: 10,
                   ),
                   child: Text(
-                    '${Date.toString()} ${time.toString()}',
+                    '$Date $time',
                     style: GoogleFont.ibmPlexSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -302,68 +294,22 @@ class CustomContainer {
                   ),
                 ),
 
-                if (hasReacts && ImagePath != null) ...[
-                  const SizedBox(width: 5),
+                // reacts
+                if (hasReacts) ...[
+                  const SizedBox(width: 10),
                   Text(
-                    Reacts,
+                    Reacts!,
                     style: GoogleFont.ibmPlexSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: AppColor.grey,
                     ),
                   ),
-                  const SizedBox(width: 5),
+                ],
 
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 10,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // date
-                        Text(
-                          Date,
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: AppColor.grey,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        // time
-                        Text(
-                          time,
-                          style: GoogleFont.inter(
-                            fontSize: 12,
-                            color: AppColor.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // reacts (only if provided)
-                if (hasReacts) const SizedBox(width: 17),
-                if (hasReacts)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 11.0),
-                    child: Text(
-                      Reacts!,
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: AppColor.grey,
-                      ),
-                    ),
-                  ),
-
-                // image (only if provided)
-                if (hasImage) const SizedBox(width: 10),
-                if (hasImage)
-
+                // image
+                if (hasImage) ...[
+                  const SizedBox(width: 10),
                   InkWell(
                     onTap: IconOntap,
                     child: Image.asset(
@@ -372,6 +318,7 @@ class CustomContainer {
                       fit: BoxFit.contain,
                     ),
                   ),
+                ],
               ],
             ),
           ],
@@ -395,7 +342,7 @@ class CustomContainer {
       onTap: onDetailsTap,
       child: Stack(
         children: [
-          // ✅ Network image with loader + error handling
+
           ClipRRect(
             borderRadius: BorderRadius.circular(22),
             child: CachedNetworkImage(
