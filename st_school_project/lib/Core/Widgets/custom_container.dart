@@ -257,6 +257,8 @@ class CustomContainer {
             // main text
             Text(
               mainText,
+              maxLines: null, // Allow unlimited lines
+              softWrap: true, // Enable text wrapping
               style: GoogleFont.ibmPlexSans(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
@@ -741,53 +743,116 @@ class CustomContainer {
     );
   }
 
-  static teacherTab({
+  static Widget teacherTab({
     required String teachresName,
     required String classTitle,
     required String teacherImage,
   }) {
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColor.grey.withOpacity(0.1)),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  teachresName,
-                  style: GoogleFont.ibmPlexSans(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: AppColor.black,
-                  ),
-                ),
-                Text(
-                  classTitle,
-                  style: GoogleFont.ibmPlexSans(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: AppColor.blue,
-                  ),
-                ),
-                SizedBox(height: 10),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.network(
-                    teacherImage,
-                    fit: BoxFit.cover, // or contain if you prefer
-                  ),
-                ),
-              ],
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColor.grey.withOpacity(0.1)),
+        color: AppColor.white,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Name
+            Text(
+              teachresName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: GoogleFont.ibmPlexSans(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: AppColor.black,
+              ),
             ),
-          ),
+
+            const SizedBox(height: 4),
+
+            // Subject / Role
+            Text(
+              classTitle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: GoogleFont.ibmPlexSans(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: AppColor.blue,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            // 🔒 Uniform image frame for ANY source image size
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child:
+              CachedNetworkImage(
+                imageUrl: teacherImage,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                placeholder:
+                    (context, url) => Container(
+                  height: 160, // adjust to your card height
+                  alignment: Alignment.center,
+                  child: const SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+                errorWidget:
+                    (context, url, error) => const Icon(
+                  Icons.broken_image,
+                  size: 40,
+                  color: Colors.grey,
+                ),
+              ),
+
+              /*AspectRatio(
+                aspectRatio:
+                    4 /
+                    4, // keep same visual size; use 3/4 if you prefer taller portrait
+                child: Image.network(
+                  teacherImage,
+                  fit: BoxFit.cover, // fills the frame (crops nicely)
+                  // Optional loading & error placeholders
+                  loadingBuilder: (context, child, progress) {
+                    if (progress == null) return child;
+                    return Container(
+                      color: Colors.grey.shade100,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator(
+                        value:
+                            progress.expectedTotalBytes != null
+                                ? progress.cumulativeBytesLoaded /
+                                    (progress.expectedTotalBytes ?? 1)
+                                : null,
+                      ),
+                    );
+                  },
+                  errorBuilder:
+                      (_, __, ___) => Container(
+                        color: Colors.grey.shade200,
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.person,
+                          size: 36,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                ),
+              ),*/
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -1046,11 +1111,13 @@ class CustomContainer {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                             )
-                            : null),
+                            : LinearGradient(
+                              colors: [AppColor.lightGrey, AppColor.lightGrey],
+                            )), // Added default gradient
                 color:
                     leftIsPlaceholder
                         ? Colors.transparent
-                        : (leftSelected ? null : AppColor.lightGrey),
+                        : null, // Color is managed by gradient now
                 borderRadius: BorderRadius.circular(16),
                 border:
                     leftIsPlaceholder
@@ -1117,11 +1184,13 @@ class CustomContainer {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                             )
-                            : null),
+                            : LinearGradient(
+                              colors: [AppColor.lightGrey, AppColor.lightGrey],
+                            )), // Added default gradient
                 color:
                     rightIsPlaceholder
                         ? Colors.transparent
-                        : (rightSelected ? null : AppColor.lightGrey),
+                        : null, // Color is managed by gradient now
                 borderRadius: BorderRadius.circular(16),
                 border:
                     rightIsPlaceholder

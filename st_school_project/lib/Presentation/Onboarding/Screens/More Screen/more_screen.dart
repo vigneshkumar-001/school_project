@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:latlong2/latlong.dart';
@@ -20,7 +22,165 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 
+
+// --- grayscale matrix
+const List<double> _kGrayscaleMatrix = <double>[
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+];
+
+Widget _avatarBox({
+  required String? url,
+  required double size,
+  required bool isActive,
+  required bool grayscale,
+  required String fallbackAsset,
+  required Color activeBorderColor,
+}) {
+  final img =
+      (url != null && url.isNotEmpty)
+          ? Image.network(
+            url,
+            height: size,
+            width: size,
+            fit: BoxFit.cover,
+            errorBuilder:
+                (_, __, ___) => Image.asset(
+                  fallbackAsset,
+                  height: size,
+                  width: size,
+                  fit: BoxFit.cover,
+                ),
+          )
+          : Image.asset(
+            fallbackAsset,
+            height: size,
+            width: size,
+            fit: BoxFit.cover,
+          );
+
+  final filtered =
+      grayscale
+          ? ColorFiltered(
+            colorFilter: const ColorFilter.matrix(_kGrayscaleMatrix),
+            child: img,
+          )
+          : img;
+
+  return Container(
+    height: size,
+    width: size,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(15),
+      border: Border.all(
+        color: isActive ? activeBorderColor : Colors.white,
+        width: isActive ? 2 : 1.5,
+      ),
+      boxShadow: [
+        if (isActive)
+          BoxShadow(
+            color: activeBorderColor.withOpacity(0.25),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+      ],
+    ),
+    child: ClipRRect(borderRadius: BorderRadius.circular(15), child: filtered),
+  );
+}
+
+class TwoProfileStack extends StatelessWidget {
+  final dynamic active; // expects .avatar, .id
+  final dynamic other; // expects .avatar, .id (can be null)
+  final double size; // front(active) size
+  final double? backSize; // grayscale(back) size
+  final double overlapFraction; // 0..1 overlap based on min(front, back)
+  final VoidCallback? onTap;
+  final String fallbackAsset;
+  final Color activeBorderColor;
+
+  const TwoProfileStack({
+    super.key,
+    required this.active,
+    required this.other,
+    this.size = 49,
+    this.backSize, // if null => size * 0.86
+    this.overlapFraction = 0.45,
+    this.onTap,
+    required this.fallbackAsset,
+    required this.activeBorderColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final double _back = backSize ?? size * 0.86;
+    final double h = math.max(size, _back);
+    final double overlapPx = math.min(size, _back) * overlapFraction;
+
+    final double w = (other == null) ? size : math.max(_back, overlapPx + size);
+    final double frontTop = (h - size) / 2;
+    final double backTop = (h - _back) / 2;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        width: w,
+        height: h,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            if (other != null)
+              Positioned(
+                right: 0,
+                top: backTop,
+                child: _avatarBox(
+                  url: other.avatar,
+                  size: _back,
+                  isActive: false,
+                  grayscale: true, // back one B/W
+                  fallbackAsset: fallbackAsset,
+                  activeBorderColor: activeBorderColor,
+                ),
+              ),
+            Positioned(
+              right: other == null ? 0 : overlapPx,
+              top: frontTop,
+              child: _avatarBox(
+                url: active?.avatar,
+                size: size,
+                isActive: true, // front active & color
+                grayscale: false,
+                fallbackAsset: fallbackAsset,
+                activeBorderColor: activeBorderColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 import 'profile_screen/model/fees_history_response.dart';
+
 
 class MoreScreen extends StatefulWidget {
   const MoreScreen({super.key});
@@ -1228,7 +1388,7 @@ class _MoreScreenState extends State<MoreScreen>
                     image: DecorationImage(
                       image: AssetImage(AppImages.moreSbackImage),
                       fit: BoxFit.cover,
-                      alignment: const Alignment(-8, -0.8),
+                      alignment: const Alignment(-2, -0.8),
                     ),
                     gradient: const LinearGradient(
                       begin: Alignment.topRight,
@@ -1246,7 +1406,7 @@ class _MoreScreenState extends State<MoreScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Image.asset(AppImages.moreStopImage, fit: BoxFit.cover),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 10),
 
                         Obx(() {
                           final data =
@@ -1271,170 +1431,139 @@ class _MoreScreenState extends State<MoreScreen>
                             orElse: () => siblings.first,
                           );
 
-                          return Stack(
-                            children: [
-                              /// --- Student info
-                              ListTile(
-                                title: RichText(
-                                  text: TextSpan(
-                                    text: data?.studentName.toString() ?? '',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 24,
-                                      color: AppColor.black,
-                                    ),
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                            ),
+                            child: ListTile(
+                              title: RichText(
+                                text: TextSpan(
+                                  text: data?.studentName.toString() ?? '',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 22,
+                                    color: AppColor.black,
                                   ),
                                 ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () => _OTPonMobileNoEdit(context),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            data?.student_phone.toString() ??
-                                                '',
-                                            style: GoogleFont.ibmPlexSans(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 16,
-                                              color: AppColor.lightBlack,
-                                            ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => _OTPonMobileNoEdit(context),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          data?.student_phone.toString() ?? '',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                            color: AppColor.lightBlack,
                                           ),
-                                          const SizedBox(width: 5),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                              vertical: 12,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: AppColor.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                            ),
-                                            child: Image.asset(
-                                              AppImages.moreSnumberAdd,
-                                              height: 13,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    RichText(
-                                      text: TextSpan(
-                                        text:
-                                            data?.studentClass.toString() ?? '',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontSize: 12,
-                                          color: AppColor.grey,
-                                          fontWeight: FontWeight.w800,
                                         ),
-                                        children: [
-                                          TextSpan(
-                                            text: 'th ',
-                                            style: GoogleFont.ibmPlexSans(
-                                              fontSize: 8,
-                                            ),
+                                        const SizedBox(width: 5),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 12,
                                           ),
-                                          TextSpan(
-                                            text: 'Grade - ',
-                                            style: GoogleFont.ibmPlexSans(
-                                              fontSize: 12,
-                                              color: AppColor.grey,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text:
-                                                data?.section.toString() ?? '',
-                                            style: GoogleFont.ibmPlexSans(
-                                              fontSize: 12,
-                                              color: AppColor.grey,
-                                              fontWeight: FontWeight.w800,
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: ' Section',
-                                            style: GoogleFont.ibmPlexSans(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                /// 👉 Show small avatar only if more than 1 sibling
-                                trailing:
-                                    siblings.length > 1
-                                        ? InkWell(
-                                          onTap: () {
-                                            SwitchProfileSheet.show(
-                                              context,
-                                              students: controller.siblingsList,
-                                              selectedStudent:
-                                                  controller.selectedStudent,
-                                              onSwitch: (student) async {
-                                                await controller.switchSiblings(
-                                                  id: student.id,
-                                                );
-                                                controller.selectStudent(
-                                                  student,
-                                                );
-                                              },
-                                              onLogout: () async {
-                                                await loginController.logout();
-                                              },
-                                            );
-                                          },
-                                          child: ClipRRect(
+                                          decoration: BoxDecoration(
+                                            color: AppColor.white,
                                             borderRadius: BorderRadius.circular(
-                                              10,
+                                              50,
                                             ),
-                                            child:
-                                                (remainingStudent.avatar !=
-                                                            null &&
-                                                        remainingStudent
-                                                            .avatar
-                                                            .isNotEmpty)
-                                                    ? Image.network(
-                                                      remainingStudent.avatar,
-                                                      height: 30,
-                                                      width: 30,
-                                                      fit: BoxFit.cover,
-                                                      errorBuilder: (
-                                                        context,
-                                                        error,
-                                                        stackTrace,
-                                                      ) {
-                                                        return Image.asset(
-                                                          AppImages.moreSimage1,
-                                                          height: 30,
-                                                          width: 30,
-                                                          fit: BoxFit.cover,
-                                                        );
-                                                      },
-                                                    )
-                                                    : Image.asset(
-                                                      AppImages.moreSimage1,
-                                                      height: 30,
-                                                      width: 30,
-                                                      fit: BoxFit.cover,
-                                                    ),
                                           ),
-                                        )
-                                        : null,
+                                          child: Image.asset(
+                                            AppImages.moreSnumberAdd,
+                                            height: 13,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  RichText(
+                                    text: TextSpan(
+                                      text: data?.studentClass.toString() ?? '',
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontSize: 12,
+                                        color: AppColor.grey,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                          text: 'th ',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 8,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: 'Grade - ',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 12,
+                                            color: AppColor.grey,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: data?.section.toString() ?? '',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 12,
+                                            color: AppColor.grey,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: ' Section',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
 
-                              /// --- Active Student Avatar (always shown if at least 1 student)
-                              if (siblings.isNotEmpty)
-                                Positioned(
-                                  right: 34,
-                                  bottom: 17,
-                                  child: InkWell(
+                              // 👉 two-avatar stack as trailing
+                              trailing: Builder(
+                                builder: (context) {
+                                  final siblings = controller.siblingsList;
+                                  if (siblings.isEmpty)
+                                    return const SizedBox.shrink();
+
+                                  // pick active (front) + one other (back)
+                                  dynamic activeStudent;
+                                  try {
+                                    activeStudent = siblings.firstWhere(
+                                      (s) => s.isActive == true,
+                                    );
+                                  } catch (_) {
+                                    activeStudent = siblings.first;
+                                  }
+
+                                  dynamic otherStudent;
+                                  for (final s in siblings) {
+                                    if (s.id != activeStudent.id) {
+                                      otherStudent = s;
+                                      break;
+                                    }
+                                  }
+
+                                  return TwoProfileStack(
+                                    active: activeStudent,
+                                    other:
+                                        siblings.length > 1
+                                            ? otherStudent
+                                            : null, // only show back if >1
+                                    size: 80, // front (color) avatar
+                                    backSize:
+                                        55, // 🔥 back (B/W) avatar size — customize here
+                                    overlapFraction:
+                                        0.44, // tweak overlap if you like
+                                    fallbackAsset: AppImages.moreSimage1,
+                                    activeBorderColor: Colors.transparent,
                                     onTap: () {
                                       SwitchProfileSheet.show(
                                         context,
@@ -1448,131 +1577,14 @@ class _MoreScreenState extends State<MoreScreen>
                                           controller.selectStudent(student);
                                         },
                                         onLogout: () async {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                backgroundColor: AppColor.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
-                                                title: Text(
-                                                  'Logout',
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                content: Text(
-                                                  'Are you sure you want to log out?',
-                                                  style: GoogleFont.ibmPlexSans(
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(
-                                                        context,
-                                                      ).pop();
-                                                    },
-                                                    child: Text(
-                                                      'Cancel',
-                                                      style:
-                                                          GoogleFont.ibmPlexSans(
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color:
-                                                                AppColor.grey,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      loginController.logout();
-
-                                                      // Navigator.pushReplacement(
-                                                      //   context,
-                                                      //   MaterialPageRoute(
-                                                      //     builder:
-                                                      //         (context) =>
-                                                      //   ChangeMobileNumber(
-                                                      //               page: 'splash',
-                                                      //             ),
-                                                      //
-                                                      //   ),
-                                                      // );
-                                                    },
-                                                    child: Text(
-                                                      'Log Out',
-                                                      style:
-                                                          GoogleFont.ibmPlexSans(
-                                                            color:
-                                                                AppColor
-                                                                    .red01G1,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
+                                          await loginController.logout();
                                         },
                                       );
-
-                                      // SwitchProfileSheet.show(
-                                      //   context,
-                                      //   students: controller.siblingsList,
-                                      //   selectedStudent:
-                                      //       controller.selectedStudent,
-                                      //   onSwitch: (student) async {
-                                      //     await controller.switchSiblings(
-                                      //       id: student.id,
-                                      //     );
-                                      //     controller.selectStudent(student);
-                                      //   },
-                                      //   onLogout: () async {
-                                      //     await loginController.logout();
-                                      //   },
-                                      // );
                                     },
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child:
-                                          (activeStudent.avatar != null &&
-                                                  activeStudent
-                                                      .avatar
-                                                      .isNotEmpty)
-                                              ? Image.network(
-                                                activeStudent.avatar,
-                                                height: 49,
-                                                width: 49,
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (
-                                                  context,
-                                                  error,
-                                                  stackTrace,
-                                                ) {
-                                                  return Image.asset(
-                                                    AppImages.moreSimage1,
-                                                    height: 49,
-                                                    width: 49,
-                                                    fit: BoxFit.cover,
-                                                  );
-                                                },
-                                              )
-                                              : Image.asset(
-                                                AppImages.moreSimage1,
-                                                height: 49,
-                                                width: 49,
-                                                fit: BoxFit.cover,
-                                              ),
-                                    ),
-                                  ),
-                                ),
-                            ],
+                                  );
+                                },
+                              ),
+                            ),
                           );
                         }),
                       ],
@@ -1687,9 +1699,7 @@ class _MoreScreenState extends State<MoreScreen>
                               .isEmpty) {
                         return Column(
                           children: [
-                            const Center(
-                              child: Text("No teachers available"),
-                            ),
+                            const Center(child: Text("No teachers available")),
                             SizedBox(height: 10),
                             Image.asset(AppImages.noDataFound),
                           ],
@@ -1705,91 +1715,310 @@ class _MoreScreenState extends State<MoreScreen>
 
                       return Column(
                         children: [
-                        /*  for (int i = 0; i < teachers.length; i += 2)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 15.0),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: CustomContainer.teacherTab(
-                                      teachresName: teachers[i].teacherName,
-                                      classTitle:
-                                      teachers[i].classTeacher
-                                          ? "${teachers[i].subject} - Class Teacher"
-                                          : teachers[i].subject,
-                                      teacherImage:
-                                      teachers[i].teacherImage.isNotEmpty
-                                          ? teachers[i].teacherImage
-                                          : AppImages.teacher1,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 18),
-                                  if (i + 1 < teachers.length)
-                                    Expanded(
-                                      child: CustomContainer.teacherTab(
-                                        teachresName:
-                                        teachers[i + 1].teacherName,
-                                        classTitle:
-                                        teachers[i + 1].classTeacher
-                                            ? "${teachers[i + 1].subject} - Class Teacher"
-                                            : teachers[i + 1].subject,
-                                        teacherImage:
-                                        teachers[i + 1]
-                                            .teacherImage
-                                            .isNotEmpty
-                                            ? teachers[i + 1].teacherImage
-                                            : AppImages.teacher2,
-                                      ),
-                                    )
-                                  else
-                                    Spacer(),
-                                ],
-                              ),
-                            ),*/
-
+                          /*  for (int i = 0; i < teachers.length; i += 2)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 15.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: CustomContainer.teacherTab(
+                    teachresName: teachers[i].teacherName,
+                    classTitle:
+                    teachers[i].classTeacher
+                        ? "${teachers[i].subject} - Class Teacher"
+                        : teachers[i].subject,
+                    teacherImage:
+                    teachers[i].teacherImage.isNotEmpty
+                        ? teachers[i].teacherImage
+                        : AppImages.teacher1,
+                  ),
+                ),
+                const SizedBox(width: 18),
+                if (i + 1 < teachers.length)
+                  Expanded(
+                    child: CustomContainer.teacherTab(
+                      teachresName:
+                      teachers[i + 1].teacherName,
+                      classTitle:
+                      teachers[i + 1].classTeacher
+                          ? "${teachers[i + 1].subject} - Class Teacher"
+                          : teachers[i + 1].subject,
+                      teacherImage:
+                      teachers[i + 1]
+                          .teacherImage
+                          .isNotEmpty
+                          ? teachers[i + 1].teacherImage
+                          : AppImages.teacher2,
+                    ),
+                  )
+                else
+                  Spacer(),
+              ],
+            ),
+          ),*/
                           for (int i = 0; i < teachers.length; i += 2)
                             Padding(
                               padding: const EdgeInsets.only(bottom: 15.0),
                               child: IntrinsicHeight(
                                 child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   children: [
                                     Expanded(
                                       child: CustomContainer.teacherTab(
                                         teachresName: teachers[i].teacherName,
-                                        classTitle: teachers[i].classTeacher
-                                            ? "${teachers[i].subject} - Class Teacher"
-                                            : teachers[i].subject,
-                                        teacherImage: teachers[i].teacherImage.isNotEmpty
-                                            ? teachers[i].teacherImage
-                                            : AppImages.teacher1,
+                                        classTitle:
+                                            teachers[i].classTeacher
+                                                ? "${teachers[i].subject} - Class Teacher"
+                                                : teachers[i].subject,
+                                        teacherImage:
+                                            teachers[i].teacherImage.isNotEmpty
+                                                ? teachers[i].teacherImage
+                                                : AppImages.teacher1,
                                       ),
                                     ),
                                     const SizedBox(width: 18),
                                     if (i + 1 < teachers.length)
                                       Expanded(
                                         child: CustomContainer.teacherTab(
-                                          teachresName: teachers[i + 1].teacherName,
-                                          classTitle: teachers[i + 1].classTeacher
-                                              ? "${teachers[i + 1].subject} - Class Teacher"
-                                              : teachers[i + 1].subject,
-                                          teacherImage: teachers[i + 1].teacherImage.isNotEmpty
-                                              ? teachers[i + 1].teacherImage
-                                              : AppImages.teacher2,
+                                          teachresName:
+                                              teachers[i + 1].teacherName,
+                                          classTitle:
+                                              teachers[i + 1].classTeacher
+                                                  ? "${teachers[i + 1].subject} - Class Teacher"
+                                                  : teachers[i + 1].subject,
+                                          teacherImage:
+                                              teachers[i + 1]
+                                                      .teacherImage
+                                                      .isNotEmpty
+                                                  ? teachers[i + 1].teacherImage
+                                                  : AppImages.teacher2,
                                         ),
                                       )
                                     else
-                                      const Expanded(child: SizedBox()), // Fill space if odd
+                                      const Expanded(
+                                        child: SizedBox(),
+                                      ), // Fill space if odd
                                   ],
                                 ),
                               ),
                             ),
-
-
                         ],
                       );
                     }),
                   ),
+
+                  /* SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 20,
+                    ),
+                    child: Obx(() {
+                      if (teacherListController.isLoading.value) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (teacherListController.teacherListResponse.value ==
+                              null ||
+                          teacherListController
+                                  .teacherListResponse
+                                  .value!
+                                  .data ==
+                              null ||
+                          teacherListController
+                              .teacherListResponse
+                              .value!
+                              .data!
+                              .teachers
+                              .isEmpty) {
+                        return Container(
+                          padding: EdgeInsets.symmetric(vertical: 160),
+                          decoration: BoxDecoration(color: AppColor.white),
+                          child: Column(
+                            children: [
+                              Center(
+                                child: Text(
+                                  'No teachers available',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: AppColor.grey,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 30),
+                              Image.asset(AppImages.noDataFound),
+                            ],
+                          ),
+                        );
+                      }
+
+                      final teachers =
+                          teacherListController
+                              .teacherListResponse
+                              .value!
+                              .data!
+                              .teachers;
+
+                      // ⬇️ REPLACE your old `return Column(children:[...])` with THIS:
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics:
+                            const NeverScrollableScrollPhysics(), // inside SingleChildScrollView
+                        padding: EdgeInsets.zero,
+                        itemCount: teachers.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, // 2 columns
+                              crossAxisSpacing: 18, // horizontal gap
+                              mainAxisSpacing: 15, // vertical gap
+                              childAspectRatio:
+                                  0.73, // adjust card height if needed
+                            ),
+                        itemBuilder: (context, i) {
+                          final t = teachers[i];
+                          return CustomContainer.teacherTab(
+                            teachresName: t.teacherName,
+                            classTitle:
+                                t.classTeacher
+                                    ? "${t.subject} - Class Teacher"
+                                    : t.subject,
+                            teacherImage:
+                                t.teacherImage.isNotEmpty
+                                    ? t.teacherImage
+                                    : AppImages.teacher1,
+                          );
+                        },
+                      );
+                    }),
+                  ),*/
+
+                  // SingleChildScrollView(
+                  //   padding: const EdgeInsets.symmetric(
+                  //     horizontal: 18,
+                  //     vertical: 20,
+                  //   ),
+                  //   child: Obx(() {
+                  //     if (teacherListController.isLoading.value) {
+                  //       return const Center(child: CircularProgressIndicator());
+                  //     }
+                  //     if (teacherListController.teacherListResponse.value ==
+                  //             null ||
+                  //         teacherListController
+                  //                 .teacherListResponse
+                  //                 .value!
+                  //                 .data ==
+                  //             null ||
+                  //         teacherListController
+                  //             .teacherListResponse
+                  //             .value!
+                  //             .data!
+                  //             .teachers
+                  //             .isEmpty) {
+                  //       return Column(
+                  //         children: [
+                  //           const Center(
+                  //             child: Text("No teachers available"),
+                  //           ),
+                  //           SizedBox(height: 10),
+                  //           Image.asset(AppImages.noDataFound),
+                  //         ],
+                  //       );
+                  //     }
+                  //
+                  //     final teachers =
+                  //         teacherListController
+                  //             .teacherListResponse
+                  //             .value!
+                  //             .data!
+                  //             .teachers;
+                  //
+                  //     return Column(
+                  //       children: [
+                  //       /*  for (int i = 0; i < teachers.length; i += 2)
+                  //           Padding(
+                  //             padding: const EdgeInsets.only(bottom: 15.0),
+                  //             child: Row(
+                  //               children: [
+                  //                 Expanded(
+                  //                   child: CustomContainer.teacherTab(
+                  //                     teachresName: teachers[i].teacherName,
+                  //                     classTitle:
+                  //                     teachers[i].classTeacher
+                  //                         ? "${teachers[i].subject} - Class Teacher"
+                  //                         : teachers[i].subject,
+                  //                     teacherImage:
+                  //                     teachers[i].teacherImage.isNotEmpty
+                  //                         ? teachers[i].teacherImage
+                  //                         : AppImages.teacher1,
+                  //                   ),
+                  //                 ),
+                  //                 const SizedBox(width: 18),
+                  //                 if (i + 1 < teachers.length)
+                  //                   Expanded(
+                  //                     child: CustomContainer.teacherTab(
+                  //                       teachresName:
+                  //                       teachers[i + 1].teacherName,
+                  //                       classTitle:
+                  //                       teachers[i + 1].classTeacher
+                  //                           ? "${teachers[i + 1].subject} - Class Teacher"
+                  //                           : teachers[i + 1].subject,
+                  //                       teacherImage:
+                  //                       teachers[i + 1]
+                  //                           .teacherImage
+                  //                           .isNotEmpty
+                  //                           ? teachers[i + 1].teacherImage
+                  //                           : AppImages.teacher2,
+                  //                     ),
+                  //                   )
+                  //                 else
+                  //                   Spacer(),
+                  //               ],
+                  //             ),
+                  //           ),*/
+                  //
+                  //         for (int i = 0; i < teachers.length; i += 2)
+                  //           Padding(
+                  //             padding: const EdgeInsets.only(bottom: 15.0),
+                  //             child: IntrinsicHeight(
+                  //               child: Row(
+                  //                 crossAxisAlignment: CrossAxisAlignment.stretch,
+                  //                 children: [
+                  //                   Expanded(
+                  //                     child: CustomContainer.teacherTab(
+                  //                       teachresName: teachers[i].teacherName,
+                  //                       classTitle: teachers[i].classTeacher
+                  //                           ? "${teachers[i].subject} - Class Teacher"
+                  //                           : teachers[i].subject,
+                  //                       teacherImage: teachers[i].teacherImage.isNotEmpty
+                  //                           ? teachers[i].teacherImage
+                  //                           : AppImages.teacher1,
+                  //                     ),
+                  //                   ),
+                  //                   const SizedBox(width: 18),
+                  //                   if (i + 1 < teachers.length)
+                  //                     Expanded(
+                  //                       child: CustomContainer.teacherTab(
+                  //                         teachresName: teachers[i + 1].teacherName,
+                  //                         classTitle: teachers[i + 1].classTeacher
+                  //                             ? "${teachers[i + 1].subject} - Class Teacher"
+                  //                             : teachers[i + 1].subject,
+                  //                         teacherImage: teachers[i + 1].teacherImage.isNotEmpty
+                  //                             ? teachers[i + 1].teacherImage
+                  //                             : AppImages.teacher2,
+                  //                       ),
+                  //                     )
+                  //                   else
+                  //                     const Expanded(child: SizedBox()), // Fill space if odd
+                  //                 ],
+                  //               ),
+                  //             ),
+                  //           ),
+                  //
+                  //
+                  //       ],
+                  //     );
+                  //   }),
+                  // ),
                 ],
               ),
             ),

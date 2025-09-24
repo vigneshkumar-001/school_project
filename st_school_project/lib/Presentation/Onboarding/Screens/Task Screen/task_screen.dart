@@ -1832,12 +1832,144 @@ import '../More Screen/quiz_result.dart';
 import '../More Screen/quiz_screen.dart';
 import 'package:get/get.dart';
 
+import 'dart:math' as math; // <- add this import if not present
+
+// --- grayscale matrix
+const List<double> _kGrayscaleMatrix = <double>[
+  0.2126, 0.7152, 0.0722, 0, 0,
+  0.2126, 0.7152, 0.0722, 0, 0,
+  0.2126, 0.7152, 0.0722, 0, 0,
+  0,      0,      0,      1, 0,
+];
+
+Widget _avatarBox({
+  required String? url,
+  required double size,
+  required bool isActive,
+  required bool grayscale,
+  required String fallbackAsset,
+  required Color activeBorderColor,
+}) {
+  final img = (url != null && url.isNotEmpty)
+      ? Image.network(
+    url,
+    height: size,
+    width: size,
+    fit: BoxFit.cover,
+    errorBuilder: (_, __, ___) =>
+        Image.asset(fallbackAsset, height: size, width: size, fit: BoxFit.cover),
+  )
+      : Image.asset(fallbackAsset, height: size, width: size, fit: BoxFit.cover);
+
+  final filtered = grayscale
+      ? ColorFiltered(colorFilter: const ColorFilter.matrix(_kGrayscaleMatrix), child: img)
+      : img;
+
+  return Container(
+    height: size,
+    width: size,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(
+        color: isActive ? activeBorderColor : Colors.white,
+        width: isActive ? 2 : 1.5,
+      ),
+      boxShadow: [
+        if (isActive)
+          BoxShadow(
+            color: activeBorderColor.withOpacity(0.25),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+      ],
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: filtered,
+    ),
+  );
+}
+
+class TwoProfileStack extends StatelessWidget {
+  final dynamic active;           // expects .avatar, .id
+  final dynamic other;            // expects .avatar, .id (can be null)
+  final double size;              // front(active) size
+  final double? backSize;         // grayscale(back) size
+  final double overlapFraction;   // 0..1 overlap based on min(front, back)
+  final VoidCallback? onTap;
+  final String fallbackAsset;
+  final Color activeBorderColor;
+
+  const TwoProfileStack({
+    super.key,
+    required this.active,
+    required this.other,
+    this.size = 49,
+    this.backSize,                // if null => size * 0.86
+    this.overlapFraction = 0.45,
+    this.onTap,
+    required this.fallbackAsset,
+    required this.activeBorderColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final double _back = backSize ?? size * 0.86;
+    final double h = math.max(size, _back);
+    final double overlapPx = math.min(size, _back) * overlapFraction;
+
+    final double w = (other == null) ? size : math.max(_back, overlapPx + size);
+    final double frontTop = (h - size) / 2;
+    final double backTop  = (h - _back) / 2;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        width: w,
+        height: h,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            if (other != null)
+              Positioned(
+                right: 0,
+                top: backTop,
+                child: _avatarBox(
+                  url: other.avatar,
+                  size: _back,
+                  isActive: false,
+                  grayscale: true, // back one B/W
+                  fallbackAsset: fallbackAsset,
+                  activeBorderColor: activeBorderColor,
+                ),
+              ),
+            Positioned(
+              right: other == null ? 0 : overlapPx,
+              top: frontTop,
+              child: _avatarBox(
+                url: active?.avatar,
+                size: size,
+                isActive: true,     // front active & color
+                grayscale: false,
+                fallbackAsset: fallbackAsset,
+                activeBorderColor: activeBorderColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
 
   @override
   State<TaskScreen> createState() => _TaskScreenState();
 }
+
 
 class _TaskScreenState extends State<TaskScreen>
     with AutomaticKeepAliveClientMixin {
@@ -3241,6 +3373,7 @@ class _TaskScreenState extends State<TaskScreen>
   late final ScrollController _listScrollController;
   bool _bodyScrolled = false;
 
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -3412,10 +3545,26 @@ class _TaskScreenState extends State<TaskScreen>
                           final siblings = controller.siblingsList;
                           if (siblings.isEmpty) return const SizedBox.shrink();
 
-                          final activeStudent = siblings.firstWhere(
-                            (s) => s.isActive == true,
-                            orElse: () => siblings.first,
-                          );
+
+                          // pick active + one other
+                          dynamic activeStudent;
+                          try {
+                            activeStudent = siblings.firstWhere((s) => s.isActive == true);
+                          } catch (_) {
+                            activeStudent = siblings.first;
+                          }
+                          dynamic otherStudent;
+                          for (final s in siblings) {
+                            if (s.id != activeStudent.id) {
+                              otherStudent = s;
+                              break;
+                            }
+                          }
+
+                          // final activeStudent = siblings.firstWhere(
+                          //   (s) => s.isActive == true,
+                          //   orElse: () => siblings.first,
+                          // );
                           final remainingStudent = siblings.firstWhere(
                             (s) => s.id != activeStudent.id,
                             orElse: () => siblings.first,
@@ -3434,7 +3583,30 @@ class _TaskScreenState extends State<TaskScreen>
                                     ),
                                   ),
                                   const Spacer(),
-                                  if (siblings.length > 1)
+                                  TwoProfileStack(
+                                    active: activeStudent,
+                                    other: otherStudent,             // null => only active shown
+                                    size: 40,                        // front size
+                                    backSize: 30,                    // 🔥 B/W (back) size — customize here
+                                    overlapFraction: 0.40,           // optional
+                                    fallbackAsset: AppImages.moreSimage1,
+                                    activeBorderColor:  Colors.transparent,
+                                    onTap: () {
+                                      SwitchProfileSheet.show(
+                                        context,
+                                        students: controller.siblingsList,
+                                        selectedStudent: controller.selectedStudent,
+                                        onSwitch: (student) async {
+                                          await controller.switchSiblings(id: student.id);
+                                          controller.selectStudent(student);
+                                        },
+                                        onLogout: () async {
+                                          await loginController.logout();
+                                        },
+                                      );
+                                    },
+                                  ),
+                                /*  if (siblings.length > 1)
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 15.0,
@@ -3491,12 +3663,12 @@ class _TaskScreenState extends State<TaskScreen>
                                                   ),
                                         ),
                                       ),
-                                    ),
+                                    ),*/
                                 ],
                               ),
-                              Positioned(
+                            /*  Positioned(
                                 right: 30,
-                                bottom: 0,
+                                bottom: 4,
                                 child: InkWell(
                                   onTap: () {
                                     SwitchProfileSheet.show(
@@ -3541,7 +3713,7 @@ class _TaskScreenState extends State<TaskScreen>
                                             ),
                                   ),
                                 ),
-                              ),
+                              ),*/
                             ],
                           );
                         }),
