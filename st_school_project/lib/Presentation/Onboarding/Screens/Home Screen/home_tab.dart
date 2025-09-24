@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -26,6 +28,168 @@ import '../More Screen/quiz_screen.dart';
 import 'controller/student_home_controller.dart';
 import 'message_screen.dart';
 import 'model/student_home_response.dart';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Two-avatar stack helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+const List<double> _kGrayscaleMatrix = <double>[
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+];
+
+Widget _avatarBox({
+  required String? url,
+  required double size,
+  required bool isActive,
+  required bool grayscale,
+  required String fallbackAsset,
+  required Color activeBorderColor,
+}) {
+  final img =
+      (url != null && url.isNotEmpty)
+          ? Image.network(
+            url,
+            height: size,
+            width: size,
+            fit: BoxFit.cover,
+            errorBuilder:
+                (_, __, ___) => Image.asset(
+                  fallbackAsset,
+                  height: size,
+                  width: size,
+                  fit: BoxFit.cover,
+                ),
+          )
+          : Image.asset(
+            fallbackAsset,
+            height: size,
+            width: size,
+            fit: BoxFit.cover,
+          );
+
+  final filtered =
+      grayscale
+          ? ColorFiltered(
+            colorFilter: const ColorFilter.matrix(_kGrayscaleMatrix),
+            child: img,
+          )
+          : img;
+
+  return Container(
+    height: size,
+    width: size,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: isActive ? activeBorderColor : Colors.white,
+        width: isActive ? 2 : 1.5,
+      ),
+      boxShadow: [
+        if (isActive)
+          BoxShadow(
+            color: activeBorderColor.withOpacity(0.25),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+      ],
+    ),
+    child: ClipRRect(borderRadius: BorderRadius.circular(10), child: filtered),
+  );
+}
+
+class TwoProfileStack extends StatelessWidget {
+  final dynamic active; // expects .avatar, .id
+  final dynamic other; // expects .avatar, .id (can be null)
+  final double size; // front(active) size
+  final double? backSize; // <-- NEW: grayscale(back) size
+  final double overlapFraction; // 0..1 overlap based on min(front, back)
+  final VoidCallback? onTap;
+  final String fallbackAsset;
+  final Color activeBorderColor;
+
+  const TwoProfileStack({
+    super.key,
+    required this.active,
+    required this.other,
+    this.size = 49,
+    this.backSize, // if null -> size * 0.86
+    this.overlapFraction = 0.45,
+    this.onTap,
+    required this.fallbackAsset,
+    required this.activeBorderColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final double _back = backSize ?? size * 0.86; // default slightly smaller
+    final double h = math.max(size, _back); // stack height
+    final double overlapPx = math.min(size, _back) * overlapFraction;
+
+    // total width: if no other -> just front width
+    final double w = (other == null) ? size : math.max(_back, overlapPx + size);
+
+    // vertically center both when sizes differ
+    final double frontTop = (h - size) / 2;
+    final double backTop = (h - _back) / 2;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        width: w,
+        height: h,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            if (other != null)
+              Positioned(
+                right: 0,
+                top: backTop,
+                child: _avatarBox(
+                  url: other.avatar,
+                  size: _back,
+                  isActive: false,
+                  grayscale: true, // back one is B/W
+                  fallbackAsset: fallbackAsset,
+                  activeBorderColor: activeBorderColor,
+                ),
+              ),
+            Positioned(
+              right: other == null ? 0 : overlapPx,
+              top: frontTop,
+              child: _avatarBox(
+                url: active?.avatar,
+                size: size,
+                isActive: true, // front is active & colored
+                grayscale: false,
+                fallbackAsset: fallbackAsset,
+                activeBorderColor: activeBorderColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class HomeTab extends StatefulWidget {
   final VoidCallback? onBackPressed;
@@ -71,6 +235,8 @@ class _HomeScreenState extends State<HomeTab>
     'Social Science',
     'Maths',
   ];
+  String _fmt(DateTime d) =>
+      DateFormat('dd MMM yyyy').format(d); // e.g., 23 Sep 2025
 
   PopupMenuItem<String> _buildMenuItem(String value) {
     final isSelected = value == selectedDay;
@@ -315,14 +481,34 @@ class _HomeScreenState extends State<HomeTab>
             }
 
             final siblings = controller.siblingsList;
-            final activeStudent = siblings.firstWhere(
-              (s) => s.isActive == true,
-              orElse: () => siblings.first,
-            );
-            final remainingStudent = siblings.firstWhere(
-              (s) => s.id != activeStudent.id,
-              orElse: () => siblings.first,
-            );
+
+            // robust pick: active (front) + one other (back)
+            dynamic activeStudent =
+                controller.selectedStudent.value; // <-- .value !
+            if (activeStudent == null) {
+              try {
+                activeStudent = siblings.firstWhere((s) => s.isActive == true);
+              } catch (_) {
+                activeStudent = siblings.isNotEmpty ? siblings.first : null;
+              }
+            }
+
+            dynamic otherStudent;
+            for (final s in siblings) {
+              if (activeStudent == null || s.id != activeStudent.id) {
+                otherStudent = s;
+                break;
+              }
+            }
+            // NOTE: if only one student, otherStudent stays null → only active shown
+
+            // if only one student, otherStudent stays null → only active shown
+
+            // final siblings = controller.siblingsList;
+            // final activeStudent = siblings.firstWhere(
+            //   (s) => s.isActive == true,
+            //   orElse: () => siblings.first,
+            // );
 
             final subjectsList = subjects.toList();
 
@@ -433,7 +619,7 @@ class _HomeScreenState extends State<HomeTab>
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // message button
+                          // Message button
                           InkWell(
                             onTap: () {
                               Navigator.push(
@@ -451,80 +637,33 @@ class _HomeScreenState extends State<HomeTab>
                           ),
                           const SizedBox(width: 12),
 
-                          // siblings/profile switch (show only if 1+ students)
-                          // ✅ Trailing avatar stack
-                          if (controller.siblingsList.isNotEmpty)
-                            SizedBox(
-                              width: 80, // enough space for stacked avatars
-                              child: Stack(
-                                children: List.generate(
-                                  controller.siblingsList.length.clamp(
-                                    0,
-                                    3,
-                                  ), // show max 3
-                                  (index) {
-                                    final student =
-                                        controller.siblingsList[index];
-                                    final double offset =
-                                        index * 24; // overlap value
-
-                                    return Positioned(
-                                      right: offset,
-                                      child: InkWell(
-                                        onTap: () {
-                                          SwitchProfileSheet.show(
-                                            context,
-                                            students: controller.siblingsList,
-                                            selectedStudent:
-                                                controller.selectedStudent,
-                                            onSwitch: (student) async {
-                                              await controller.switchSiblings(
-                                                id: student.id,
-                                              );
-                                              controller.selectStudent(student);
-                                            },
-                                            onLogout: () async {
-                                              await loginController.logout();
-                                            },
-                                          );
-                                        },
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                          child:
-                                              (student.avatar != null &&
-                                                      student.avatar.isNotEmpty)
-                                                  ? Image.network(
-                                                    student.avatar,
-                                                    height: 49,
-                                                    width: 49,
-                                                    fit: BoxFit.cover,
-                                                    errorBuilder: (
-                                                      context,
-                                                      error,
-                                                      stackTrace,
-                                                    ) {
-                                                      return Image.asset(
-                                                        AppImages.moreSimage1,
-                                                        height: 49,
-                                                        width: 49,
-                                                        fit: BoxFit.cover,
-                                                      );
-                                                    },
-                                                  )
-                                                  : Image.asset(
-                                                    AppImages.moreSimage1,
-                                                    height: 49,
-                                                    width: 49,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                        ),
-                                      ),
+                          // Exactly two avatars: active (front, color) + other (back, grayscale)
+                          if (siblings.isNotEmpty)
+                            TwoProfileStack(
+                              active: activeStudent,
+                              other: otherStudent, // null => only active shown
+                              size: 49, // front(active)
+                              backSize: 38, // <-- customize B/W size here
+                              overlapFraction:
+                                  0.50, // optional: how much to overlap
+                              fallbackAsset: AppImages.moreSimage1,
+                              activeBorderColor: Colors.transparent,
+                              onTap: () {
+                                SwitchProfileSheet.show(
+                                  context,
+                                  students: controller.siblingsList,
+                                  selectedStudent: controller.selectedStudent,
+                                  onSwitch: (student) async {
+                                    await controller.switchSiblings(
+                                      id: student.id,
                                     );
+                                    controller.selectStudent(student);
                                   },
-                                ),
-                              ),
+                                  onLogout: () async {
+                                    await loginController.logout();
+                                  },
+                                );
+                              },
                             ),
                         ],
                       ),
@@ -1817,6 +1956,101 @@ class _HomeScreenState extends State<HomeTab>
                                   PopupMenuButton<String>(
                                     color: AppColor.white,
                                     onSelected: (value) async {
+                                      if (value == 'Today') {
+                                        setState(() {
+                                          selectedDay = 'Today';
+                                          selectedDate = DateTime.now();
+                                        });
+                                      } else if (value == 'Yesterday') {
+                                        setState(() {
+                                          selectedDay = 'Yesterday';
+                                          selectedDate = DateTime.now()
+                                              .subtract(
+                                                const Duration(days: 1),
+                                              );
+                                        });
+                                      } else if (value == 'Custom Date') {
+                                        final picked = await showDatePicker(
+                                          context: context,
+                                          initialDate:
+                                              selectedDate ?? DateTime.now(),
+                                          firstDate: DateTime(2000),
+                                          lastDate: DateTime(2100),
+                                          builder: (context, child) {
+                                            return Theme(
+                                              data: Theme.of(context).copyWith(
+                                                dialogBackgroundColor:
+                                                    AppColor.white,
+                                                colorScheme: ColorScheme.light(
+                                                  primary: AppColor.blueG2,
+                                                  onPrimary: Colors.white,
+                                                  onSurface: AppColor.black,
+                                                ),
+                                                textButtonTheme:
+                                                    TextButtonThemeData(
+                                                      style:
+                                                          TextButton.styleFrom(
+                                                            foregroundColor:
+                                                                AppColor.blueG2,
+                                                          ),
+                                                    ),
+                                              ),
+                                              child: child!,
+                                            );
+                                          },
+                                        );
+
+                                        if (picked != null) {
+                                          setState(() {
+                                            selectedDate = picked;
+                                            selectedDay = _fmt(
+                                              picked,
+                                            ); // 🔥 show the picked date on the button
+                                          });
+                                        }
+                                      }
+                                    },
+                                    itemBuilder:
+                                        (context) => [
+                                          _buildMenuItem('Today'),
+                                          _buildMenuItem('Yesterday'),
+                                          _buildMenuItem('Custom Date'),
+                                        ],
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColor.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            selectedDay,
+
+                                            style: GoogleFont.ibmPlexSans(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColor.black,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Icon(
+                                            Icons.keyboard_arrow_down_outlined,
+                                            size: 20,
+                                            color: AppColor.black,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                  /* PopupMenuButton<String>(
+                                    color: AppColor.white,
+                                    onSelected: (value) async {
                                       setState(() {
                                         selectedDay = value;
                                       });
@@ -1900,7 +2134,7 @@ class _HomeScreenState extends State<HomeTab>
                                         ],
                                       ),
                                     ),
-                                  ),
+                                  ),*/
                                 ],
                               ),
                             ),
@@ -1919,8 +2153,6 @@ class _HomeScreenState extends State<HomeTab>
                               // filter tasks by selected date first
                               final dateFilteredTasks =
                                   tasks.where((task) {
-                                    if (selectedDate == null) return true;
-
                                     final taskDate =
                                         DateTime.parse(
                                           task.date.toString(),
@@ -2076,7 +2308,7 @@ class _HomeScreenState extends State<HomeTab>
                                   // ---------- Tasks or Empty State ----------
                                   if (filteredTasks.isEmpty)
                                     Padding(
-                                      padding: const EdgeInsets.all(20),
+                                      padding: const EdgeInsets.only(top: 20),
                                       child: Column(
                                         children: [
                                           Center(

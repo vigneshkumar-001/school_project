@@ -797,6 +797,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
       },
     );
   }
+
   @override
   void initState() {
     super.initState();
@@ -823,14 +824,25 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
 
           // Empty State
           if (data == null || data.items.isEmpty) {
-            return Column(
-              children: [
-                const Center(child: Text("No announcements available"),
-
-                ),
-                SizedBox(height: 10),
-                Image.asset(AppImages.noDataFound),
-              ],
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 160),
+              decoration: BoxDecoration(color: AppColor.white),
+              child: Column(
+                children: [
+                  Center(
+                    child: Text(
+                      'No announcements available',
+                      style: GoogleFont.ibmPlexSans(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        color: AppColor.grey,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  Image.asset(AppImages.noDataFound),
+                ],
+              ),
             );
           }
 
