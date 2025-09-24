@@ -8,6 +8,7 @@ import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
 import 'package:st_school_project/Core/Widgets/swicth_profile_sheet.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/controller/fees_history_controller.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/controller/teacher_list_controller.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/screen/profile_screen.dart';
 
@@ -20,6 +21,7 @@ import 'change_mobile_number.dart' show ChangeMobileNumber;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
+
 
 // --- grayscale matrix
 const List<double> _kGrayscaleMatrix = <double>[
@@ -177,6 +179,9 @@ class TwoProfileStack extends StatelessWidget {
   }
 }
 
+import 'profile_screen/model/fees_history_response.dart';
+
+
 class MoreScreen extends StatefulWidget {
   const MoreScreen({super.key});
 
@@ -193,6 +198,7 @@ class _MoreScreenState extends State<MoreScreen>
 
   final StudentHomeController controller = Get.put(StudentHomeController());
   final LoginController loginController = Get.put(LoginController());
+  final FeesHistoryController feesController = Get.put(FeesHistoryController());
   final TeacherListController teacherListController = Get.put(
     TeacherListController(),
   );
@@ -221,8 +227,9 @@ class _MoreScreenState extends State<MoreScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 1, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     teacherListController.teacherListData();
+    feesController.feesHistoryList();
   }
 
   void _handleTabChange() {
@@ -581,7 +588,169 @@ class _MoreScreenState extends State<MoreScreen>
     );
   }
 
-  void _feessSheet(BuildContext context) {
+  void _feessSheet(BuildContext context, PlanItem plan) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.55,
+          minChildSize: 0.20,
+          maxChildSize: 0.55,
+          expand: false,
+          builder: (context, scrollController) {
+            final items = plan.items; // ✅ FeeItem list
+
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+              ),
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                children: [
+                  // handle bar
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: AppColor.grayop,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  Image.asset(AppImages.announcement2),
+                  const SizedBox(height: 20),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          plan.name, // Plan title (Third Term Fee)
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.black,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            'Due date',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 12,
+                              color: AppColor.lowGrey,
+                            ),
+                          ),
+                          Text(
+                            plan.dueDate, // ✅ from PlanItem
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        CupertinoIcons.clock_fill,
+                        size: 30,
+                        color: AppColor.grayop,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Fee breakdown list
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: List.generate(
+                      items.length,
+                      (index) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          '${index + 1}. ${items[index].feeTypeName} - Rs.${items[index].amount} (${items[index].status})',
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 16,
+                            color: AppColor.lightBlack,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      // TODO: payment API call
+                    },
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all(EdgeInsets.zero),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      elevation: MaterialStateProperty.all(0),
+                      backgroundColor: MaterialStateProperty.all(
+                        Colors.transparent,
+                      ),
+                    ),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppColor.blueG1, AppColor.blueG2],
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: 50,
+                        width: double.infinity,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Pay Rs.${plan.summary.totalAmount}',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: AppColor.white,
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            const Icon(
+                              CupertinoIcons.right_chevron,
+                              size: 14,
+                              weight: 20,
+                              color: AppColor.white,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /*  void _fessSheet(BuildContext context, PlanItem plan) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -733,7 +902,7 @@ class _MoreScreenState extends State<MoreScreen>
         );
       },
     );
-  }
+  }*/
 
   void Switchprofileorlogout(BuildContext context) {
     showModalBottomSheet(
@@ -941,9 +1110,9 @@ class _MoreScreenState extends State<MoreScreen>
       backgroundColor: Colors.transparent,
       builder: (_) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.80,
+          initialChildSize: 0.85,
           minChildSize: 0.20,
-          maxChildSize: 0.85,
+          maxChildSize: 0.90,
           expand: false,
           builder: (context, scrollController) {
             return Container(
@@ -1433,7 +1602,7 @@ class _MoreScreenState extends State<MoreScreen>
                   child: TabBar(
                     controller: _tabController,
                     tabs: const [
-                      // Tab(text: 'Payment History'),
+                      Tab(text: 'Payment History'),
                       Tab(text: 'Teachers'),
                     ],
                     labelColor: AppColor.lightBlack,
@@ -1446,21 +1615,19 @@ class _MoreScreenState extends State<MoreScreen>
                     dividerColor: Colors.transparent,
                   ),
                 ),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => _showContactSchoolSheet(context),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      child: Text(
-                        'Contact School',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.grey,
-                        ),
+                GestureDetector(
+                  onTap: () => _showContactSchoolSheet(context),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    child: Text(
+                      'Contact School',
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.grey,
                       ),
                     ),
                   ),
@@ -1472,38 +1639,41 @@ class _MoreScreenState extends State<MoreScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  // Payment History Tab
-                  // SingleChildScrollView(
-                  //   padding: const EdgeInsets.symmetric(
-                  //     horizontal: 15,
-                  //     vertical: 20,
-                  //   ),
-                  //   child: Column(
-                  //     children: [
-                  //       CustomContainer.moreScreen(
-                  //         termTitle: 'Third-Term Fees',
-                  //         timeDate: '8 Jan 26',
-                  //         amount: 'Rs. 15000',
-                  //         isPaid: false,
-                  //         onDetailsTap: () => _feessSheet(context),
-                  //       ),
-                  //       CustomContainer.moreScreen(
-                  //         termTitle: 'Second-Term Fees',
-                  //         timeDate: '12.30Pm - 8 Dec 25',
-                  //         amount: 'Rs. 15000',
-                  //         isPaid: true,
-                  //         onDetailsTap: () => _paymentReceipt(context),
-                  //       ),
-                  //       CustomContainer.moreScreen(
-                  //         termTitle: 'First-Term Fees',
-                  //         timeDate: '12.30Pm - 2 Jun 25',
-                  //         amount: 'Rs. 15000',
-                  //         isPaid: true,
-                  //         onDetailsTap: () => _paymentReceipt(context),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
+                  Obx(() {
+                    final data = feesController.feesData.value;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 20,
+                      ),
+                      child: ListView.builder(
+                        itemCount: data?.items.length,
+                        itemBuilder: (context, index) {
+                          final plan = data?.items[index]; // PlanItem
+                          return CustomContainer.moreScreen(
+                            onDetailsTap: () {
+                              _paymentReceipt(context);
+                            },
+                            termTitle:
+                                plan?.name.toString() ??
+                                '', // e.g. "Third Term Fee – Sep 2025"
+                            timeDate:
+                                plan?.announcementDate.toString() ??
+                                '', // or format with intl
+                            amount: "Rs. ${plan?.summary.totalAmount}",
+                            isPaid:
+                                plan?.summary.unpaidCount ==
+                                0, // true if all paid
+                            payNowButton:
+                                () => _feessSheet(
+                                  context,
+                                  plan!,
+                                ), // pass plan if needed
+                          );
+                        },
+                      ),
+                    );
+                  }),
                   // Teachers Tab
                   SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(
@@ -1853,430 +2023,6 @@ class _MoreScreenState extends State<MoreScreen>
               ),
             ),
           ],
-        ),
-      ),
-    );
-
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(AppImages.moreSbackImage),
-                        fit: BoxFit.cover,
-                        alignment: Alignment(-8, -0.8),
-                      ),
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        colors: [AppColor.white, AppColor.lowWhite],
-                      ),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 15, left: 15, bottom: 25),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Image.asset(
-                            AppImages.moreStopImage,
-                            fit: BoxFit.cover,
-                          ),
-                          SizedBox(height: 20),
-                          ListTile(
-                            title: RichText(
-                              text: TextSpan(
-                                text: 'Jelastin',
-                                style: GoogleFont.ibmPlexSans(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 24,
-                                  color: AppColor.black,
-                                ),
-                              ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                GestureDetector(
-                                  onTap: () => _OTPonMobileNoEdit(context),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        '+91 900 000 0000',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16,
-                                          color: AppColor.lightBlack,
-                                        ),
-                                      ),
-                                      SizedBox(width: 5),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 12,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: AppColor.white,
-                                          borderRadius: BorderRadius.circular(
-                                            50,
-                                          ),
-                                        ),
-                                        child: Image.asset(
-                                          AppImages.moreSnumberAdd,
-                                          height: 13,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                RichText(
-                                  text: TextSpan(
-                                    text: '7',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontSize: 12,
-                                      color: AppColor.grey,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                        text: 'th ',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontSize: 8,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: 'Grade - ',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontSize: 12,
-                                          color: AppColor.grey,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: 'C ',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontSize: 12,
-                                          color: AppColor.grey,
-                                          fontWeight: FontWeight.w800,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: 'Section',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            trailing: Image.asset(
-                              AppImages.moreSimage2,
-                              height: 58,
-                              width: 58,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 58,
-                    bottom: 35,
-                    child: InkWell(
-                      onTap: () {
-                        SwitchProfileSheet.show(
-                          context,
-                          students: controller.siblingsList,
-                          selectedStudent: controller.selectedStudent,
-                          onSwitch: (student) async {
-                            await controller.switchSiblings(id: student.id);
-                            controller.selectStudent(student);
-                          },
-                          onLogout: () async {
-                            await controller.clearData();
-                            // Get.offAllNamed('/login');
-                          },
-                        );
-                      },
-                      child: Image.asset(
-                        AppImages.moreSimage1,
-                        height: 95,
-                        width: 95,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 15),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: TabBar(
-                      controller: _tabController,
-                      tabs: const [
-                        Tab(text: 'Payment History'),
-                        Tab(text: 'Teachers'),
-                      ],
-                      labelColor: AppColor.lightBlack,
-                      unselectedLabelColor: AppColor.grey,
-                      indicatorColor: AppColor.lightBlack,
-                      labelStyle: GoogleFont.ibmPlexSans(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      dividerColor: Colors.transparent,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => _showContactSchoolSheet(context),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      child: Text(
-                        'Contact School',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.grey,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 500,
-                child: TabBarView(
-                  physics: NeverScrollableScrollPhysics(),
-                  controller: _tabController,
-                  children: [
-                    // 📌 Payment History Tab (same as before)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          CustomContainer.moreScreen(
-                            termTitle: 'Third-Term Fees',
-                            timeDate: '8 Jan 26',
-                            amount: 'Rs. 15000',
-                            isPaid: false,
-                            onDetailsTap: () => _feessSheet(context),
-                          ),
-                          CustomContainer.moreScreen(
-                            termTitle: 'Second-Term Fees',
-                            timeDate: '12.30Pm - 8 Dec 25',
-                            amount: 'Rs. 15000',
-                            isPaid: true,
-                            onDetailsTap: () => _paymentReceipt(context),
-                          ),
-                          CustomContainer.moreScreen(
-                            termTitle: 'First-Term Fees',
-                            timeDate: '12.30Pm - 2 Jun 25',
-                            amount: 'Rs. 15000',
-                            isPaid: true,
-                            onDetailsTap: () => _paymentReceipt(context),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // 📌 Teachers Tab (Dynamic Now)
-                    // 📌 Teachers Tab (Dynamic Now)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 18.0,
-                        vertical: 20,
-                      ),
-                      child: Obx(() {
-                        if (teacherListController.isLoading.value) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        if (teacherListController.teacherListResponse.value ==
-                                null ||
-                            teacherListController
-                                    .teacherListResponse
-                                    .value!
-                                    .data ==
-                                null ||
-                            teacherListController
-                                .teacherListResponse
-                                .value!
-                                .data!
-                                .teachers
-                                .isEmpty) {
-                          return const Center(
-                            child: Text("No teachers available"),
-                          );
-                        }
-
-                        final teachers =
-                            teacherListController
-                                .teacherListResponse
-                                .value!
-                                .data!
-                                .teachers;
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            for (int i = 0; i < teachers.length; i += 2)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 15.0),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: CustomContainer.teacherTab(
-                                        teachresName: teachers[i].teacherName,
-                                        classTitle:
-                                            teachers[i].classTeacher
-                                                ? "${teachers[i].subject} - Class Teacher"
-                                                : teachers[i].subject,
-                                        teacherImage:
-                                            teachers[i].teacherImage.isNotEmpty
-                                                ? teachers[i].teacherImage
-                                                : AppImages.teacher1,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 18),
-                                    if (i + 1 < teachers.length)
-                                      Expanded(
-                                        child: CustomContainer.teacherTab(
-                                          teachresName:
-                                              teachers[i + 1].teacherName,
-                                          classTitle:
-                                              teachers[i + 1].classTeacher
-                                                  ? "${teachers[i + 1].subject} - Class Teacher"
-                                                  : teachers[i + 1].subject,
-                                          teacherImage:
-                                              teachers[i + 1]
-                                                      .teacherImage
-                                                      .isNotEmpty
-                                                  ? teachers[i + 1].teacherImage
-                                                  : AppImages.teacher2,
-                                        ),
-                                      )
-                                    else
-                                      const Spacer(),
-                                  ],
-                                ),
-                              ),
-                          ],
-                        );
-                      }),
-                    ),
-                  ],
-                ),
-              ),
-
-              /* SizedBox(
-                height: 500,
-                child: TabBarView(
-                  physics: NeverScrollableScrollPhysics(),
-                  controller: _tabController,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          CustomContainer.moreScreen(
-                            termTitle: 'Third-Term Fees',
-                            timeDate: '8 Jan 26',
-                            amount: 'Rs. 15000',
-                            isPaid: false,
-                            onDetailsTap: () => _feessSheet(context),
-                          ),
-                          CustomContainer.moreScreen(
-                            termTitle: 'Second-Term Fees',
-                            timeDate: '12.30Pm - 8 Dec 25',
-                            amount: 'Rs. 15000',
-                            isPaid: true,
-                            onDetailsTap: () => _paymentReceipt(context),
-                          ),
-                          CustomContainer.moreScreen(
-                            termTitle: 'First-Term Fees',
-                            timeDate: '12.30Pm - 2 Jun 25',
-                            amount: 'Rs. 15000',
-                            isPaid: true,
-                            onDetailsTap: () => _paymentReceipt(context),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 18.0,
-                        vertical: 20,
-                      ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomContainer.teacherTab(
-                                    teachresName: 'Vasanth',
-                                    classTitle: 'Tamil - Class Teacher',
-                                    teacherImage: AppImages.teacher1,
-                                  ),
-                                ),
-                                SizedBox(width: 18),
-                                Expanded(
-                                  child: CustomContainer.teacherTab(
-                                    teachresName: 'Abishiek',
-                                    classTitle: 'English',
-                                    teacherImage: AppImages.teacher2,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 15),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomContainer.teacherTab(
-                                    teachresName: 'Kumari',
-                                    classTitle: 'Maths',
-                                    teacherImage: AppImages.teacher3,
-                                  ),
-                                ),
-                                SizedBox(width: 18),
-                                Expanded(
-                                  child: CustomContainer.teacherTab(
-                                    teachresName: 'Ponnamma',
-                                    classTitle: 'Science',
-                                    teacherImage: AppImages.teacher4,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),*/
-            ],
-          ),
         ),
       ),
     );

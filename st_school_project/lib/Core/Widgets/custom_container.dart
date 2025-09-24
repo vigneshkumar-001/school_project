@@ -267,6 +267,11 @@ class CustomContainer {
             ),
             const SizedBox(height: 8),
 
+            Row(
+              mainAxisSize: MainAxisSize.min, // Row takes only needed width
+              children: [
+
+
             // ===== META ROW =====
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,11 +281,39 @@ class CustomContainer {
                       : MainAxisAlignment.center,
               children: [
                 // date+time pill
+
                 Container(
                   decoration: BoxDecoration(
                     color: AppColor.black.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(50),
                   ),
+
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 10,
+                  ),
+                  child: Text(
+                    '${Date.toString()} ${time.toString()}',
+                    style: GoogleFont.ibmPlexSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.grey,
+                    ),
+                  ),
+                ),
+
+                if (hasReacts && ImagePath != null) ...[
+                  const SizedBox(width: 5),
+                  Text(
+                    Reacts,
+                    style: GoogleFont.ibmPlexSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.grey,
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 15,
@@ -330,6 +363,7 @@ class CustomContainer {
                 // image (only if provided)
                 if (hasImage) const SizedBox(width: 10),
                 if (hasImage)
+
                   InkWell(
                     onTap: IconOntap,
                     child: Image.asset(
@@ -561,153 +595,151 @@ class CustomContainer {
     required String amount,
     bool isPaid = true,
     VoidCallback? onDetailsTap,
+    VoidCallback? payNowButton,
   }) {
-    return InkWell(
-      onTap: onDetailsTap,
-      child: Container(
-        margin: EdgeInsets.only(bottom: 20),
-        decoration: BoxDecoration(
-          border: Border.all(color: AppColor.grey.withOpacity(0.2)),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child:
-            isPaid
-                ? ListTile(
-                  title: Text(
-                    'Paid for',
-                    style: GoogleFont.ibmPlexSans(
-                      fontSize: 12,
-                      color: AppColor.lowGrey,
+    return Container(
+      margin: EdgeInsets.only(bottom: 20),
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColor.grey.withOpacity(0.2)),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child:
+          isPaid
+              ? ListTile(
+                title: Text(
+                  'Paid for',
+                  style: GoogleFont.ibmPlexSans(
+                    fontSize: 12,
+                    color: AppColor.lowGrey,
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 7),
+                    Text(
+                      termTitle,
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 16,
+                        color: AppColor.black,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 7),
-                      Text(
-                        termTitle,
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 16,
-                          color: AppColor.black,
-                          fontWeight: FontWeight.w800,
-                        ),
+                    SizedBox(height: 7),
+                    Text(
+                      timeDate,
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 12,
+                        color: AppColor.grey,
                       ),
-                      SizedBox(height: 7),
-                      Text(
-                        timeDate,
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 12,
-                          color: AppColor.grey,
-                        ),
-                      ),
-                      SizedBox(height: 7),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Row(
-                          children: [
-                            Text(
-                              'Details',
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 10,
-                                color: AppColor.lowGrey,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            SizedBox(width: 1),
-                            Icon(
-                              CupertinoIcons.right_chevron,
-                              size: 10,
-                              color: AppColor.lowGrey,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  trailing: Text(
-                    amount,
-                    style: GoogleFont.ibmPlexSans(
-                      fontSize: 20,
-                      color: AppColor.greenMore1,
-                      fontWeight: FontWeight.w500,
                     ),
-                  ),
-                )
-                : Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        termTitle,
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Row(
+                    SizedBox(height: 7),
+                    GestureDetector(
+                      onTap: onDetailsTap,
+                      child: Row(
                         children: [
                           Text(
-                            amount,
+                            'Details',
                             style: GoogleFont.ibmPlexSans(
-                              fontSize: 20,
+                              fontSize: 10,
+                              color: AppColor.lowGrey,
                               fontWeight: FontWeight.w600,
-                              color: AppColor.blue,
                             ),
                           ),
-                          Spacer(),
-                          GestureDetector(
-                            onTap: onDetailsTap,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 4,
+                          SizedBox(width: 1),
+                          Icon(
+                            CupertinoIcons.right_chevron,
+                            size: 10,
+                            color: AppColor.lowGrey,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                trailing: Text(
+                  amount,
+                  style: GoogleFont.ibmPlexSans(
+                    fontSize: 20,
+                    color: AppColor.greenMore1,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              )
+              : Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      termTitle,
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          amount,
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.blue,
+                          ),
+                        ),
+                        Spacer(),
+                        GestureDetector(
+                          onTap: payNowButton,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [AppColor.blueG1, AppColor.blueG2],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
                               ),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [AppColor.blueG1, AppColor.blueG2],
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                ),
-                                borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Text(
+                              'Pay Now',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: AppColor.white,
                               ),
-                              child: Text(
-                                'Pay Now',
-                                style: GoogleFont.ibmPlexSans(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColor.white,
-                                ),
-                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 7),
+                    RichText(
+                      text: TextSpan(
+                        text: 'Due Date',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.grey,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: ' $timeDate',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: AppColor.lightBlack,
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 7),
-                      RichText(
-                        text: TextSpan(
-                          text: 'Due Date',
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.grey,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: ' $timeDate',
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: AppColor.lightBlack,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-      ),
+              ),
     );
   }
 

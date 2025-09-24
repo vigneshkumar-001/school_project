@@ -3,6 +3,7 @@ class ApiUrl {
   static String baseUrl =
       'https://school-backend-v2-19bebceab98e.herokuapp.com';
   static String teacherInfo = '$baseUrl/student-teacher-info';
+  static String paymentHistory = '$baseUrl/student-payments/history';
   static String login = '$baseUrl/student-auth/login';
   static String changePhoneNumber = '$baseUrl/student/change-phone/request';
   static String verifyOtp = '$baseUrl/student-auth/verify-otp';
