@@ -22,7 +22,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 
-
+import 'profile_screen/model/fees_history_response.dart';
 // --- grayscale matrix
 const List<double> _kGrayscaleMatrix = <double>[
   0.2126,
@@ -179,7 +179,7 @@ class TwoProfileStack extends StatelessWidget {
   }
 }
 
-import 'profile_screen/model/fees_history_response.dart';
+
 
 
 class MoreScreen extends StatefulWidget {
