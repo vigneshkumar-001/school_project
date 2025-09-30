@@ -1649,7 +1649,7 @@ class _MoreScreenState extends State<MoreScreen>
                       child: ListView.builder(
                         itemCount: data?.items.length,
                         itemBuilder: (context, index) {
-                          final plan = data?.items[index]; // PlanItem
+                          final plan = data?.items[index];
                           return CustomContainer.moreScreen(
                             onDetailsTap: () {
                               _paymentReceipt(context);
