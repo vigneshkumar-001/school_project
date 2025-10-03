@@ -16,6 +16,7 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 
 import '../../../../Core/Widgets/custom_container.dart';
+import '../../../../Core/Widgets/date_and_time_convert.dart';
 import '../../../Admssion/Screens/admission_1.dart';
 import '../../../Admssion/Screens/check_admission_status.dart';
 import '../Attendence Screen/attendence_screen.dart';
@@ -2515,9 +2516,11 @@ class _HomeScreenState extends State<HomeTab>
                                                           ),
                                                         ),
                                                         Text(
-                                                          DateFormat(
-                                                            'hh:mm a',
-                                                          ).format(taskDate),
+                                                          DateAndTimeConvert.formatDateTime(
+                                                            task.time.toString(),
+                                                            showDate: false,
+                                                            showTime: true,
+                                                          ),
                                                           style:
                                                               GoogleFont.ibmPlexSans(
                                                                 color:
