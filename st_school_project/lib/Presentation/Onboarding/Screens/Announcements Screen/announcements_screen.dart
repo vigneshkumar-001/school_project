@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:intl/intl.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_loader.dart';
+import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/controller/announcement_controller.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/model/exam_result_response.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,6 +15,7 @@ import '../../../../Core/Utility/app_images.dart' show AppImages;
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/custom_container.dart' show CustomContainer;
 import '../../../../Core/Widgets/custom_textfield.dart';
+import '../../../../payment_web_view.dart';
 import 'model/announcement_details_response.dart';
 
 class AnnouncementsScreen extends StatefulWidget {
@@ -64,7 +66,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     // Find the plan by planId
     final plan = planData.items.firstWhere(
       (p) => p.planId == planId,
-      orElse: () => planData.items.first, // fallback
+      orElse: () => planData.items.first,
     );
 
     showModalBottomSheet(
@@ -151,7 +153,8 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                       final item = plan.items[idx];
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8),
-                        child: Column(       crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               '${idx + 1}. ${item.feeTypeName} - ₹${item.amount} (${item.status})',
@@ -161,59 +164,148 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                               ),
                             ),
                             const SizedBox(height: 8),
+
                             if (plan.paymentType == "online")
-                              ElevatedButton(
-                                onPressed: () async {
-                                  final url = item.action?.href;
-                                  if (url != null) {
-                                    // open inside app
-                                    await launchUrl(
-                                      Uri.parse(url),
-                                      mode: LaunchMode.inAppWebView,
-                                    );
-                                  }
-                                },
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                    EdgeInsets.zero,
-                                  ),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
+                              plan.items[idx].status == "paid"
+                                  ? Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                      horizontal: 16,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColor.greenMore1,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                  ),
-                                  elevation: MaterialStateProperty.all(0),
-                                  backgroundColor: MaterialStateProperty.all(
-                                    Colors.transparent,
-                                  ),
-                                ),
-                                child: Ink(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        AppColor.blueG1,
-                                        AppColor.blueG2,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          AppImages.tick,
+                                          height: 24,
+                                          width: 27,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          "Payment Successful",
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                          ),
+                                        ),
                                       ],
-                                      begin: Alignment.topRight,
-                                      end: Alignment.bottomRight,
                                     ),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: 45,
-                                    width: double.infinity,
-                                    child: Text(
-                                      'Pay Rs.${item.amount}',
-                                      style: GoogleFont.ibmPlexSans(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppColor.white,
+                                  )
+                                  : ElevatedButton(
+                                    onPressed: () async {
+                                      final baseUrl = item.action?.href;
+                                      final studentId = item.studentId;
+                                      print('${baseUrl},${studentId}');
+                                      AppLogger.log.i(
+                                        '${baseUrl},${studentId}',
+                                      );
+
+                                      if (baseUrl != null &&
+                                          studentId != null) {
+                                        final newUrl = "$baseUrl/$studentId";
+
+                                        final result = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (_) =>
+                                                    PaymentWebView(url: newUrl),
+                                          ),
+                                        );
+
+                                        if (result != null) {
+                                          if (result["status"] == "success") {
+                                            print("✅ Payment successful");
+                                            if (context.mounted) {
+                                              Navigator.pop(context);
+                                            }
+                                            Get.snackbar(
+                                              "Payment Successful",
+                                              "Your payment has been completed successfully.",
+                                              snackPosition:
+                                                  SnackPosition.BOTTOM,
+                                              backgroundColor: Colors.green,
+                                              colorText: Colors.white,
+                                              duration: const Duration(
+                                                seconds: 2,
+                                              ),
+                                            );
+
+                                            print(
+                                              "OrderId: ${result['orderId']}, tid: ${result['tid']}",
+                                            );
+                                          } else if (result["status"] ==
+                                              "failure") {
+                                            print("❌ Payment failed");
+                                            print(
+                                              "OrderId: ${result['orderId']}, Reason: ${result['reason']}",
+                                            );
+                                            Get.snackbar(
+                                              "Payment Failed",
+                                              "Something went wrong. Please try again.",
+                                              snackPosition:
+                                                  SnackPosition.BOTTOM,
+                                              backgroundColor: Colors.red,
+                                              colorText: Colors.white,
+                                              duration: const Duration(
+                                                seconds: 2,
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      }
+                                    },
+                                    style: ButtonStyle(
+                                      padding: MaterialStateProperty.all(
+                                        EdgeInsets.zero,
+                                      ),
+                                      shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                      ),
+                                      elevation: MaterialStateProperty.all(0),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                            Colors.transparent,
+                                          ),
+                                    ),
+                                    child: Ink(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            AppColor.blueG1,
+                                            AppColor.blueG2,
+                                          ],
+                                          begin: Alignment.topRight,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        height: 45,
+                                        width: double.infinity,
+                                        child: Text(
+                                          'Pay Rs.${item.amount}',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColor.white,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ),
                           ],
                         ),
                       );
@@ -963,8 +1055,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                 backRoundImage: item.image,
                                 iconData: CupertinoIcons.clock_fill,
                                 additionalText1: "Date",
-                                additionalText2:
-                                    formattedDate,
+                                additionalText2: formattedDate,
                                 verticalPadding: 12,
                                 gradientStartColor: AppColor.black.withOpacity(
                                   0.01,

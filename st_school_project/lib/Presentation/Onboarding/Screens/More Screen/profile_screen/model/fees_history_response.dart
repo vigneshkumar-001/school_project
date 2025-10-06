@@ -49,6 +49,7 @@ class FeePlansData {
 
 class PlanItem {
   final int planId;
+  final int studentId;
   final String name;
   final String announcementDate;
   final String dueDate;
@@ -58,6 +59,7 @@ class PlanItem {
 
   PlanItem({
     required this.planId,
+    required this.studentId,
     required this.name,
     required this.announcementDate,
     required this.dueDate,
@@ -69,6 +71,7 @@ class PlanItem {
   factory PlanItem.fromJson(Map<String, dynamic> json) {
     return PlanItem(
       planId: json['planId'] ?? 0,
+      studentId: json['studentId'] ?? 0,
       name: json['name'] ?? '',
       announcementDate: json['announcementDate'] ?? '',
       dueDate: json['dueDate'] ?? '',
@@ -83,6 +86,7 @@ class PlanItem {
 
   Map<String, dynamic> toJson() => {
     "planId": planId,
+    "studentId": studentId,
     "name": name,
     "announcementDate": announcementDate,
     "dueDate": dueDate,
@@ -93,9 +97,9 @@ class PlanItem {
 }
 
 class Summary {
-  final int totalAmount;
-  final int paidAmount;
-  final int unpaidCount;
+  final dynamic totalAmount;
+  final dynamic paidAmount;
+  final dynamic unpaidCount;
 
   Summary({
     required this.totalAmount,
@@ -122,10 +126,13 @@ class FeeItem {
   final int itemId;
   final int studentId;
   final String feeTypeName;
-  final int amount;
+  final dynamic amount;
   final String status;
   final String? paidAt;
   final String? method;
+  final String? admissionNo;
+  final String? receiptNo;
+  final String? receiptLink;
   final ActionModel? action;
 
   FeeItem({
@@ -136,6 +143,9 @@ class FeeItem {
     required this.status,
     this.paidAt,
     this.method,
+    this.admissionNo,
+    this.receiptLink,
+    this.receiptNo,
     this.action,
   });
 
@@ -147,6 +157,10 @@ class FeeItem {
       amount: json['amount'] ?? 0,
       status: json['status'] ?? '',
       paidAt: json['paidAt'],
+
+      receiptNo: json['receiptNo'],
+      admissionNo: json['admissionNo'],
+      receiptLink: json['receiptLink'],
       method: json['method'],
       action:
           json['action'] != null ? ActionModel.fromJson(json['action']) : null,
@@ -161,6 +175,9 @@ class FeeItem {
     "status": status,
     "paidAt": paidAt,
     "method": method,
+    "receiptNo": receiptNo,
+    "admissionNo": admissionNo,
+    "receiptLink": receiptLink,
     "action": action?.toJson(),
   };
 }

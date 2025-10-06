@@ -16,8 +16,10 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/
 
 import '../../../../Core/Utility/app_color.dart' show AppColor;
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
+import '../../../../Core/Widgets/date_and_time_convert.dart';
 import '../../../../payment_web_view.dart';
 import '../../../Admssion/Screens/admission_1.dart';
+import '../Announcements Screen/controller/announcement_controller.dart';
 import '../Home Screen/controller/student_home_controller.dart';
 import 'Login_screen/controller/login_controller.dart';
 import 'change_mobile_number.dart' show ChangeMobileNumber;
@@ -200,6 +202,9 @@ class _MoreScreenState extends State<MoreScreen>
   final StudentHomeController controller = Get.put(StudentHomeController());
   final LoginController loginController = Get.put(LoginController());
   final FeesHistoryController feesController = Get.put(FeesHistoryController());
+  final AnnouncementController announcementController = Get.put(
+    AnnouncementController(),
+  );
   final TeacherListController teacherListController = Get.put(
     TeacherListController(),
   );
@@ -229,9 +234,19 @@ class _MoreScreenState extends State<MoreScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    teacherListController.teacherListData();
-    feesController.feesHistoryList();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (feesController.feesData.value == null) {
+        feesController.feesHistoryList();
+      }
+
+      if (teacherListController.teacherListResponse.value == null) {
+        teacherListController.teacherListData();
+      }
+    });
+
   }
+
 
   void _handleTabChange() {
     if (_tabController.index == 2 && _tabController.indexIsChanging) {
@@ -669,9 +684,7 @@ class _MoreScreenState extends State<MoreScreen>
                     ],
                   ),
                   const SizedBox(height: 20),
-
-                  // Fee breakdown list
-                  Column(
+                 Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: List.generate(items.length, (index) {
                       final item = items[index];
@@ -687,161 +700,148 @@ class _MoreScreenState extends State<MoreScreen>
                                 color: AppColor.lightBlack,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 10),
 
-                            /*if (plan.paymentType == "online")
-                              ElevatedButton(
-                                onPressed: () async {
-                                  // final baseUrl = item.action?.href;
-                                  // final studentId = item.studentId;
-                                  //
-                                  // if (baseUrl != null && studentId != null) {
-                                  //   final newUrl = "$baseUrl/$studentId"; // append studentId
-                                  //
-                                  //   print(newUrl);
-                                  //
-                                  //   launchUrl(
-                                  //     Uri.parse(newUrl),
-                                  //     mode: LaunchMode.inAppWebView, // stay inside the app
-                                  //   );
-                                  // }
-
-                                  final baseUrl = item.action?.href;
-                                  final studentId = item.studentId;
-
-                                  if (baseUrl != null && studentId != null) {
-                                    final newUrl = "$baseUrl/$studentId";
-
-                                    final result = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => PaymentWebView(url: newUrl),
-                                      ),
-                                    );
-
-                                    if (result == true) {
-                                      // Payment succeeded — do something here
-                                      print("Payment completed");
-                                    }
-                                  }
-                                },
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                    EdgeInsets.zero,
-                                  ),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                  ),
-                                  elevation: MaterialStateProperty.all(0),
-                                  backgroundColor: MaterialStateProperty.all(
-                                    Colors.transparent,
-                                  ),
-                                ),
-                                child: Ink(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        AppColor.blueG1,
-                                        AppColor.blueG2,
-                                      ],
-                                      begin: Alignment.topRight,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: 45,
-                                    width: double.infinity,
-                                    child: Text(
-                                      'Pay Rs.${item.amount}',
-                                      style: GoogleFont.ibmPlexSans(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppColor.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),*/
                             if (plan.paymentType == "online")
-                              ElevatedButton(
-                                onPressed: () async {
-                                  final baseUrl = item.action?.href;
-                                  final studentId = item.studentId;
-
-                                  if (baseUrl != null && studentId != null) {
-                                    final newUrl = "$baseUrl/$studentId";
-
-                                    final result = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (_) => PaymentWebView(url: newUrl),
-                                      ),
-                                    );
-
-                                    if (result != null) {
-                                      if (result["status"] == "success") {
-                                        print("✅ Payment successful");
-                                        print(
-                                          "OrderId: ${result['orderId']}, tid: ${result['tid']}",
-                                        );
-                                        // ✅ Call your success API or update UI here
-                                      } else if (result["status"] ==
-                                          "failure") {
-                                        print("❌ Payment failed");
-                                        print(
-                                          "OrderId: ${result['orderId']}, Reason: ${result['reason']}",
-                                        );
-                                        // ❌ Show failure UI or retry
-                                      }
-                                    }
-                                  }
-                                },
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                    EdgeInsets.zero,
-                                  ),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
+                              plan.items[index].status == "paid"
+                                  ? Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                      horizontal: 16,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColor.greenMore1,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                  ),
-                                  elevation: MaterialStateProperty.all(0),
-                                  backgroundColor: MaterialStateProperty.all(
-                                    Colors.transparent,
-                                  ),
-                                ),
-                                child: Ink(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        AppColor.blueG1,
-                                        AppColor.blueG2,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          AppImages.tick,
+                                          height: 24,
+                                          width: 27,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          "Payment Successful",
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                          ),
+                                        ),
                                       ],
-                                      begin: Alignment.topRight,
-                                      end: Alignment.bottomRight,
                                     ),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: 45,
-                                    width: double.infinity,
-                                    child: Text(
-                                      'Pay Rs.${item.amount}',
-                                      style: GoogleFont.ibmPlexSans(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppColor.white,
+                                  )
+                                  : ElevatedButton(
+                                    onPressed: () async {
+                                      final baseUrl = item.action?.href;
+                                      final studentId = item.studentId;
+
+                                      if (baseUrl != null &&
+                                          studentId != null) {
+                                        final newUrl = "$baseUrl/$studentId";
+
+                                        final result = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (_) =>
+                                                    PaymentWebView(url: newUrl),
+                                          ),
+                                        );
+                                        if (result != null) {
+                                          if (result["status"] == "success") {
+                                            print("✅ Payment successful");
+                                            if (context.mounted) {
+                                              Navigator.pop(context);
+                                            }
+                                            Get.snackbar(
+                                              "Payment Successful",
+                                              "Your payment has been completed successfully.",
+                                              snackPosition:
+                                                  SnackPosition.BOTTOM,
+                                              backgroundColor: Colors.green,
+                                              colorText: Colors.white,
+                                              duration: const Duration(
+                                                seconds: 2,
+                                              ),
+                                            );
+
+                                            await feesController
+                                                .feesHistoryList();
+
+                                            print(
+                                              "OrderId: ${result['orderId']}, tid: ${result['tid']}",
+                                            );
+                                          } else if (result["status"] ==
+                                              "failure") {
+                                            print("❌ Payment failed");
+                                            print(
+                                              "OrderId: ${result['orderId']}, Reason: ${result['reason']}",
+                                            );
+                                            Get.snackbar(
+                                              "Payment Failed",
+                                              "Something went wrong. Please try again.",
+                                              snackPosition:
+                                                  SnackPosition.BOTTOM,
+                                              backgroundColor: Colors.red,
+                                              colorText: Colors.white,
+                                              duration: const Duration(
+                                                seconds: 2,
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      }
+                                    },
+                                    style: ButtonStyle(
+                                      padding: MaterialStateProperty.all(
+                                        EdgeInsets.zero,
+                                      ),
+                                      shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                      ),
+                                      elevation: MaterialStateProperty.all(0),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                            Colors.transparent,
+                                          ),
+                                    ),
+                                    child: Ink(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            AppColor.blueG1,
+                                            AppColor.blueG2,
+                                          ],
+                                          begin: Alignment.topRight,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        height: 45,
+                                        width: double.infinity,
+                                        child: Text(
+                                          'Pay Rs.${item.amount}',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColor.white,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ),
+                            const SizedBox(height: 10),
                           ],
                         ),
                       );
@@ -910,168 +910,6 @@ class _MoreScreenState extends State<MoreScreen>
       },
     );
   }
-
-  /*  void _feessSheet(BuildContext context, PlanItem plan) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.55,
-          minChildSize: 0.20,
-          maxChildSize: 0.55,
-          expand: false,
-          builder: (context, scrollController) {
-            final items = plan.items;
-
-            return Container(
-              decoration: BoxDecoration(
-                color: AppColor.white,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
-                ),
-              ),
-              child: ListView(
-                controller: scrollController,
-                padding: const EdgeInsets.all(16),
-                children: [
-                  // handle bar
-                  Center(
-                    child: Container(
-                      height: 4,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: AppColor.grayop,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  Image.asset(AppImages.announcement2),
-                  const SizedBox(height: 20),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          plan.name,
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w500,
-                            color: AppColor.black,
-                          ),
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            'Due date',
-                            style: GoogleFont.ibmPlexSans(
-                              fontSize: 12,
-                              color: AppColor.lowGrey,
-                            ),
-                          ),
-                          Text(
-                            plan.dueDate, // ✅ from PlanItem
-                            style: GoogleFont.ibmPlexSans(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: AppColor.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        CupertinoIcons.clock_fill,
-                        size: 30,
-                        color: AppColor.grayop,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Fee breakdown list
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: List.generate(
-                      items.length,
-                      (index) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Text(
-                          '${index + 1}. ${items[index].feeTypeName} - Rs.${items[index].amount} (${items[index].status})',
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 16,
-                            color: AppColor.lightBlack,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-
-                  ElevatedButton(
-                    onPressed: () {
-                      // TODO: payment API call
-                    },
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all(EdgeInsets.zero),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      elevation: MaterialStateProperty.all(0),
-                      backgroundColor: MaterialStateProperty.all(
-                        Colors.transparent,
-                      ),
-                    ),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColor.blueG1, AppColor.blueG2],
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Container(
-                        alignment: Alignment.center,
-                        height: 50,
-                        width: double.infinity,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Pay Rs.${plan.summary.totalAmount}',
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                                color: AppColor.white,
-                              ),
-                            ),
-                            const SizedBox(width: 5),
-                            const Icon(
-                              CupertinoIcons.right_chevron,
-                              size: 14,
-                              weight: 20,
-                              color: AppColor.white,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }*/
 
   void Switchprofileorlogout(BuildContext context) {
     showModalBottomSheet(
@@ -1272,7 +1110,20 @@ class _MoreScreenState extends State<MoreScreen>
     );
   }
 
-  void _paymentReceipt(BuildContext context) {
+  Future<void> _paymentReceipt(BuildContext context, int planId) async {
+    final planData = await announcementController.getStudentPaymentPlan(
+      id: planId,
+    );
+    if (planData == null || planData.items.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("No data found for plan $planId")));
+      return;
+    }
+    final plan = planData.items.firstWhere(
+      (p) => p.planId == planId,
+      orElse: () => planData.items.first,
+    );
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -1309,7 +1160,7 @@ class _MoreScreenState extends State<MoreScreen>
                       Image.asset(AppImages.paidImage, height: 98),
                       SizedBox(height: 14),
                       Text(
-                        'Rs. 3500',
+                        'Rs. ${plan.summary.totalAmount}',
                         style: GoogleFont.ibmPlexSans(
                           fontWeight: FontWeight.w500,
                           fontSize: 34,
@@ -1317,7 +1168,7 @@ class _MoreScreenState extends State<MoreScreen>
                         ),
                       ),
                       Text(
-                        'Paid to Third term fees',
+                        'Paid to ${plan.name}',
                         style: GoogleFont.ibmPlexSans(
                           fontWeight: FontWeight.w500,
                           fontSize: 18,
@@ -1361,31 +1212,37 @@ class _MoreScreenState extends State<MoreScreen>
                                     ),
                                   ),
                                   SizedBox(width: 15),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Receipt No',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14,
-                                          color: AppColor.grey,
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Receipt No',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14,
+                                            color: AppColor.grey,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        'GJGFH87GHJG8II',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20,
-                                          color: AppColor.black,
+                                        SizedBox(height: 5),
+                                        Text(
+                                          plan.items
+                                              .map((e) => e.receiptNo)
+                                              .whereType<String>()
+                                              .join(', '),
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 20,
+                                            color: AppColor.black,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
+
                               SizedBox(height: 25),
                               Row(
                                 children: [
@@ -1417,7 +1274,8 @@ class _MoreScreenState extends State<MoreScreen>
                                       ),
                                       SizedBox(height: 5),
                                       Text(
-                                        'SJIG9M4JK',
+                                        plan.items[0].admissionNo.toString() ??
+                                            '',
                                         style: GoogleFont.ibmPlexSans(
                                           fontWeight: FontWeight.w500,
                                           fontSize: 20,
@@ -1445,40 +1303,39 @@ class _MoreScreenState extends State<MoreScreen>
                                     ),
                                   ),
                                   SizedBox(width: 15),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Time',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14,
-                                          color: AppColor.grey,
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Time',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14,
+                                            color: AppColor.grey,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      RichText(
-                                        text: TextSpan(
-                                          text: '12.00Pm   ',
+                                        SizedBox(height: 5),
+                                        Text(
+                                          // format each paidAt using your helper
+                                          plan.items
+                                              .where((e) => e.paidAt != null)
+                                              .map(
+                                                (e) =>
+                                                    DateAndTimeConvert.timeAndDate(
+                                                      e.paidAt.toString() ?? '',
+                                                    ),
+                                              )
+                                              .join(', '),
                                           style: GoogleFont.ibmPlexSans(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 20,
                                             color: AppColor.black,
                                           ),
-                                          children: [
-                                            TextSpan(
-                                              text: '16 Jun 2025',
-                                              style: GoogleFont.ibmPlexSans(
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 20,
-                                                color: AppColor.grey,
-                                              ),
-                                            ),
-                                          ],
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -1497,9 +1354,7 @@ class _MoreScreenState extends State<MoreScreen>
                       ),
                       SizedBox(height: 40),
                       GestureDetector(
-                        onTap: () {
-                          setState(() {});
-                        },
+                        onTap: () {},
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -1808,7 +1663,7 @@ class _MoreScreenState extends State<MoreScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  Obx(() {
+                  /*  Obx(() {
                     final data = feesController.feesData.value;
                     return Padding(
                       padding: const EdgeInsets.symmetric(
@@ -1840,7 +1695,71 @@ class _MoreScreenState extends State<MoreScreen>
                         },
                       ),
                     );
+                  }),*/
+                  Obx(() {
+                    final data = feesController.feesData.value;
+                    final isLoading = feesController.isLoading.value;
+
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        await feesController.feesHistoryList();
+                      },
+                      child:
+                          isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : (data == null || data.items.isEmpty)
+                              ? ListView(
+                                children: [
+                                  const SizedBox(height: 120),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        AppImages.noDataFound,
+                                        height: 150,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        "No fees available",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFont.ibmPlexSans(
+                                          fontSize: 16,
+                                          color: AppColor.grey,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )
+                              : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: 20,
+                                ),
+                                child: ListView.builder(
+                                  itemCount: data.items.length,
+                                  itemBuilder: (context, index) {
+                                    final plan = data.items[index];
+                                    return CustomContainer.moreScreen(
+                                      onDetailsTap:
+                                          () => _paymentReceipt(
+                                            context,
+                                            plan.planId,
+                                          ),
+                                      termTitle: plan.name ?? '',
+                                      timeDate: plan.announcementDate ?? '',
+                                      amount: "Rs. ${plan.summary.totalAmount}",
+                                      isPaid: plan.summary.unpaidCount == 0,
+                                      payNowButton:
+                                          () => _feessSheet(context, plan),
+                                    );
+                                  },
+                                ),
+                              ),
+                    );
                   }),
+
                   // Teachers Tab
                   SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(
