@@ -3724,7 +3724,7 @@ class _TaskScreenState extends State<TaskScreen>
                         final tasksForDate =
                             taskController.tasks.where((task) {
                               final taskDate = DateTime.parse(
-                                task.time.toString(),
+                                task.date.toString(),
                               );
                               return taskDate.year == selectedDate.year &&
                                   taskDate.month == selectedDate.month &&
@@ -3801,7 +3801,6 @@ class _TaskScreenState extends State<TaskScreen>
 
                       const SizedBox(height: 12),
 
-                      // TASK LIST (fills remaining space and scrolls from top)
                       Expanded(
                         child: Obx(() {
                           if (taskController.isLoading.value) {
@@ -3819,7 +3818,7 @@ class _TaskScreenState extends State<TaskScreen>
                           final filteredTasks =
                               taskController.tasks.where((task) {
                                 final taskDate = DateTime.parse(
-                                  task.time.toString(),
+                                  task.date.toString(),
                                 );
                                 final isSameDate =
                                     taskDate.year == selectedDate.year &&
@@ -3831,7 +3830,7 @@ class _TaskScreenState extends State<TaskScreen>
                                 return isSameDate && isSameSubject;
                               }).toList();
 
-                          // ✅ Always wrap with RefreshIndicator
+
                           return RefreshIndicator(
                             onRefresh: () async {
                               await taskController.getTaskDetails();

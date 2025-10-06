@@ -120,6 +120,7 @@ class Summary {
 
 class FeeItem {
   final int itemId;
+  final int studentId;
   final String feeTypeName;
   final int amount;
   final String status;
@@ -129,6 +130,7 @@ class FeeItem {
 
   FeeItem({
     required this.itemId,
+    required this.studentId,
     required this.feeTypeName,
     required this.amount,
     required this.status,
@@ -140,6 +142,7 @@ class FeeItem {
   factory FeeItem.fromJson(Map<String, dynamic> json) {
     return FeeItem(
       itemId: json['itemId'] ?? 0,
+      studentId: json['studentId'] ?? 0,
       feeTypeName: json['feeTypeName'] ?? '',
       amount: json['amount'] ?? 0,
       status: json['status'] ?? '',
@@ -152,6 +155,7 @@ class FeeItem {
 
   Map<String, dynamic> toJson() => {
     "itemId": itemId,
+    "studentId": studentId,
     "feeTypeName": feeTypeName,
     "amount": amount,
     "status": status,
