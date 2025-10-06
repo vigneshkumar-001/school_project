@@ -3724,7 +3724,7 @@ class _TaskScreenState extends State<TaskScreen>
                         final tasksForDate =
                             taskController.tasks.where((task) {
                               final taskDate = DateTime.parse(
-                                task.time.toString(),
+                                task.date.toString(),
                               );
                               return taskDate.year == selectedDate.year &&
                                   taskDate.month == selectedDate.month &&
@@ -3819,7 +3819,7 @@ class _TaskScreenState extends State<TaskScreen>
                           final filteredTasks =
                               taskController.tasks.where((task) {
                                 final taskDate = DateTime.parse(
-                                  task.time.toString(),
+                                  task.date.toString(),
                                 );
                                 final isSameDate =
                                     taskDate.year == selectedDate.year &&

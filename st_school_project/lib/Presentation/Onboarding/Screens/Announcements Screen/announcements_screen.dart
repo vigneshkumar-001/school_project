@@ -50,7 +50,22 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     );
   }
 
-  void _feessSheet(BuildContext context) {
+  void _feessSheet(BuildContext context, int planId) async {
+    final planData = await controller.getStudentPaymentPlan(id: planId);
+
+    if (planData == null || planData.items.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("No data found for plan $planId")));
+      return;
+    }
+
+    // Find the plan by planId
+    final plan = planData.items.firstWhere(
+      (p) => p.planId == planId,
+      orElse: () => planData.items.first, // fallback
+    );
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -62,8 +77,6 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
           maxChildSize: 0.55,
           expand: false,
           builder: (context, scrollController) {
-            final items = ['Shoes', 'Notebooks', 'Tuition Fees'];
-
             return Container(
               decoration: BoxDecoration(
                 color: AppColor.white,
@@ -73,6 +86,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                 controller: scrollController,
                 padding: const EdgeInsets.all(16),
                 children: [
+                  Image.asset(AppImages.announcement2),
                   Center(
                     child: Container(
                       height: 4,
@@ -85,14 +99,12 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                   ),
                   SizedBox(height: 20),
 
-                  Image.asset(AppImages.announcement2),
-                  SizedBox(height: 20),
-
+                  // Plan title + due date
                   Row(
                     children: [
                       Expanded(
                         child: Text(
-                          'Third-Term Fees',
+                          plan.name,
                           style: GoogleFont.ibmPlexSans(
                             fontSize: 22,
                             fontWeight: FontWeight.w500,
@@ -110,7 +122,9 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                             ),
                           ),
                           Text(
-                            '12-Dec-25',
+                            DateFormat(
+                              "dd-MMM-yy",
+                            ).format(DateTime.parse(plan.dueDate)),
                             style: GoogleFont.ibmPlexSans(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -128,26 +142,31 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                     ],
                   ),
                   SizedBox(height: 20),
+
+                  // Fee Items
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: List.generate(
-                      items.length,
-                      (index) => Padding(
+                    children: List.generate(plan.items.length, (idx) {
+                      final item = plan.items[idx];
+                      return Padding(
                         padding: const EdgeInsets.only(bottom: 8),
                         child: Text(
-                          '${index + 1}. ${items[index]}',
+                          '${idx + 1}. ${item.feeTypeName} - ₹${item.amount} (${item.status})',
                           style: GoogleFont.ibmPlexSans(
                             fontSize: 16,
                             color: AppColor.lightBlack,
                           ),
                         ),
-                      ),
-                    ),
+                      );
+                    }),
                   ),
                   SizedBox(height: 15),
 
+                  // Pay Button
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // handle payment
+                    },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all(EdgeInsets.zero),
                       shape: MaterialStateProperty.all(
@@ -177,7 +196,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Pay Rs.15,000',
+                              'Pay Rs.${plan.summary.totalAmount}',
                               style: GoogleFont.ibmPlexSans(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w800,
@@ -885,7 +904,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                 iconData: CupertinoIcons.clock_fill,
                                 additionalText1: "Date",
                                 additionalText2:
-                                    formattedDate, // 👈 dynamic date
+                                    formattedDate,
                                 verticalPadding: 12,
                                 gradientStartColor: AppColor.black.withOpacity(
                                   0.01,
@@ -898,10 +917,11 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                     _showAnnouncementDetails(context, item.id);
                                   } else if (item.type == "exam") {
                                     showExamTimeTable(context, item.id);
+                                  } else if (item.type == "feepayment") {
+                                    print(item.id);
+                                    print('Fees');
+                                    _feessSheet(context, item.id);
                                   }
-
-                                  // Example: show details bottomsheet
-                                  // _showAnnouncementDetails(context, item);
                                 },
                               ),
                             );

@@ -23,6 +23,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 
 import 'profile_screen/model/fees_history_response.dart';
+
 // --- grayscale matrix
 const List<double> _kGrayscaleMatrix = <double>[
   0.2126,
@@ -178,9 +179,6 @@ class TwoProfileStack extends StatelessWidget {
     );
   }
 }
-
-
-
 
 class MoreScreen extends StatefulWidget {
   const MoreScreen({super.key});
@@ -600,7 +598,7 @@ class _MoreScreenState extends State<MoreScreen>
           maxChildSize: 0.55,
           expand: false,
           builder: (context, scrollController) {
-            final items = plan.items; // ✅ FeeItem list
+            final items = plan.items;
 
             return Container(
               decoration: BoxDecoration(
