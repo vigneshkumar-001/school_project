@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import 'package:webview_flutter/webview_flutter.dart';
+
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:latlong2/latlong.dart';
@@ -14,6 +16,7 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/
 
 import '../../../../Core/Utility/app_color.dart' show AppColor;
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
+import '../../../../payment_web_view.dart';
 import '../../../Admssion/Screens/admission_1.dart';
 import '../Home Screen/controller/student_home_controller.dart';
 import 'Login_screen/controller/login_controller.dart';
@@ -23,6 +26,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 
 import 'profile_screen/model/fees_history_response.dart';
+
 // --- grayscale matrix
 const List<double> _kGrayscaleMatrix = <double>[
   0.2126,
@@ -178,9 +182,6 @@ class TwoProfileStack extends StatelessWidget {
     );
   }
 }
-
-
-
 
 class MoreScreen extends StatefulWidget {
   const MoreScreen({super.key});
@@ -506,7 +507,6 @@ class _MoreScreenState extends State<MoreScreen>
                             onTap: _openGoogleMap,
                             child: SizedBox(
                               height: 122,
-
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
                                 child: FlutterMap(
@@ -597,10 +597,10 @@ class _MoreScreenState extends State<MoreScreen>
         return DraggableScrollableSheet(
           initialChildSize: 0.55,
           minChildSize: 0.20,
-          maxChildSize: 0.55,
+          maxChildSize: 0.85, // bigger since multiple buttons possible
           expand: false,
           builder: (context, scrollController) {
-            final items = plan.items; // ✅ FeeItem list
+            final items = plan.items;
 
             return Container(
               decoration: BoxDecoration(
@@ -633,7 +633,330 @@ class _MoreScreenState extends State<MoreScreen>
                     children: [
                       Expanded(
                         child: Text(
-                          plan.name, // Plan title (Third Term Fee)
+                          plan.name,
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.black,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            'Due date',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 12,
+                              color: AppColor.lowGrey,
+                            ),
+                          ),
+                          Text(
+                            plan.dueDate,
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        CupertinoIcons.clock_fill,
+                        size: 30,
+                        color: AppColor.grayop,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Fee breakdown list
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: List.generate(items.length, (index) {
+                      final item = items[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${index + 1}. ${item.feeTypeName} - Rs.${item.amount} (${item.status})',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 16,
+                                color: AppColor.lightBlack,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+
+                            /*if (plan.paymentType == "online")
+                              ElevatedButton(
+                                onPressed: () async {
+                                  // final baseUrl = item.action?.href;
+                                  // final studentId = item.studentId;
+                                  //
+                                  // if (baseUrl != null && studentId != null) {
+                                  //   final newUrl = "$baseUrl/$studentId"; // append studentId
+                                  //
+                                  //   print(newUrl);
+                                  //
+                                  //   launchUrl(
+                                  //     Uri.parse(newUrl),
+                                  //     mode: LaunchMode.inAppWebView, // stay inside the app
+                                  //   );
+                                  // }
+
+                                  final baseUrl = item.action?.href;
+                                  final studentId = item.studentId;
+
+                                  if (baseUrl != null && studentId != null) {
+                                    final newUrl = "$baseUrl/$studentId";
+
+                                    final result = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => PaymentWebView(url: newUrl),
+                                      ),
+                                    );
+
+                                    if (result == true) {
+                                      // Payment succeeded — do something here
+                                      print("Payment completed");
+                                    }
+                                  }
+                                },
+                                style: ButtonStyle(
+                                  padding: MaterialStateProperty.all(
+                                    EdgeInsets.zero,
+                                  ),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                  ),
+                                  elevation: MaterialStateProperty.all(0),
+                                  backgroundColor: MaterialStateProperty.all(
+                                    Colors.transparent,
+                                  ),
+                                ),
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        AppColor.blueG1,
+                                        AppColor.blueG2,
+                                      ],
+                                      begin: Alignment.topRight,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    height: 45,
+                                    width: double.infinity,
+                                    child: Text(
+                                      'Pay Rs.${item.amount}',
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColor.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),*/
+                            if (plan.paymentType == "online")
+                              ElevatedButton(
+                                onPressed: () async {
+                                  final baseUrl = item.action?.href;
+                                  final studentId = item.studentId;
+
+                                  if (baseUrl != null && studentId != null) {
+                                    final newUrl = "$baseUrl/$studentId";
+
+                                    final result = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => PaymentWebView(url: newUrl),
+                                      ),
+                                    );
+
+                                    if (result != null) {
+                                      if (result["status"] == "success") {
+                                        print("✅ Payment successful");
+                                        print(
+                                          "OrderId: ${result['orderId']}, tid: ${result['tid']}",
+                                        );
+                                        // ✅ Call your success API or update UI here
+                                      } else if (result["status"] ==
+                                          "failure") {
+                                        print("❌ Payment failed");
+                                        print(
+                                          "OrderId: ${result['orderId']}, Reason: ${result['reason']}",
+                                        );
+                                        // ❌ Show failure UI or retry
+                                      }
+                                    }
+                                  }
+                                },
+                                style: ButtonStyle(
+                                  padding: MaterialStateProperty.all(
+                                    EdgeInsets.zero,
+                                  ),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                  ),
+                                  elevation: MaterialStateProperty.all(0),
+                                  backgroundColor: MaterialStateProperty.all(
+                                    Colors.transparent,
+                                  ),
+                                ),
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        AppColor.blueG1,
+                                        AppColor.blueG2,
+                                      ],
+                                      begin: Alignment.topRight,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    height: 45,
+                                    width: double.infinity,
+                                    child: Text(
+                                      'Pay Rs.${item.amount}',
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColor.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 15),
+
+                  // If cash → show single bottom button
+                  if (plan.paymentType == "cash")
+                    ElevatedButton(
+                      onPressed: () {
+                        // TODO: call your cash API
+                      },
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        elevation: MaterialStateProperty.all(0),
+                        backgroundColor: MaterialStateProperty.all(
+                          Colors.transparent,
+                        ),
+                      ),
+                      child: Ink(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppColor.blueG1, AppColor.blueG2],
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: 50,
+                          width: double.infinity,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Pay Rs.${plan.summary.totalAmount}',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColor.white,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              const Icon(
+                                CupertinoIcons.right_chevron,
+                                size: 14,
+                                color: AppColor.white,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /*  void _feessSheet(BuildContext context, PlanItem plan) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.55,
+          minChildSize: 0.20,
+          maxChildSize: 0.55,
+          expand: false,
+          builder: (context, scrollController) {
+            final items = plan.items;
+
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+              ),
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                children: [
+                  // handle bar
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: AppColor.grayop,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  Image.asset(AppImages.announcement2),
+                  const SizedBox(height: 20),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          plan.name,
                           style: GoogleFont.ibmPlexSans(
                             fontSize: 22,
                             fontWeight: FontWeight.w500,
@@ -731,160 +1054,6 @@ class _MoreScreenState extends State<MoreScreen>
                             ),
                             const SizedBox(width: 5),
                             const Icon(
-                              CupertinoIcons.right_chevron,
-                              size: 14,
-                              weight: 20,
-                              color: AppColor.white,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  /*  void _fessSheet(BuildContext context, PlanItem plan) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.55,
-          minChildSize: 0.20,
-          maxChildSize: 0.55,
-          expand: false,
-          builder: (context, scrollController) {
-            final items = ['Shoes', 'Notebooks', 'Tuition Fees'];
-
-            return Container(
-              decoration: BoxDecoration(
-                color: AppColor.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              child: ListView(
-                controller: scrollController,
-                padding: const EdgeInsets.all(16),
-                children: [
-                  Center(
-                    child: Container(
-                      height: 4,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: AppColor.grayop,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-
-                  Image.asset(AppImages.announcement2),
-                  SizedBox(height: 20),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Third-Term Fees',
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w500,
-                            color: AppColor.black,
-                          ),
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            'Due date',
-                            style: GoogleFont.ibmPlexSans(
-                              fontSize: 12,
-                              color: AppColor.lowGrey,
-                            ),
-                          ),
-                          Text(
-                            '12-Dec-25',
-                            style: GoogleFont.ibmPlexSans(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: AppColor.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 4),
-                      Icon(
-                        CupertinoIcons.clock_fill,
-                        size: 30,
-                        color: AppColor.grayop,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: List.generate(
-                      items.length,
-                      (index) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Text(
-                          '${index + 1}. ${items[index]}',
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 16,
-                            color: AppColor.lightBlack,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all(EdgeInsets.zero),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      elevation: MaterialStateProperty.all(0),
-                      backgroundColor: MaterialStateProperty.all(
-                        Colors.transparent,
-                      ),
-                    ),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppColor.blueG1, AppColor.blueG2],
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Container(
-                        alignment: Alignment.center,
-                        height: 50,
-                        width: double.infinity,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Pay Rs.15,000',
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                                color: AppColor.white,
-                              ),
-                            ),
-                            SizedBox(width: 5),
-                            Icon(
                               CupertinoIcons.right_chevron,
                               size: 14,
                               weight: 20,
@@ -1654,9 +1823,7 @@ class _MoreScreenState extends State<MoreScreen>
                             onDetailsTap: () {
                               _paymentReceipt(context);
                             },
-                            termTitle:
-                                plan?.name.toString() ??
-                                '', // e.g. "Third Term Fee – Sep 2025"
+                            termTitle: plan?.name.toString() ?? '',
                             timeDate:
                                 plan?.announcementDate.toString() ??
                                 '', // or format with intl

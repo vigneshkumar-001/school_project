@@ -6,6 +6,7 @@ import 'package:st_school_project/api/data_source/apiDataSource.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 
 import '../../../../../Core/Utility/app_color.dart';
+import '../../More Screen/profile_screen/model/fees_history_response.dart';
 import '../model/announcement_details_response.dart';
 import '../model/exam_details_response.dart';
 
@@ -17,6 +18,7 @@ class AnnouncementController extends GetxController {
   String accessToken = '';
   Rx<AnnouncementData?> announcementData = Rx<AnnouncementData?>(null);
   Rx<AnnouncementDetails?> announcementDetails = Rx<AnnouncementDetails?>(null);
+  Rx<FeePlansData?> feesPlanData = Rx<FeePlansData?>(null);
   Rx<ExamResultData?> examResultData = Rx<ExamResultData?>(null);
   Rx<ExamDetailsDatas?> examDetails = Rx<ExamDetailsDatas?>(null);
   int? lastFetchedExamId;
@@ -134,7 +136,35 @@ class AnnouncementController extends GetxController {
       return null;
     }
   }
+  Future<FeePlansData?> getStudentPaymentPlan({
+    bool showLoader = true,
+    required int id,
+  }) async {
 
+    try {
+      if (showLoader) showPopupLoader();
+
+      final results = await apiDataSource.getStudentPaymentPlan(id: id);
+
+      return results.fold(
+            (failure) {
+          if (showLoader) hidePopupLoader();
+          AppLogger.log.e(failure.message);
+          return null;
+        },
+            (response) {
+          if (showLoader) hidePopupLoader();
+          AppLogger.log.i('Announcement Details Fetched ✅');
+          feesPlanData.value = response.data; // store in observable
+          return response.data; // return data for UI
+        },
+      );
+    } catch (e) {
+      if (showLoader) hidePopupLoader();
+      AppLogger.log.e(e);
+      return null;
+    }
+  }
   void showPopupLoader() {
     Get.dialog(
       Center(
