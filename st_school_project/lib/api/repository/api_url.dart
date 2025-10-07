@@ -72,4 +72,7 @@ class ApiUrl {
   static String getStudentPaymentPlan({required int id}) {
     return '$baseUrl/student-payments/plan/$id';
   }
+
+
+
 }

@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/model/announcement_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/model/exam_result_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/model/student_home_response.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/model/fees_details_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/model/fees_history_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/model/home_work_id_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/model/task_response.dart';
@@ -767,4 +768,6 @@ class ApiDataSource extends BaseApiDataSource {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+
 }

@@ -136,6 +136,9 @@ class AnnouncementController extends GetxController {
       return null;
     }
   }
+
+
+
   Future<FeePlansData?> getStudentPaymentPlan({
     bool showLoader = true,
     required int id,
