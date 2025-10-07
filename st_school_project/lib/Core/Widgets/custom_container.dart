@@ -269,9 +269,10 @@ class CustomContainer {
 
             // meta row
             Row(
-              mainAxisAlignment: hasExtras
-                  ? MainAxisAlignment.start
-                  : MainAxisAlignment.center,
+              mainAxisAlignment:
+                  hasExtras
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // date + time pill
@@ -340,201 +341,115 @@ class CustomContainer {
   }) {
     return InkWell(
       onTap: onDetailsTap,
-      child: Stack(
-        children: [
-
-          ClipRRect(
-            borderRadius: BorderRadius.circular(22),
-            child: CachedNetworkImage(
-              imageUrl: backRoundImage,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              placeholder:
-                  (context, url) => Container(
-                    height: 180, // adjust to your card height
-                    alignment: Alignment.center,
-                    child: const SizedBox(
-                      height: 24,
-                      width: 24,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+      child: Container(
+        height: 180, //  Fixed height for all cards
+        width: double.infinity, //  Full width (parent constraint)
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(22)),
+        clipBehavior: Clip.hardEdge, //  Ensure borderRadius clips children
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(22),
+              child: CachedNetworkImage(
+                imageUrl: backRoundImage,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                placeholder:
+                    (context, url) => Container(
+                      alignment: Alignment.center,
+                      child: const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
                     ),
-                  ),
-              errorWidget:
-                  (context, url, error) => const Icon(
-                    Icons.broken_image,
-                    size: 40,
-                    color: Colors.grey,
-                  ),
-            ),
-          ),
-
-          // ✅ Gradient overlay
-          Positioned(
-            bottom: 0,
-            right: 0,
-            left: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    gradientStartColor ?? AppColor.black.withOpacity(0.01),
-                    gradientEndColor ?? AppColor.black,
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(22),
-                  bottomRight: Radius.circular(22),
-                ),
+                errorWidget:
+                    (context, url, error) => const Icon(
+                      Icons.broken_image,
+                      size: 40,
+                      color: Colors.grey,
+                    ),
               ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 25,
-                  vertical: verticalPadding,
+            ),
+
+            // ✅ Gradient overlay
+            Positioned(
+              bottom: 0,
+              right: 0,
+              left: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      gradientStartColor ?? AppColor.black.withOpacity(0.01),
+                      gradientEndColor ?? AppColor.black,
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(22),
+                    bottomRight: Radius.circular(22),
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          mainText,
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColor.white,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 25,
+                    vertical: verticalPadding,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            mainText,
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.white,
+                            ),
                           ),
-                        ),
-                        const Spacer(),
-                        if (iconData != null)
-                          Icon(iconData, size: 22, color: AppColor.white),
-                        const SizedBox(width: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (additionalText1.isNotEmpty)
+                          const Spacer(),
+                          if (iconData != null)
+                            Icon(iconData, size: 22, color: AppColor.white),
+                          const SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (additionalText1.isNotEmpty)
+                                Text(
+                                  additionalText1,
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 12,
+                                    color: AppColor.lightGrey,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               Text(
-                                additionalText1,
+                                additionalText2,
                                 style: GoogleFont.ibmPlexSans(
-                                  fontSize: 12,
-                                  color: AppColor.lightGrey,
+                                  fontSize: 14,
+                                  color: AppColor.white,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            Text(
-                              additionalText2,
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 14,
-                                color: AppColor.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-  /*
-  static announcementsScreen({
-    required String mainText,
-    required String backRoundImage,
-    required String additionalText1,
-    required String additionalText2,
-    VoidCallback? onDetailsTap,
-    IconData? iconData,
-    double verticalPadding = 9,
-    Color? gradientStartColor,
-    Color? gradientEndColor,
-  }) {
-    return InkWell(
-      onTap: onDetailsTap,
-      child: Stack(
-        children: [
-          Image.network(backRoundImage),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            left: 0,
-
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    gradientStartColor ?? AppColor.black.withOpacity(0.01),
-                    gradientEndColor ?? AppColor.black,
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(22),
-                  bottomRight: Radius.circular(22),
-                ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 25,
-                  vertical: verticalPadding,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          mainText,
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColor.white,
+                            ],
                           ),
-                        ),
-                        Spacer(),
-                        Icon(iconData, size: 22, color: AppColor.white),
-                        SizedBox(width: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (additionalText1 != '')
-                              Text(
-                                additionalText1,
-                                style: GoogleFont.ibmPlexSans(
-                                  fontSize: 12,
-                                  color: AppColor.lightGrey,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            Text(
-                              additionalText2,
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 14,
-                                color: AppColor.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 5),
-                  ],
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
-*/
 
   static moreScreen({
     required String termTitle,
@@ -735,68 +650,94 @@ class CustomContainer {
             ),
 
             const SizedBox(height: 10),
-
-            // 🔒 Uniform image frame for ANY source image size
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
-              child:
-              CachedNetworkImage(
-                imageUrl: teacherImage,
-                fit: BoxFit.cover,
+              child: SizedBox(
+                height: 160,
                 width: double.infinity,
-                placeholder:
-                    (context, url) => Container(
-                  height: 160, // adjust to your card height
-                  alignment: Alignment.center,
-                  child: const SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                ),
-                errorWidget:
-                    (context, url, error) => const Icon(
-                  Icons.broken_image,
-                  size: 40,
-                  color: Colors.grey,
-                ),
-              ),
-
-              /*AspectRatio(
-                aspectRatio:
-                    4 /
-                    4, // keep same visual size; use 3/4 if you prefer taller portrait
-                child: Image.network(
-                  teacherImage,
-                  fit: BoxFit.cover, // fills the frame (crops nicely)
-                  // Optional loading & error placeholders
-                  loadingBuilder: (context, child, progress) {
-                    if (progress == null) return child;
-                    return Container(
-                      color: Colors.grey.shade100,
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator(
-                        value:
-                            progress.expectedTotalBytes != null
-                                ? progress.cumulativeBytesLoaded /
-                                    (progress.expectedTotalBytes ?? 1)
-                                : null,
-                      ),
-                    );
-                  },
-                  errorBuilder:
-                      (_, __, ___) => Container(
-                        color: Colors.grey.shade200,
+                child: CachedNetworkImage(
+                  imageUrl: teacherImage,
+                  fit: BoxFit.cover,
+                  placeholder:
+                      (context, url) => Container(
                         alignment: Alignment.center,
-                        child: Icon(
-                          Icons.person,
-                          size: 36,
-                          color: Colors.grey.shade400,
+                        child: const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         ),
                       ),
+                  errorWidget:
+                      (context, url, error) => const Icon(
+                        Icons.broken_image,
+                        size: 40,
+                        color: Colors.grey,
+                      ),
                 ),
-              ),*/
+              ),
             ),
+
+            // 🔒 Uniform image frame for ANY source image size
+            // ClipRRect(
+            //   borderRadius: BorderRadius.circular(15),
+            //   child:
+            //   CachedNetworkImage(
+            //     imageUrl: teacherImage,
+            //     fit: BoxFit.cover,
+            //     width: double.infinity,
+            //     placeholder:
+            //         (context, url) => Container(
+            //       height: 160, // adjust to your card height
+            //       alignment: Alignment.center,
+            //       child: const SizedBox(
+            //         height: 24,
+            //         width: 24,
+            //         child: CircularProgressIndicator(strokeWidth: 2),
+            //       ),
+            //     ),
+            //     errorWidget:
+            //         (context, url, error) => const Icon(
+            //       Icons.broken_image,
+            //       size: 40,
+            //       color: Colors.grey,
+            //     ),
+            //   ),
+            //
+            //   /*AspectRatio(
+            //     aspectRatio:
+            //         4 /
+            //         4, // keep same visual size; use 3/4 if you prefer taller portrait
+            //     child: Image.network(
+            //       teacherImage,
+            //       fit: BoxFit.cover, // fills the frame (crops nicely)
+            //       // Optional loading & error placeholders
+            //       loadingBuilder: (context, child, progress) {
+            //         if (progress == null) return child;
+            //         return Container(
+            //           color: Colors.grey.shade100,
+            //           alignment: Alignment.center,
+            //           child: CircularProgressIndicator(
+            //             value:
+            //                 progress.expectedTotalBytes != null
+            //                     ? progress.cumulativeBytesLoaded /
+            //                         (progress.expectedTotalBytes ?? 1)
+            //                     : null,
+            //           ),
+            //         );
+            //       },
+            //       errorBuilder:
+            //           (_, __, ___) => Container(
+            //             color: Colors.grey.shade200,
+            //             alignment: Alignment.center,
+            //             child: Icon(
+            //               Icons.person,
+            //               size: 36,
+            //               color: Colors.grey.shade400,
+            //             ),
+            //           ),
+            //     ),
+            //   ),*/
+            // ),
           ],
         ),
       ),
