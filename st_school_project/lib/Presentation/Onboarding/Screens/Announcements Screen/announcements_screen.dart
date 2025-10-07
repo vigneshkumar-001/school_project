@@ -16,6 +16,8 @@ import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/custom_container.dart' show CustomContainer;
 import '../../../../Core/Widgets/custom_textfield.dart';
 import '../../../../payment_web_view.dart';
+import '../More Screen/more_screen.dart';
+import '../More Screen/profile_screen/model/fees_history_response.dart';
 import 'model/announcement_details_response.dart';
 
 class AnnouncementsScreen extends StatefulWidget {
@@ -53,7 +55,9 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     );
   }
 
-<<<<<<< Updated upstream
+
+
+
   void _feessSheet(BuildContext context, int planId) async {
     final planData = await controller.getStudentPaymentPlan(id: planId);
 
@@ -76,9 +80,9 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
       backgroundColor: Colors.transparent,
       builder: (_) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.55,
+          initialChildSize: 0.65,
           minChildSize: 0.20,
-          maxChildSize: 0.55,
+          maxChildSize: 0.95,
           expand: false,
           builder: (context, scrollController) {
             return Container(
@@ -375,320 +379,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
       },
     );
   }
-=======
-  // void _feessSheet(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     backgroundColor: Colors.transparent,
-  //     builder: (_) {
-  //       return DraggableScrollableSheet(
-  //         initialChildSize: 0.55,
-  //         minChildSize: 0.20,
-  //         maxChildSize: 0.55,
-  //         expand: false,
-  //         builder: (context, scrollController) {
-  //           final items = ['Shoes', 'Notebooks', 'Tuition Fees'];
-  //
-  //           return Container(
-  //             decoration: BoxDecoration(
-  //               color: AppColor.white,
-  //               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //             ),
-  //             child: ListView(
-  //               controller: scrollController,
-  //               padding: const EdgeInsets.all(16),
-  //               children: [
-  //                 Center(
-  //                   child: Container(
-  //                     height: 4,
-  //                     width: 40,
-  //                     decoration: BoxDecoration(
-  //                       color: AppColor.grayop,
-  //                       borderRadius: BorderRadius.circular(2),
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 SizedBox(height: 20),
-  //
-  //                 Image.asset(AppImages.announcement2),
-  //                 SizedBox(height: 20),
-  //
-  //                 Row(
-  //                   children: [
-  //                     Expanded(
-  //                       child: Text(
-  //                         'Third-Term Fees',
-  //                         style: GoogleFont.ibmPlexSans(
-  //                           fontSize: 22,
-  //                           fontWeight: FontWeight.w500,
-  //                           color: AppColor.black,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                     Column(
-  //                       children: [
-  //                         Text(
-  //                           'Due date',
-  //                           style: GoogleFont.ibmPlexSans(
-  //                             fontSize: 12,
-  //                             color: AppColor.lowGrey,
-  //                           ),
-  //                         ),
-  //                         Text(
-  //                           '12-Dec-25',
-  //                           style: GoogleFont.ibmPlexSans(
-  //                             fontSize: 14,
-  //                             fontWeight: FontWeight.w500,
-  //                             color: AppColor.black,
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                     SizedBox(width: 4),
-  //                     Icon(
-  //                       CupertinoIcons.clock_fill,
-  //                       size: 30,
-  //                       color: AppColor.grayop,
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 SizedBox(height: 20),
-  //                 Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: List.generate(
-  //                     items.length,
-  //                     (index) => Padding(
-  //                       padding: const EdgeInsets.only(bottom: 8),
-  //                       child: Text(
-  //                         '${index + 1}. ${items[index]}',
-  //                         style: GoogleFont.ibmPlexSans(
-  //                           fontSize: 16,
-  //                           color: AppColor.lightBlack,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 SizedBox(height: 15),
-  //
-  //                 ElevatedButton(
-  //                   onPressed: () {},
-  //                   style: ButtonStyle(
-  //                     padding: MaterialStateProperty.all(EdgeInsets.zero),
-  //                     shape: MaterialStateProperty.all(
-  //                       RoundedRectangleBorder(
-  //                         borderRadius: BorderRadius.circular(20),
-  //                       ),
-  //                     ),
-  //                     elevation: MaterialStateProperty.all(0),
-  //                     backgroundColor: MaterialStateProperty.all(
-  //                       Colors.transparent,
-  //                     ),
-  //                   ),
-  //                   child: Ink(
-  //                     decoration: BoxDecoration(
-  //                       gradient: LinearGradient(
-  //                         colors: [AppColor.blueG1, AppColor.blueG2],
-  //                         begin: Alignment.topRight,
-  //                         end: Alignment.bottomRight,
-  //                       ),
-  //                       borderRadius: BorderRadius.circular(20),
-  //                     ),
-  //                     child: Container(
-  //                       alignment: Alignment.center,
-  //                       height: 50,
-  //                       width: double.infinity,
-  //                       child: Row(
-  //                         mainAxisAlignment: MainAxisAlignment.center,
-  //                         children: [
-  //                           Text(
-  //                             'Pay Rs.15,000',
-  //                             style: GoogleFont.ibmPlexSans(
-  //                               fontSize: 16,
-  //                               fontWeight: FontWeight.w800,
-  //                               color: AppColor.white,
-  //                             ),
-  //                           ),
-  //                           SizedBox(width: 5),
-  //                           Icon(
-  //                             CupertinoIcons.right_chevron,
-  //                             size: 14,
-  //                             weight: 20,
-  //                             color: AppColor.white,
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
->>>>>>> Stashed changes
 
-  /*Future<void> _examResult(BuildContext context, int id) async {
-    final details = await controller.getExamResultData(id: id);
-    if (details == null) return;
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.65,
-          minChildSize: 0.20,
-          maxChildSize: 0.65,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: BoxDecoration(
-                color: AppColor.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              child: ListView(
-                controller: scrollController,
-                padding: const EdgeInsets.all(16),
-                children: [
-                  Center(
-                    child: Container(
-                      height: 4,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: AppColor.grayop,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        details.exam.heading ?? '',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.lightBlack,
-                        ),
-                      ),
-                      const SizedBox(height: 7),
-                      RichText(
-                        text: TextSpan(
-                          text: details.totals?.grade ?? '',
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 43,
-                            fontWeight: FontWeight.w600,
-                            color: AppColor.greenMore1,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: ' Grade',
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 43,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 26),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 35.0),
-                        child: DottedLine(
-                          dashColor: AppColor.grayop,
-                          dashGapLength: 6,
-                          dashLength: 7,
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: details.subjects?.length ?? 0,
-                        itemBuilder: (context, index) {
-                          final subject = details.subjects![index];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 8.0,
-                              horizontal: 16,
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    subject.subjectName ?? '',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColor.grey,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  subject.obtainedMarks?.toString() ?? '-',
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColor.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 35.0),
-                        child: DottedLine(
-                          dashColor: AppColor.grayop,
-                          dashGapLength: 6,
-                          dashLength: 7,
-                        ),
-                      ),
-
-                      const SizedBox(height: 30),
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Center(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 30,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: AppColor.blue,
-                                width: 1,
-                              ),
-                            ),
-                            child: CustomTextField.textWithSmall(
-                              text: 'Close',
-                              color: AppColor.blue,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }*/
 
   Future<void> _examResult(BuildContext context, int id) async {
     ExamResultData? details;
@@ -701,9 +392,9 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
       backgroundColor: Colors.transparent,
       builder: (_) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.65,
-          minChildSize: 0.20,
-          maxChildSize: 0.65,
+          initialChildSize: 0.85,
+          minChildSize: 0.40,
+          maxChildSize: 0.95,
           expand: false,
           builder: (context, scrollController) {
             return Container(

@@ -1,3 +1,9 @@
+import 'package:http/http.dart' as http;
+
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:webview_flutter/webview_flutter.dart';
@@ -16,6 +22,7 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/
 
 import '../../../../Core/Utility/app_color.dart' show AppColor;
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
+import '../../../../Core/Utility/snack_bar.dart';
 import '../../../../Core/Widgets/date_and_time_convert.dart';
 import '../../../../payment_web_view.dart';
 import '../../../Admssion/Screens/admission_1.dart';
@@ -27,7 +34,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 
-import 'profile_screen/model/fees_history_response.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/More Screen/profile_screen/model/fees_history_response.dart';
 
 // --- grayscale matrix
 const List<double> _kGrayscaleMatrix = <double>[
@@ -186,7 +193,9 @@ class TwoProfileStack extends StatelessWidget {
 }
 
 class MoreScreen extends StatefulWidget {
-  const MoreScreen({super.key});
+  final int? openReceiptForPlanId; // 👈 add this
+
+  const MoreScreen({super.key, this.openReceiptForPlanId});
 
   @override
   State<MoreScreen> createState() => _MoreScreenState();
@@ -235,7 +244,7 @@ class _MoreScreenState extends State<MoreScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (feesController.feesData.value == null) {
         feesController.feesHistoryList();
       }
@@ -243,10 +252,13 @@ class _MoreScreenState extends State<MoreScreen>
       if (teacherListController.teacherListResponse.value == null) {
         teacherListController.teacherListData();
       }
+
+      final id = widget.openReceiptForPlanId;
+      if (id != null) {
+        _paymentReceipt(context, id); // your existing receipt bottom-sheet
+      }
     });
-
   }
-
 
   void _handleTabChange() {
     if (_tabController.index == 2 && _tabController.indexIsChanging) {
@@ -265,6 +277,140 @@ class _MoreScreenState extends State<MoreScreen>
     _tabController.removeListener(_handleTabChange);
     _tabController.dispose();
     super.dispose();
+  }
+
+  Widget _buildHeaderStudentTile() {
+    return Obx(() {
+      final data = teacherListController.teacherListResponse.value?.data;
+      final siblings = controller.siblingsList;
+
+      if (siblings.isEmpty) return const SizedBox.shrink();
+
+      final activeStudent = siblings.firstWhere(
+        (s) => s.isActive == true,
+        orElse: () => siblings.first,
+      );
+
+      dynamic otherStudent;
+      for (final s in siblings) {
+        if (s.id != activeStudent.id) {
+          otherStudent = s;
+          break;
+        }
+      }
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: ListTile(
+          title: Text(
+            data?.studentName.toString() ?? '',
+            style: GoogleFont.ibmPlexSans(
+              fontWeight: FontWeight.w600,
+              fontSize: 22,
+              color: AppColor.black,
+            ),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () => _OTPonMobileNoEdit(context),
+                child: Row(
+                  children: [
+                    Text(
+                      data?.student_phone.toString() ?? '',
+                      style: GoogleFont.ibmPlexSans(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        color: AppColor.lightBlack,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColor.white,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Image.asset(AppImages.moreSnumberAdd, height: 13),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 5),
+              RichText(
+                text: TextSpan(
+                  text: data?.studentClass.toString() ?? '',
+                  style: GoogleFont.ibmPlexSans(
+                    fontSize: 12,
+                    color: AppColor.grey,
+                    fontWeight: FontWeight.w800,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: 'th ',
+                      style: GoogleFont.ibmPlexSans(fontSize: 8),
+                    ),
+                    TextSpan(
+                      text: 'Grade - ',
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 12,
+                        color: AppColor.grey,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    TextSpan(
+                      text: data?.section.toString() ?? '',
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 12,
+                        color: AppColor.grey,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' Section',
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          trailing:
+              (siblings.isEmpty)
+                  ? const SizedBox.shrink()
+                  : TwoProfileStack(
+                    active: activeStudent,
+                    other: siblings.length > 1 ? otherStudent : null,
+                    size: 80,
+                    backSize: 55,
+                    overlapFraction: 0.44,
+                    fallbackAsset: AppImages.moreSimage1,
+                    activeBorderColor: Colors.transparent,
+                    onTap: () {
+                      SwitchProfileSheet.show(
+                        context,
+                        students: controller.siblingsList,
+                        selectedStudent: controller.selectedStudent,
+                        onSwitch: (student) async {
+                          await controller.switchSiblings(id: student.id);
+                          controller.selectStudent(student);
+                        },
+                        onLogout: () async {
+                          await loginController.logout();
+                        },
+                      );
+                    },
+                  ),
+        ),
+      );
+    });
   }
 
   void _OTPonMobileNoEdit(BuildContext context) {
@@ -684,7 +830,7 @@ class _MoreScreenState extends State<MoreScreen>
                     ],
                   ),
                   const SizedBox(height: 20),
-                 Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: List.generate(items.length, (index) {
                       final item = items[index];
@@ -1354,7 +1500,9 @@ class _MoreScreenState extends State<MoreScreen>
                       ),
                       SizedBox(height: 40),
                       GestureDetector(
-                        onTap: () {},
+                        onTap:
+                            () async =>
+                                _downloadAndOpenPdf(plan.combinedDownloadUrl),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -1403,714 +1551,451 @@ class _MoreScreenState extends State<MoreScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(AppImages.moreSbackImage),
-                      fit: BoxFit.cover,
-                      alignment: const Alignment(-2, -0.8),
-                    ),
-                    gradient: const LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [AppColor.white, AppColor.lowWhite],
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      right: 15,
-                      left: 15,
-                      bottom: 25,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+        child: DefaultTabController(
+          length: 2,
+          child: NestedScrollView(
+            headerSliverBuilder:
+                (context, innerScrolled) => [
+                  // HEADER (your big top area)
+                  SliverToBoxAdapter(
+                    child: Stack(
                       children: [
-                        Image.asset(AppImages.moreStopImage, fit: BoxFit.cover),
-                        const SizedBox(height: 10),
-
-                        Obx(() {
-                          final data =
-                              teacherListController
-                                  .teacherListResponse
-                                  .value
-                                  ?.data;
-                          final siblings = controller.siblingsList;
-
-                          if (siblings.isEmpty) {
-                            return const SizedBox.shrink();
-                          }
-
-                          final activeStudent = siblings.firstWhere(
-                            (s) => s.isActive == true,
-                            orElse: () => siblings.first,
-                          );
-
-                          // find first "other" student (if exists)
-                          final remainingStudent = siblings.firstWhere(
-                            (s) => s.id != activeStudent.id,
-                            orElse: () => siblings.first,
-                          );
-
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(20),
+                              bottomLeft: Radius.circular(20),
                             ),
-                            child: ListTile(
-                              title: RichText(
-                                text: TextSpan(
-                                  text: data?.studentName.toString() ?? '',
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 22,
-                                    color: AppColor.black,
-                                  ),
+                            image: DecorationImage(
+                              image: AssetImage(AppImages.moreSbackImage),
+                              fit: BoxFit.cover,
+                              alignment: const Alignment(-2, -0.8),
+                            ),
+                            gradient: const LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                              colors: [AppColor.white, AppColor.lowWhite],
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              right: 15,
+                              left: 15,
+                              bottom: 25,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image.asset(
+                                  AppImages.moreStopImage,
+                                  fit: BoxFit.cover,
                                 ),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () => _OTPonMobileNoEdit(context),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          data?.student_phone.toString() ?? '',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 16,
-                                            color: AppColor.lightBlack,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 5),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 12,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: AppColor.white,
-                                            borderRadius: BorderRadius.circular(
-                                              50,
-                                            ),
-                                          ),
-                                          child: Image.asset(
-                                            AppImages.moreSnumberAdd,
-                                            height: 13,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  RichText(
-                                    text: TextSpan(
-                                      text: data?.studentClass.toString() ?? '',
-                                      style: GoogleFont.ibmPlexSans(
-                                        fontSize: 12,
-                                        color: AppColor.grey,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                      children: [
-                                        TextSpan(
-                                          text: 'th ',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 8,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: 'Grade - ',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 12,
-                                            color: AppColor.grey,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: data?.section.toString() ?? '',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 12,
-                                            color: AppColor.grey,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: ' Section',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.normal,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              // 👉 two-avatar stack as trailing
-                              trailing: Builder(
-                                builder: (context) {
-                                  final siblings = controller.siblingsList;
-                                  if (siblings.isEmpty)
-                                    return const SizedBox.shrink();
-
-                                  // pick active (front) + one other (back)
-                                  dynamic activeStudent;
-                                  try {
-                                    activeStudent = siblings.firstWhere(
-                                      (s) => s.isActive == true,
-                                    );
-                                  } catch (_) {
-                                    activeStudent = siblings.first;
-                                  }
-
-                                  dynamic otherStudent;
-                                  for (final s in siblings) {
-                                    if (s.id != activeStudent.id) {
-                                      otherStudent = s;
-                                      break;
-                                    }
-                                  }
-
-                                  return TwoProfileStack(
-                                    active: activeStudent,
-                                    other:
-                                        siblings.length > 1
-                                            ? otherStudent
-                                            : null, // only show back if >1
-                                    size: 80, // front (color) avatar
-                                    backSize:
-                                        55, // 🔥 back (B/W) avatar size — customize here
-                                    overlapFraction:
-                                        0.44, // tweak overlap if you like
-                                    fallbackAsset: AppImages.moreSimage1,
-                                    activeBorderColor: Colors.transparent,
-                                    onTap: () {
-                                      SwitchProfileSheet.show(
-                                        context,
-                                        students: controller.siblingsList,
-                                        selectedStudent:
-                                            controller.selectedStudent,
-                                        onSwitch: (student) async {
-                                          await controller.switchSiblings(
-                                            id: student.id,
-                                          );
-                                          controller.selectStudent(student);
-                                        },
-                                        onLogout: () async {
-                                          await loginController.logout();
-                                        },
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
+                                const SizedBox(height: 10),
+                                // === your Obx(ListTile + avatars) unchanged ===
+                                _buildHeaderStudentTile(),
+                              ],
                             ),
-                          );
-                        }),
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                ),
-              ],
-            ),
 
-            const SizedBox(height: 15),
-
-            Row(
-              children: [
-                Expanded(
-                  child: TabBar(
-                    controller: _tabController,
-                    tabs: const [
-                      Tab(text: 'Payment History'),
-                      Tab(text: 'Teachers'),
-                    ],
-                    labelColor: AppColor.lightBlack,
-                    unselectedLabelColor: AppColor.grey,
-                    indicatorColor: AppColor.lightBlack,
-                    labelStyle: GoogleFont.ibmPlexSans(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    dividerColor: Colors.transparent,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () => _showContactSchoolSheet(context),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 10,
-                    ),
-                    child: Text(
-                      'Contact School',
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.grey,
+                  // PINNED TAB BAR ROW (TabBar + "Contact School")
+                  SliverAppBar(
+                    pinned: true,
+                    elevation: 0,
+                    backgroundColor: Colors.white,
+                    automaticallyImplyLeading: false,
+                    toolbarHeight: 80,
+                    titleSpacing: 0,
+                    title: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TabBar(
+                              controller: _tabController,
+                              tabs: const [
+                                Tab(text: 'Payment History'),
+                                Tab(text: 'Teachers'),
+                              ],
+                              labelColor: AppColor.lightBlack,
+                              unselectedLabelColor: AppColor.grey,
+                              indicatorColor: AppColor.lightBlack,
+                              dividerColor: Colors.transparent,
+                              labelStyle: GoogleFont.ibmPlexSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => _showContactSchoolSheet(context),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                              child: Text(
+                                'Contact School',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColor.grey,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
 
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  /*  Obx(() {
-                    final data = feesController.feesData.value;
-                    return Padding(
+            // ==== FULL-SCREEN, INDEPENDENTLY SCROLLING TABS ====
+            body: TabBarView(
+              controller: _tabController,
+              children: [
+                // --- Payment tab ---
+                Obx(() {
+                  final data = feesController.feesData.value;
+                  final isLoading = feesController.isLoading.value;
+
+                  if (isLoading)
+                    return const Center(child: CircularProgressIndicator());
+
+                  if (data == null || data.items.isEmpty) {
+                    return ListView(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 15,
                         vertical: 20,
                       ),
-                      child: ListView.builder(
-                        itemCount: data?.items.length,
-                        itemBuilder: (context, index) {
-                          final plan = data?.items[index];
-                          return CustomContainer.moreScreen(
-                            onDetailsTap: () {
-                              _paymentReceipt(context);
-                            },
-                            termTitle: plan?.name.toString() ?? '',
-                            timeDate:
-                                plan?.announcementDate.toString() ??
-                                '', // or format with intl
-                            amount: "Rs. ${plan?.summary.totalAmount}",
-                            isPaid:
-                                plan?.summary.unpaidCount ==
-                                0, // true if all paid
-                            payNowButton:
-                                () => _feessSheet(
-                                  context,
-                                  plan!,
-                                ), // pass plan if needed
-                          );
-                        },
-                      ),
-                    );
-                  }),*/
-                  Obx(() {
-                    final data = feesController.feesData.value;
-                    final isLoading = feesController.isLoading.value;
-
-                    return RefreshIndicator(
-                      onRefresh: () async {
-                        await feesController.feesHistoryList();
-                      },
-                      child:
-                          isLoading
-                              ? const Center(child: CircularProgressIndicator())
-                              : (data == null || data.items.isEmpty)
-                              ? ListView(
-                                children: [
-                                  const SizedBox(height: 120),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        AppImages.noDataFound,
-                                        height: 150,
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        "No fees available",
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontSize: 16,
-                                          color: AppColor.grey,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )
-                              : Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 15,
-                                  vertical: 20,
-                                ),
-                                child: ListView.builder(
-                                  itemCount: data.items.length,
-                                  itemBuilder: (context, index) {
-                                    final plan = data.items[index];
-                                    return CustomContainer.moreScreen(
-                                      onDetailsTap:
-                                          () => _paymentReceipt(
-                                            context,
-                                            plan.planId,
-                                          ),
-                                      termTitle: plan.name ?? '',
-                                      timeDate: plan.announcementDate ?? '',
-                                      amount: "Rs. ${plan.summary.totalAmount}",
-                                      isPaid: plan.summary.unpaidCount == 0,
-                                      payNowButton:
-                                          () => _feessSheet(context, plan),
-                                    );
-                                  },
-                                ),
+                      children: [
+                        const SizedBox(height: 120),
+                        Column(
+                          children: [
+                            Image.asset(AppImages.noDataFound, height: 150),
+                            const SizedBox(height: 10),
+                            Text(
+                              "No fees available",
+                              textAlign: TextAlign.center,
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 16,
+                                color: AppColor.grey,
+                                fontWeight: FontWeight.w500,
                               ),
+                            ),
+                          ],
+                        ),
+                      ],
                     );
-                  }),
+                  }
 
-                  // Teachers Tab
-                  SingleChildScrollView(
+                  return RefreshIndicator(
+                    onRefresh: () => feesController.feesHistoryList(),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 20,
+                      ),
+                      itemCount: data.items.length,
+                      itemBuilder: (context, index) {
+                        final plan = data.items[index];
+                        return CustomContainer.moreScreen(
+                          onDetailsTap:
+                              () => _paymentReceipt(context, plan.planId),
+                          termTitle: plan.name ?? '',
+                          timeDate: plan.announcementDate ?? '',
+                          amount: "Rs. ${plan.summary.totalAmount}",
+                          isPaid: plan.summary.unpaidCount == 0,
+                          payNowButton: () => _feessSheet(context, plan),
+                        );
+                      },
+                    ),
+                  );
+                }),
+
+                // --- Teachers tab ---
+                Obx(() {
+                  if (teacherListController.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final res = teacherListController.teacherListResponse.value;
+                  final data = res?.data;
+                  if (data == null || data.teachers.isEmpty) {
+                    return ListView(
+                      children: [
+                        const SizedBox(height: 120),
+                        Center(child: Text("No teachers available")),
+                        const SizedBox(height: 10),
+                        Image.asset(AppImages.noDataFound),
+                      ],
+                    );
+                  }
+
+                  final teachers = data.teachers;
+
+                  // choose one layout:
+                  // A) grid (scrolls full screen)
+                  return GridView.builder(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 18,
                       vertical: 20,
                     ),
-                    child: Obx(() {
-                      if (teacherListController.isLoading.value) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (teacherListController.teacherListResponse.value ==
-                              null ||
-                          teacherListController
-                                  .teacherListResponse
-                                  .value!
-                                  .data ==
-                              null ||
-                          teacherListController
-                              .teacherListResponse
-                              .value!
-                              .data!
-                              .teachers
-                              .isEmpty) {
-                        return Column(
-                          children: [
-                            const Center(child: Text("No teachers available")),
-                            SizedBox(height: 10),
-                            Image.asset(AppImages.noDataFound),
-                          ],
-                        );
-                      }
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 18,
+                          mainAxisSpacing: 15,
+                          childAspectRatio: 0.73,
+                        ),
+                    itemCount: teachers.length,
+                    itemBuilder: (context, i) {
+                      final t = teachers[i];
+                      return CustomContainer.teacherTab(
+                        teachresName: t.teacherName,
+                        classTitle:
+                            t.classTeacher
+                                ? "${t.subject} - Class Teacher"
+                                : t.subject,
+                        teacherImage:
+                            t.teacherImage.isNotEmpty
+                                ? t.teacherImage
+                                : AppImages.teacher1,
+                      );
+                    },
+                  );
 
-                      final teachers =
-                          teacherListController
-                              .teacherListResponse
-                              .value!
-                              .data!
-                              .teachers;
-
-                      return Column(
-                        children: [
-                          /*  for (int i = 0; i < teachers.length; i += 2)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 15.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: CustomContainer.teacherTab(
-                    teachresName: teachers[i].teacherName,
-                    classTitle:
-                    teachers[i].classTeacher
-                        ? "${teachers[i].subject} - Class Teacher"
-                        : teachers[i].subject,
-                    teacherImage:
-                    teachers[i].teacherImage.isNotEmpty
-                        ? teachers[i].teacherImage
-                        : AppImages.teacher1,
-                  ),
-                ),
-                const SizedBox(width: 18),
-                if (i + 1 < teachers.length)
-                  Expanded(
-                    child: CustomContainer.teacherTab(
-                      teachresName:
-                      teachers[i + 1].teacherName,
-                      classTitle:
-                      teachers[i + 1].classTeacher
-                          ? "${teachers[i + 1].subject} - Class Teacher"
-                          : teachers[i + 1].subject,
-                      teacherImage:
-                      teachers[i + 1]
-                          .teacherImage
-                          .isNotEmpty
-                          ? teachers[i + 1].teacherImage
-                          : AppImages.teacher2,
-                    ),
-                  )
-                else
-                  Spacer(),
+                  // B) or your 2-per-row IntrinsicHeight (also full-screen):
+                  // return ListView.builder(...);
+                }),
               ],
             ),
-          ),*/
-                          for (int i = 0; i < teachers.length; i += 2)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 15.0),
-                              child: IntrinsicHeight(
-                                child: Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Expanded(
-                                      child: CustomContainer.teacherTab(
-                                        teachresName: teachers[i].teacherName,
-                                        classTitle:
-                                            teachers[i].classTeacher
-                                                ? "${teachers[i].subject} - Class Teacher"
-                                                : teachers[i].subject,
-                                        teacherImage:
-                                            teachers[i].teacherImage.isNotEmpty
-                                                ? teachers[i].teacherImage
-                                                : AppImages.teacher1,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 18),
-                                    if (i + 1 < teachers.length)
-                                      Expanded(
-                                        child: CustomContainer.teacherTab(
-                                          teachresName:
-                                              teachers[i + 1].teacherName,
-                                          classTitle:
-                                              teachers[i + 1].classTeacher
-                                                  ? "${teachers[i + 1].subject} - Class Teacher"
-                                                  : teachers[i + 1].subject,
-                                          teacherImage:
-                                              teachers[i + 1]
-                                                      .teacherImage
-                                                      .isNotEmpty
-                                                  ? teachers[i + 1].teacherImage
-                                                  : AppImages.teacher2,
-                                        ),
-                                      )
-                                    else
-                                      const Expanded(
-                                        child: SizedBox(),
-                                      ), // Fill space if odd
-                                  ],
-                                ),
-                              ),
-                            ),
-                        ],
-                      );
-                    }),
-                  ),
-
-                  /* SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 20,
-                    ),
-                    child: Obx(() {
-                      if (teacherListController.isLoading.value) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (teacherListController.teacherListResponse.value ==
-                              null ||
-                          teacherListController
-                                  .teacherListResponse
-                                  .value!
-                                  .data ==
-                              null ||
-                          teacherListController
-                              .teacherListResponse
-                              .value!
-                              .data!
-                              .teachers
-                              .isEmpty) {
-                        return Container(
-                          padding: EdgeInsets.symmetric(vertical: 160),
-                          decoration: BoxDecoration(color: AppColor.white),
-                          child: Column(
-                            children: [
-                              Center(
-                                child: Text(
-                                  'No teachers available',
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                    color: AppColor.grey,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 30),
-                              Image.asset(AppImages.noDataFound),
-                            ],
-                          ),
-                        );
-                      }
-
-                      final teachers =
-                          teacherListController
-                              .teacherListResponse
-                              .value!
-                              .data!
-                              .teachers;
-
-                      // ⬇️ REPLACE your old `return Column(children:[...])` with THIS:
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics:
-                            const NeverScrollableScrollPhysics(), // inside SingleChildScrollView
-                        padding: EdgeInsets.zero,
-                        itemCount: teachers.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2, // 2 columns
-                              crossAxisSpacing: 18, // horizontal gap
-                              mainAxisSpacing: 15, // vertical gap
-                              childAspectRatio:
-                                  0.73, // adjust card height if needed
-                            ),
-                        itemBuilder: (context, i) {
-                          final t = teachers[i];
-                          return CustomContainer.teacherTab(
-                            teachresName: t.teacherName,
-                            classTitle:
-                                t.classTeacher
-                                    ? "${t.subject} - Class Teacher"
-                                    : t.subject,
-                            teacherImage:
-                                t.teacherImage.isNotEmpty
-                                    ? t.teacherImage
-                                    : AppImages.teacher1,
-                          );
-                        },
-                      );
-                    }),
-                  ),*/
-
-                  // SingleChildScrollView(
-                  //   padding: const EdgeInsets.symmetric(
-                  //     horizontal: 18,
-                  //     vertical: 20,
-                  //   ),
-                  //   child: Obx(() {
-                  //     if (teacherListController.isLoading.value) {
-                  //       return const Center(child: CircularProgressIndicator());
-                  //     }
-                  //     if (teacherListController.teacherListResponse.value ==
-                  //             null ||
-                  //         teacherListController
-                  //                 .teacherListResponse
-                  //                 .value!
-                  //                 .data ==
-                  //             null ||
-                  //         teacherListController
-                  //             .teacherListResponse
-                  //             .value!
-                  //             .data!
-                  //             .teachers
-                  //             .isEmpty) {
-                  //       return Column(
-                  //         children: [
-                  //           const Center(
-                  //             child: Text("No teachers available"),
-                  //           ),
-                  //           SizedBox(height: 10),
-                  //           Image.asset(AppImages.noDataFound),
-                  //         ],
-                  //       );
-                  //     }
-                  //
-                  //     final teachers =
-                  //         teacherListController
-                  //             .teacherListResponse
-                  //             .value!
-                  //             .data!
-                  //             .teachers;
-                  //
-                  //     return Column(
-                  //       children: [
-                  //       /*  for (int i = 0; i < teachers.length; i += 2)
-                  //           Padding(
-                  //             padding: const EdgeInsets.only(bottom: 15.0),
-                  //             child: Row(
-                  //               children: [
-                  //                 Expanded(
-                  //                   child: CustomContainer.teacherTab(
-                  //                     teachresName: teachers[i].teacherName,
-                  //                     classTitle:
-                  //                     teachers[i].classTeacher
-                  //                         ? "${teachers[i].subject} - Class Teacher"
-                  //                         : teachers[i].subject,
-                  //                     teacherImage:
-                  //                     teachers[i].teacherImage.isNotEmpty
-                  //                         ? teachers[i].teacherImage
-                  //                         : AppImages.teacher1,
-                  //                   ),
-                  //                 ),
-                  //                 const SizedBox(width: 18),
-                  //                 if (i + 1 < teachers.length)
-                  //                   Expanded(
-                  //                     child: CustomContainer.teacherTab(
-                  //                       teachresName:
-                  //                       teachers[i + 1].teacherName,
-                  //                       classTitle:
-                  //                       teachers[i + 1].classTeacher
-                  //                           ? "${teachers[i + 1].subject} - Class Teacher"
-                  //                           : teachers[i + 1].subject,
-                  //                       teacherImage:
-                  //                       teachers[i + 1]
-                  //                           .teacherImage
-                  //                           .isNotEmpty
-                  //                           ? teachers[i + 1].teacherImage
-                  //                           : AppImages.teacher2,
-                  //                     ),
-                  //                   )
-                  //                 else
-                  //                   Spacer(),
-                  //               ],
-                  //             ),
-                  //           ),*/
-                  //
-                  //         for (int i = 0; i < teachers.length; i += 2)
-                  //           Padding(
-                  //             padding: const EdgeInsets.only(bottom: 15.0),
-                  //             child: IntrinsicHeight(
-                  //               child: Row(
-                  //                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                  //                 children: [
-                  //                   Expanded(
-                  //                     child: CustomContainer.teacherTab(
-                  //                       teachresName: teachers[i].teacherName,
-                  //                       classTitle: teachers[i].classTeacher
-                  //                           ? "${teachers[i].subject} - Class Teacher"
-                  //                           : teachers[i].subject,
-                  //                       teacherImage: teachers[i].teacherImage.isNotEmpty
-                  //                           ? teachers[i].teacherImage
-                  //                           : AppImages.teacher1,
-                  //                     ),
-                  //                   ),
-                  //                   const SizedBox(width: 18),
-                  //                   if (i + 1 < teachers.length)
-                  //                     Expanded(
-                  //                       child: CustomContainer.teacherTab(
-                  //                         teachresName: teachers[i + 1].teacherName,
-                  //                         classTitle: teachers[i + 1].classTeacher
-                  //                             ? "${teachers[i + 1].subject} - Class Teacher"
-                  //                             : teachers[i + 1].subject,
-                  //                         teacherImage: teachers[i + 1].teacherImage.isNotEmpty
-                  //                             ? teachers[i + 1].teacherImage
-                  //                             : AppImages.teacher2,
-                  //                       ),
-                  //                     )
-                  //                   else
-                  //                     const Expanded(child: SizedBox()), // Fill space if odd
-                  //                 ],
-                  //               ),
-                  //             ),
-                  //           ),
-                  //
-                  //
-                  //       ],
-                  //     );
-                  //   }),
-                  // ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
+
+/*Future<void> _downloadAndOpenPdf(String url) async {
+  if (url.isEmpty) {
+    Get.snackbar('Error', 'Download URL not available');
+    return;
+  }
+
+  // Check permission
+  if (Platform.isAndroid) {
+    var status = await Permission.manageExternalStorage.status;
+    if (!status.isGranted) {
+      bool openSettings = await Get.dialog(
+        AlertDialog(
+          title: Text('Permission Required'),
+          content: Text(
+            'Storage permission is required to download the receipt. Please enable it.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(result: false),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Get.back(result: true),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+        barrierDismissible: false,
+      );
+
+      if (openSettings) {
+        bool isOpened = await openAppSettings();
+        if (!isOpened) {
+          Get.snackbar('Error', 'Cannot open settings');
+          return;
+        }
+
+        status = await Permission.manageExternalStorage.request();
+        if (!status.isGranted) {
+          Get.snackbar('Permission Denied', 'Storage permission not granted');
+          return;
+        }
+      } else {
+        return;
+      }
+    }
+  }
+
+  try {
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode != 200) {
+      Get.back();
+      Get.snackbar('Error', 'Failed to download file');
+      return;
+    }
+
+    Directory? dir;
+    if (Platform.isAndroid) {
+      dir = Directory('/storage/emulated/0/Download'); // Downloads folder
+      if (!dir.existsSync()) {
+        dir.createSync(recursive: true);
+      }
+    } else {
+      dir = await getApplicationDocumentsDirectory();
+    }
+
+    final file = File(
+      '${dir.path}/receipt_${DateTime.now().millisecondsSinceEpoch}.pdf',
+    );
+    await file.writeAsBytes(response.bodyBytes);
+
+    Get.back(); // dismiss loading
+    Get.snackbar('Success', 'PDF saved to ${file.path}');
+  } catch (e) {
+    Get.back();
+    Get.snackbar('Error', e.toString());
+  }
+}*/
+
+Future<void> _downloadAndOpenPdf(String url) async {
+  if (url.isEmpty) {
+    Get.snackbar('Error', 'Download URL not available');
+    return;
+  }
+
+  // Check storage permission for Android
+  if (Platform.isAndroid) {
+    var status = await Permission.manageExternalStorage.status;
+    if (!status.isGranted) {
+      bool openSettings = await Get.dialog(
+        AlertDialog(
+          title: Text('Permission Required'),
+          content: Text(
+            'Storage permission is required to download the receipt. Please enable it.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(result: false),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Get.back(result: true),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+        barrierDismissible: false,
+      );
+
+      if (openSettings) {
+        bool isOpened = await openAppSettings();
+        if (!isOpened) {
+          Get.snackbar('Error', 'Cannot open settings');
+          return;
+        }
+
+        status = await Permission.manageExternalStorage.request();
+        if (!status.isGranted) {
+          Get.snackbar('Permission Denied', 'Storage permission not granted');
+          return;
+        }
+      } else {
+        return;
+      }
+    }
+  }
+
+  try {
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode != 200) {
+      Get.back();
+      Get.snackbar('Error', 'Failed to download file');
+      return;
+    }
+
+    Directory dir;
+    if (Platform.isAndroid) {
+      dir = Directory('/storage/emulated/0/Download');
+      if (!dir.existsSync()) {
+        dir.createSync(recursive: true);
+      }
+    } else {
+      dir = await getApplicationDocumentsDirectory();
+    }
+
+    final file = File(
+      '${dir.path}/receipt_${DateTime.now().millisecondsSinceEpoch}.pdf',
+    );
+    await file.writeAsBytes(response.bodyBytes);
+
+    Get.back(); // dismiss loading
+    Get.snackbar('Success', 'PDF saved to ${file.path}');
+
+    // Share PDF
+  } catch (e) {
+    Get.back();
+    Get.snackbar('Error', e.toString());
+  }
+}
+
+/*Future<void> _downloadAndOpenPdf(String url) async {
+  if (url.isEmpty) {
+    CustomSnackBar.showError("Download URL not available");
+    return;
+  }
+
+  final uri = Uri.parse(url);
+  try {
+    // Optional: show a small loading UI
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+
+    final dir = await getApplicationDocumentsDirectory();
+    final filename = 'receipt_${DateTime.now().millisecondsSinceEpoch}.pdf';
+    final savePath = p.join(dir.path, filename);
+
+    final dio = Dio();
+
+    // If your endpoint needs headers/cookies, set them here:
+    // dio.options.headers['Authorization'] = 'Bearer <token>';
+
+    await dio.downloadUri(
+      uri,
+      savePath,
+      onReceiveProgress: (received, total) {
+        // You can show progress if you want:
+        // debugPrint('Downloading: ${(received / (total == -1 ? 1 : total) * 100).toStringAsFixed(0)}%');
+      },
+      options: Options(
+        responseType: ResponseType.bytes,
+        followRedirects: true,
+        receiveTimeout: const Duration(minutes: 2),
+      ),
+    );
+
+    // Close loader
+    if (Get.isDialogOpen ?? false) Get.back();
+
+    CustomSnackBar.showSuccess("Receipt saved: $filename");
+    await OpenFilex.open(savePath); // triggers the OS PDF viewer
+  } on DioException catch (e) {
+    if (Get.isDialogOpen ?? false) Get.back();
+    CustomSnackBar.showError("Download failed: ${e.message}");
+  } catch (e) {
+    if (Get.isDialogOpen ?? false) Get.back();
+    CustomSnackBar.showError("Something went wrong");
+  }
+}*/
