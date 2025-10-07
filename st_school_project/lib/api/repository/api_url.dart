@@ -1,5 +1,7 @@
 class ApiUrl {
-  static String baseUrl = 'https://school-back-end-594f59bea6cb.herokuapp.com';
+  static String baseUrl12 = 'https://school-back-end-594f59bea6cb.herokuapp.com';
+  static String baseUrl = 'http://backend.stjosephmatricschool.com';
+
   static String baseUrl1 =
       'https://school-backend-v2-19bebceab98e.herokuapp.com';
   static String teacherInfo = '$baseUrl/student-teacher-info';
@@ -68,11 +70,7 @@ class ApiUrl {
     return '$baseUrl/student-home/monthly-attendance-by-student?year=$year&month=$month';
   }
 
-
   static String getStudentPaymentPlan({required int id}) {
     return '$baseUrl/student-payments/plan/$id';
   }
-
-
-
 }

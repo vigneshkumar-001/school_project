@@ -55,6 +55,8 @@ class PlanItem {
   final String dueDate;
   final String paymentType;
   final Summary summary;
+  final String combinedDownloadUrl;
+
   final List<FeeItem> items;
 
   PlanItem({
@@ -66,6 +68,7 @@ class PlanItem {
     required this.paymentType,
     required this.summary,
     required this.items,
+    required this.combinedDownloadUrl,
   });
 
   factory PlanItem.fromJson(Map<String, dynamic> json) {
@@ -76,6 +79,7 @@ class PlanItem {
       announcementDate: json['announcementDate'] ?? '',
       dueDate: json['dueDate'] ?? '',
       paymentType: json['paymentType'] ?? '',
+      combinedDownloadUrl: json['combinedDownloadUrl'] ?? '',
       summary: Summary.fromJson(json['summary'] ?? {}),
       items:
           (json['items'] as List<dynamic>? ?? [])
@@ -91,6 +95,7 @@ class PlanItem {
     "announcementDate": announcementDate,
     "dueDate": dueDate,
     "paymentType": paymentType,
+    "combinedDownloadUrl": combinedDownloadUrl,
     "summary": summary.toJson(),
     "items": items.map((e) => e.toJson()).toList(),
   };
@@ -127,7 +132,7 @@ class FeeItem {
   final int studentId;
   final String feeTypeName;
   final dynamic amount;
-  final String status;
+  late final String status;
   final String? paidAt;
   final String? method;
   final String? admissionNo;
