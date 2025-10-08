@@ -1625,7 +1625,7 @@ class _MoreScreenState extends State<MoreScreen>
                               indicatorColor: AppColor.lightBlack,
                               dividerColor: Colors.transparent,
                               labelStyle: GoogleFont.ibmPlexSans(
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

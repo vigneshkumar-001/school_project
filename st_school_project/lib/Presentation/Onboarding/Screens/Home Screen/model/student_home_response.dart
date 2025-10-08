@@ -44,7 +44,7 @@ class StudentHomeData {
     required this.attendance,
     required this.announcements,
     required this.tasks,
-    required this. appVersions ,
+    required this.appVersions,
   });
 
   factory StudentHomeData.fromJson(Map<String, dynamic> json) {
@@ -53,15 +53,18 @@ class StudentHomeData {
       className: json['class'] ?? '',
       section: json['section'] ?? '',
       attendance: Attendance.fromJson(json['attendance'] ?? {}),
-      announcements: (json['announcements'] as List? ?? [])
-          .map((e) => Announcement.fromJson(e ?? {}))
-          .toList(),
-      tasks: (json['tasks'] as List? ?? [])
-          .map((e) => Task.fromJson(e ?? {}))
-          .toList(),
-      appVersions: json['appVersions'] != null
-          ? AppVersions.fromJson(json['appVersions'])
-          : null,
+      announcements:
+          (json['announcements'] as List? ?? [])
+              .map((e) => Announcement.fromJson(e ?? {}))
+              .toList(),
+      tasks:
+          (json['tasks'] as List? ?? [])
+              .map((e) => Task.fromJson(e ?? {}))
+              .toList(),
+      appVersions:
+          json['appVersions'] != null
+              ? AppVersions.fromJson(json['appVersions'])
+              : null,
     );
   }
 
@@ -89,10 +92,7 @@ class Attendance {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'morning': morning,
-    'afternoon': afternoon,
-  };
+  Map<String, dynamic> toJson() => {'morning': morning, 'afternoon': afternoon};
 }
 
 class Announcement {
@@ -149,7 +149,6 @@ class Task {
   final String type;
   final String teacherImage;
 
-
   Task({
     required this.id,
     required this.title,
@@ -161,7 +160,6 @@ class Task {
     required this.subjectId,
     required this.type,
     required this.teacherImage,
-
   });
 
   factory Task.fromJson(Map<String, dynamic> json) {
@@ -176,7 +174,6 @@ class Task {
       subjectId: json['subject_id'] ?? 0,
       type: json['type'] ?? '',
       teacherImage: json['teacher_image'] ?? '',
-
     );
   }
 
@@ -191,7 +188,6 @@ class Task {
     'subject_id': subjectId,
     'type': type,
     'teacher_image': teacherImage,
-
   };
 
   static DateTime _parseDate(dynamic v) {
@@ -251,7 +247,6 @@ class AppVersion {
     'storeUrl': storeUrl,
   };
 }
-
 
 // class StudentHomeResponse {
 //   final bool status;
