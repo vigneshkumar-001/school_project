@@ -97,6 +97,8 @@ class AttendanceByDate {
   final bool fullDayAbsent;
   final bool holidayStatus;
   final bool eventsStatus;
+  String? eventTitle;
+  String? eventImage;
 
   AttendanceByDate({
     required this.morning,
@@ -104,6 +106,8 @@ class AttendanceByDate {
     required this.fullDayAbsent,
     required this.holidayStatus,
     required this.eventsStatus,
+    this.eventImage,
+    this.eventTitle,
   });
 
   factory AttendanceByDate.fromJson(Map<String, dynamic> json) {
@@ -113,6 +117,8 @@ class AttendanceByDate {
       fullDayAbsent: json['full_day_absent'] ?? false,
       holidayStatus: json['holiday_status'] ?? false,
       eventsStatus: json['events_status'] ?? false,
+      eventTitle: json['event_title'] as String?,
+      eventImage: json['event_image'] as String?,
     );
   }
 
@@ -123,6 +129,8 @@ class AttendanceByDate {
       'full_day_absent': fullDayAbsent,
       'holiday_status': holidayStatus,
       'events_status': eventsStatus,
+      'event_title': eventTitle,
+      'event_image': eventImage,
     };
   }
 }

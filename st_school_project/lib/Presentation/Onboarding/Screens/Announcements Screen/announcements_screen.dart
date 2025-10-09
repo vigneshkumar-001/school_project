@@ -55,9 +55,6 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     );
   }
 
-
-
-
   void _feessSheet(BuildContext context, int planId) async {
     final planData = await controller.getStudentPaymentPlan(id: planId);
 
@@ -380,7 +377,6 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     );
   }
 
-
   Future<void> _examResult(BuildContext context, int id) async {
     ExamResultData? details;
 
@@ -621,18 +617,18 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                       ),
                     ),
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
 
                   // Title
                   Text(
-                    details.title,
-                    style: const TextStyle(
+                    details.title.toUpperCase(),
+                    style: GoogleFont.ibmPlexSans(
                       fontSize: 22,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
 
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
 
                   // Date
                   Row(
@@ -711,6 +707,97 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                             return const SizedBox.shrink();
                           }).toList(),
                     ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showEventDetails(
+    BuildContext context,
+    String title,
+    DateTime time,
+    String image,
+  ) async {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.50,
+          minChildSize: 0.4,
+          maxChildSize: 0.95,
+          builder: (_, controller) {
+            return SingleChildScrollView(
+              controller: controller,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Grab Handle
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+
+                  // Image (if exists)
+                  // if (details!.contents.isNotEmpty &&
+                  //     details.contents.first.type == "image")
+                  SizedBox(height: 8),
+                  // Title
+                  Text(
+                    title.toUpperCase(),
+                    style: GoogleFont.ibmPlexSans(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+
+                  SizedBox(height: 8),
+
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        DateFormat(
+                          'dd-MMM-yyyy',
+                        ).format(DateTime.parse(time.toString())),
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 25),
+                  GestureDetector(
+                    onTap: () {
+                      _openFullScreenNetwork(image.toString() ?? "");
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.network(
+                        image.toString() ?? "",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             );
@@ -920,6 +1007,15 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                     print(item.id);
                                     print('Fees');
                                     _feessSheet(context, item.id);
+                                  } else if (item.type == "calendar") {
+                                    print(item.id);
+                                    print('calendar');
+                                    _showEventDetails(
+                                      context,
+                                      item.title,
+                                      item.notifyDate,
+                                      item.image,
+                                    );
                                   }
                                 },
                               ),

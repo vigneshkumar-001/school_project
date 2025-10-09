@@ -4,14 +4,17 @@ import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:intl/intl.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
-import 'package:st_school_project/Presentation/Onboarding/Screens/Attendence%20Screen/controller/attendance_controller.dart';
+
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/attendance_card.dart';
 import '../../../../Core/Widgets/progress_bar.dart';
-import 'model/attendance_response.dart';
+
 import 'package:get/get.dart';
+
+import 'controller/attendance_controller.dart';
+import 'model/attendance_response.dart';
 
 class AttendenceScreen extends StatefulWidget {
   const AttendenceScreen({super.key});
@@ -450,82 +453,86 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 20),
-                          /*          Stack(
-                            children: [
-                              Image.asset(AppImages.attendence1),
-                              Positioned(
-                                bottom: 0,
+                          if (dayAttendance?.eventsStatus == true) ...[
+                            const SizedBox(height: 20),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(22),
+                              child: Stack(
+                                children: [
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 200,
+                                    child:
+                                        ((dayAttendance!.eventImage ?? '')
+                                                .isNotEmpty)
+                                            ? Image.network(
+                                              dayAttendance.eventImage!,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (_, __, ___) => Container(
+                                                    color: Colors.grey[300],
+                                                    alignment: Alignment.center,
+                                                    child: const Icon(
+                                                      Icons.broken_image,
+                                                    ),
+                                                  ),
+                                            )
+                                            : Container(
+                                              color: Colors.grey[300],
+                                              alignment: Alignment.center,
+                                              child: const Icon(
+                                                Icons.image_not_supported,
+                                              ),
+                                            ),
+                                  ),
 
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        AppColor.black.withOpacity(0.1),
-                                        AppColor.black,
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                    ),
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(22),
-                                      bottomRight: Radius.circular(22),
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 34,
-                                      vertical: 25,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          'Sports Day',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColor.white,
+                                  // gradient + title
+                                  Positioned.fill(
+                                    child: Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 24,
+                                          vertical: 18,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              Colors.black.withOpacity(0.1),
+                                              Colors.black,
+                                            ],
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
                                           ),
                                         ),
-                                        SizedBox(width: 124),
-                                        Icon(
-                                          CupertinoIcons.clock_fill,
-                                          size: 20,
-                                          color: AppColor.white,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                (dayAttendance.eventTitle
+                                                            ?.trim()
+                                                            .isNotEmpty ??
+                                                        false)
+                                                    ? dayAttendance.eventTitle!
+                                                    : 'Event',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFont.ibmPlexSans(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: AppColor.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        SizedBox(width: 5),
-                                        Text(
-                                          '3Pm',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 12,
-                                            color: AppColor.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        SizedBox(width: 3),
-                                        Text(
-                                          'to',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 12,
-                                            color: AppColor.white,
-                                          ),
-                                        ),
-                                        SizedBox(width: 3),
-                                        Text(
-                                          '5Pm',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 12,
-                                            color: AppColor.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),*/
+                            ),
+                          ],
                           SizedBox(height: 25),
                           Row(
                             children: [
@@ -541,8 +548,6 @@ class _AttendenceScreenState extends State<AttendenceScreen> {
                                   ),
                                 ),
                               ),
-
-
 
                               Text(
                                 'Average',
