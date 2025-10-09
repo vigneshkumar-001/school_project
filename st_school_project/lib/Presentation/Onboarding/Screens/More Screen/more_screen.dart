@@ -1,13 +1,8 @@
 import 'package:http/http.dart' as http;
-
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
-
 import 'dart:io';
 import 'dart:math' as math;
-
-import 'package:webview_flutter/webview_flutter.dart';
-
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:latlong2/latlong.dart';
@@ -19,13 +14,10 @@ import 'package:st_school_project/Core/Widgets/swicth_profile_sheet.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/controller/fees_history_controller.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/controller/teacher_list_controller.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/screen/profile_screen.dart';
-
 import '../../../../Core/Utility/app_color.dart' show AppColor;
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
-import '../../../../Core/Utility/snack_bar.dart';
 import '../../../../Core/Widgets/date_and_time_convert.dart';
 import '../../../../payment_web_view.dart';
-import '../../../Admssion/Screens/admission_1.dart';
 import '../Announcements Screen/controller/announcement_controller.dart';
 import '../Home Screen/controller/student_home_controller.dart';
 import 'Login_screen/controller/login_controller.dart';
@@ -33,7 +25,6 @@ import 'change_mobile_number.dart' show ChangeMobileNumber;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
-
 import 'package:st_school_project/Presentation/Onboarding/Screens/More Screen/profile_screen/model/fees_history_response.dart';
 
 // --- grayscale matrix
@@ -1276,9 +1267,10 @@ class _MoreScreenState extends State<MoreScreen>
       backgroundColor: Colors.transparent,
       builder: (_) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.85,
+          initialChildSize: 0.90,
           minChildSize: 0.20,
-          maxChildSize: 0.90,
+          maxChildSize: 0.95,
+
           expand: false,
           builder: (context, scrollController) {
             return Container(
@@ -1625,7 +1617,7 @@ class _MoreScreenState extends State<MoreScreen>
                               indicatorColor: AppColor.lightBlack,
                               dividerColor: Colors.transparent,
                               labelStyle: GoogleFont.ibmPlexSans(
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

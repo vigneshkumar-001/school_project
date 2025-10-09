@@ -207,27 +207,33 @@ class CustomContainer {
   }
 
   static Widget messageScreen({
+    required BuildContext context, // pass context for responsive sizing
     required String time,
-    required String Date, // keep same param name
-    String? Reacts, // optional
+    required String Date,
+    String? Reacts,
     required Color backRoundColor,
     required String mainText,
-    String? ImagePath, // optional
+    String? ImagePath,
     String sentTo = 'Kalai Selvi',
     VoidCallback? IconOntap,
   }) {
+    final screenWidth = MediaQuery.of(context).size.width;
     final bool hasReacts = (Reacts != null && Reacts.trim().isNotEmpty);
     final bool hasImage = (ImagePath != null && ImagePath.trim().isNotEmpty);
     final bool hasExtras = hasReacts || hasImage;
 
     return Container(
+      width: screenWidth * 0.9, // 90% of screen width
       decoration: BoxDecoration(
         color: backRoundColor,
         border: Border.all(color: AppColor.lightGrey, width: 1),
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(screenWidth * 0.04),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        padding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.05, // 5% of screen width
+          vertical: screenWidth * 0.04,   // scale vertical padding
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -237,7 +243,7 @@ class CustomContainer {
                 Text(
                   'Sent to ',
                   style: GoogleFont.ibmPlexSans(
-                    fontSize: 12,
+                    fontSize: screenWidth * 0.035, // responsive font
                     fontWeight: FontWeight.w500,
                     color: AppColor.grey,
                   ),
@@ -245,50 +251,48 @@ class CustomContainer {
                 Text(
                   sentTo,
                   style: GoogleFont.ibmPlexSans(
-                    fontSize: 12,
+                    fontSize: screenWidth * 0.035,
                     fontWeight: FontWeight.w800,
                     color: AppColor.grey,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: screenWidth * 0.03),
 
             // main text
             Text(
               mainText,
-              maxLines: null, // Allow unlimited lines
-              softWrap: true, // Enable text wrapping
+              maxLines: null,
+              softWrap: true,
               style: GoogleFont.ibmPlexSans(
-                fontSize: 18,
+                fontSize: screenWidth * 0.045, // scale main text
                 fontWeight: FontWeight.w800,
                 color: AppColor.black,
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: screenWidth * 0.03),
 
             // meta row
             Row(
               mainAxisAlignment:
-                  hasExtras
-                      ? MainAxisAlignment.start
-                      : MainAxisAlignment.center,
+              hasExtras ? MainAxisAlignment.start : MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // date + time pill
                 Container(
                   decoration: BoxDecoration(
                     color: AppColor.black.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(50),
+                    borderRadius: BorderRadius.circular(screenWidth * 0.1),
                   ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 10,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.04,
+                    vertical: screenWidth * 0.02,
                   ),
                   child: Text(
                     '$Date $time',
                     style: GoogleFont.ibmPlexSans(
-                      fontSize: 12,
+                      fontSize: screenWidth * 0.03,
                       fontWeight: FontWeight.w500,
                       color: AppColor.grey,
                     ),
@@ -297,11 +301,11 @@ class CustomContainer {
 
                 // reacts
                 if (hasReacts) ...[
-                  const SizedBox(width: 10),
+                  SizedBox(width: screenWidth * 0.02),
                   Text(
                     Reacts!,
                     style: GoogleFont.ibmPlexSans(
-                      fontSize: 12,
+                      fontSize: screenWidth * 0.03,
                       fontWeight: FontWeight.w500,
                       color: AppColor.grey,
                     ),
@@ -310,12 +314,13 @@ class CustomContainer {
 
                 // image
                 if (hasImage) ...[
-                  const SizedBox(width: 10),
+                  SizedBox(width: screenWidth * 0.02),
                   InkWell(
                     onTap: IconOntap,
                     child: Image.asset(
                       ImagePath!,
-                      height: 42,
+                      height: screenWidth * 0.1, // responsive image size
+                      width: screenWidth * 0.1,
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -327,6 +332,7 @@ class CustomContainer {
       ),
     );
   }
+
 
   static announcementsScreen({
     required String mainText,

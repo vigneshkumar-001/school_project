@@ -274,7 +274,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: CustomContainer.messageScreen(
+                              child: CustomContainer.messageScreen(context: context ,
                                 sentTo: msg.teacher?.name.toString() ?? '',
                                 IconOntap: () {},
                                 Reacts: msg.reacted ? 'Teacher Reacts' : null,
