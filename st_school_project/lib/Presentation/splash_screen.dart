@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen>
     TeacherListController(),
   );
 
-  final String latestVersion = "2.3.0";
+  final String latestVersion = "2.3.1";
 
   @override
   void initState() {
@@ -134,28 +134,32 @@ class _SplashScreenState extends State<SplashScreen>
     final uri = Uri.parse(directUrl);
 
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.inAppWebView); // ✅ Use in-app WebView
+      await launchUrl(uri, mode: LaunchMode.inAppWebView); // Use in-app WebView
     } else {
       print('Could not open the URL.');
     }
   }
 
-
-
   void openPlayStore() async {
-    final directUrl = controller.studentHomeData.value?.appVersions?.android.storeUrl ?? '';
+    final storeUrl =
+        controller.studentHomeData.value?.appVersions?.android.storeUrl ?? '';
 
-    if (directUrl.isEmpty) {
+    if (storeUrl.isEmpty) {
       print('No URL available.');
       return;
     }
-    print('No URL available.');
-    final uri = Uri.parse(directUrl);
 
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      print('Could not open the URL.');
+    final uri = Uri.parse(storeUrl);
+    print('Trying to launch: $uri');
+
+    // Try in-app or platform default mode
+    final success = await launchUrl(
+      uri,
+      mode: LaunchMode.platformDefault, // or LaunchMode.inAppWebView
+    );
+
+    if (!success) {
+      print('Could not open the link. Maybe no browser is installed.');
     }
   }
 
@@ -212,7 +216,7 @@ class _SplashScreenState extends State<SplashScreen>
               AppButton.button(
                 text: 'Update Now',
                 onTap: () {
-                  openDirectUrl();
+                  openPlayStore();
                 },
               ),
             ],
