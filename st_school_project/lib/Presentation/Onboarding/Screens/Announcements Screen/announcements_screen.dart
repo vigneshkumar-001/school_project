@@ -16,7 +16,6 @@ import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/custom_container.dart' show CustomContainer;
 import '../../../../Core/Widgets/custom_textfield.dart';
 import '../../../../payment_web_view.dart';
-import '../More Screen/more_screen.dart';
 import 'model/announcement_details_response.dart';
 
 class AnnouncementsScreen extends StatefulWidget {
@@ -54,205 +53,179 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     );
   }
 
-  void _feessSheet(BuildContext outerContext, int planId) async {
-    // Fetch plan data
+  void _feessSheet(BuildContext context, int planId) async {
     final planData = await controller.getStudentPaymentPlan(id: planId);
 
     if (planData == null || planData.items.isEmpty) {
-      ScaffoldMessenger.of(outerContext).showSnackBar(
-        const SnackBar(content: Text("No data found for this plan")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("No data found for plan $planId")));
       return;
     }
 
-    // Find plan by planId
-    var plan = planData.items.firstWhere(
+    // Find the plan by planId
+    final plan = planData.items.firstWhere(
       (p) => p.planId == planId,
       orElse: () => planData.items.first,
     );
 
     showModalBottomSheet(
-      context: outerContext,
+      context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return DraggableScrollableSheet(
-              initialChildSize: 0.55,
-              minChildSize: 0.2,
-              maxChildSize: 0.55,
-              expand: false,
-              builder: (context, scrollController) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: AppColor.white,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(20),
+        return DraggableScrollableSheet(
+          initialChildSize: 0.55,
+          minChildSize: 0.20,
+          maxChildSize: 0.55,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Image.asset(AppImages.announcement2),
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: AppColor.grayop,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
                   ),
-                  child: ListView(
-                    controller: scrollController,
-                    padding: const EdgeInsets.all(16),
+                  SizedBox(height: 20),
+
+                  // Plan title + due date
+                  Row(
                     children: [
-                      // Top image
-                      Image.asset(AppImages.announcement2),
-                      Center(
-                        child: Container(
-                          height: 4,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            color: AppColor.grayop,
-                            borderRadius: BorderRadius.circular(2),
+                      Expanded(
+                        child: Text(
+                          plan.name,
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.black,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
-
-                      // Plan title + due date
-                      Row(
+                      Column(
                         children: [
-                          Expanded(
-                            child: Text(
-                              plan.name,
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w500,
-                                color: AppColor.black,
-                              ),
+                          Text(
+                            'Due date',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 12,
+                              color: AppColor.lowGrey,
                             ),
                           ),
-                          Column(
-                            children: [
-                              Text(
-                                'Due date',
-                                style: GoogleFont.ibmPlexSans(
-                                  fontSize: 12,
-                                  color: AppColor.lowGrey,
-                                ),
-                              ),
-                              Text(
-                                DateFormat(
-                                  "dd-MMM-yy",
-                                ).format(DateTime.parse(plan.dueDate)),
-                                style: GoogleFont.ibmPlexSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColor.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 4),
-                          Icon(
-                            CupertinoIcons.clock_fill,
-                            size: 30,
-                            color: AppColor.grayop,
+                          Text(
+                            DateFormat(
+                              "dd-MMM-yy",
+                            ).format(DateTime.parse(plan.dueDate)),
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.black,
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(width: 4),
+                      Icon(
+                        CupertinoIcons.clock_fill,
+                        size: 30,
+                        color: AppColor.grayop,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
 
-                      // Fee items
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: List.generate(plan.items.length, (idx) {
-                          final item = plan.items[idx];
+                  // Fee Items
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: List.generate(plan.items.length, (idx) {
+                      final item = plan.items[idx];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${idx + 1}. ${item.feeTypeName} - ₹${item.amount} (${item.status})',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 16,
+                                color: AppColor.lightBlack,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
 
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${idx + 1}. ${item.feeTypeName} - ₹${item.amount} (${item.status})',
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontSize: 16,
-                                    color: AppColor.lightBlack,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-
-                                // Online payment button
-                                if (plan.paymentType == "online")
-                                  item.status == "paid"
-                                      ? Container(
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 12,
-                                          horizontal: 16,
+                            if (plan.paymentType == "online")
+                              plan.items[idx].status == "paid"
+                                  ? Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                      horizontal: 16,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColor.greenMore1,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          AppImages.tick,
+                                          height: 24,
+                                          width: 27,
                                         ),
-                                        decoration: BoxDecoration(
-                                          color: AppColor.greenMore1,
-                                          borderRadius: BorderRadius.circular(
-                                            20,
+                                        SizedBox(width: 8),
+                                        Text(
+                                          "Payment Successful",
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
                                           ),
                                         ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Image.asset(
-                                              AppImages.tick,
-                                              height: 24,
-                                              width: 27,
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              "Payment Successful",
-                                              style: GoogleFont.ibmPlexSans(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                      : ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 12,
+                                      ],
+                                    ),
+                                  )
+                                  : ElevatedButton(
+                                    onPressed: () async {
+                                      final baseUrl = item.action?.href;
+                                      final studentId = item.studentId;
+                                      print('${baseUrl},${studentId}');
+                                      AppLogger.log.i(
+                                        '${baseUrl},${studentId}',
+                                      );
+
+                                      if (baseUrl != null &&
+                                          studentId != null) {
+                                        final newUrl = "$baseUrl/$studentId";
+
+                                        final result = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (_) =>
+                                                    PaymentWebView(url: newUrl),
                                           ),
-                                          backgroundColor: Colors.transparent,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              20,
-                                            ),
-                                          ),
-                                        ),
-                                        onPressed: () async {
-                                          print(
-                                            "Pay button clicked for ${item.feeTypeName}",
-                                          );
-                                          final baseUrl = item.action?.href;
-                                          final studentId = item.studentId;
+                                        );
 
-                                          if (baseUrl == null ||
-                                              studentId == null) {
-                                            Get.snackbar(
-                                              "Error",
-                                              "Payment URL or student ID missing",
-                                              backgroundColor: Colors.red,
-                                              colorText: Colors.white,
-                                            );
-                                            return;
-                                          }
-
-                                          final newUrl = "$baseUrl/$studentId";
-
-                                          final result = await Navigator.push(
-                                            outerContext,
-                                            MaterialPageRoute(
-                                              builder:
-                                                  (_) => PaymentWebView(
-                                                    url: newUrl,
-                                                  ),
-                                            ),
-                                          );
-
-                                          if (result != null &&
-                                              result["status"] == "success") {
+                                        if (result != null) {
+                                          if (result["status"] == "success") {
+                                            print("✅ Payment successful");
+                                            if (context.mounted) {
+                                              Navigator.pop(context);
+                                            }
                                             Get.snackbar(
                                               "Payment Successful",
                                               "Your payment has been completed successfully.",
@@ -265,49 +238,15 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                               ),
                                             );
 
-                                            // Refresh plan
-                                            final refreshedData =
-                                                await controller
-                                                    .getStudentPaymentPlan(
-                                                      id: planId,
-                                                    );
-                                            if (refreshedData != null) {
-                                              final refreshedPlan =
-                                                  refreshedData.items
-                                                      .firstWhere(
-                                                        (p) =>
-                                                            p.planId == planId,
-                                                        orElse:
-                                                            () =>
-                                                                refreshedData
-                                                                    .items
-                                                                    .first,
-                                                      );
-                                              setState(() {
-                                                plan = refreshedPlan;
-                                              });
-                                            }
-
-                                            // Close the bottom sheet first
-                                            if (outerContext.mounted) {
-                                              Navigator.pop(
-                                                outerContext,
-                                              ); // close bottom sheet
-                                              Future.delayed(
-                                                const Duration(
-                                                  milliseconds: 300,
-                                                ),
-                                                () {
-                                                  Get.to(
-                                                    () => MoreScreen(),
-                                                    arguments: {
-                                                      "openReceipt": true,
-                                                    },
-                                                  );
-                                                },
-                                              );
-                                            }
-                                          } else {
+                                            print(
+                                              "OrderId: ${result['orderId']}, tid: ${result['tid']}",
+                                            );
+                                          } else if (result["status"] ==
+                                              "failure") {
+                                            print("❌ Payment failed");
+                                            print(
+                                              "OrderId: ${result['orderId']}, Reason: ${result['reason']}",
+                                            );
                                             Get.snackbar(
                                               "Payment Failed",
                                               "Something went wrong. Please try again.",
@@ -320,95 +259,279 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                               ),
                                             );
                                           }
-                                        },
-
-                                        child: Ink(
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              colors: [
-                                                AppColor.blueG1,
-                                                AppColor.blueG2,
-                                              ],
-                                              begin: Alignment.topRight,
-                                              end: Alignment.bottomRight,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              20,
-                                            ),
-                                          ),
-                                          child: Container(
-                                            height: 45,
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              'Pay Rs.${item.amount}',
-                                              style: GoogleFont.ibmPlexSans(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.white,
-                                              ),
-                                            ),
+                                        }
+                                      }
+                                    },
+                                    style: ButtonStyle(
+                                      padding: MaterialStateProperty.all(
+                                        EdgeInsets.zero,
+                                      ),
+                                      shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            20,
                                           ),
                                         ),
                                       ),
-                              ],
-                            ),
-                          );
-                        }),
-                      ),
-                      const SizedBox(height: 15),
-
-                      // Cash payment button
-                      if (plan.paymentType == "cash")
-                        Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(20),
-                            onTap: () {
-                              // TODO: handle cash payment
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [AppColor.blueG1, AppColor.blueG2],
-                                  begin: Alignment.topRight,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Pay Rs.${plan.summary.totalAmount}',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
-                                      color: Colors.white,
+                                      elevation: MaterialStateProperty.all(0),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                            Colors.transparent,
+                                          ),
+                                    ),
+                                    child: Ink(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            AppColor.blueG1,
+                                            AppColor.blueG2,
+                                          ],
+                                          begin: Alignment.topRight,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        height: 45,
+                                        width: double.infinity,
+                                        child: Text(
+                                          'Pay Rs.${item.amount}',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColor.white,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(width: 5),
-                                  const Icon(
-                                    CupertinoIcons.right_chevron,
-                                    size: 14,
-                                    color: Colors.white,
-                                  ),
-                                ],
-                              ),
-                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 15),
+
+                  // If cash → show single bottom button
+                  if (plan.paymentType == "cash")
+                    ElevatedButton(
+                      onPressed: () {
+                        // TODO: call your cash API
+                      },
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
-                    ],
-                  ),
-                );
-              },
+                        elevation: MaterialStateProperty.all(0),
+                        backgroundColor: MaterialStateProperty.all(
+                          Colors.transparent,
+                        ),
+                      ),
+                      child: Ink(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppColor.blueG1, AppColor.blueG2],
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: 50,
+                          width: double.infinity,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Pay Rs.${plan.summary.totalAmount}',
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColor.white,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              const Icon(
+                                CupertinoIcons.right_chevron,
+                                size: 14,
+                                color: AppColor.white,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             );
           },
         );
       },
     );
   }
+
+  /*Future<void> _examResult(BuildContext context, int id) async {
+    final details = await controller.getExamResultData(id: id);
+    if (details == null) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.65,
+          minChildSize: 0.20,
+          maxChildSize: 0.65,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: AppColor.grayop,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        details.exam.heading ?? '',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.lightBlack,
+                        ),
+                      ),
+                      const SizedBox(height: 7),
+                      RichText(
+                        text: TextSpan(
+                          text: details.totals?.grade ?? '',
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 43,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.greenMore1,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: ' Grade',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 43,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 26),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 35.0),
+                        child: DottedLine(
+                          dashColor: AppColor.grayop,
+                          dashGapLength: 6,
+                          dashLength: 7,
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: details.subjects?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          final subject = details.subjects![index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8.0,
+                              horizontal: 16,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    subject.subjectName ?? '',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColor.grey,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  subject.obtainedMarks?.toString() ?? '-',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColor.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 35.0),
+                        child: DottedLine(
+                          dashColor: AppColor.grayop,
+                          dashGapLength: 6,
+                          dashLength: 7,
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 30,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: AppColor.blue,
+                                width: 1,
+                              ),
+                            ),
+                            child: CustomTextField.textWithSmall(
+                              text: 'Close',
+                              color: AppColor.blue,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }*/
 
   Future<void> _examResult(BuildContext context, int id) async {
     ExamResultData? details;
