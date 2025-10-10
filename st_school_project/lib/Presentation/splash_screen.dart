@@ -121,25 +121,6 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
-  void openDirectUrl() async {
-    final directUrl = 'https://www.honeywell.com/us/en';
-
-    if (directUrl.isEmpty) {
-      print('No URL available.');
-      return;
-    }
-
-    print('Trying to launch URL: $directUrl');
-
-    final uri = Uri.parse(directUrl);
-
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.inAppWebView); // Use in-app WebView
-    } else {
-      print('Could not open the URL.');
-    }
-  }
-
   void openPlayStore() async {
     final storeUrl =
         controller.studentHomeData.value?.appVersions?.android.storeUrl ?? '';

@@ -276,13 +276,13 @@ class CustomContainer {
             // meta row
             Row(
               mainAxisAlignment:
-<<<<<<< Updated upstream
+
               hasExtras ? MainAxisAlignment.start : MainAxisAlignment.center,
-=======
-                  hasExtras
-                      ? MainAxisAlignment.start
-                      : MainAxisAlignment.center,
->>>>>>> Stashed changes
+
+                  // hasExtras
+                  //     ? MainAxisAlignment.start
+                  //     : MainAxisAlignment.center,
+
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // date + time pill
@@ -662,7 +662,7 @@ class CustomContainer {
             ),
 
             const SizedBox(height: 10),
-<<<<<<< Updated upstream
+
             Expanded(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15),
@@ -688,8 +688,8 @@ class CustomContainer {
                           color: Colors.grey,
                         ),
                   ),
-=======
-            ClipRRect(
+
+         /*   ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: SizedBox(
                 height: 160,
@@ -712,10 +712,10 @@ class CustomContainer {
                         size: 40,
                         color: Colors.grey,
                       ),
->>>>>>> Stashed changes
+
                 ),
               ),
-            ),
+            ),*/
 
             // 🔒 Uniform image frame for ANY source image size
             // ClipRRect(
@@ -778,7 +778,7 @@ class CustomContainer {
             //     ),
             //   ),*/
             // ),
-          ],
+                )))],
         ),
       ),
     );

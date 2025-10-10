@@ -55,7 +55,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     );
   }
 
-<<<<<<< Updated upstream
+
   void _feessSheet(BuildContext context, int planId) async {
     final planData = await controller.getStudentPaymentPlan(id: planId);
 
@@ -377,7 +377,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
       },
     );
   }
-=======
+
   // void _feessSheet(BuildContext context) {
   //   showModalBottomSheet(
   //     context: context,
@@ -532,7 +532,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
   //     },
   //   );
   // }
->>>>>>> Stashed changes
+
 
   Future<void> _examResult(BuildContext context, int id) async {
     ExamResultData? details;
