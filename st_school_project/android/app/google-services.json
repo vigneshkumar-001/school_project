@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "907983834187",
+    "project_id": "st-student-app-526ef",
+    "storage_bucket": "st-student-app-526ef.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:907983834187:android:0ec6e404b2ba0fee50d1ce",
+        "android_client_info": {
+          "package_name": "com.fenizo.st_school_project.st_school_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVSAWuhIQEc5Qu2iRqlSlsdPQLbtDO02s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
