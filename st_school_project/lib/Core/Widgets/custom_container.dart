@@ -276,7 +276,13 @@ class CustomContainer {
             // meta row
             Row(
               mainAxisAlignment:
+<<<<<<< Updated upstream
               hasExtras ? MainAxisAlignment.start : MainAxisAlignment.center,
+=======
+                  hasExtras
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.center,
+>>>>>>> Stashed changes
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // date + time pill
@@ -656,6 +662,7 @@ class CustomContainer {
             ),
 
             const SizedBox(height: 10),
+<<<<<<< Updated upstream
             Expanded(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15),
@@ -681,6 +688,31 @@ class CustomContainer {
                           color: Colors.grey,
                         ),
                   ),
+=======
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: SizedBox(
+                height: 160,
+                width: double.infinity,
+                child: CachedNetworkImage(
+                  imageUrl: teacherImage,
+                  fit: BoxFit.cover,
+                  placeholder:
+                      (context, url) => Container(
+                        alignment: Alignment.center,
+                        child: const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                  errorWidget:
+                      (context, url, error) => const Icon(
+                        Icons.broken_image,
+                        size: 40,
+                        color: Colors.grey,
+                      ),
+>>>>>>> Stashed changes
                 ),
               ),
             ),
