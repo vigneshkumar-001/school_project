@@ -235,6 +235,13 @@ class _MoreScreenState extends State<MoreScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
+    final args = Get.arguments;
+    if (args != null && args['openReceipt'] == true) {
+      Future.delayed(const Duration(milliseconds: 400), () {
+        _paymentReceipt(args['planName'], args['amount']); // ✅ pass arguments
+      });
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (feesController.feesData.value == null) {
         feesController.feesHistoryList();
