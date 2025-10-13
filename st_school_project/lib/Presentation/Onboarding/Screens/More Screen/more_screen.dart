@@ -186,7 +186,7 @@ class TwoProfileStack extends StatelessWidget {
 class MoreScreen extends StatefulWidget {
   final int? openReceiptForPlanId; // 👈 add this
 
-  const MoreScreen({super.key, this.openReceiptForPlanId});
+  const MoreScreen({super.key, this.openReceiptForPlanId,});
 
   @override
   State<MoreScreen> createState() => _MoreScreenState();
@@ -230,10 +230,39 @@ class _MoreScreenState extends State<MoreScreen>
     }
   }
 
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (feesController.feesData.value == null) {
+        feesController.feesHistoryList();
+      }
+
+      if (teacherListController.teacherListResponse.value == null) {
+        teacherListController.teacherListData();
+      }
+
+      // Show receipt if passed
+      final id = widget.openReceiptForPlanId;
+      if (id != null) {
+        await _paymentReceipt(context, id);
+      }
+    });
+  }
+
+/*  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+
+    if (widget.planIdToShowReceipt != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await _paymentReceipt(context, widget.planIdToShowReceipt!);
+      });
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (feesController.feesData.value == null) {
@@ -249,7 +278,7 @@ class _MoreScreenState extends State<MoreScreen>
         _paymentReceipt(context, id); // your existing receipt bottom-sheet
       }
     });
-  }
+  }*/
 
   void _handleTabChange() {
     if (_tabController.index == 2 && _tabController.indexIsChanging) {
