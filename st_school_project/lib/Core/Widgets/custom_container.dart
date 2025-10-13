@@ -524,7 +524,8 @@ class CustomContainer {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,vertical: 5
+                              horizontal: 8.0,
+                              vertical: 5,
                             ),
                             child: Row(
                               children: [
@@ -536,10 +537,11 @@ class CustomContainer {
                                     color: AppColor.white,
                                   ),
                                 ),
-                                SizedBox(width: 4,),
+                                SizedBox(width: 4),
                                 Image.asset(
                                   AppImages.downloadImage,
-                                  height: 15,color: AppColor.white,
+                                  height: 15,
+                                  color: AppColor.white,
                                 ),
                               ],
                             ),

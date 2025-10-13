@@ -120,16 +120,16 @@ class _TaskDetailState extends State<TaskDetail> {
                     ),
                     borderRadius: BorderRadius.circular(25),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 30,
-                      horizontal: 20,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (topImage != null)
-                          GestureDetector(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (topImage != null)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 30,
+                            horizontal: 20,
+                          ),
+                          child: GestureDetector(
                             onTap: () {
                               _openFullScreenNetwork(topImage.content);
                             },
@@ -150,8 +150,11 @@ class _TaskDetailState extends State<TaskDetail> {
                               ),
                             ),
                           ),
-                        const SizedBox(height: 15),
-                        Text(
+                        ),
+                      const SizedBox(height: 15),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
                           homework.title ?? '',
                           style: GoogleFont.inter(
                             fontWeight: FontWeight.w600,
@@ -159,19 +162,25 @@ class _TaskDetailState extends State<TaskDetail> {
                             color: AppColor.lightBlack,
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        Text(
+                      ),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
                           homework.description ?? '',
                           style: GoogleFont.inter(
                             fontSize: 12,
                             color: AppColor.grey,
                           ),
                         ),
-                        const SizedBox(height: 20),
+                      ),
+                      const SizedBox(height: 20),
 
-                        // Horizontal scroll of remaining images with counter
-                        if (remainingImages.isNotEmpty)
-                          Column(
+                      // Horizontal scroll of remaining images with counter
+                      if (remainingImages.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 10),
@@ -210,30 +219,34 @@ class _TaskDetailState extends State<TaskDetail> {
                               const SizedBox(height: 20),
                             ],
                           ),
-                        // Paragraphs
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children:
-                              allParagraphs.map<Widget>((p) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 8,
-                                  ),
-                                  child: Text(
-                                    p.content ?? '',
-                                    style: GoogleFont.inter(
-                                      fontSize: 14,
-                                      color: AppColor.lightBlack,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
                         ),
+                      // Paragraphs
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children:
+                            allParagraphs.map<Widget>((p) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 20,
+                                ),
+                                child: Text(
+                                  p.content ?? '',
+                                  style: GoogleFont.inter(
+                                    fontSize: 14,
+                                    color: AppColor.lightBlack,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                      ),
 
-                        // Lists
-                        if (allLists.isNotEmpty) ...[
-                          const SizedBox(height: 10),
-                          Column(
+                      // Lists
+                      if (allLists.isNotEmpty) ...[
+                        const SizedBox(height: 10),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children:
                                 allLists.asMap().entries.map<Widget>((entry) {
@@ -270,9 +283,12 @@ class _TaskDetailState extends State<TaskDetail> {
                                   );
                                 }).toList(),
                           ),
-                        ],
+                        ),
+                      ],
 
-                        SingleChildScrollView(
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 30),
+                        child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
@@ -360,8 +376,8 @@ class _TaskDetailState extends State<TaskDetail> {
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ],
