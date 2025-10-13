@@ -43,24 +43,25 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     showDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.9),
-      builder: (_) => GestureDetector(
-        onTap: () => Navigator.pop(context),
-        child: Center(
-          child: InteractiveViewer(
-            minScale: 0.5,
-            maxScale: 5,
-            child: Image.network(url),
+      builder:
+          (_) => GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Center(
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 5,
+                child: Image.network(url),
+              ),
+            ),
           ),
-        ),
-      ),
     );
   }
 
   // filter siblings by same type & sort by date (new -> old)
   List<AnnouncementItem> _siblingsByTypeSorted(
-      List<AnnouncementItem> all,
-      String type,
-      ) {
+    List<AnnouncementItem> all,
+    String type,
+  ) {
     final t = (type).toLowerCase();
     final same = all.where((e) => (e.type ?? '').toLowerCase() == t).toList();
     same.sort((a, b) {
@@ -80,7 +81,8 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
   void _openPagedSheet({
     required List<AnnouncementItem> allItems,
     required int initialGlobalId,
-    required String type, // 'feepayment' | 'exammark' | 'announcement' | 'calendar' | 'exam'
+    required String
+    type, // 'feepayment' | 'exammark' | 'announcement' | 'calendar' | 'exam'
   }) {
     final siblings = _siblingsByTypeSorted(allItems, type);
     int initialIndex = _indexOfId(siblings, initialGlobalId);
@@ -89,9 +91,10 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: type == 'announcement' || type == 'calendar' || type == 'exam'
-          ? Colors.white
-          : Colors.transparent,
+      backgroundColor:
+          type == 'announcement' || type == 'calendar' || type == 'exam'
+              ? Colors.white
+              : Colors.transparent,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -107,20 +110,25 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton.icon(
-                  onPressed: hasPrev
-                      ? () => setSheetState(() => localIndex -= 1)
-                      : null,
+                  onPressed:
+                      hasPrev
+                          ? () => setSheetState(() => localIndex -= 1)
+                          : null,
                   icon: const Icon(CupertinoIcons.left_chevron),
                   label: const Text('Previous'),
                 ),
                 Text(
                   '${localIndex + 1} / ${siblings.length}',
-                  style: GoogleFont.ibmPlexSans(fontSize: 12, color: AppColor.grey),
+                  style: GoogleFont.ibmPlexSans(
+                    fontSize: 12,
+                    color: AppColor.grey,
+                  ),
                 ),
                 TextButton.icon(
-                  onPressed: hasNext
-                      ? () => setSheetState(() => localIndex += 1)
-                      : null,
+                  onPressed:
+                      hasNext
+                          ? () => setSheetState(() => localIndex += 1)
+                          : null,
                   icon: const Icon(CupertinoIcons.right_chevron),
                   label: const Text('Next'),
                 ),
@@ -150,11 +158,11 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
 
   // ---------- FEES body (in-sheet paging) ----------
   Widget _feesBody(
-      BuildContext ctx,
-      void Function(void Function()) setSheetState,
-      AnnouncementItem current,
-      Widget Function() navHeader,
-      ) {
+    BuildContext ctx,
+    void Function(void Function()) setSheetState,
+    AnnouncementItem current,
+    Widget Function() navHeader,
+  ) {
     // planId equals announcement item id (as per your earlier code)
     final int planId = current.id;
 
@@ -164,8 +172,6 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
       _planCache[planId] = planData;
       return planData;
     }
-
-
 
     return DraggableScrollableSheet(
       initialChildSize: 0.65,
@@ -194,9 +200,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
               return _sheetContainer(
                 child: Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Center(
-                    child: Text('No data found for plan $planId'),
-                  ),
+                  child: Center(child: Text('No data found for plan $planId')),
                 ),
                 scrollController: scrollController,
                 isTransparent: true,
@@ -207,7 +211,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
             }
 
             final plan = planData.items.firstWhere(
-                  (p) => p.planId == planId,
+              (p) => p.planId == planId,
               orElse: () => planData.items.first,
             );
 
@@ -249,8 +253,9 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                               ),
                             ),
                             Text(
-                              DateFormat("dd-MMM-yy")
-                                  .format(DateTime.parse(plan.dueDate)),
+                              DateFormat(
+                                "dd-MMM-yy",
+                              ).format(DateTime.parse(plan.dueDate)),
                               style: GoogleFont.ibmPlexSans(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -260,8 +265,11 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                           ],
                         ),
                         const SizedBox(width: 4),
-                        const Icon(CupertinoIcons.clock_fill,
-                            size: 30, color: AppColor.grayop),
+                        const Icon(
+                          CupertinoIcons.clock_fill,
+                          size: 30,
+                          color: AppColor.grayop,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -271,7 +279,8 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: List.generate(plan.items.length, (idx) {
                         final item = plan.items[idx];
-                        final isPaid = (item.status ?? '').trim().toLowerCase() == 'paid';
+                        final isPaid =
+                            (item.status ?? '').trim().toLowerCase() == 'paid';
                         final href = (item.action?.href ?? '').trim();
                         final hasLink = href.isNotEmpty;
                         final hasId = item.studentId != null;
@@ -295,7 +304,9 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                 Container(
                                   width: double.infinity,
                                   padding: const EdgeInsets.symmetric(
-                                      vertical: 12, horizontal: 16),
+                                    vertical: 12,
+                                    horizontal: 16,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: AppColor.greenMore1,
                                     borderRadius: BorderRadius.circular(20),
@@ -303,7 +314,11 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Image.asset(AppImages.tick, height: 24, width: 27),
+                                      Image.asset(
+                                        AppImages.tick,
+                                        height: 24,
+                                        width: 27,
+                                      ),
                                       const SizedBox(width: 8),
                                       Text(
                                         "Payment Successful",
@@ -324,31 +339,40 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                       showDialog(
                                         context: ctx,
                                         barrierDismissible: false,
-                                        builder: (_) =>
-                                        const Center(child: CircularProgressIndicator()),
+                                        builder:
+                                            (_) => const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
                                       );
 
                                       final result = await Navigator.push(
                                         ctx,
                                         MaterialPageRoute(
-                                          builder: (_) => PaymentWebView(url: newUrl),
+                                          builder:
+                                              (_) =>
+                                                  PaymentWebView(url: newUrl),
                                         ),
                                       );
 
-                                      if (Navigator.canPop(ctx)) Navigator.pop(ctx);
+                                      if (Navigator.canPop(ctx))
+                                        Navigator.pop(ctx);
 
                                       if (result == null) {
                                         ScaffoldMessenger.of(ctx).showSnackBar(
                                           const SnackBar(
-                                            content: Text("Payment not completed."),
+                                            content: Text(
+                                              "Payment not completed.",
+                                            ),
                                           ),
                                         );
                                         return;
                                       }
 
-                                      final status = (result["status"] ?? '')
-                                          .toString()
-                                          .toLowerCase();
+                                      final status =
+                                          (result["status"] ?? '')
+                                              .toString()
+                                              .toLowerCase();
 
                                       if (status == 'success') {
                                         Get.snackbar(
@@ -361,14 +385,19 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                         );
                                         // refresh this plan in cache
                                         _planCache.remove(planId);
-                                        setSheetState(() {}); // re-build & refetch via FutureBuilder
+                                        setSheetState(
+                                          () {},
+                                        ); // re-build & refetch via FutureBuilder
                                         // optional: open receipt screen
                                         if (mounted) {
                                           Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (_) =>
-                                                  MoreScreen(openReceiptForPlanId: planId),
+                                              builder:
+                                                  (_) => MoreScreen(
+                                                    openReceiptForPlanId:
+                                                        planId,
+                                                  ),
                                             ),
                                           );
                                         }
@@ -376,7 +405,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                         Get.snackbar(
                                           "Payment Failed",
                                           (result["reason"] ??
-                                              "Something went wrong. Please try again.")
+                                                  "Something went wrong. Please try again.")
                                               .toString(),
                                           snackPosition: SnackPosition.BOTTOM,
                                           backgroundColor: Colors.red,
@@ -386,31 +415,42 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                         ScaffoldMessenger.of(ctx).showSnackBar(
                                           SnackBar(
                                             content: Text(
-                                                "Payment finished with status: $status"),
+                                              "Payment finished with status: $status",
+                                            ),
                                           ),
                                         );
                                       }
                                     } catch (e) {
-                                      if (Navigator.canPop(ctx)) Navigator.pop(ctx);
+                                      if (Navigator.canPop(ctx))
+                                        Navigator.pop(ctx);
                                       ScaffoldMessenger.of(ctx).showSnackBar(
-                                        SnackBar(content: Text("Payment error: $e")),
+                                        SnackBar(
+                                          content: Text("Payment error: $e"),
+                                        ),
                                       );
                                     }
                                   },
                                   style: ButtonStyle(
-                                    padding: MaterialStateProperty.all(EdgeInsets.zero),
+                                    padding: MaterialStateProperty.all(
+                                      EdgeInsets.zero,
+                                    ),
                                     shape: MaterialStateProperty.all(
                                       RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20)),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
                                     ),
                                     elevation: MaterialStateProperty.all(0),
-                                    backgroundColor:
-                                    MaterialStateProperty.all(Colors.transparent),
+                                    backgroundColor: MaterialStateProperty.all(
+                                      Colors.transparent,
+                                    ),
                                   ),
                                   child: Ink(
                                     decoration: BoxDecoration(
                                       gradient: const LinearGradient(
-                                        colors: [AppColor.blueG1, AppColor.blueG2],
+                                        colors: [
+                                          AppColor.blueG1,
+                                          AppColor.blueG2,
+                                        ],
                                         begin: Alignment.topRight,
                                         end: Alignment.bottomRight,
                                       ),
@@ -441,22 +481,29 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
 
                     if (isCash)
                       Container(
-                        padding:
-                        const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 16,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColor.lightWhite,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Row(
                           children: [
-                            const Icon(CupertinoIcons.info,
-                                size: 18, color: AppColor.grayop),
+                            const Icon(
+                              CupertinoIcons.info,
+                              size: 18,
+                              color: AppColor.grayop,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 'This plan is cash only. Please pay at the office.',
                                 style: GoogleFont.ibmPlexSans(
-                                    fontSize: 14, color: AppColor.grey),
+                                  fontSize: 14,
+                                  color: AppColor.grey,
+                                ),
                               ),
                             ),
                           ],
@@ -474,10 +521,10 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
 
   // ---------- EXAM RESULT body ----------
   Widget _examResultBody(
-      BuildContext ctx,
-      AnnouncementItem current,
-      Widget Function() navHeader,
-      ) {
+    BuildContext ctx,
+    AnnouncementItem current,
+    Widget Function() navHeader,
+  ) {
     final int id = current.id;
 
     Future<ExamResultData?> _load() async {
@@ -584,7 +631,9 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 38.0),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 38.0,
+                              ),
                               child: Row(
                                 children: [
                                   Text(
@@ -626,7 +675,9 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                     child: Center(
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 30),
+                          vertical: 12,
+                          horizontal: 30,
+                        ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: AppColor.blue, width: 1),
@@ -649,10 +700,10 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
 
   // ---------- ANNOUNCEMENT body ----------
   Widget _announcementBody(
-      BuildContext ctx,
-      AnnouncementItem current,
-      Widget Function() navHeader,
-      ) {
+    BuildContext ctx,
+    AnnouncementItem current,
+    Widget Function() navHeader,
+  ) {
     final int id = current.id;
 
     Future<AnnouncementDetails?> _load() async {
@@ -711,8 +762,10 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                   if (details.contents.isNotEmpty &&
                       details.contents.first.type == "image")
                     GestureDetector(
-                      onTap: () => _openFullScreenNetwork(
-                          details.contents.first.content ?? ""),
+                      onTap:
+                          () => _openFullScreenNetwork(
+                            details.contents.first.content ?? "",
+                          ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: Image.network(
@@ -732,12 +785,16 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today,
-                          size: 16, color: Colors.grey),
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(width: 6),
                       Text(
-                        DateFormat('dd-MMM-yyyy')
-                            .format(DateTime.parse(details.notifyDate)),
+                        DateFormat(
+                          'dd-MMM-yyyy',
+                        ).format(DateTime.parse(details.notifyDate)),
                         style: const TextStyle(color: Colors.grey),
                       ),
                     ],
@@ -751,35 +808,40 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                   if (details.contents.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: details.contents.map((c) {
-                        if (c.type == "paragraph") {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: Text(
-                              c.content ?? "",
-                              style: const TextStyle(fontSize: 15),
-                            ),
-                          );
-                        } else if (c.type == "list") {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: c.items
-                                ?.map(
-                                  (e) => Row(
-                                children: [
-                                  const Icon(Icons.check,
-                                      color: Colors.green, size: 18),
-                                  const SizedBox(width: 6),
-                                  Expanded(child: Text(e)),
-                                ],
-                              ),
-                            )
-                                .toList() ??
-                                [],
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      }).toList(),
+                      children:
+                          details.contents.map((c) {
+                            if (c.type == "paragraph") {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: Text(
+                                  c.content ?? "",
+                                  style: const TextStyle(fontSize: 15),
+                                ),
+                              );
+                            } else if (c.type == "list") {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children:
+                                    c.items
+                                        ?.map(
+                                          (e) => Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.check,
+                                                color: Colors.green,
+                                                size: 18,
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Expanded(child: Text(e)),
+                                            ],
+                                          ),
+                                        )
+                                        .toList() ??
+                                    [],
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          }).toList(),
                     ),
                 ],
               ),
@@ -792,10 +854,10 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
 
   // ---------- EVENT body ----------
   Widget _eventBody(
-      BuildContext ctx,
-      AnnouncementItem current,
-      Widget Function() navHeader,
-      ) {
+    BuildContext ctx,
+    AnnouncementItem current,
+    Widget Function() navHeader,
+  ) {
     final title = current.title ?? '';
     final time = current.notifyDate;
     final image = current.image;
@@ -823,12 +885,16 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(Icons.calendar_today,
-                      size: 16, color: Colors.grey),
+                  const Icon(
+                    Icons.calendar_today,
+                    size: 16,
+                    color: Colors.grey,
+                  ),
                   const SizedBox(width: 6),
                   Text(
-                    DateFormat('dd-MMM-yyyy')
-                        .format(DateTime.parse(time.toString())),
+                    DateFormat(
+                      'dd-MMM-yyyy',
+                    ).format(DateTime.parse(time.toString())),
                     style: const TextStyle(color: Colors.grey),
                   ),
                 ],
@@ -839,10 +905,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                   onTap: () => _openFullScreenNetwork(image.toString()),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: Image.network(
-                      image.toString(),
-                      fit: BoxFit.cover,
-                    ),
+                    child: Image.network(image.toString(), fit: BoxFit.cover),
                   ),
                 ),
             ],
@@ -854,10 +917,10 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
 
   // ---------- EXAM TIMETABLE body ----------
   Widget _examTimetableBody(
-      BuildContext ctx,
-      AnnouncementItem current,
-      Widget Function() navHeader,
-      ) {
+    BuildContext ctx,
+    AnnouncementItem current,
+    Widget Function() navHeader,
+  ) {
     final int examId = current.id;
 
     Future<dynamic?> _load() async {
@@ -922,8 +985,11 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today,
-                          size: 16, color: Colors.grey),
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         '${details.exam.startDate} to ${details.exam.endDate}',
@@ -935,7 +1001,9 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                   if (details.exam.timetableUrl != null &&
                       details.exam.timetableUrl.isNotEmpty)
                     GestureDetector(
-                      onTap: () => _openFullScreenNetwork(details.exam.timetableUrl),
+                      onTap:
+                          () =>
+                              _openFullScreenNetwork(details.exam.timetableUrl),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: Image.network(
@@ -1097,37 +1165,41 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                     const SizedBox(height: 20),
 
                     Column(
-                      children: data.items.asMap().entries.map((entry) {
-                        final i = entry.key;
-                        final item = entry.value;
+                      children:
+                          data.items.asMap().entries.map((entry) {
+                            final i = entry.key;
+                            final item = entry.value;
 
-                        final formattedDate = DateFormat("dd-MMM-yy").format(
-                          DateTime.parse(item.notifyDate.toString()),
-                        );
+                            final formattedDate = DateFormat(
+                              "dd-MMM-yy",
+                            ).format(
+                              DateTime.parse(item.notifyDate.toString()),
+                            );
 
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: CustomContainer.announcementsScreen(
-                            mainText: item.announcementCategory,
-                            backRoundImage: item.image,
-                            iconData: CupertinoIcons.clock_fill,
-                            additionalText1: "Date",
-                            additionalText2: formattedDate,
-                            verticalPadding: 12,
-                            gradientStartColor:
-                            AppColor.black.withOpacity(0.01),
-                            gradientEndColor: AppColor.black,
-                            onDetailsTap: () {
-                              final type = (item.type ?? '').toLowerCase();
-                              _openPagedSheet(
-                                allItems: data.items,
-                                initialGlobalId: item.id,
-                                type: type,
-                              );
-                            },
-                          ),
-                        );
-                      }).toList(),
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: CustomContainer.announcementsScreen(
+                                mainText: item.announcementCategory,
+                                backRoundImage: item.image,
+                                iconData: CupertinoIcons.clock_fill,
+                                additionalText1: "Date",
+                                additionalText2: formattedDate,
+                                verticalPadding: 12,
+                                gradientStartColor: AppColor.black.withOpacity(
+                                  0.01,
+                                ),
+                                gradientEndColor: AppColor.black,
+                                onDetailsTap: () {
+                                  final type = (item.type ?? '').toLowerCase();
+                                  _openPagedSheet(
+                                    allItems: data.items,
+                                    initialGlobalId: item.id,
+                                    type: type,
+                                  );
+                                },
+                              ),
+                            );
+                          }).toList(),
                     ),
                   ],
                 ),
@@ -1139,8 +1211,6 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     );
   }
 }
-
-
 
 // class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
 //   final AnnouncementController controller = Get.put(AnnouncementController());
