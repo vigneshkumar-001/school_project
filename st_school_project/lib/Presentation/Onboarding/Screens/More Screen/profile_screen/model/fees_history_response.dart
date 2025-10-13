@@ -132,6 +132,7 @@ class FeeItem {
   final int studentId;
   final String feeTypeName;
   final dynamic amount;
+  final String instructionUrl;
   late final String status;
   final String? paidAt;
   final String? method;
@@ -145,6 +146,8 @@ class FeeItem {
     required this.studentId,
     required this.feeTypeName,
     required this.amount,
+    required this.instructionUrl,
+
     required this.status,
     this.paidAt,
     this.method,
@@ -159,6 +162,7 @@ class FeeItem {
       itemId: json['itemId'] ?? 0,
       studentId: json['studentId'] ?? 0,
       feeTypeName: json['feeTypeName'] ?? '',
+      instructionUrl: json['instructionUrl'] ?? '',
       amount: json['amount'] ?? 0,
       status: json['status'] ?? '',
       paidAt: json['paidAt'],
@@ -176,6 +180,7 @@ class FeeItem {
     "itemId": itemId,
     "studentId": studentId,
     "feeTypeName": feeTypeName,
+    "instructionUrl": instructionUrl,
     "amount": amount,
     "status": status,
     "paidAt": paidAt,

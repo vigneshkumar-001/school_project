@@ -232,7 +232,7 @@ class CustomContainer {
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: screenWidth * 0.05, // 5% of screen width
-          vertical: screenWidth * 0.04,   // scale vertical padding
+          vertical: screenWidth * 0.04, // scale vertical padding
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,13 +276,13 @@ class CustomContainer {
             // meta row
             Row(
               mainAxisAlignment:
+                  hasExtras
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.center,
 
-              hasExtras ? MainAxisAlignment.start : MainAxisAlignment.center,
-
-                  // hasExtras
-                  //     ? MainAxisAlignment.start
-                  //     : MainAxisAlignment.center,
-
+              // hasExtras
+              //     ? MainAxisAlignment.start
+              //     : MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // date + time pill
@@ -338,7 +338,6 @@ class CustomContainer {
       ),
     );
   }
-
 
   static announcementsScreen({
     required String mainText,
@@ -507,28 +506,69 @@ class CustomContainer {
                         color: AppColor.grey,
                       ),
                     ),
-                    SizedBox(height: 7),
-                    GestureDetector(
-                      onTap: onDetailsTap,
-                      child: Row(
-                        children: [
-                          Text(
-                            'Details',
-                            style: GoogleFont.ibmPlexSans(
-                              fontSize: 10,
-                              color: AppColor.lowGrey,
-                              fontWeight: FontWeight.w600,
+                    SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 82.0),
+                      child: GestureDetector(
+                        onTap: onDetailsTap,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          decoration: BoxDecoration(
+                            // color: AppColor.greenMore1,
+                            gradient: LinearGradient(
+                              colors: [AppColor.green01G3, AppColor.greenMore1],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,vertical: 5
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'View Receipt ',
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColor.white,
+                                  ),
+                                ),
+                                SizedBox(width: 4,),
+                                Image.asset(
+                                  AppImages.downloadImage,
+                                  height: 15,color: AppColor.white,
+                                ),
+                              ],
                             ),
                           ),
-                          SizedBox(width: 1),
-                          Icon(
-                            CupertinoIcons.right_chevron,
-                            size: 10,
-                            color: AppColor.lowGrey,
-                          ),
-                        ],
+                        ),
                       ),
                     ),
+                    // GestureDetector(
+                    //   onTap: onDetailsTap,
+                    //   child: Row(
+                    //     children: [
+                    //
+                    //       Text(
+                    //         'View Receipt',
+                    //         style: GoogleFont.ibmPlexSans(
+                    //           fontSize: 12,
+                    //           color: AppColor.greenMore1,
+                    //           fontWeight: FontWeight.w600,
+                    //         ),
+                    //       ),
+                    //       SizedBox(width: 1),
+                    //       Icon(
+                    //         CupertinoIcons.right_chevron,
+                    //         size: 10,
+                    //         color: AppColor.lowGrey,
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                   ],
                 ),
                 trailing: Text(
@@ -689,7 +729,7 @@ class CustomContainer {
                         ),
                   ),
 
-         /*   ClipRRect(
+                  /*   ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: SizedBox(
                 height: 160,
@@ -717,68 +757,71 @@ class CustomContainer {
               ),
             ),*/
 
-            // 🔒 Uniform image frame for ANY source image size
-            // ClipRRect(
-            //   borderRadius: BorderRadius.circular(15),
-            //   child:
-            //   CachedNetworkImage(
-            //     imageUrl: teacherImage,
-            //     fit: BoxFit.cover,
-            //     width: double.infinity,
-            //     placeholder:
-            //         (context, url) => Container(
-            //       height: 160, // adjust to your card height
-            //       alignment: Alignment.center,
-            //       child: const SizedBox(
-            //         height: 24,
-            //         width: 24,
-            //         child: CircularProgressIndicator(strokeWidth: 2),
-            //       ),
-            //     ),
-            //     errorWidget:
-            //         (context, url, error) => const Icon(
-            //       Icons.broken_image,
-            //       size: 40,
-            //       color: Colors.grey,
-            //     ),
-            //   ),
-            //
-            //   /*AspectRatio(
-            //     aspectRatio:
-            //         4 /
-            //         4, // keep same visual size; use 3/4 if you prefer taller portrait
-            //     child: Image.network(
-            //       teacherImage,
-            //       fit: BoxFit.cover, // fills the frame (crops nicely)
-            //       // Optional loading & error placeholders
-            //       loadingBuilder: (context, child, progress) {
-            //         if (progress == null) return child;
-            //         return Container(
-            //           color: Colors.grey.shade100,
-            //           alignment: Alignment.center,
-            //           child: CircularProgressIndicator(
-            //             value:
-            //                 progress.expectedTotalBytes != null
-            //                     ? progress.cumulativeBytesLoaded /
-            //                         (progress.expectedTotalBytes ?? 1)
-            //                     : null,
-            //           ),
-            //         );
-            //       },
-            //       errorBuilder:
-            //           (_, __, ___) => Container(
-            //             color: Colors.grey.shade200,
-            //             alignment: Alignment.center,
-            //             child: Icon(
-            //               Icons.person,
-            //               size: 36,
-            //               color: Colors.grey.shade400,
-            //             ),
-            //           ),
-            //     ),
-            //   ),*/
-            // ),
-                )))],
+                  // 🔒 Uniform image frame for ANY source image size
+                  // ClipRRect(
+                  //   borderRadius: BorderRadius.circular(15),
+                  //   child:
+                  //   CachedNetworkImage(
+                  //     imageUrl: teacherImage,
+                  //     fit: BoxFit.cover,
+                  //     width: double.infinity,
+                  //     placeholder:
+                  //         (context, url) => Container(
+                  //       height: 160, // adjust to your card height
+                  //       alignment: Alignment.center,
+                  //       child: const SizedBox(
+                  //         height: 24,
+                  //         width: 24,
+                  //         child: CircularProgressIndicator(strokeWidth: 2),
+                  //       ),
+                  //     ),
+                  //     errorWidget:
+                  //         (context, url, error) => const Icon(
+                  //       Icons.broken_image,
+                  //       size: 40,
+                  //       color: Colors.grey,
+                  //     ),
+                  //   ),
+                  //
+                  //   /*AspectRatio(
+                  //     aspectRatio:
+                  //         4 /
+                  //         4, // keep same visual size; use 3/4 if you prefer taller portrait
+                  //     child: Image.network(
+                  //       teacherImage,
+                  //       fit: BoxFit.cover, // fills the frame (crops nicely)
+                  //       // Optional loading & error placeholders
+                  //       loadingBuilder: (context, child, progress) {
+                  //         if (progress == null) return child;
+                  //         return Container(
+                  //           color: Colors.grey.shade100,
+                  //           alignment: Alignment.center,
+                  //           child: CircularProgressIndicator(
+                  //             value:
+                  //                 progress.expectedTotalBytes != null
+                  //                     ? progress.cumulativeBytesLoaded /
+                  //                         (progress.expectedTotalBytes ?? 1)
+                  //                     : null,
+                  //           ),
+                  //         );
+                  //       },
+                  //       errorBuilder:
+                  //           (_, __, ___) => Container(
+                  //             color: Colors.grey.shade200,
+                  //             alignment: Alignment.center,
+                  //             child: Icon(
+                  //               Icons.person,
+                  //               size: 36,
+                  //               color: Colors.grey.shade400,
+                  //             ),
+                  //           ),
+                  //     ),
+                  //   ),*/
+                  // ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
