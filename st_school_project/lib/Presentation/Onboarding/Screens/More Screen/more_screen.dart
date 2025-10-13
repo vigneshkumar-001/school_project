@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -186,7 +188,7 @@ class TwoProfileStack extends StatelessWidget {
 class MoreScreen extends StatefulWidget {
   final int? openReceiptForPlanId; // 👈 add this
 
-  const MoreScreen({super.key, this.openReceiptForPlanId,});
+  const MoreScreen({super.key, this.openReceiptForPlanId});
 
   @override
   State<MoreScreen> createState() => _MoreScreenState();
@@ -230,7 +232,6 @@ class _MoreScreenState extends State<MoreScreen>
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -253,7 +254,7 @@ class _MoreScreenState extends State<MoreScreen>
     });
   }
 
-/*  @override
+  /*  @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
@@ -778,7 +779,7 @@ class _MoreScreenState extends State<MoreScreen>
         return DraggableScrollableSheet(
           initialChildSize: 0.55,
           minChildSize: 0.20,
-          maxChildSize: 0.85, // bigger since multiple buttons possible
+          maxChildSize: 0.85,
           expand: false,
           builder: (context, scrollController) {
             final items = plan.items;
@@ -794,7 +795,6 @@ class _MoreScreenState extends State<MoreScreen>
                 controller: scrollController,
                 padding: const EdgeInsets.all(16),
                 children: [
-                  // handle bar
                   Center(
                     child: Container(
                       height: 4,
@@ -866,7 +866,7 @@ class _MoreScreenState extends State<MoreScreen>
                                 color: AppColor.lightBlack,
                               ),
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 25),
 
                             if (plan.paymentType == "online")
                               plan.items[index].status == "paid"
@@ -1007,13 +1007,12 @@ class _MoreScreenState extends State<MoreScreen>
                                       ),
                                     ),
                                   ),
-                            const SizedBox(height: 10),
+
                           ],
                         ),
                       );
                     }),
                   ),
-                  const SizedBox(height: 15),
 
                   // If cash → show single bottom button
                   if (plan.paymentType == "cash")
@@ -1068,6 +1067,41 @@ class _MoreScreenState extends State<MoreScreen>
                         ),
                       ),
                     ),
+                  GestureDetector(
+                    onTap: () {
+                      _downloadAndOpenPdf(plan.items[0].instructionUrl);
+                      //downloadAndOpenPdf(plan.items[0].instructionUrl);
+
+                      print(plan.items[0].instructionUrl);
+                    },
+
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 16,
+                            horizontal: 27,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(AppImages.downloadImage, height: 20),
+                              SizedBox(width: 10),
+                              CustomTextField.textWithSmall(
+                                fontSize: 13,
+                                text: 'Download Payment Instructions',
+                                color: AppColor.blue,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             );
@@ -1961,7 +1995,20 @@ Future<void> _downloadAndOpenPdf(String url) async {
     await file.writeAsBytes(response.bodyBytes);
 
     Get.back(); // dismiss loading
-    Get.snackbar('Success', 'PDF saved to ${file.path}');
+    Get.snackbar(
+      'Success',
+      'PDF saved to ${file.path}',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green.shade600,
+      colorText: Colors.white,
+      borderRadius: 12,
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      icon: Icon(Icons.check_circle_outline, color: Colors.white),
+      shouldIconPulse: false,
+      duration: Duration(seconds: 3),
+      snackStyle: SnackStyle.FLOATING,
+      padding: EdgeInsets.all(16),
+    );
 
     // Share PDF
   } catch (e) {
@@ -1969,6 +2016,37 @@ Future<void> _downloadAndOpenPdf(String url) async {
     Get.snackbar('Error', e.toString());
   }
 }
+
+// Future<void> downloadAndOpenPdf(String url) async {
+//   try {
+//     final tempDir = await getTemporaryDirectory();
+//     final filePath = '${tempDir.path}/payment_instruction.pdf';
+//
+//     final dio = Dio();
+//
+//     final response = await dio.download(
+//       url,
+//       filePath,
+//       options: Options(
+//         headers: {'User-Agent': 'Mozilla/5.0'},
+//         responseType: ResponseType.bytes,
+//         followRedirects: true,
+//         validateStatus: (status) => status! < 500,
+//       ),
+//     );
+//
+//     if (response.statusCode == 200) {
+//       print('✅ PDF downloaded successfully to: $filePath');
+//       await OpenFile.open(filePath);
+//     } else if (response.statusCode == 403) {
+//       print('❌ Access denied (403). Check if the link is publicly accessible.');
+//     } else {
+//       print('❌ Failed to download file. Status code: ${response.statusCode}');
+//     }
+//   } catch (e) {
+//     print('❌ Error downloading PDF: $e');
+//   }
+// }
 
 /*Future<void> _downloadAndOpenPdf(String url) async {
   if (url.isEmpty) {
