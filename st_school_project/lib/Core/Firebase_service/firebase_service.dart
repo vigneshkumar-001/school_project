@@ -2,13 +2,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
-
+import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/Login_screen/controller/login_controller.dart';
 
 class FirebaseService {
+  final LoginController controller = Get.put(LoginController());
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   final AndroidNotificationChannel channel = const AndroidNotificationChannel(
     'flutter_notification',
@@ -26,6 +28,7 @@ class FirebaseService {
     await Firebase.initializeApp();
     AppLogger.log.i('🔕 [BG] messageId=${message.messageId}');
   }
+
   Future<void> initializeFirebase() async {
     // App already called Firebase.initializeApp() in main; safe to skip here.
     // Register background handler ONCE (top-level function)
@@ -38,7 +41,8 @@ class FirebaseService {
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(channel);
 
     // Ask notification permission (Android 13+ & iOS)
@@ -52,7 +56,9 @@ class FirebaseService {
       sound: true,
       provisional: false,
     );
-    AppLogger.log.i('🔔 Notification permission: ${settings.authorizationStatus}');
+    AppLogger.log.i(
+      '🔔 Notification permission: ${settings.authorizationStatus}',
+    );
   }
 
   Future<void> fetchFCMTokenIfNeeded() async {
@@ -63,13 +69,17 @@ class FirebaseService {
       final messaging = FirebaseMessaging.instance;
       final token = await messaging.getToken();
       AppLogger.log.i('✅ FCM Token: $token'); // <-- printed here
+      AppLogger.log.i(
+        'Shared prfd _fcmToken: $_fcmToken',
+      ); // <-- printed here
       _fcmToken = token;
       if (token != null) {
         await prefs.setString('fcmToken', token);
-
+        controller.sendFcmToken(token);
       }
     } else {
       AppLogger.log.i('ℹ️ Existing FCM Token: $_fcmToken');
+      controller.sendFcmToken(_fcmToken!);
     }
   }
 
@@ -100,4 +110,3 @@ class FirebaseService {
     FirebaseMessaging.onMessageOpenedApp.listen(onMessageOpenedApp);
   }
 }
-

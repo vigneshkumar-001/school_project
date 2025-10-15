@@ -173,6 +173,56 @@ class ApiDataSource extends BaseApiDataSource {
     }
   }
 
+  Future<Either<Failure, LoginResponse>> sendFcmToken({
+    required String token,
+  }) async
+  {
+    try {
+      String url = ApiUrl.notifications;
+
+      dynamic response = await Request.sendRequest(
+        url,
+        {
+          "token": token,
+          "platform": 'android',
+          "deviceModel": 'Mobile',
+          "appVersion": "2.3.2",
+        },
+        'Post',
+        false,
+      );
+      AppLogger.log.i(response);
+      if (response is! DioException) {
+        // If status code is success
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          if (response.data['status'] == true) {
+            return Right(LoginResponse.fromJson(response.data));
+          } else {
+            return Left(
+              ServerFailure(response.data['message'] ?? "Login failed"),
+            );
+          }
+        } else {
+          // ❗ API returned non-success code but has JSON error message
+          return Left(
+            ServerFailure(response.data['message'] ?? "Something went wrong"),
+          );
+        }
+      }
+      // Is DioException
+      else {
+        final errorData = response.response?.data;
+        if (errorData is Map && errorData.containsKey('message')) {
+          return Left(ServerFailure(errorData['message']));
+        }
+        return Left(ServerFailure(response.message ?? "Unknown Dio error"));
+      }
+    } catch (e) {
+      AppLogger.log.e(e);
+      return Left(ServerFailure(''));
+    }
+  }
+
   Future<Either<Failure, LoginResponse>> changeOtpLogin({
     required String phone,
     required String otp,
@@ -768,6 +818,4 @@ class ApiDataSource extends BaseApiDataSource {
       return Left(ServerFailure(e.toString()));
     }
   }
-
-
 }

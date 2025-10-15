@@ -232,27 +232,90 @@ class _MoreScreenState extends State<MoreScreen>
     }
   }
 
+  int? _consumedReceiptPlanId;         // which planId we've already shown a receipt for
+  bool _isShowingReceipt = false;      // in-flight guard
+  Future<void>? _receiptModalFuture;   // the active bottom-sheet future (if any)
+
+
+  bool _receiptOpened = false; // 👈 guard so we open only once
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_handleTabChange);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // warm data
       if (feesController.feesData.value == null) {
-        feesController.feesHistoryList();
+        await feesController.feesHistoryList();
       }
-
       if (teacherListController.teacherListResponse.value == null) {
-        teacherListController.teacherListData();
+        await teacherListController.teacherListData();
       }
-
-      // Show receipt if passed
-      final id = widget.openReceiptForPlanId;
-      if (id != null) {
-        await _paymentReceipt(context, id);
-      }
+      await _maybeShowReceipt();
+      // open receipt only if navigated here after final payment
+    /*  final id = widget.openReceiptForPlanId;
+      if (id != null && !_receiptOpened && mounted) {
+        _receiptOpened = true;                 // 👈 prevent duplicates
+        await _paymentReceipt(context, id);    // 👈 show the bottom sheet
+      }*/
     });
   }
+
+  @override
+  void didUpdateWidget(covariant MoreScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // If parent sends a NEW plan id, allow one auto-open for that id
+    if (widget.openReceiptForPlanId != oldWidget.openReceiptForPlanId) {
+      _consumedReceiptPlanId = null; // reset so the new id can trigger once
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _maybeShowReceipt();          // helper handles all guards + awaiting
+      });
+    }
+  }
+
+
+  static bool _gReceiptBusy = false;
+  static int? _gLastOpenedId;
+
+  Future<void> _maybeShowReceipt() async {
+    if (!mounted) return;
+
+    final id = widget.openReceiptForPlanId;
+    if (id == null) return;
+
+    // do not open if we're not the visible route
+    final route = ModalRoute.of(context);
+    if (route == null || !route.isCurrent) return;
+
+    // already consumed in this instance?
+    if (_consumedReceiptPlanId == id) return;
+
+    // global guards: stop parallel or repeated opens across instances
+    if (_gReceiptBusy || _gLastOpenedId == id) return;
+
+    // local guards
+    if (_isShowingReceipt || _receiptModalFuture != null) return;
+
+    _isShowingReceipt = true;
+    _gReceiptBusy = true;
+    _gLastOpenedId = id;
+    _consumedReceiptPlanId = id;
+
+    _receiptModalFuture = _paymentReceipt(context, id);
+    try {
+      await _receiptModalFuture;
+    } finally {
+      _receiptModalFuture = null;
+      _isShowingReceipt = false;
+      _gReceiptBusy = false;
+      // keep _gLastOpenedId as last opened to avoid immediate re-open on rebuilds
+    }
+  }
+
+
 
   /*  @override
   void initState() {
@@ -1310,7 +1373,7 @@ class _MoreScreenState extends State<MoreScreen>
     );
   }
 
-  Future<void> _paymentReceipt(BuildContext context, int planId) async {
+  /*Future<void> _paymentReceipt(BuildContext context, int planId) async {
     final planData = await announcementController.getStudentPaymentPlan(
       id: planId,
     );
@@ -1327,6 +1390,7 @@ class _MoreScreenState extends State<MoreScreen>
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       builder: (_) {
         return DraggableScrollableSheet(
@@ -1600,7 +1664,245 @@ class _MoreScreenState extends State<MoreScreen>
         );
       },
     );
+  }*/
+
+  Future<void> _paymentReceipt(BuildContext context, int planId) async {
+    final planData = await announcementController.getStudentPaymentPlan(id: planId);
+    if (planData == null || planData.items.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("No data found for plan $planId")),
+      );
+      return;
+    }
+
+    final plan = planData.items.firstWhere(
+          (p) => p.planId == planId,
+      orElse: () => planData.items.first,
+    );
+
+    // ✅ IMPORTANT: return the Future so callers can await and avoid double-open
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useRootNavigator: true,            // helps avoid nested navigator dupes
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.90,
+          minChildSize: 0.20,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Center(
+                    child: Container(
+                      height: 4, width: 40,
+                      decoration: BoxDecoration(
+                        color: AppColor.grayop,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  Column(
+                    children: [
+                      Image.asset(AppImages.paidImage, height: 98),
+                      const SizedBox(height: 14),
+                      Text(
+                        'Rs. ${plan.summary.totalAmount}',
+                        style: GoogleFont.ibmPlexSans(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 34,
+                          color: AppColor.greenMore1,
+                        ),
+                      ),
+                      Text(
+                        'Paid to ${plan.name}',
+                        style: GoogleFont.ibmPlexSans(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                          color: AppColor.lightBlack,
+                        ),
+                      ),
+                      const SizedBox(height: 34),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 35.0),
+                        child: DottedLine(dashColor: AppColor.grayop, dashGapLength: 6, dashLength: 7),
+                      ),
+                      const SizedBox(height: 40),
+
+                      Stack(
+                        children: [
+                          Positioned.fill(
+                            child: Image.asset(
+                              AppImages.examResultBCImage,
+                              height: 250, width: 280,
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              // Receipt No
+                              Row(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColor.lightGrey,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(17.0),
+                                      child: Image.asset(AppImages.receiptNo, height: 24),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Receipt No',
+                                            style: GoogleFont.ibmPlexSans(
+                                                fontWeight: FontWeight.w500, fontSize: 14, color: AppColor.grey)),
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          plan.items.map((e) => e.receiptNo).whereType<String>().join(', '),
+                                          style: GoogleFont.ibmPlexSans(
+                                              fontWeight: FontWeight.w500, fontSize: 20, color: AppColor.black),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 25),
+                              // Admission No
+                              Row(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColor.lightGrey,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(17.0),
+                                      child: Image.asset(AppImages.admissionNo, height: 24),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Admission No',
+                                          style: GoogleFont.ibmPlexSans(
+                                              fontWeight: FontWeight.w500, fontSize: 14, color: AppColor.grey)),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        plan.items.isNotEmpty
+                                            ? (plan.items[0].admissionNo ?? '').toString()
+                                            : '',
+                                        style: GoogleFont.ibmPlexSans(
+                                            fontWeight: FontWeight.w500, fontSize: 20, color: AppColor.black),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 25),
+                              // Time
+                              Row(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColor.lightGrey,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(17.0),
+                                      child: Image.asset(AppImages.timeImage, height: 24),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Time',
+                                            style: GoogleFont.ibmPlexSans(
+                                                fontWeight: FontWeight.w500, fontSize: 14, color: AppColor.grey)),
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          plan.items
+                                              .where((e) => e.paidAt != null)
+                                              .map((e) => DateAndTimeConvert.timeAndDate(e.paidAt.toString()))
+                                              .join(', '),
+                                          style: GoogleFont.ibmPlexSans(
+                                              fontWeight: FontWeight.w500, fontSize: 20, color: AppColor.black),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 40),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 35.0),
+                        child: DottedLine(dashColor: AppColor.grayop, dashGapLength: 6, dashLength: 7),
+                      ),
+                      const SizedBox(height: 40),
+
+                      GestureDetector(
+                        onTap: () async => _downloadAndOpenPdf(plan.combinedDownloadUrl),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 27),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: AppColor.blue, width: 1),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(AppImages.downloadImage, height: 20),
+                                  const SizedBox(width: 10),
+                                  CustomTextField.textWithSmall(
+                                    text: 'Download Receipt',
+                                    color: AppColor.blue,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
+
 
   @override
   Widget build(BuildContext context) {

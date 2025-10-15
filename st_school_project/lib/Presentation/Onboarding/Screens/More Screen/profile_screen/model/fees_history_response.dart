@@ -57,7 +57,7 @@ class PlanItem {
   final Summary summary;
   final String combinedDownloadUrl;
 
-  final List<FeeItem> items;
+  late final List<FeeItem> items;
 
   PlanItem({
     required this.planId,

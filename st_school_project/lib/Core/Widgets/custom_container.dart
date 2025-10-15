@@ -507,48 +507,62 @@ class CustomContainer {
                       ),
                     ),
                     SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 82.0),
-                      child: GestureDetector(
-                        onTap: onDetailsTap,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                          decoration: BoxDecoration(
-                            // color: AppColor.greenMore1,
-                            gradient: LinearGradient(
-                              colors: [AppColor.green01G3, AppColor.greenMore1],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
+                    Row(
+                      children: [
+                        Flexible(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
-                              vertical: 5,
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'View Receipt ',
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColor.white,
+                            padding: const EdgeInsets.only(right: 82.0),
+                            child: GestureDetector(
+                              onTap: onDetailsTap,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 5),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      AppColor.green01G3,
+                                      AppColor.greenMore1,
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0,
+                                    vertical: 5,
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min, // important
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          'View Receipt',
+                                          // overflow: TextOverflow.ellipsis,
+                                          softWrap: false,
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColor.white,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 4),
+                                      Image.asset(
+                                        AppImages.rightArrow,
+                                        height: 9,
+                                        color: AppColor.white,
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                SizedBox(width: 4),
-                                Image.asset(
-                                  AppImages.downloadImage,
-                                  height: 15,
-                                  color: AppColor.white,
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
+
                     // GestureDetector(
                     //   onTap: onDetailsTap,
                     //   child: Row(
