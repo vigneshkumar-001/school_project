@@ -1,13 +1,14 @@
 class ApiUrl {
-  static String baseUrl12 =
+  static String baseUrl =
       'https://school-back-end-594f59bea6cb.herokuapp.com';
-  static String baseUrl = 'https://backend.stjosephmatricschool.com';
+  static String baseUrl12 = 'https://backend.stjosephmatricschool.com';
 
   static String baseUrl1 =
       'https://school-backend-v2-19bebceab98e.herokuapp.com';
   static String teacherInfo = '$baseUrl/student-teacher-info';
   static String paymentHistory = '$baseUrl/student-payments/history';
   static String login = '$baseUrl/student-auth/login';
+  static String logout = '$baseUrl/notifications/students/unregister';
   static String changePhoneNumber = '$baseUrl/student/change-phone/request';
   static String verifyOtp = '$baseUrl/student-auth/verify-otp';
   static String changePhoneVerify = '$baseUrl/student/change-phone/verify';
@@ -17,6 +18,7 @@ class ApiUrl {
   static String announcementList = '$baseUrl/student-announcement/list';
   static String studentMessageList = '$baseUrl/student-messages/history';
   static String reactMessage = '$baseUrl/student-messages/create';
+  static String notifications = '$baseUrl/notifications/students/register';
   static String profileImage =
       '$baseUrl/student-home/profiles/profile-image-url';
 

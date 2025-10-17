@@ -27,7 +27,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
 
                 // ✅ Payment Success
                 if (request.url.startsWith(
-                  "https://backend.stjosephmatricschool.com/payment/success",
+                  // "https://backend.stjosephmatricschool.com/payment/success",
+                    'https://school-back-end-594f59bea6cb.herokuapp.com',
                 )) {
                   final orderId = uri.queryParameters["orderId"];
                   final tid = uri.queryParameters["tid"];
@@ -41,7 +42,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
 
                 // ❌ Payment Failure
                 if (request.url.startsWith(
-                  "https://backend.stjosephmatricschool.com/payment/failure",
+                  // "https://backend.stjosephmatricschool.com/payment/failure",
+                    'https://school-back-end-594f59bea6cb.herokuapp.com',
                 )) {
                   final orderId = uri.queryParameters["orderId"];
                   final reason = uri.queryParameters["reason"];

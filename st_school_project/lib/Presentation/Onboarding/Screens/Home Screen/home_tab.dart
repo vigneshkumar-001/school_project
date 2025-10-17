@@ -1260,660 +1260,730 @@ class _HomeScreenState extends State<HomeTab>
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 15),
 
-                              Stack(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topRight,
-                                        end: Alignment.centerRight,
-                                        colors: [
-                                          AppColor.lightBlueG1,
-                                          AppColor.lightBlueG1.withOpacity(0.5),
-                                          AppColor.lightBlueG2,
-                                        ],
-                                      ),
-                                      // border: Border.all(color: Colors.black12),
-                                      // color: AppColor.white,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 70,
-                                        right: 8,
-                                        left: 8,
-                                        bottom: 8,
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: AppColor.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.only(
-                                                top: 26,
-                                                right: 50,
-                                                left: 15,
-                                                bottom: 15,
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    '2025-26 LKG',
-                                                    style:
-                                                        GoogleFont.ibmPlexSans(
-                                                          fontSize: 16,
-                                                          color:
-                                                              AppColor
-                                                                  .lightBlack,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                  ),
-
-                                                  Text(
-                                                    'Admission \nStarted',
-                                                    style:
-                                                        GoogleFont.ibmPlexSans(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          color: AppColor.black,
-                                                        ),
-                                                  ),
-
-                                                  SizedBox(height: 10),
-                                                  Divider(
-                                                    color: AppColor.lightGrey,
-                                                  ),
-                                                  SizedBox(height: 6),
-                                                  InkWell(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder:
-                                                              (context) =>
-                                                                  Admission1(),
-                                                        ),
-                                                      );
-                                                    },
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          'Open Now',
-                                                          style:
-                                                              GoogleFont.ibmPlexSans(
-                                                                fontSize: 12,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    AppColor
-                                                                        .blueG2,
-                                                              ),
-                                                        ),
-                                                        SizedBox(width: 7),
-                                                        Image.asset(
-                                                          AppImages.rightArrow,
-                                                          height: 10,
-                                                          color:
-                                                              AppColor.blueG2,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    child: Image.asset(
-                                      AppImages.homeScreenCont2,
-                                      height: 67,
-                                      width: 77.31,
-                                    ),
-                                    left: 20,
-                                    top: 33,
-                                  ),
-                                ],
-                              ),
-
-                              SizedBox(width: 15),
-                              Stack(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topRight,
-                                        end: Alignment.centerRight,
-                                        colors: [
-                                          AppColor.lightBlueG1,
-                                          AppColor.lightBlueG1.withOpacity(0.5),
-                                          AppColor.lightBlueG2,
-                                        ],
-                                      ),
-                                      // border: Border.all(color: Colors.black12),
-                                      // color: AppColor.white,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 60,
-                                        right: 8,
-                                        left: 8,
-                                        bottom: 8,
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: AppColor.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.only(
-                                                top: 38,
-                                                right: 50,
-                                                left: 15,
-                                                bottom: 15,
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    '2025-26 LKG',
-                                                    style:
-                                                        GoogleFont.ibmPlexSans(
-                                                          fontSize: 16,
-                                                          color:
-                                                              AppColor
-                                                                  .lightBlack,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                  ),
-
-                                                  Text(
-                                                    'Admission \nStarted',
-                                                    style:
-                                                        GoogleFont.ibmPlexSans(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          color: AppColor.black,
-                                                        ),
-                                                  ),
-                                                  SizedBox(height: 8),
-                                                  Divider(
-                                                    color: AppColor.lightGrey,
-                                                  ),
-                                                  SizedBox(height: 6),
-                                                  InkWell(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder:
-                                                              (context) =>
-                                                                  CheckAdmissionStatus(),
-                                                        ),
-                                                      );
-                                                    },
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          'Check Now',
-                                                          style:
-                                                              GoogleFont.ibmPlexSans(
-                                                                fontSize: 12,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color:
-                                                                    AppColor
-                                                                        .blueG2,
-                                                              ),
-                                                        ),
-                                                        SizedBox(width: 7),
-                                                        Image.asset(
-                                                          AppImages.rightArrow,
-                                                          height: 10,
-                                                          color:
-                                                              AppColor.blueG2,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    left: 20,
-                                    top: 19,
-                                    child: Image.asset(
-                                      AppImages.homeScreenCont3,
-                                      height: 75,
-                                      width: 73.5,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(width: 15),
-                              Stack(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topRight,
-                                        end: Alignment.centerRight,
-                                        colors: [
-                                          AppColor.orangeG1, // light blue
-                                          AppColor.orangeG2, // cyan
-                                          AppColor.orangeG3, // cyan
-                                        ],
-                                      ),
-                                      // border: Border.all(color: Colors.black12),
-                                      // color: AppColor.white,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 60,
-                                        right: 10,
-                                        left: 10,
-                                        bottom: 15,
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: AppColor.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                top: 40,
-                                                right: 15,
-                                                left: 20,
-                                                bottom: 20,
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'Prepare for',
-                                                    style:
-                                                        GoogleFont.ibmPlexSans(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color:
-                                                              AppColor
-                                                                  .lightBlack,
-                                                        ),
-                                                  ),
-                                                  Text(
-                                                    'Examinations',
-                                                    style:
-                                                        GoogleFont.ibmPlexSans(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          color: AppColor.black,
-                                                        ),
-                                                  ),
-                                                  SizedBox(height: 7),
-                                                  Text(
-                                                    'First Term Exam will \nbe conducted on \n11.Jun.25 ',
-                                                    style:
-                                                        GoogleFont.ibmPlexSans(
-                                                          color: AppColor.grey,
-                                                          fontSize: 12,
-                                                        ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    child: Image.asset(
-                                      AppImages.clock,
-                                      height: 72,
-                                      width: 60.3,
-                                    ),
-                                    left: 20,
-                                    top: 15,
-                                  ),
-                                  Positioned(
-                                    child: SizedBox(
-                                      height: 22,
-                                      width: 58,
+                              if (controller
+                                      .studentHomeData
+                                      .value
+                                      ?.announcements[0]
+                                      .newAdmissionStatus ==
+                                  false) ...[
+                                SizedBox(width: 15),
+                                Stack(
+                                  children: [
+                                    SizedBox(
+                                      width: 175 ,
                                       child: Container(
-                                        alignment: Alignment.center,
                                         decoration: BoxDecoration(
-                                          color: AppColor.brown,
-                                          borderRadius: BorderRadius.circular(
-                                            15,
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topRight,
+                                            end: Alignment.centerRight,
+                                            colors: [
+                                              AppColor.lightBlueG1,
+                                              AppColor.lightBlueG1.withOpacity(
+                                                0.5,
+                                              ),
+                                              AppColor.lightBlueG2,
+                                            ],
                                           ),
+                                          // border: Border.all(color: Colors.black12),
+                                          // color: AppColor.white,
+                                          borderRadius: BorderRadius.circular(15),
                                         ),
-                                        child: Text(
-                                          'Jun 11',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 12,
-                                            color: AppColor.yellow,
-                                            fontWeight: FontWeight.bold,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 70,
+                                            right: 8,
+                                            left: 8,
+                                            bottom: 8,
                                           ),
-                                        ),
-                                      ),
-                                    ),
-                                    right: 25,
-                                    top: 48,
-                                  ),
-                                  // Positioned(
-                                  //   child: TextButton(
-                                  //     style: ButtonStyle(
-                                  //       backgroundColor: WidgetStatePropertyAll(
-                                  //         AppColor.brown,
-                                  //       ),
-                                  //     ),
-                                  //     onPressed: () {},
-                                  //     child: Text(
-                                  //       'Jun 11',
-                                  //       style: TextStyle(
-                                  //         fontSize: 12,
-                                  //         color: AppColor.yellow,
-                                  //         fontWeight: FontWeight.bold,
-                                  //       ),
-                                  //     ),
-                                  //   ),
-                                  //   right: 25,
-                                  //   top: 70,
-                                  // ),
-                                ],
-                              ),
-
-                              SizedBox(width: 15),
-                              Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topRight,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      AppColor.greenG4.withOpacity(0.2),
-                                      AppColor.greenG2.withOpacity(0.4),
-                                      AppColor.greenG1.withOpacity(0.9),
-                                      AppColor.greenG1.withOpacity(0.9),
-                                    ],
-                                  ),
-                                  // border: Border.all(color: Colors.black12),
-                                  //  color: AppColor.white,
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 8,
-                                    left: 8,
-                                    right: 8,
-                                    bottom: 20,
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Column(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                                begin: Alignment.topRight,
-                                                end: Alignment.bottomRight,
-                                                colors: [
-                                                  AppColor.white,
-                                                  AppColor.white,
-                                                  AppColor.white,
-                                                  AppColor.white,
-                                                  AppColor.white,
-                                                  AppColor.white.withOpacity(
-                                                    0.1,
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color: AppColor.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                    top: 26,
+                                                    right: 20,
+                                                    left: 15,
+                                                    bottom: 15,
                                                   ),
-                                                ],
-                                              ),
-
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                top: 18,
-                                                left: 15,
-                                                right: 20,
-                                                bottom: 50,
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'Upcoming Saturday\nHalf day School',
-                                                    style:
-                                                        GoogleFont.ibmPlexSans(
-                                                          fontSize: 12,
-                                                          color: AppColor.black,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                  ),
-                                                  SizedBox(height: 5),
-                                                  Text(
-                                                    '16-Jun-25',
-                                                    style:
-                                                        GoogleFont.ibmPlexSans(
-                                                          fontSize: 10,
-                                                          color: AppColor.grey,
-                                                        ),
-                                                  ),
-                                                  SizedBox(height: 21),
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                      left: 45.0,
-                                                    ),
-                                                    child: InkWell(
-                                                      onTap: () {},
-                                                      child: Image.asset(
-                                                        AppImages
-                                                            .greenButtomArrow,
-                                                        height: 24,
-                                                        width: 23,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(height: 20),
-                                          Text(
-                                            'Notice Board',
-                                            style: GoogleFont.ibmPlexSans(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColor.lightBlack,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Positioned(
-                                        child: Image.asset(
-                                          AppImages.bag,
-                                          height: 45,
-                                          width: 43.75,
-                                        ),
-                                        top: 140,
-                                        left: 50,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 15),
-                              Stack(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topRight,
-                                        end: Alignment.centerRight,
-                                        colors: [
-                                          AppColor.blueCG1, // light blue
-                                          AppColor.blueCG2, // cyan
-                                          AppColor.blueCG3, // cyan
-                                        ],
-                                      ),
-                                      // border: Border.all(color: Colors.black12),
-                                      // color: AppColor.white,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 60,
-                                        right: 10,
-                                        left: 10,
-                                        bottom: 8,
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: AppColor.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.only(
-                                                top: 30,
-                                                right: 20,
-                                                left: 15,
-                                                bottom: 15,
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  SizedBox(
-                                                    height: 22,
-                                                    width: 58,
-                                                    child: Container(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            AppColor.lightBlue,
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              15,
-                                                            ),
-                                                      ),
-                                                      child: Text(
-                                                        'Jun 11',
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        maxLines: 3,
+                                                        overflow:
+                                                            TextOverflow.ellipsis,
+                                                        data
+                                                                ?.announcements[0]
+                                                                .message
+                                                                .toString() ??
+                                                            '',
                                                         style:
                                                             GoogleFont.ibmPlexSans(
-                                                              fontSize: 12,
+                                                              fontSize: 16,
                                                               color:
                                                                   AppColor
-                                                                      .textBlue,
+                                                                      .lightBlack,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                                  FontWeight.w600,
                                                             ),
                                                       ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: 6),
-                                                  Text(
-                                                    'Second-Term \nFees',
-                                                    style:
-                                                        GoogleFont.ibmPlexSans(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: AppColor.black,
+
+                                                      Text(
+                                                        data
+                                                                ?.announcements[0]
+                                                                .submessage
+                                                                .toString() ??
+                                                            '',
+                                                        style:
+                                                            GoogleFont.ibmPlexSans(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight.w700,
+                                                              color:
+                                                                  AppColor.black,
+                                                            ),
+                                                      ),
+
+
+                                                      Divider(
+                                                        color: AppColor.lightGrey,
+                                                      ),
+
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      Admission1(),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              'Open Now',
+                                                              style:
+                                                                  GoogleFont.ibmPlexSans(
+                                                                    fontSize: 12,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        AppColor
+                                                                            .blueG2,
+                                                                  ),
+                                                            ),
+                                                            SizedBox(width: 7),
+                                                            Image.asset(
+                                                              AppImages
+                                                                  .rightArrow,
+                                                              height: 10,
+                                                              color:
+                                                                  AppColor.blueG2,
+                                                            ),
+                                                          ],
                                                         ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  SizedBox(height: 8),
-                                                  Divider(),
-                                                  SizedBox(height: 6),
-                                                  InkWell(
-                                                    onTap: () {},
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          'Know More',
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      child: Image.asset(
+                                        AppImages.homeScreenCont2,
+                                        height: 67,
+                                        width: 77.31,
+                                      ),
+                                      left: 20,
+                                      top: 33,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                              if (data?.announcements[1].admissionStatus ==
+                                  false) ...[
+                                SizedBox(width: 15),
+                                Stack(
+                                  children: [
+                                    SizedBox(width: 175,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topRight,
+                                            end: Alignment.centerRight,
+                                            colors: [
+                                              AppColor.lightBlueG1,
+                                              AppColor.lightBlueG1.withOpacity(
+                                                0.5,
+                                              ),
+                                              AppColor.lightBlueG2,
+                                            ],
+                                          ),
+                                          // border: Border.all(color: Colors.black12),
+                                          // color: AppColor.white,
+                                          borderRadius: BorderRadius.circular(15),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 60,
+                                            right: 8,
+                                            left: 8,
+                                            bottom: 8,
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color: AppColor.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                    top: 38,
+                                                    right: 20,
+                                                    left: 15,
+                                                    bottom: 15,
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        data
+                                                                ?.announcements[1]
+                                                                .message
+                                                                .toString() ??
+                                                            '',
+                                                        style:
+                                                            GoogleFont.ibmPlexSans(
+                                                              fontSize: 16,
+                                                              color:
+                                                                  AppColor
+                                                                      .lightBlack,
+                                                              fontWeight:
+                                                                  FontWeight.w600,
+                                                            ),
+                                                      ),
+
+                                                      Text(
+                                                        data
+                                                                ?.announcements[1]
+                                                                .submessage
+                                                                .toString() ??
+                                                            '',
+                                                        style:
+                                                            GoogleFont.ibmPlexSans(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight.w700,
+                                                              color:
+                                                                  AppColor.black,
+                                                            ),
+                                                      ),
+
+                                                      Divider(
+                                                        color: AppColor.lightGrey,
+                                                      ),
+
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      CheckAdmissionStatus(),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              'Check Now',
+                                                              style:
+                                                                  GoogleFont.ibmPlexSans(
+                                                                    fontSize: 12,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        AppColor
+                                                                            .blueG2,
+                                                                  ),
+                                                            ),
+                                                            SizedBox(width: 7),
+                                                            Image.asset(
+                                                              AppImages
+                                                                  .rightArrow,
+                                                              height: 10,
+                                                              color:
+                                                                  AppColor.blueG2,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      left: 20,
+                                      top: 19,
+                                      child: Image.asset(
+                                        AppImages.homeScreenCont3,
+                                        height: 75,
+                                        width: 73.5,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                              if (data?.announcements[2].examStatus ==
+                                  true) ...[
+                                SizedBox(width: 15),
+                                Stack(
+                                  children: [
+                                    SizedBox(
+                                      width: 170,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topRight,
+                                            end: Alignment.centerRight,
+                                            colors: [
+                                              AppColor.orangeG1, // light blue
+                                              AppColor.orangeG2, // cyan
+                                              AppColor.orangeG3, // cyan
+                                            ],
+                                          ),
+                                          // border: Border.all(color: Colors.black12),
+                                          // color: AppColor.white,
+                                          borderRadius: BorderRadius.circular(15),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 60,
+                                            right: 10,
+                                            left: 10,
+                                            bottom: 15,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color: AppColor.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(
+                                                    top: 40,
+                                                    right: 15,
+                                                    left: 20,
+                                                    bottom: 20,
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        data
+                                                                ?.announcements[2]
+                                                                .message
+                                                                .toString() ??
+                                                            '',
+                                                        style:
+                                                            GoogleFont.ibmPlexSans(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight.w600,
+                                                              color:
+                                                                  AppColor
+                                                                      .lightBlack,
+                                                            ),
+                                                      ),
+
+                                                      SizedBox(height: 7),
+                                                      Text(
+                                                        data
+                                                                ?.announcements[2]
+                                                                .submessage
+                                                                .toString() ??
+                                                            '',
+                                                        style:
+                                                            GoogleFont.ibmPlexSans(
+                                                              color:
+                                                                  AppColor.grey,
+                                                              fontSize: 12,
+                                                            ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      child: Image.asset(
+                                        AppImages.clock,
+                                        height: 72,
+                                        width: 60.3,
+                                      ),
+                                      left: 20,
+                                      top: 15,
+                                    ),
+                                    Positioned(
+                                      child: SizedBox(
+                                        height: 22,
+                                        width: 58,
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            color: AppColor.brown,
+                                            borderRadius: BorderRadius.circular(
+                                              15,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'Jun 11',
+                                            style: GoogleFont.ibmPlexSans(
+                                              fontSize: 12,
+                                              color: AppColor.yellow,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      right: 25,
+                                      top: 48,
+                                    ),
+                                    // Positioned(
+                                    //   child: TextButton(
+                                    //     style: ButtonStyle(
+                                    //       backgroundColor: WidgetStatePropertyAll(
+                                    //         AppColor.brown,
+                                    //       ),
+                                    //     ),
+                                    //     onPressed: () {},
+                                    //     child: Text(
+                                    //       'Jun 11',
+                                    //       style: TextStyle(
+                                    //         fontSize: 12,
+                                    //         color: AppColor.yellow,
+                                    //         fontWeight: FontWeight.bold,
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    //   right: 25,
+                                    //   top: 70,
+                                    // ),
+                                  ],
+                                ),
+                              ],
+                              if (data?.announcements[3].noticeBoardStatus ==
+                                  true) ...[
+                                SizedBox(width: 15),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topRight,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        AppColor.greenG4.withOpacity(0.2),
+                                        AppColor.greenG2.withOpacity(0.4),
+                                        AppColor.greenG1.withOpacity(0.9),
+                                        AppColor.greenG1.withOpacity(0.9),
+                                      ],
+                                    ),
+                                    // border: Border.all(color: Colors.black12),
+                                    //  color: AppColor.white,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 8,
+                                      left: 8,
+                                      right: 8,
+                                      bottom: 20,
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topRight,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    AppColor.white,
+                                                    AppColor.white,
+                                                    AppColor.white,
+                                                    AppColor.white,
+                                                    AppColor.white,
+                                                    AppColor.white.withOpacity(
+                                                      0.1,
+                                                    ),
+                                                  ],
+                                                ),
+
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                  top: 10,
+                                                  left: 15,
+                                                  right: 65,
+                                                  bottom: 50,
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      data
+                                                              ?.announcements[3]
+                                                              .message
+                                                              .toString() ??
+                                                          '',
+                                                      style:
+                                                          GoogleFont.ibmPlexSans(
+                                                            fontSize: 12,
+                                                            color:
+                                                                AppColor.black,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                    Text(
+                                                      data
+                                                              ?.announcements[3]
+                                                              .submessage
+                                                              .toString() ??
+                                                          '',
+                                                      style:
+                                                          GoogleFont.ibmPlexSans(
+                                                            fontSize: 10,
+                                                            color:
+                                                                AppColor.grey,
+                                                          ),
+                                                    ),
+                                                    SizedBox(height: 21),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                        left: 45.0,
+                                                      ),
+                                                      child: InkWell(
+                                                        onTap: () {},
+                                                        child: Image.asset(
+                                                          AppImages
+                                                              .greenButtomArrow,
+                                                          height: 24,
+                                                          width: 23,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(height: 20),
+                                            Text(
+                                              'Notice Board',
+                                              style: GoogleFont.ibmPlexSans(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColor.lightBlack,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Positioned.fill(
+                                          child: Image.asset(
+                                            AppImages.bag,
+                                            height: 50,
+                                            width: 43.75,
+                                          ),
+                                          top: 90,
+                                          left: 50,
+                                          right: 50,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              if (data?.announcements[4].termFeesStatus ==
+                                  true) ...[
+                                SizedBox(width: 15),
+                                Stack(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topRight,
+                                          end: Alignment.centerRight,
+                                          colors: [
+                                            AppColor.blueCG1, // light blue
+                                            AppColor.blueCG2, // cyan
+                                            AppColor.blueCG3, // cyan
+                                          ],
+                                        ),
+                                        // border: Border.all(color: Colors.black12),
+                                        // color: AppColor.white,
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 60,
+                                          right: 10,
+                                          left: 10,
+                                          bottom: 8,
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: AppColor.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: Padding(
+                                                padding: EdgeInsets.only(
+                                                  top: 30,
+                                                  right: 20,
+                                                  left: 15,
+                                                  bottom: 15,
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(
+                                                      height: 22,
+                                                      width: 58,
+                                                      child: Container(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        decoration: BoxDecoration(
+                                                          color:
+                                                              AppColor
+                                                                  .lightBlue,
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                15,
+                                                              ),
+                                                        ),
+                                                        child: Text(
+                                                          'Jun 11',
                                                           style:
                                                               GoogleFont.ibmPlexSans(
-                                                                fontSize: 11,
+                                                                fontSize: 12,
+                                                                color:
+                                                                    AppColor
+                                                                        .textBlue,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                color:
-                                                                    AppColor
-                                                                        .blueG2,
                                                               ),
                                                         ),
-                                                        SizedBox(width: 5),
-                                                        Image.asset(
-                                                          AppImages.rightArrow,
-                                                          height: 7,
-                                                          color:
-                                                              AppColor.blueG2,
-                                                        ),
-                                                      ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
+                                                    SizedBox(height: 6),
+                                                    Text(
+                                                      data
+                                                              ?.announcements[4]
+                                                              .message
+                                                              .toString() ??
+                                                          '',
+                                                      style:
+                                                          GoogleFont.ibmPlexSans(
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color:
+                                                                AppColor.black,
+                                                          ),
+                                                    ),
+                                                    SizedBox(height: 8),
+                                                    Divider(),
+                                                    SizedBox(height: 6),
+                                                    InkWell(
+                                                      onTap: () {},
+                                                      child: Row(
+                                                        children: [
+                                                          Text(
+                                                            'Know More',
+                                                            style:
+                                                                GoogleFont.ibmPlexSans(
+                                                                  fontSize: 11,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      AppColor
+                                                                          .blueG2,
+                                                                ),
+                                                          ),
+                                                          SizedBox(width: 5),
+                                                          Image.asset(
+                                                            AppImages
+                                                                .rightArrow,
+                                                            height: 7,
+                                                            color:
+                                                                AppColor.blueG2,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Positioned(
-                                    child: Image.asset(
-                                      AppImages.wallet,
-                                      height: 81,
-                                      width: 67.84,
+                                    Positioned(
+                                      child: Image.asset(
+                                        AppImages.wallet,
+                                        height: 81,
+                                        width: 67.84,
+                                      ),
+                                      left: 20,
+                                      top: 15,
                                     ),
-                                    left: 20,
-                                    top: 15,
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
+                              ],
                             ],
                           ),
                         ),
