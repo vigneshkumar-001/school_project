@@ -8,6 +8,7 @@ class ApiUrl {
   static String teacherInfo = '$baseUrl/student-teacher-info';
   static String paymentHistory = '$baseUrl/student-payments/history';
   static String login = '$baseUrl/student-auth/login';
+  static String logout = '$baseUrl/notifications/students/unregister';
   static String changePhoneNumber = '$baseUrl/student/change-phone/request';
   static String verifyOtp = '$baseUrl/student-auth/verify-otp';
   static String changePhoneVerify = '$baseUrl/student/change-phone/verify';

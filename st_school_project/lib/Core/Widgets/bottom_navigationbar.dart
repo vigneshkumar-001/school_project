@@ -295,9 +295,10 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
 
   void _updateSlideAnimation() {
     _slideAnimation = Tween<Offset>(
-      begin: _selectedIndex > _prevIndex
-          ? const Offset(1.0, 0.0)
-          : const Offset(-1.0, 0.0),
+      begin:
+          _selectedIndex > _prevIndex
+              ? const Offset(1.0, 0.0)
+              : const Offset(-1.0, 0.0),
       end: Offset.zero,
     ).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
@@ -306,7 +307,7 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
     _animationController.forward(from: 0.0);
   }
 
-  void _onTabTapped(int index) {
+  /* void _onTabTapped(int index) {
     if (index == _selectedIndex) return;
 
     setState(() {
@@ -314,6 +315,28 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
       _selectedIndex = index;
       _animationController.reset();
       _updateSlideAnimation();
+    });
+  }*/
+  void _onTabTapped(int index) {
+    if (index == _selectedIndex) return;
+
+    setState(() {
+      _prevIndex = _selectedIndex;
+      _selectedIndex = index;
+
+      // Slide direction based on index
+      _slideAnimation = Tween<Offset>(
+        begin:
+            _selectedIndex > _prevIndex
+                ? const Offset(1.0, 0.0) // slide from right
+                : const Offset(-1.0, 0.0), // slide from left
+        end: Offset.zero,
+      ).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+      );
+
+      _animationController.reset();
+      _animationController.forward();
     });
   }
 
@@ -337,12 +360,13 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
       child: _pages[_selectedIndex],
     );
 
-    final Widget? previous = (_selectedIndex == _prevIndex)
-        ? null
-        : KeyedSubtree(
-      key: ValueKey('page-$_prevIndex'),
-      child: _pages[_prevIndex],
-    );
+    final Widget? previous =
+        (_selectedIndex == _prevIndex)
+            ? null
+            : KeyedSubtree(
+              key: ValueKey('page-$_prevIndex'),
+              child: _pages[_prevIndex],
+            );
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -353,13 +377,19 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
             // If there is no previous page (first paint), don't animate.
             (_selectedIndex == _prevIndex)
                 ? current
-                : SlideTransition(position: _slideAnimation, child: current),
+                : SlideTransition(
+                  position: _slideAnimation,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 400),
+                    child: current,
+                  ),
+                ),
           ],
         ),
         bottomNavigationBar: Obx(() {
           final siblings = controller.siblingsList;
           final activeStudent = siblings.firstWhere(
-                (s) => s.isActive == true,
+            (s) => s.isActive == true,
             orElse: () => siblings.first,
           );
 
@@ -399,48 +429,52 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
                 label: 'Attendance',
               ),
               BottomNavigationBarItem(
-                icon: (activeStudent.avatar != null &&
-                    activeStudent.avatar.isNotEmpty)
-                    ? ClipOval(
-                  child: Image.network(
-                    activeStudent.avatar,
-                    height: 30,
-                    width: 30,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Image.asset(
-                      AppImages.moreSimage1,
-                      height: 49,
-                      width: 30,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                )
-                    : Image.asset(
-                  AppImages.moreSimage1,
-                  height: 30,
-                  width: 30,
-                ),
-                activeIcon: (activeStudent.avatar != null &&
-                    activeStudent.avatar.isNotEmpty)
-                    ? ClipOval(
-                  child: Image.network(
-                    activeStudent.avatar,
-                    height: 30,
-                    width: 30,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Image.asset(
-                      AppImages.moreSimage1,
-                      height: 49,
-                      width: 30,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                )
-                    : Image.asset(
-                  AppImages.moreSimage1,
-                  height: 30,
-                  width: 30,
-                ),
+                icon:
+                    (activeStudent.avatar != null &&
+                            activeStudent.avatar.isNotEmpty)
+                        ? ClipOval(
+                          child: Image.network(
+                            activeStudent.avatar,
+                            height: 30,
+                            width: 30,
+                            fit: BoxFit.cover,
+                            errorBuilder:
+                                (_, __, ___) => Image.asset(
+                                  AppImages.moreSimage1,
+                                  height: 49,
+                                  width: 30,
+                                  fit: BoxFit.cover,
+                                ),
+                          ),
+                        )
+                        : Image.asset(
+                          AppImages.moreSimage1,
+                          height: 30,
+                          width: 30,
+                        ),
+                activeIcon:
+                    (activeStudent.avatar != null &&
+                            activeStudent.avatar.isNotEmpty)
+                        ? ClipOval(
+                          child: Image.network(
+                            activeStudent.avatar,
+                            height: 30,
+                            width: 30,
+                            fit: BoxFit.cover,
+                            errorBuilder:
+                                (_, __, ___) => Image.asset(
+                                  AppImages.moreSimage1,
+                                  height: 49,
+                                  width: 30,
+                                  fit: BoxFit.cover,
+                                ),
+                          ),
+                        )
+                        : Image.asset(
+                          AppImages.moreSimage1,
+                          height: 30,
+                          width: 30,
+                        ),
                 label: 'More',
               ),
             ],
@@ -450,8 +484,6 @@ class CommonBottomNavigationState extends State<CommonBottomNavigation>
     );
   }
 }
-
-
 
 // import 'package:flutter/material.dart';
 // import 'package:st_school_project/Core/Utility/google_font.dart';

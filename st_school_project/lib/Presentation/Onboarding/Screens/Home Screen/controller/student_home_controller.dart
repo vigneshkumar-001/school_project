@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:st_school_project/Core/Utility/snack_bar.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:st_school_project/Presentation/splash_screen.dart';
 
 import '../../../../../../api/data_source/apiDataSource.dart';
 import '../../../../../Core/Utility/app_color.dart';
@@ -172,17 +173,17 @@ class StudentHomeController extends GetxController {
             await prefs.setString('token', accessToken);
             AppLogger.log.i("New token saved: $accessToken");
           }
-          await getStudentHome();
-          await getSiblingsData();
-          final teacherListController = Get.find<TeacherListController>();
-          await teacherListController.teacherListData();
+          // await getStudentHome();
+          // await getSiblingsData();
+          // final teacherListController = Get.find<TeacherListController>();
+          // await teacherListController.teacherListData();
           if (showLoader) hidePopupLoader();
           // Optionally clear previous student data
           // studentHomeData.value = null;
           // selectedStudent.value = null;
           // siblingsList.clear();
 
-          // Get.offAll(() => ChangeMobileNumber(page: 'splash'));
+          // Get.offAll(() => SplashScreen();
         },
       );
     } catch (e) {
