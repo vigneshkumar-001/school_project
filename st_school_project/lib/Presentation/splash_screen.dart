@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
@@ -45,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 8),
     );
 
     _controller.addListener(() {
@@ -56,8 +57,11 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    Future.delayed(const Duration(seconds: 3), () {
-      _checkAppVersion();
+    // Delay navigation/check until animation finishes
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _checkAppVersion();
+      }
     });
   }
 
@@ -99,12 +103,39 @@ class _SplashScreenState extends State<SplashScreen>
   //   }
   // }
 
+  // void _checkLoginStatus() async {
+  //   final isLoggedIn = await loginController.isLoggedIn();
+  //
+  //   if (!mounted) return;
+  //
+  //   if (isLoggedIn) {
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (_) => const CommonBottomNavigation(initialIndex: 0),
+  //       ),
+  //     );
+  //   } else {
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (_) => const ChangeMobileNumber(page: 'splash'),
+  //       ),
+  //     );
+  //   }
+  // }
+  /// Check token existence and expiration
   void _checkLoginStatus() async {
-    final isLoggedIn = await loginController.isLoggedIn();
-
     if (!mounted) return;
 
-    if (isLoggedIn) {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    if (token != null && token.isNotEmpty) {
+
+      await loginController.checkTokenExpire();
+
+      // After token check & loading data → navigate to Home
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -112,6 +143,7 @@ class _SplashScreenState extends State<SplashScreen>
         ),
       );
     } else {
+      // No token → navigate to login/change mobile
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
