@@ -236,6 +236,18 @@ class _HomeScreenState extends State<HomeTab>
     'Social Science',
     'Maths',
   ];
+
+  String formatDate(String date) {
+    // Split the original date by '.'
+    List<String> parts = date.split('.');
+    if (parts.length < 2) return date; // fallback if format is unexpected
+
+    String day = parts[0];
+    String month = parts[1];
+
+    return "$month.$day"; // "oct.17"
+  }
+
   String _fmt(DateTime d) =>
       DateFormat('dd MMM yyyy').format(d); // e.g., 23 Sep 2025
 
@@ -1031,7 +1043,7 @@ class _HomeScreenState extends State<HomeTab>
                                   ),
                                   // border: Border.all(color: Colors.black12),
                                   //  color: AppColor.white,
-                                  borderRadius: BorderRadius.circular(15),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.only(
@@ -1266,12 +1278,12 @@ class _HomeScreenState extends State<HomeTab>
                                       .value
                                       ?.announcements[0]
                                       .newAdmissionStatus ==
-                                  false) ...[
+                                  true) ...[
                                 SizedBox(width: 15),
                                 Stack(
                                   children: [
                                     SizedBox(
-                                      width: 175 ,
+                                      width: 175,
                                       child: Container(
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
@@ -1287,11 +1299,13 @@ class _HomeScreenState extends State<HomeTab>
                                           ),
                                           // border: Border.all(color: Colors.black12),
                                           // color: AppColor.white,
-                                          borderRadius: BorderRadius.circular(15),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
                                         ),
                                         child: Padding(
                                           padding: const EdgeInsets.only(
-                                            top: 70,
+                                            top: 62,
                                             right: 8,
                                             left: 8,
                                             bottom: 8,
@@ -1309,16 +1323,18 @@ class _HomeScreenState extends State<HomeTab>
                                                     top: 26,
                                                     right: 20,
                                                     left: 15,
-                                                    bottom: 15,
+                                                    bottom: 20,
                                                   ),
                                                   child: Column(
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: [
                                                       Text(
                                                         maxLines: 3,
                                                         overflow:
-                                                            TextOverflow.ellipsis,
+                                                            TextOverflow
+                                                                .ellipsis,
                                                         data
                                                                 ?.announcements[0]
                                                                 .message
@@ -1331,7 +1347,8 @@ class _HomeScreenState extends State<HomeTab>
                                                                   AppColor
                                                                       .lightBlack,
                                                               fontWeight:
-                                                                  FontWeight.w600,
+                                                                  FontWeight
+                                                                      .w600,
                                                             ),
                                                       ),
 
@@ -1345,15 +1362,17 @@ class _HomeScreenState extends State<HomeTab>
                                                             GoogleFont.ibmPlexSans(
                                                               fontSize: 16,
                                                               fontWeight:
-                                                                  FontWeight.w700,
+                                                                  FontWeight
+                                                                      .w700,
                                                               color:
-                                                                  AppColor.black,
+                                                                  AppColor
+                                                                      .black,
                                                             ),
                                                       ),
 
-
                                                       Divider(
-                                                        color: AppColor.lightGrey,
+                                                        color:
+                                                            AppColor.lightGrey,
                                                       ),
 
                                                       InkWell(
@@ -1371,16 +1390,15 @@ class _HomeScreenState extends State<HomeTab>
                                                           children: [
                                                             Text(
                                                               'Open Now',
-                                                              style:
-                                                                  GoogleFont.ibmPlexSans(
-                                                                    fontSize: 12,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color:
-                                                                        AppColor
-                                                                            .blueG2,
-                                                                  ),
+                                                              style: GoogleFont.ibmPlexSans(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    AppColor
+                                                                        .blueG2,
+                                                              ),
                                                             ),
                                                             SizedBox(width: 7),
                                                             Image.asset(
@@ -1388,7 +1406,8 @@ class _HomeScreenState extends State<HomeTab>
                                                                   .rightArrow,
                                                               height: 10,
                                                               color:
-                                                                  AppColor.blueG2,
+                                                                  AppColor
+                                                                      .blueG2,
                                                             ),
                                                           ],
                                                         ),
@@ -1409,17 +1428,18 @@ class _HomeScreenState extends State<HomeTab>
                                         width: 77.31,
                                       ),
                                       left: 20,
-                                      top: 33,
+                                      top: 26,
                                     ),
                                   ],
                                 ),
                               ],
                               if (data?.announcements[1].admissionStatus ==
-                                  false) ...[
+                                  true) ...[
                                 SizedBox(width: 15),
                                 Stack(
                                   children: [
-                                    SizedBox(width: 175,
+                                    SizedBox(
+                                      width: 175,
                                       child: Container(
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
@@ -1435,7 +1455,9 @@ class _HomeScreenState extends State<HomeTab>
                                           ),
                                           // border: Border.all(color: Colors.black12),
                                           // color: AppColor.white,
-                                          borderRadius: BorderRadius.circular(15),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
                                         ),
                                         child: Padding(
                                           padding: const EdgeInsets.only(
@@ -1454,14 +1476,15 @@ class _HomeScreenState extends State<HomeTab>
                                                 ),
                                                 child: Padding(
                                                   padding: EdgeInsets.only(
-                                                    top: 38,
+                                                    top: 32,
                                                     right: 20,
                                                     left: 15,
                                                     bottom: 15,
                                                   ),
                                                   child: Column(
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: [
                                                       Text(
                                                         data
@@ -1476,7 +1499,8 @@ class _HomeScreenState extends State<HomeTab>
                                                                   AppColor
                                                                       .lightBlack,
                                                               fontWeight:
-                                                                  FontWeight.w600,
+                                                                  FontWeight
+                                                                      .w600,
                                                             ),
                                                       ),
 
@@ -1490,14 +1514,17 @@ class _HomeScreenState extends State<HomeTab>
                                                             GoogleFont.ibmPlexSans(
                                                               fontSize: 16,
                                                               fontWeight:
-                                                                  FontWeight.w700,
+                                                                  FontWeight
+                                                                      .w700,
                                                               color:
-                                                                  AppColor.black,
+                                                                  AppColor
+                                                                      .black,
                                                             ),
                                                       ),
 
                                                       Divider(
-                                                        color: AppColor.lightGrey,
+                                                        color:
+                                                            AppColor.lightGrey,
                                                       ),
 
                                                       InkWell(
@@ -1515,16 +1542,15 @@ class _HomeScreenState extends State<HomeTab>
                                                           children: [
                                                             Text(
                                                               'Check Now',
-                                                              style:
-                                                                  GoogleFont.ibmPlexSans(
-                                                                    fontSize: 12,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color:
-                                                                        AppColor
-                                                                            .blueG2,
-                                                                  ),
+                                                              style: GoogleFont.ibmPlexSans(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    AppColor
+                                                                        .blueG2,
+                                                              ),
                                                             ),
                                                             SizedBox(width: 7),
                                                             Image.asset(
@@ -1532,7 +1558,8 @@ class _HomeScreenState extends State<HomeTab>
                                                                   .rightArrow,
                                                               height: 10,
                                                               color:
-                                                                  AppColor.blueG2,
+                                                                  AppColor
+                                                                      .blueG2,
                                                             ),
                                                           ],
                                                         ),
@@ -1564,7 +1591,7 @@ class _HomeScreenState extends State<HomeTab>
                                 Stack(
                                   children: [
                                     SizedBox(
-                                      width: 170,
+                                      width: 160,
                                       child: Container(
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
@@ -1578,13 +1605,15 @@ class _HomeScreenState extends State<HomeTab>
                                           ),
                                           // border: Border.all(color: Colors.black12),
                                           // color: AppColor.white,
-                                          borderRadius: BorderRadius.circular(15),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
                                         ),
                                         child: Padding(
                                           padding: const EdgeInsets.only(
                                             top: 60,
-                                            right: 10,
-                                            left: 10,
+                                            right: 8,
+                                            left: 8,
                                             bottom: 15,
                                           ),
                                           child: Column(
@@ -1598,17 +1627,23 @@ class _HomeScreenState extends State<HomeTab>
                                                       BorderRadius.circular(10),
                                                 ),
                                                 child: Padding(
-                                                  padding: const EdgeInsets.only(
-                                                    top: 40,
-                                                    right: 15,
-                                                    left: 20,
-                                                    bottom: 20,
-                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        top: 40,
+                                                        right: 20,
+                                                        left: 20,
+                                                        bottom: 56,
+                                                      ),
                                                   child: Column(
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: [
                                                       Text(
+                                                        maxLines: 2,
+                                                        overflow:
+                                                            TextOverflow
+                                                                .ellipsis,
                                                         data
                                                                 ?.announcements[2]
                                                                 .message
@@ -1618,7 +1653,8 @@ class _HomeScreenState extends State<HomeTab>
                                                             GoogleFont.ibmPlexSans(
                                                               fontSize: 16,
                                                               fontWeight:
-                                                                  FontWeight.w600,
+                                                                  FontWeight
+                                                                      .w600,
                                                               color:
                                                                   AppColor
                                                                       .lightBlack,
@@ -1654,23 +1690,29 @@ class _HomeScreenState extends State<HomeTab>
                                         height: 72,
                                         width: 60.3,
                                       ),
-                                      left: 20,
+                                      left: 12,
                                       top: 15,
                                     ),
                                     Positioned(
-                                      child: SizedBox(
-                                        height: 22,
-                                        width: 58,
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            color: AppColor.brown,
-                                            borderRadius: BorderRadius.circular(
-                                              15,
-                                            ),
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          color: AppColor.brown,
+                                          borderRadius: BorderRadius.circular(
+                                            15,
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10.0,
+                                            vertical: 3,
                                           ),
                                           child: Text(
-                                            'Jun 11',
+                                            formatDate(
+                                              data?.announcements[2].submessage
+                                                      .toString() ??
+                                                  '',
+                                            ),
                                             style: GoogleFont.ibmPlexSans(
                                               fontSize: 12,
                                               color: AppColor.yellow,
@@ -1717,101 +1759,114 @@ class _HomeScreenState extends State<HomeTab>
                                         AppColor.greenG4.withOpacity(0.2),
                                         AppColor.greenG2.withOpacity(0.4),
                                         AppColor.greenG1.withOpacity(0.9),
-                                        AppColor.greenG1.withOpacity(0.9),
+                                        // AppColor.greenG1.withOpacity(0.9),
                                       ],
                                     ),
                                     // border: Border.all(color: Colors.black12),
                                     //  color: AppColor.white,
-                                    borderRadius: BorderRadius.circular(15),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.only(
-                                      top: 8,
+                                      top: 0,
                                       left: 8,
                                       right: 8,
-                                      bottom: 20,
+                                      bottom: 15,
                                     ),
                                     child: Stack(
                                       children: [
                                         Column(
                                           children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  begin: Alignment.topRight,
-                                                  end: Alignment.bottomRight,
-                                                  colors: [
-                                                    AppColor.white,
-                                                    AppColor.white,
-                                                    AppColor.white,
-                                                    AppColor.white,
-                                                    AppColor.white,
-                                                    AppColor.white.withOpacity(
-                                                      0.1,
-                                                    ),
-                                                  ],
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 20.0,
+                                                  ),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    begin: Alignment.topRight,
+                                                    end: Alignment.bottomRight,
+                                                    colors: [
+                                                      AppColor.white,
+                                                      AppColor.white,
+                                                      AppColor.white,
+                                                      AppColor.white,
+                                                      AppColor.white,
+                                                      AppColor.white,
+                                                      AppColor.white
+                                                          .withOpacity(0.1),
+                                                      AppColor.white
+                                                          .withOpacity(0.1),
+                                                    ],
+                                                  ),
+
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
                                                 ),
 
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                  top: 10,
-                                                  left: 15,
-                                                  right: 65,
-                                                  bottom: 50,
-                                                ),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      data
-                                                              ?.announcements[3]
-                                                              .message
-                                                              .toString() ??
-                                                          '',
-                                                      style:
-                                                          GoogleFont.ibmPlexSans(
-                                                            fontSize: 12,
-                                                            color:
-                                                                AppColor.black,
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                          ),
-                                                    ),
-                                                    SizedBox(height: 5),
-                                                    Text(
-                                                      data
-                                                              ?.announcements[3]
-                                                              .submessage
-                                                              .toString() ??
-                                                          '',
-                                                      style:
-                                                          GoogleFont.ibmPlexSans(
-                                                            fontSize: 10,
-                                                            color:
-                                                                AppColor.grey,
-                                                          ),
-                                                    ),
-                                                    SizedBox(height: 21),
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                        left: 45.0,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        top: 10,
+                                                        left: 15,
+                                                        right: 70,
+                                                        bottom: 52,
                                                       ),
-                                                      child: InkWell(
-                                                        onTap: () {},
-                                                        child: Image.asset(
-                                                          AppImages
-                                                              .greenButtomArrow,
-                                                          height: 24,
-                                                          width: 23,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        data
+                                                                ?.announcements[3]
+                                                                .message
+                                                                .toString() ??
+                                                            '',
+                                                        style:
+                                                            GoogleFont.ibmPlexSans(
+                                                              fontSize: 12,
+                                                              color:
+                                                                  AppColor
+                                                                      .black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
+                                                      ),
+                                                      SizedBox(height: 5),
+                                                      Text(
+                                                        data
+                                                                ?.announcements[3]
+                                                                .submessage
+                                                                .toString() ??
+                                                            '',
+                                                        style:
+                                                            GoogleFont.ibmPlexSans(
+                                                              fontSize: 10,
+                                                              color:
+                                                                  AppColor.grey,
+                                                            ),
+                                                      ),
+                                                      SizedBox(height: 21),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                              left: 45.0,
+                                                            ),
+                                                        child: InkWell(
+                                                          onTap: () {},
+                                                          child: Image.asset(
+                                                            AppImages
+                                                                .greenButtomArrow,
+                                                            height: 24,
+                                                            width: 23,
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -1829,12 +1884,11 @@ class _HomeScreenState extends State<HomeTab>
                                         Positioned.fill(
                                           child: Image.asset(
                                             AppImages.bag,
-                                            height: 50,
-                                            width: 43.75,
+                                            height: 20,
                                           ),
-                                          top: 90,
-                                          left: 50,
-                                          right: 50,
+                                          top: 120,
+                                          left: 40,
+                                          right: 40,
                                         ),
                                       ],
                                     ),
@@ -1846,140 +1900,170 @@ class _HomeScreenState extends State<HomeTab>
                                 SizedBox(width: 15),
                                 Stack(
                                   children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topRight,
-                                          end: Alignment.centerRight,
-                                          colors: [
-                                            AppColor.blueCG1, // light blue
-                                            AppColor.blueCG2, // cyan
-                                            AppColor.blueCG3, // cyan
-                                          ],
+                                    SizedBox(
+                                      width: 180,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topRight,
+                                            end: Alignment.centerRight,
+                                            colors: [
+                                              AppColor.blueCG1, // light blue
+                                              AppColor.blueCG2, // cyan
+                                              AppColor.blueCG3, // cyan
+                                            ],
+                                          ),
+                                          // border: Border.all(color: Colors.black12),
+                                          // color: AppColor.white,
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
                                         ),
-                                        // border: Border.all(color: Colors.black12),
-                                        // color: AppColor.white,
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 60,
-                                          right: 10,
-                                          left: 10,
-                                          bottom: 8,
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color: AppColor.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                  top: 30,
-                                                  right: 20,
-                                                  left: 15,
-                                                  bottom: 15,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 60,
+                                            right: 10,
+                                            left: 10,
+                                            bottom: 8,
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color: AppColor.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
                                                 ),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(
-                                                      height: 22,
-                                                      width: 58,
-                                                      child: Container(
-                                                        alignment:
-                                                            Alignment.center,
-                                                        decoration: BoxDecoration(
-                                                          color:
-                                                              AppColor
-                                                                  .lightBlue,
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                15,
-                                                              ),
-                                                        ),
-                                                        child: Text(
-                                                          'Jun 11',
-                                                          style:
-                                                              GoogleFont.ibmPlexSans(
-                                                                fontSize: 12,
-                                                                color:
-                                                                    AppColor
-                                                                        .textBlue,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 6),
-                                                    Text(
-                                                      data
-                                                              ?.announcements[4]
-                                                              .message
-                                                              .toString() ??
-                                                          '',
-                                                      style:
-                                                          GoogleFont.ibmPlexSans(
-                                                            fontSize: 18,
-                                                            fontWeight:
-                                                                FontWeight.w600,
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                    top: 30,
+                                                    right: 20,
+                                                    left: 15,
+                                                    bottom: 15,
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              right: 45.0,
+                                                            ),
+                                                        child: Container(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          decoration: BoxDecoration(
                                                             color:
-                                                                AppColor.black,
+                                                                AppColor
+                                                                    .lightBlue,
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  15,
+                                                                ),
                                                           ),
-                                                    ),
-                                                    SizedBox(height: 8),
-                                                    Divider(),
-                                                    SizedBox(height: 6),
-                                                    InkWell(
-                                                      onTap: () {},
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            'Know More',
-                                                            style:
-                                                                GoogleFont.ibmPlexSans(
-                                                                  fontSize: 11,
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets.symmetric(
+                                                                  horizontal: 8,
+                                                                  vertical: 3,
+                                                                ),
+                                                            child: Center(
+                                                              child: Text(
+                                                                formatDate(
+                                                                  data
+                                                                          ?.announcements[4]
+                                                                          .submessage
+                                                                          .toString() ??
+                                                                      '',
+                                                                ),
+                                                                style: GoogleFont.ibmPlexSans(
+                                                                  fontSize: 12,
+                                                                  color:
+                                                                      AppColor
+                                                                          .textBlue,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color:
-                                                                      AppColor
-                                                                          .blueG2,
                                                                 ),
+                                                              ),
+                                                            ),
                                                           ),
-                                                          SizedBox(width: 5),
-                                                          Image.asset(
-                                                            AppImages
-                                                                .rightArrow,
-                                                            height: 7,
-                                                            color:
-                                                                AppColor.blueG2,
-                                                          ),
-                                                        ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                      SizedBox(height: 6),
+                                                      Text(
+                                                        maxLines: 2,
+                                                        overflow:
+                                                            TextOverflow
+                                                                .ellipsis,
+                                                        data
+                                                                ?.announcements[4]
+                                                                .message
+                                                                .toString() ??
+                                                            '',
+                                                        style:
+                                                            GoogleFont.ibmPlexSans(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color:
+                                                                  AppColor
+                                                                      .black,
+                                                            ),
+                                                      ),
+                                                      SizedBox(height: 8),
+                                                      Divider(
+                                                        color:
+                                                            AppColor.lightGrey,
+                                                      ),
+                                                      SizedBox(height: 6),
+                                                      InkWell(
+                                                        onTap: () {},
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              'Know More',
+                                                              style: GoogleFont.ibmPlexSans(
+                                                                fontSize: 11,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    AppColor
+                                                                        .blueG2,
+                                                              ),
+                                                            ),
+                                                            SizedBox(width: 5),
+                                                            Image.asset(
+                                                              AppImages
+                                                                  .rightArrow,
+                                                              height: 7,
+                                                              color:
+                                                                  AppColor
+                                                                      .blueG2,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
                                     Positioned(
                                       child: Image.asset(
                                         AppImages.wallet,
-                                        height: 81,
-                                        width: 67.84,
+                                        height: 95,
                                       ),
-                                      left: 20,
-                                      top: 15,
+                                      left: 18,
+                                      top: 1,
                                     ),
                                   ],
                                 ),
