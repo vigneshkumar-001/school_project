@@ -35,6 +35,7 @@ class FirebaseService {
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
     // Android local notifications init
+
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
     const initSettings = InitializationSettings(android: androidInit);
     await flutterLocalNotificationsPlugin.initialize(initSettings);

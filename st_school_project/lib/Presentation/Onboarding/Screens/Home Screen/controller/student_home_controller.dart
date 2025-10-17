@@ -173,10 +173,10 @@ class StudentHomeController extends GetxController {
             await prefs.setString('token', accessToken);
             AppLogger.log.i("New token saved: $accessToken");
           }
-          // await getStudentHome();
-          // await getSiblingsData();
-          // final teacherListController = Get.find<TeacherListController>();
-          // await teacherListController.teacherListData();
+            await getStudentHome();
+            await getSiblingsData();
+            final teacherListController = Get.find<TeacherListController>();
+            await teacherListController.teacherListData();
           if (showLoader) hidePopupLoader();
           // Optionally clear previous student data
           // studentHomeData.value = null;
