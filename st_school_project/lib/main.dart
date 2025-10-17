@@ -36,7 +36,7 @@ Future<void> main() async {
   // Create and initialize the service
   final firebaseService = FirebaseService();
   await firebaseService.initializeFirebase();
-  await firebaseService.fetchFCMTokenIfNeeded(); // <-- this prints token
+  await firebaseService.fetchFCMTokenIfNeeded();
 
   // (Optional) foreground/opened handlers
   firebaseService.listenToMessages(
