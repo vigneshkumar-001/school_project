@@ -2638,7 +2638,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
             String _txt(Object? v) => v?.toString() ?? '';
             final d = _detailsAd as AnnouncementDetails;
 
-            Future<void> _gotoDelta(int d) async {
+            Future<void> _gotoDelta(int d, BuildContext ctx, StateSetter setSheetState) async {
               final next = _currIndexAd + d;
               if (next < 0 || next >= _orderAd.length) return;
               setSheetState(() => _loadingAd = true);

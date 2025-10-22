@@ -2023,29 +2023,32 @@ class _MoreScreenState extends State<MoreScreen>
                     return const Center(child: CircularProgressIndicator());
 
                   if (data == null || data.items.isEmpty) {
-                    return ListView(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 20,
-                      ),
-                      children: [
-                        const SizedBox(height: 120),
-                        Column(
-                          children: [
-                            Image.asset(AppImages.noDataFound, height: 150),
-                            const SizedBox(height: 10),
-                            Text(
-                              "No fees available",
-                              textAlign: TextAlign.center,
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 16,
-                                color: AppColor.grey,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                    return RefreshIndicator(
+                      onRefresh: () => feesController.feesHistoryList(),
+                      child: ListView(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 20,
                         ),
-                      ],
+                        children: [
+                          const SizedBox(height: 120),
+                          Column(
+                            children: [
+                              Image.asset(AppImages.noDataFound, height: 150),
+                              const SizedBox(height: 10),
+                              Text(
+                                "No fees available",
+                                textAlign: TextAlign.center,
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 16,
+                                  color: AppColor.grey,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     );
                   }
 
