@@ -383,76 +383,76 @@ class _TaskDetailState extends State<TaskDetail> {
                   ),
                 ),
                 SizedBox(height: 20),
-                Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColor.lightGrey,
-                        border: Border.all(
-                          color: AppColor.lowLightBlue,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 7,
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    color: AppColor.grey,
-                                    CupertinoIcons.left_chevron,
-                                    size: 20,
-                                  ),
-                                  SizedBox(width: 20),
-                                  Text(
-                                    'English',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColor.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 30),
-                    OutlinedButton(
-                      onPressed: () {},
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Mathematics',
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.black,
-                              ),
-                            ),
-                            SizedBox(width: 30),
-                            Icon(
-                              color: AppColor.grey,
-                              CupertinoIcons.right_chevron,
-                              size: 20,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     Container(
+                //       decoration: BoxDecoration(
+                //         color: AppColor.lightGrey,
+                //         border: Border.all(
+                //           color: AppColor.lowLightBlue,
+                //           width: 1,
+                //         ),
+                //         borderRadius: BorderRadius.circular(30),
+                //       ),
+                //       child: Row(
+                //         children: [
+                //           IconButton(
+                //             onPressed: () {},
+                //             icon: Padding(
+                //               padding: const EdgeInsets.symmetric(
+                //                 horizontal: 15,
+                //                 vertical: 7,
+                //               ),
+                //               child: Row(
+                //                 children: [
+                //                   Icon(
+                //                     color: AppColor.grey,
+                //                     CupertinoIcons.left_chevron,
+                //                     size: 20,
+                //                   ),
+                //                   SizedBox(width: 20),
+                //                   Text(
+                //                     'English',
+                //                     style: GoogleFont.ibmPlexSans(
+                //                       fontSize: 14,
+                //                       fontWeight: FontWeight.w600,
+                //                       color: AppColor.grey,
+                //                     ),
+                //                   ),
+                //                 ],
+                //               ),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //     SizedBox(width: 30),
+                //     OutlinedButton(
+                //       onPressed: () {},
+                //       child: Padding(
+                //         padding: const EdgeInsets.symmetric(vertical: 14),
+                //         child: Row(
+                //           children: [
+                //             Text(
+                //               'Mathematics',
+                //               style: GoogleFont.ibmPlexSans(
+                //                 fontSize: 14,
+                //                 fontWeight: FontWeight.w600,
+                //                 color: AppColor.black,
+                //               ),
+                //             ),
+                //             SizedBox(width: 30),
+                //             Icon(
+                //               color: AppColor.grey,
+                //               CupertinoIcons.right_chevron,
+                //               size: 20,
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           );

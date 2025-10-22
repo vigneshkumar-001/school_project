@@ -218,14 +218,14 @@ class _SplashScreenState extends State<SplashScreen>
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 12),
+                SizedBox(height: 12),
 
               Text(
                 "A new version of the app is available. Please update to continue.",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.ibmPlexSans(fontSize: 14),
               ),
-              const SizedBox(height: 24),
+                SizedBox(height: 24),
               AppButton.button(
                 text: 'Update Now',
                 onTap: () {

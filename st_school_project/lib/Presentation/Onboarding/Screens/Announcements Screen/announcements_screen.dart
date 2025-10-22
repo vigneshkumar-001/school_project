@@ -3284,8 +3284,67 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
               ),
             );
           }
-
           return RefreshIndicator(
+            onRefresh: () async => controller.getAnnouncement(),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
+                  ),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: Text(
+                              'Announcements',
+                              style: GoogleFont.ibmPlexSans(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 26,
+                                color: AppColor.black,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Column(
+                            children: data.items.map((item) {
+                              final formattedDate =
+                              DateFormat("dd-MMM-yy").format(item.notifyDate);
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 16),
+                                child: CustomContainer.announcementsScreen(
+                                  mainText: item.announcementCategory,
+                                  backRoundImage: item.image,
+                                  iconData: CupertinoIcons.clock_fill,
+                                  additionalText1: "Date",
+                                  additionalText2: formattedDate,
+                                  verticalPadding: 12,
+                                  gradientStartColor: AppColor.black.withOpacity(0.01),
+                                  gradientEndColor: AppColor.black,
+                                  onDetailsTap: () => _openById(
+                                    context,
+                                    item.id,
+                                    forceType: item.type,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+
+
+          /*return RefreshIndicator(
             onRefresh: () async => controller.getAnnouncement(),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(
@@ -3340,7 +3399,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                 ),
               ),
             ),
-          );
+          );*/
         }),
       ),
     );
