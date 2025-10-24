@@ -102,13 +102,13 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
 
                 // Title
                 CustomTextField.textWith600(
-                  text: 'Required Photo Copies',
+                  text: 'Required Xerox Copies',
                   fontSize: 26,
                 ),
                 const SizedBox(height: 10),
                 CustomTextField.textWithSmall(
                   text:
-                      'Required Photo copies of the certificates to be attached with the downloaded application form',
+                      'Required Xerox copies of the certificates to be attached with the downloaded application form',
                   color: AppColor.grey,
                   fontSize: 14,
                 ),

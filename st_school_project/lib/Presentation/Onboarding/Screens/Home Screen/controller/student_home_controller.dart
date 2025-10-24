@@ -5,7 +5,6 @@ import 'package:st_school_project/Core/Utility/snack_bar.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:st_school_project/Presentation/splash_screen.dart';
-
 import '../../../../../../api/data_source/apiDataSource.dart';
 import '../../../../../Core/Utility/app_color.dart';
 import '../../More Screen/profile_screen/controller/teacher_list_controller.dart';

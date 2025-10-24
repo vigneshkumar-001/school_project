@@ -232,10 +232,9 @@ class _MoreScreenState extends State<MoreScreen>
     }
   }
 
-  int? _consumedReceiptPlanId;         // which planId we've already shown a receipt for
-  bool _isShowingReceipt = false;      // in-flight guard
-  Future<void>? _receiptModalFuture;   // the active bottom-sheet future (if any)
-
+  int? _consumedReceiptPlanId; // which planId we've already shown a receipt for
+  bool _isShowingReceipt = false; // in-flight guard
+  Future<void>? _receiptModalFuture; // the active bottom-sheet future (if any)
 
   bool _receiptOpened = false; // 👈 guard so we open only once
 
@@ -255,7 +254,7 @@ class _MoreScreenState extends State<MoreScreen>
       }
       await _maybeShowReceipt();
       // open receipt only if navigated here after final payment
-    /*  final id = widget.openReceiptForPlanId;
+      /*  final id = widget.openReceiptForPlanId;
       if (id != null && !_receiptOpened && mounted) {
         _receiptOpened = true;                 // 👈 prevent duplicates
         await _paymentReceipt(context, id);    // 👈 show the bottom sheet
@@ -271,11 +270,10 @@ class _MoreScreenState extends State<MoreScreen>
     if (widget.openReceiptForPlanId != oldWidget.openReceiptForPlanId) {
       _consumedReceiptPlanId = null; // reset so the new id can trigger once
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _maybeShowReceipt();          // helper handles all guards + awaiting
+        _maybeShowReceipt(); // helper handles all guards + awaiting
       });
     }
   }
-
 
   static bool _gReceiptBusy = false;
   static int? _gLastOpenedId;
@@ -314,8 +312,6 @@ class _MoreScreenState extends State<MoreScreen>
       // keep _gLastOpenedId as last opened to avoid immediate re-open on rebuilds
     }
   }
-
-
 
   /*  @override
   void initState() {
@@ -1070,7 +1066,6 @@ class _MoreScreenState extends State<MoreScreen>
                                       ),
                                     ),
                                   ),
-
                           ],
                         ),
                       );
@@ -1667,17 +1662,19 @@ class _MoreScreenState extends State<MoreScreen>
   }*/
 
   Future<void> _paymentReceipt(BuildContext context, int planId) async {
-    final planData = await announcementController.getStudentPaymentPlan(id: planId);
+    final planData = await announcementController.getStudentPaymentPlan(
+      id: planId,
+    );
     if (planData == null || planData.items.isEmpty) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No data found for plan $planId")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("No data found for plan $planId")));
       return;
     }
 
     final plan = planData.items.firstWhere(
-          (p) => p.planId == planId,
+      (p) => p.planId == planId,
       orElse: () => planData.items.first,
     );
 
@@ -1685,7 +1682,7 @@ class _MoreScreenState extends State<MoreScreen>
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useRootNavigator: true,            // helps avoid nested navigator dupes
+      useRootNavigator: true, // helps avoid nested navigator dupes
       backgroundColor: Colors.transparent,
       builder: (_) {
         return DraggableScrollableSheet(
@@ -1697,7 +1694,9 @@ class _MoreScreenState extends State<MoreScreen>
             return Container(
               decoration: BoxDecoration(
                 color: AppColor.white,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
               ),
               child: ListView(
                 controller: scrollController,
@@ -1705,7 +1704,8 @@ class _MoreScreenState extends State<MoreScreen>
                 children: [
                   Center(
                     child: Container(
-                      height: 4, width: 40,
+                      height: 4,
+                      width: 40,
                       decoration: BoxDecoration(
                         color: AppColor.grayop,
                         borderRadius: BorderRadius.circular(2),
@@ -1737,7 +1737,11 @@ class _MoreScreenState extends State<MoreScreen>
                       const SizedBox(height: 34),
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 35.0),
-                        child: DottedLine(dashColor: AppColor.grayop, dashGapLength: 6, dashLength: 7),
+                        child: DottedLine(
+                          dashColor: AppColor.grayop,
+                          dashGapLength: 6,
+                          dashLength: 7,
+                        ),
                       ),
                       const SizedBox(height: 40),
 
@@ -1746,7 +1750,8 @@ class _MoreScreenState extends State<MoreScreen>
                           Positioned.fill(
                             child: Image.asset(
                               AppImages.examResultBCImage,
-                              height: 250, width: 280,
+                              height: 250,
+                              width: 280,
                             ),
                           ),
                           Column(
@@ -1761,22 +1766,37 @@ class _MoreScreenState extends State<MoreScreen>
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(17.0),
-                                      child: Image.asset(AppImages.receiptNo, height: 24),
+                                      child: Image.asset(
+                                        AppImages.receiptNo,
+                                        height: 24,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 15),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Text('Receipt No',
-                                            style: GoogleFont.ibmPlexSans(
-                                                fontWeight: FontWeight.w500, fontSize: 14, color: AppColor.grey)),
+                                        Text(
+                                          'Receipt No',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14,
+                                            color: AppColor.grey,
+                                          ),
+                                        ),
                                         const SizedBox(height: 5),
                                         Text(
-                                          plan.items.map((e) => e.receiptNo).whereType<String>().join(', '),
+                                          plan.items
+                                              .map((e) => e.receiptNo)
+                                              .whereType<String>()
+                                              .join(', '),
                                           style: GoogleFont.ibmPlexSans(
-                                              fontWeight: FontWeight.w500, fontSize: 20, color: AppColor.black),
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 20,
+                                            color: AppColor.black,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -1795,23 +1815,36 @@ class _MoreScreenState extends State<MoreScreen>
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(17.0),
-                                      child: Image.asset(AppImages.admissionNo, height: 24),
+                                      child: Image.asset(
+                                        AppImages.admissionNo,
+                                        height: 24,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 15),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text('Admission No',
-                                          style: GoogleFont.ibmPlexSans(
-                                              fontWeight: FontWeight.w500, fontSize: 14, color: AppColor.grey)),
+                                      Text(
+                                        'Admission No',
+                                        style: GoogleFont.ibmPlexSans(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 14,
+                                          color: AppColor.grey,
+                                        ),
+                                      ),
                                       const SizedBox(height: 5),
                                       Text(
                                         plan.items.isNotEmpty
-                                            ? (plan.items[0].admissionNo ?? '').toString()
+                                            ? (plan.items[0].admissionNo ?? '')
+                                                .toString()
                                             : '',
                                         style: GoogleFont.ibmPlexSans(
-                                            fontWeight: FontWeight.w500, fontSize: 20, color: AppColor.black),
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 20,
+                                          color: AppColor.black,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -1829,25 +1862,42 @@ class _MoreScreenState extends State<MoreScreen>
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(17.0),
-                                      child: Image.asset(AppImages.timeImage, height: 24),
+                                      child: Image.asset(
+                                        AppImages.timeImage,
+                                        height: 24,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 15),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Text('Time',
-                                            style: GoogleFont.ibmPlexSans(
-                                                fontWeight: FontWeight.w500, fontSize: 14, color: AppColor.grey)),
+                                        Text(
+                                          'Time',
+                                          style: GoogleFont.ibmPlexSans(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14,
+                                            color: AppColor.grey,
+                                          ),
+                                        ),
                                         const SizedBox(height: 5),
                                         Text(
                                           plan.items
                                               .where((e) => e.paidAt != null)
-                                              .map((e) => DateAndTimeConvert.timeAndDate(e.paidAt.toString()))
+                                              .map(
+                                                (e) =>
+                                                    DateAndTimeConvert.timeAndDate(
+                                                      e.paidAt.toString(),
+                                                    ),
+                                              )
                                               .join(', '),
                                           style: GoogleFont.ibmPlexSans(
-                                              fontWeight: FontWeight.w500, fontSize: 20, color: AppColor.black),
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 20,
+                                            color: AppColor.black,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -1862,25 +1912,40 @@ class _MoreScreenState extends State<MoreScreen>
                       const SizedBox(height: 40),
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 35.0),
-                        child: DottedLine(dashColor: AppColor.grayop, dashGapLength: 6, dashLength: 7),
+                        child: DottedLine(
+                          dashColor: AppColor.grayop,
+                          dashGapLength: 6,
+                          dashLength: 7,
+                        ),
                       ),
                       const SizedBox(height: 40),
 
                       GestureDetector(
-                        onTap: () async => _downloadAndOpenPdf(plan.combinedDownloadUrl),
+                        onTap:
+                            () async =>
+                                _downloadAndOpenPdf(plan.combinedDownloadUrl),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 27),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 27,
+                              ),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: AppColor.blue, width: 1),
+                                border: Border.all(
+                                  color: AppColor.blue,
+                                  width: 1,
+                                ),
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Image.asset(AppImages.downloadImage, height: 20),
+                                  Image.asset(
+                                    AppImages.downloadImage,
+                                    height: 20,
+                                  ),
                                   const SizedBox(width: 10),
                                   CustomTextField.textWithSmall(
                                     text: 'Download Receipt',
@@ -1902,7 +1967,6 @@ class _MoreScreenState extends State<MoreScreen>
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -2023,29 +2087,32 @@ class _MoreScreenState extends State<MoreScreen>
                     return const Center(child: CircularProgressIndicator());
 
                   if (data == null || data.items.isEmpty) {
-                    return ListView(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 20,
-                      ),
-                      children: [
-                        const SizedBox(height: 120),
-                        Column(
-                          children: [
-                            Image.asset(AppImages.noDataFound, height: 150),
-                            const SizedBox(height: 10),
-                            Text(
-                              "No fees available",
-                              textAlign: TextAlign.center,
-                              style: GoogleFont.ibmPlexSans(
-                                fontSize: 16,
-                                color: AppColor.grey,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                    return RefreshIndicator(
+                      onRefresh: () => feesController.feesHistoryList(),
+                      child: ListView(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 20,
                         ),
-                      ],
+                        children: [
+                          const SizedBox(height: 120),
+                          Column(
+                            children: [
+                              Image.asset(AppImages.noDataFound, height: 150),
+                              const SizedBox(height: 10),
+                              Text(
+                                "No fees available",
+                                textAlign: TextAlign.center,
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 16,
+                                  color: AppColor.grey,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     );
                   }
 
