@@ -57,7 +57,6 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Delay navigation/check until animation finishes
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _checkAppVersion();
