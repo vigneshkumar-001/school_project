@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:st_school_project/Core/Widgets/consents.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter/material.dart';
 
 class PaymentWebView extends StatefulWidget {
   final String url;
@@ -11,6 +13,7 @@ class PaymentWebView extends StatefulWidget {
 
 class _PaymentWebViewState extends State<PaymentWebView> {
   late final WebViewController _controller;
+
   @override
   void initState() {
     super.initState();
@@ -20,16 +23,44 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
           ..setNavigationDelegate(
             NavigationDelegate(
-              onNavigationRequest: (request) {
-                print("Navigating to: ${request.url}");
+              onNavigationRequest: (request) async {
+                final url = request.url;
+                AppLogger.log.i("Navigating to: $url");
 
-                final uri = Uri.parse(request.url);
+                if (url.startsWith("upi://") || url.startsWith("intent://")) {
+                  try {
+                    String finalUrl = url;
 
-                // ✅ Payment Success
-                if (request.url.startsWith(
+                    // Convert intent:// to upi:// if needed
+                    if (url.startsWith("intent://")) {
+                      finalUrl = url.replaceFirst("intent://", "upi://");
+                    }
+
+                    final uri = Uri.parse(finalUrl);
+                    AppLogger.log.i("Launching UPI intent: $finalUrl");
+
+                    if (await canLaunchUrl(uri)) {
+                      await launchUrl(
+                        uri,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    } else {
+                      AppLogger.log.e("No app can handle: $finalUrl");
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('No UPI app found!')),
+                      );
+                    }
+                  } catch (e) {
+                    AppLogger.log.e("Error launching UPI intent: $e");
+                  }
+
+                  return NavigationDecision.prevent;
+                }
+
+                if (url.startsWith(
                   "https://backend.stjosephmatricschool.com/payment/success",
-                  //    'https://school-back-end-594f59bea6cb.herokuapp.com',
                 )) {
+                  final uri = Uri.parse(url);
                   final orderId = uri.queryParameters["orderId"];
                   final tid = uri.queryParameters["tid"];
                   Navigator.pop(context, {
@@ -40,11 +71,10 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                   return NavigationDecision.prevent;
                 }
 
-                // ❌ Payment Failure
-                if (request.url.startsWith(
+                if (url.startsWith(
                   "https://backend.stjosephmatricschool.com/payment/failure",
-                  // 'https://school-back-end-594f59bea6cb.herokuapp.com',
                 )) {
+                  final uri = Uri.parse(url);
                   final orderId = uri.queryParameters["orderId"];
                   final reason = uri.queryParameters["reason"];
                   Navigator.pop(context, {
@@ -62,25 +92,6 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           ..loadRequest(Uri.parse(widget.url));
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _controller = WebViewController()
-  //     ..setJavaScriptMode(JavaScriptMode.unrestricted)
-  //     ..setNavigationDelegate(
-  //       NavigationDelegate(
-  //         onPageFinished: (url) {
-  //           print("Page finished loading: $url");
-  //           if (url.contains("payment-success")) {
-  //             // Payment completed
-  //             Navigator.pop(context, true); // Return success
-  //           }
-  //         },
-  //       ),
-  //     )
-  //     ..loadRequest(Uri.parse(widget.url));
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,3 +100,95 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     );
   }
 }
+
+// import 'package:flutter/material.dart';
+// import 'package:webview_flutter/webview_flutter.dart';
+//
+// class PaymentWebView extends StatefulWidget {
+//   final String url;
+//   const PaymentWebView({super.key, required this.url});
+//
+//   @override
+//   State<PaymentWebView> createState() => _PaymentWebViewState();
+// }
+//
+// class _PaymentWebViewState extends State<PaymentWebView> {
+//   late final WebViewController _controller;
+//   @override
+//   void initState() {
+//     super.initState();
+//
+//     _controller =
+//         WebViewController()
+//           ..setJavaScriptMode(JavaScriptMode.unrestricted)
+//           ..setNavigationDelegate(
+//             NavigationDelegate(
+//               onNavigationRequest: (request) {
+//                 print("Navigating to: ${request.url}");
+//
+//                 final uri = Uri.parse(request.url);
+//
+//                 // ✅ Payment Success
+//                 if (request.url.startsWith(
+//                   "https://backend.stjosephmatricschool.com/payment/success",
+//                   //    'https://school-back-end-594f59bea6cb.herokuapp.com',
+//                 )) {
+//                   final orderId = uri.queryParameters["orderId"];
+//                   final tid = uri.queryParameters["tid"];
+//                   Navigator.pop(context, {
+//                     "status": "success",
+//                     "orderId": orderId,
+//                     "tid": tid,
+//                   });
+//                   return NavigationDecision.prevent;
+//                 }
+//
+//                 // ❌ Payment Failure
+//                 if (request.url.startsWith(
+//                   "https://backend.stjosephmatricschool.com/payment/failure",
+//                   // 'https://school-back-end-594f59bea6cb.herokuapp.com',
+//                 )) {
+//                   final orderId = uri.queryParameters["orderId"];
+//                   final reason = uri.queryParameters["reason"];
+//                   Navigator.pop(context, {
+//                     "status": "failure",
+//                     "orderId": orderId,
+//                     "reason": reason,
+//                   });
+//                   return NavigationDecision.prevent;
+//                 }
+//
+//                 return NavigationDecision.navigate;
+//               },
+//             ),
+//           )
+//           ..loadRequest(Uri.parse(widget.url));
+//   }
+//
+//   // @override
+//   // void initState() {
+//   //   super.initState();
+//   //   _controller = WebViewController()
+//   //     ..setJavaScriptMode(JavaScriptMode.unrestricted)
+//   //     ..setNavigationDelegate(
+//   //       NavigationDelegate(
+//   //         onPageFinished: (url) {
+//   //           print("Page finished loading: $url");
+//   //           if (url.contains("payment-success")) {
+//   //             // Payment completed
+//   //             Navigator.pop(context, true); // Return success
+//   //           }
+//   //         },
+//   //       ),
+//   //     )
+//   //     ..loadRequest(Uri.parse(widget.url));
+//   // }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text("Payment")),
+//       body: WebViewWidget(controller: _controller),
+//     );
+//   }
+// }
