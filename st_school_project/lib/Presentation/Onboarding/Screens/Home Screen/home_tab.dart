@@ -1960,7 +1960,7 @@ class _HomeScreenState extends State<HomeTab>
                                                                     .lightBlue,
                                                             borderRadius:
                                                                 BorderRadius.circular(
-                                                                  15,
+                                                                  12,
                                                                 ),
                                                           ),
                                                           child: Padding(
