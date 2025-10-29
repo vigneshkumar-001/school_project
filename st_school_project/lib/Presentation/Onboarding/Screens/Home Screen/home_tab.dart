@@ -1921,7 +1921,7 @@ class _HomeScreenState extends State<HomeTab>
                                         ),
                                         child: Padding(
                                           padding: const EdgeInsets.only(
-                                            top: 60,
+                                            top: 75,
                                             right: 10,
                                             left: 10,
                                             bottom: 8,
@@ -1936,7 +1936,7 @@ class _HomeScreenState extends State<HomeTab>
                                                 ),
                                                 child: Padding(
                                                   padding: EdgeInsets.only(
-                                                    top: 30,
+                                                    top: 40,
                                                     right: 20,
                                                     left: 15,
                                                     bottom: 15,
@@ -2060,10 +2060,10 @@ class _HomeScreenState extends State<HomeTab>
                                     Positioned(
                                       child: Image.asset(
                                         AppImages.wallet,
-                                        height: 95,
+                                        height: 105,
                                       ),
                                       left: 18,
-                                      top: 1,
+                                      top: 22,
                                     ),
                                   ],
                                 ),
