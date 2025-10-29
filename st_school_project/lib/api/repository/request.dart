@@ -43,7 +43,7 @@ class Request {
             return handler.reject(error);
           } else if (error.response?.statusCode == '406' ||
               error.response?.statusCode == '401') {
-            // Unauthorized user navigate to login page
+
 
             return handler.reject(error);
           } else if (error.response?.statusCode == '429') {
