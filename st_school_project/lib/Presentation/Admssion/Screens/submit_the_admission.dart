@@ -37,29 +37,32 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
               children: [
                 Row(
                   children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColor.lightGrey,
-                          border: Border.all(
-                            color: AppColor.lowLightBlue,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Image.asset(
-                            AppImages.leftArrow,
-                            height: 20,
-                            width: 20,
-                          ),
-                        ),
-                      ),
+                    CustomContainer.leftSaitArrow(
+                      onTap: () => Navigator.pop(context),
                     ),
+                    // InkWell(
+                    //   onTap: () {
+                    //     Navigator.pop(context);
+                    //   },
+                    //   child: Container(
+                    //     decoration: BoxDecoration(
+                    //       color: AppColor.lightGrey,
+                    //       border: Border.all(
+                    //         color: AppColor.lowLightBlue,
+                    //         width: 1,
+                    //       ),
+                    //       borderRadius: BorderRadius.circular(30),
+                    //     ),
+                    //     child: Padding(
+                    //       padding: const EdgeInsets.all(10),
+                    //       child: Image.asset(
+                    //         AppImages.leftArrow,
+                    //         height: 20,
+                    //         width: 20,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(width: 15),
                     Text(
                       '2025 - 2026 LKG Admission',

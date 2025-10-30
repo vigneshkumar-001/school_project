@@ -62,22 +62,25 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
                 // Top Header
                 Row(
                   children: [
-                    InkWell(
+                    CustomContainer.leftSaitArrow(
                       onTap: () => Navigator.pop(context),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColor.lightGrey,
-                          border: Border.all(color: AppColor.lowLightBlue),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        padding: const EdgeInsets.all(10),
-                        child: Image.asset(
-                          AppImages.leftArrow,
-                          height: 12,
-                          width: 12,
-                        ),
-                      ),
                     ),
+                    // InkWell(
+                    //   onTap: () => Navigator.pop(context),
+                    //   child: Container(
+                    //     decoration: BoxDecoration(
+                    //       color: AppColor.lightGrey,
+                    //       border: Border.all(color: AppColor.lowLightBlue),
+                    //       borderRadius: BorderRadius.circular(30),
+                    //     ),
+                    //     padding: const EdgeInsets.all(10),
+                    //     child: Image.asset(
+                    //       AppImages.leftArrow,
+                    //       height: 12,
+                    //       width: 12,
+                    //     ),
+                    //   ),
+                    // ),
                     const SizedBox(width: 15),
                     Text(
                       '2025 - 2026 LKG Admission',

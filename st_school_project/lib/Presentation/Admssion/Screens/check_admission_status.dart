@@ -306,28 +306,8 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColor.lightGrey,
-                        border: Border.all(
-                          color: AppColor.lowLightBlue,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Image.asset(
-                          AppImages.leftArrow,
-                          height: 20,
-                          width: 20,
-                        ),
-                      ),
-                    ),
+                  CustomContainer.leftSaitArrow(
+                    onTap: () => Navigator.pop(context),
                   ),
                   SizedBox(height: 33),
                   Text(
@@ -432,19 +412,19 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                     subtext2: '25 Jul 2025',
                     iconText: 'Rejected',
                   ),
-                  SizedBox(height: 30),
-                  AppButton.button(
-                    text: 'Home Page',
-                    onTap: () {
-                      HapticFeedback.heavyImpact();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CommonBottomNavigation(),
-                        ),
-                      );
-                    },
-                  ),
+                  // SizedBox(height: 30),
+                  // AppButton.button(
+                  //   text: 'Home Page',
+                  //   onTap: () {
+                  //     HapticFeedback.heavyImpact();
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => CommonBottomNavigation(),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
                 ],
               ),
             ),

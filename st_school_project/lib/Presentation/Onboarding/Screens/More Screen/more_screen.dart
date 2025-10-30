@@ -2027,9 +2027,11 @@ class _MoreScreenState extends State<MoreScreen>
                     pinned: true,
                     elevation: 0,
                     backgroundColor: Colors.white,
+                    surfaceTintColor: Colors.white,
                     automaticallyImplyLeading: false,
-                    toolbarHeight: 80,
+                    toolbarHeight: 50,
                     titleSpacing: 0,
+                    flexibleSpace: Container(color: Colors.white),
                     title: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 0),
                       child: Row(
@@ -2130,7 +2132,7 @@ class _MoreScreenState extends State<MoreScreen>
                           onDetailsTap:
                               () => _paymentReceipt(context, plan.planId),
                           termTitle: plan.name ?? '',
-                          timeDate: plan.announcementDate ?? '',
+                          timeDate: plan.dueDate ?? '',
                           amount: "Rs. ${plan.summary.totalAmount}",
                           isPaid: plan.summary.unpaidCount == 0,
                           payNowButton: () => _feessSheet(context, plan),
