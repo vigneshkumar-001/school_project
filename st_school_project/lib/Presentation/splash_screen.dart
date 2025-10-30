@@ -131,7 +131,6 @@ class _SplashScreenState extends State<SplashScreen>
     final token = prefs.getString('token');
 
     if (token != null && token.isNotEmpty) {
-
       await loginController.checkTokenExpire();
 
       // After token check & loading data → navigate to Home
@@ -217,14 +216,14 @@ class _SplashScreenState extends State<SplashScreen>
                   fontWeight: FontWeight.bold,
                 ),
               ),
-                SizedBox(height: 12),
+              SizedBox(height: 12),
 
               Text(
                 "A new version of the app is available. Please update to continue.",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.ibmPlexSans(fontSize: 14),
               ),
-                SizedBox(height: 24),
+              SizedBox(height: 24),
               AppButton.button(
                 text: 'Update Now',
                 onTap: () {
