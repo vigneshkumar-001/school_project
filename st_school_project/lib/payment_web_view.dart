@@ -84,7 +84,19 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                   });
                   return NavigationDecision.prevent;
                 }
-
+                if (url.startsWith(
+                  "https://backend.stjosephmatricschool.com/payment/cancelled",
+                )) {
+                  final uri = Uri.parse(url);
+                  final orderId = uri.queryParameters["orderId"];
+                  final reason = uri.queryParameters["reason"];
+                  Navigator.pop(context, {
+                    "status": "failure",
+                    "orderId": orderId,
+                    "reason": reason,
+                  });
+                  return NavigationDecision.prevent;
+                }
                 return NavigationDecision.navigate;
               },
             ),

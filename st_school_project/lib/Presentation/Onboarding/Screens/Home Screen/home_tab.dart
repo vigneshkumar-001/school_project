@@ -23,6 +23,7 @@ import '../Attendence Screen/attendence_screen.dart';
 import 'package:get/get.dart';
 
 import '../More Screen/Quiz Screen/controller/quiz_controller.dart';
+import '../More Screen/more_screen.dart';
 import '../More Screen/profile_screen/controller/teacher_list_controller.dart';
 import '../More Screen/quiz_result.dart';
 import '../More Screen/quiz_screen.dart';
@@ -1810,7 +1811,7 @@ class _HomeScreenState extends State<HomeTab>
                                                       const EdgeInsets.only(
                                                         top: 10,
                                                         left: 15,
-                                                        right: 70,
+                                                        right: 62,
                                                         bottom: 52,
                                                       ),
                                                   child: Column(
@@ -1853,7 +1854,7 @@ class _HomeScreenState extends State<HomeTab>
                                                       Padding(
                                                         padding:
                                                             EdgeInsets.only(
-                                                              left: 45.0,
+                                                              left: 53.0,
                                                             ),
                                                         child: InkWell(
                                                           onTap: () {},
@@ -1887,8 +1888,8 @@ class _HomeScreenState extends State<HomeTab>
                                             height: 20,
                                           ),
                                           top: 120,
-                                          left: 40,
-                                          right: 40,
+                                          left: 45,
+                                          right: 45,
                                         ),
                                       ],
                                     ),
@@ -1932,7 +1933,7 @@ class _HomeScreenState extends State<HomeTab>
                                                 decoration: BoxDecoration(
                                                   color: AppColor.white,
                                                   borderRadius:
-                                                      BorderRadius.circular(10),
+                                                      BorderRadius.circular(7),
                                                 ),
                                                 child: Padding(
                                                   padding: EdgeInsets.only(
@@ -2021,7 +2022,20 @@ class _HomeScreenState extends State<HomeTab>
                                                       ),
                                                       SizedBox(height: 6),
                                                       InkWell(
-                                                        onTap: () {},
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder:
+                                                                  (
+                                                                    context,
+                                                                  ) => CommonBottomNavigation(
+                                                                    initialIndex:
+                                                                        4,
+                                                                  ),
+                                                            ),
+                                                          );
+                                                        },
                                                         child: Row(
                                                           children: [
                                                             Text(
@@ -2060,10 +2074,10 @@ class _HomeScreenState extends State<HomeTab>
                                     Positioned(
                                       child: Image.asset(
                                         AppImages.wallet,
-                                        height: 105,
+                                        height: 107,
                                       ),
                                       left: 18,
-                                      top: 22,
+                                      top: 16,
                                     ),
                                   ],
                                 ),
