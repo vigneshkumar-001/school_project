@@ -14,11 +14,18 @@ class ClassSectionResponse {
   factory ClassSectionResponse.fromJson(Map<String, dynamic> json) {
     final parsedData = <String, List<String>>{};
 
-    //  API returns a Map<String, dynamic>
-    if (json['data'] is Map<String, dynamic>) {
-      (json['data'] as Map<String, dynamic>).forEach((key, value) {
-        parsedData[key] = List<String>.from(value.map((e) => e.toString()));
-      });
+    final rawData = json['data'];
+
+    if (rawData is Map<String, dynamic>) {
+      final content = rawData['classSection'] ?? rawData;
+
+      if (content is Map<String, dynamic>) {
+        content.forEach((key, value) {
+          if (value is List) {
+            parsedData[key] = value.map((e) => e.toString()).toList();
+          }
+        });
+      }
     }
 
     return ClassSectionResponse(

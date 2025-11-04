@@ -319,7 +319,7 @@ class AdmissionController extends GetxController {
         },
         (response) async {
           isLoading.value = false;
-          religionCasteData.value = response.data; // ✅ Correct
+          religionCasteData.value = response.data; //  Correct
           AppLogger.log.i("Fetched dropdowns successfully");
         },
       );
