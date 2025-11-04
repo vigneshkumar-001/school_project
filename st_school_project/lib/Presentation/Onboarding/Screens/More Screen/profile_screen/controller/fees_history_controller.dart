@@ -22,7 +22,7 @@ class FeesHistoryController extends GetxController {
   RxBool isOtpLoading = false.obs;
   ApiDataSource apiDataSource = ApiDataSource();
 
-  var feesData = Rxn<FeePlansData>(); // holds the full object
+  var feesData = Rxn<FeePlansData>();
 
   @override
   void onInit() {
