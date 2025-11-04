@@ -6,6 +6,7 @@ import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/parents_info_screen.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'Core/Firebase_service/firebase_service.dart';
+import 'Presentation/Admssion/Screens/admission_1.dart';
 import 'Presentation/Admssion/Screens/student_info_screen.dart';
 import 'Presentation/Onboarding/Screens/Home Screen/home_screen.dart';
 import 'Presentation/splash_screen.dart';
@@ -72,7 +73,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: AppColor.white),
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: Admission1(),
     );
   }
 }

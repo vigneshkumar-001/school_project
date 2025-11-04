@@ -12,6 +12,7 @@ class ApiUrl {
   static String logout = '$baseUrl/notifications/students/unregister';
   static String changePhoneNumber = '$baseUrl/student/change-phone/request';
   static String verifyOtp = '$baseUrl/student-auth/verify-otp';
+  static String resendOtp = '$baseUrl/student-auth/resend-otp';
   static String expireTokenCheck = '$baseUrl/auth-token/refresh-if-expired';
   static String changePhoneVerify = '$baseUrl/student/change-phone/verify';
   static String studentHome = '$baseUrl/student-home';
@@ -22,6 +23,10 @@ class ApiUrl {
   static String reactMessage = '$baseUrl/student-messages/create';
   static String notifications = '$baseUrl/notifications/students/register';
   static String profileImage = '$baseUrl/student-home/profiles/profile-image-url';
+  static String getAdmission = '$baseUrl/admissions/visible';
+  static String studentDropDown = '$baseUrl/admissions/meta';
+  static String levelClassSection = '$baseUrl/admin/class/map/levels-to-sections';
+
 
   static String examDetails({required int examId}) {
     return '$baseUrl/student-exams/$examId/details';
@@ -76,5 +81,24 @@ class ApiUrl {
 
   static String getStudentPaymentPlan({required int id}) {
     return '$baseUrl/student-payments/plan/$id';
+  }
+
+  static String admission1NextButton({required int id}) {
+    return '$baseUrl/admissions/$id/start';
+  }
+
+  static String studentInfo({required int id}) {
+    return '$baseUrl/admissions/apps/$id/step1';
+  }
+
+  static String parentsInfo({required int id}) {
+    return '$baseUrl/admissions/apps/$id/step2';
+  }
+
+  static String postAdmissionStart({required int id}) {
+    return '$baseUrl/admissions/$id/start';
+  }
+  static String sistersInfo({required int id}) {
+    return '$baseUrl/admissions/apps/$id/step3';
   }
 }
