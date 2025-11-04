@@ -1704,4 +1704,28 @@ class CustomContainer {
       ),
     );
   }
+
+  static horizonalDivider() {
+    return Container(
+      width: double.infinity,
+      height: 2,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.centerRight,
+          end: Alignment.centerLeft,
+          colors: [
+            AppColor.white.withOpacity(0.5),
+            AppColor.white3,
+            AppColor.white3,
+            AppColor.white3,
+            AppColor.white3,
+            AppColor.white3,
+            AppColor.white3,
+            AppColor.white.withOpacity(0.5),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(1),
+      ),
+    );
+  }
 }

@@ -3425,8 +3425,8 @@ class _TaskScreenState extends State<TaskScreen>
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        const SizedBox(width: 4),
-                                        const Icon(
+                                          SizedBox(width: 4),
+                                          Icon(
                                           Icons.keyboard_arrow_down,
                                           color: Colors.white,
                                         ),
@@ -3436,7 +3436,7 @@ class _TaskScreenState extends State<TaskScreen>
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 20),
+                              SizedBox(height: 20),
 
                             // Horizontal date strip
                             SizedBox(
@@ -3784,7 +3784,7 @@ class _TaskScreenState extends State<TaskScreen>
                                       },
                                       child: Text(
                                         subject,
-                                        style: TextStyle(
+                                        style: GoogleFont.ibmPlexSans(
                                           color:
                                               isSelected
                                                   ? AppColor.black

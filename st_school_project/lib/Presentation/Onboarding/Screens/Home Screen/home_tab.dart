@@ -1306,7 +1306,7 @@ class _HomeScreenState extends State<HomeTab>
                                         ),
                                         child: Padding(
                                           padding: const EdgeInsets.only(
-                                            top: 62,
+                                            top: 47,
                                             right: 8,
                                             left: 8,
                                             bottom: 8,
@@ -1324,7 +1324,7 @@ class _HomeScreenState extends State<HomeTab>
                                                     top: 26,
                                                     right: 20,
                                                     left: 15,
-                                                    bottom: 20,
+                                                    bottom: 10,
                                                   ),
                                                   child: Column(
                                                     crossAxisAlignment:
@@ -1429,7 +1429,7 @@ class _HomeScreenState extends State<HomeTab>
                                         width: 77.31,
                                       ),
                                       left: 20,
-                                      top: 26,
+                                      top: 12,
                                     ),
                                   ],
                                 ),
@@ -1922,7 +1922,7 @@ class _HomeScreenState extends State<HomeTab>
                                         ),
                                         child: Padding(
                                           padding: const EdgeInsets.only(
-                                            top: 75,
+                                            top: 67,
                                             right: 10,
                                             left: 10,
                                             bottom: 8,
@@ -1940,7 +1940,7 @@ class _HomeScreenState extends State<HomeTab>
                                                     top: 40,
                                                     right: 20,
                                                     left: 15,
-                                                    bottom: 15,
+                                                    bottom: 10,
                                                   ),
                                                   child: Column(
                                                     crossAxisAlignment:
@@ -2015,12 +2015,12 @@ class _HomeScreenState extends State<HomeTab>
                                                                       .black,
                                                             ),
                                                       ),
-                                                      SizedBox(height: 8),
+                                                      // SizedBox(height: 4),
                                                       Divider(
                                                         color:
                                                             AppColor.lightGrey,
                                                       ),
-                                                      SizedBox(height: 6),
+                                                      // SizedBox(height: 4),
                                                       InkWell(
                                                         onTap: () {
                                                           Navigator.push(
@@ -2077,7 +2077,7 @@ class _HomeScreenState extends State<HomeTab>
                                         height: 107,
                                       ),
                                       left: 18,
-                                      top: 16,
+                                      top: 10,
                                     ),
                                   ],
                                 ),
