@@ -476,7 +476,7 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                           fontSize: 18,
                         ),
                         IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
+                          icon: Icon(Icons.delete, color: Colors.red),
                           onPressed: () => setState(() => siblings.removeAt(i)),
                         ),
                       ],
@@ -611,12 +611,24 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                               ),
                             )
                             : null,
+
                     onTap:
                         isLoading
                             ? null
-                            : () {
-                              validateAndContinue(hasSiblings: '');
-                            }, // Disable tap while loading
+                            : () async {
+                              FocusScope.of(context).unfocus();
+                              await validateAndContinue(
+                                hasSiblings:
+                                    selected == 'Yes' ? 'Yes' : 'NoSiblings',
+                              );
+                            },
+
+                    // onTap:
+                    //     isLoading
+                    //         ? null
+                    //         : () {
+                    //           validateAndContinue(hasSiblings: '');
+                    //         }, // Disable tap while loading
                   );
                 }),
               ] else ...[
@@ -641,8 +653,11 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                     onTap:
                         isLoading
                             ? null
-                            : () {
-                              validateAndContinue(hasSiblings: 'NoSiblings');
+                            : () async {
+                              FocusScope.of(context).unfocus();
+                              await validateAndContinue(
+                                hasSiblings: 'NoSiblings',
+                              );
                             }, // Disable tap while loading
                   );
                 }),
@@ -785,37 +800,80 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
     );
   }
 
-  void validateAndContinue({required String hasSiblings}) async {
+  Future<void> validateAndContinue({required String hasSiblings}) async {
     HapticFeedback.mediumImpact();
-
     setState(() => isSubmitted = true);
 
-    final allValid = siblings.every(
-      (s) =>
-          s.nameController.text.trim().isNotEmpty &&
-          s.admissionNoController.text.trim().isNotEmpty &&
-          s.classController.text.trim().isNotEmpty &&
-          s.sectionController.text.trim().isNotEmpty,
-    );
+    if (selected == 'Yes') {
+      final allValid = siblings.every(
+        (s) =>
+            s.nameController.text.trim().isNotEmpty &&
+            s.admissionNoController.text.trim().isNotEmpty &&
+            s.classController.text.trim().isNotEmpty &&
+            s.sectionController.text.trim().isNotEmpty,
+      );
 
-    if (!allValid) {
-      _showSnack('Please fill all sibling details properly', isError: true);
-      return;
+      if (!allValid) {
+        _showSnack('Please fill all sibling details properly', isError: true);
+        return;
+      }
     }
 
     try {
-      final List<Map<String, String>> siblingList =
-          siblings.map((s) => s.toJson()).toList();
+      final siblingList = siblings.map((s) => s.toJson()).toList();
 
-      admissionController.sistersInfo(
+      admissionController.isLoading.value = true;
+      final error = await admissionController.sistersInfo(
         id: widget.id,
         siblings: siblingList,
         hasSisterInSchool: hasSiblings,
       );
+
+      admissionController.isLoading.value = false;
+
+      if (error == null) {
+        _showSnack('Saved successfully');
+        Get.to(() => CommunicationScreen());
+      } else {
+        _showSnack(error, isError: true);
+      }
     } catch (e) {
+      admissionController.isLoading.value = false;
       _showSnack('Unexpected error: $e', isError: true);
     }
   }
+
+  // void validateAndContinue({required String hasSiblings}) async {
+  //   HapticFeedback.mediumImpact();
+  //
+  //   setState(() => isSubmitted = true);
+  //
+  //   final allValid = siblings.every(
+  //     (s) =>
+  //         s.nameController.text.trim().isNotEmpty &&
+  //         s.admissionNoController.text.trim().isNotEmpty &&
+  //         s.classController.text.trim().isNotEmpty &&
+  //         s.sectionController.text.trim().isNotEmpty,
+  //   );
+  //
+  //   if (!allValid) {
+  //     _showSnack('Please fill all sibling details properly', isError: true);
+  //     return;
+  //   }
+  //
+  //   try {
+  //     final List<Map<String, String>> siblingList =
+  //         siblings.map((s) => s.toJson()).toList();
+  //
+  //     admissionController.sistersInfo(
+  //       id: widget.id,
+  //       siblings: siblingList,
+  //       hasSisterInSchool: hasSiblings,
+  //     );
+  //   } catch (e) {
+  //     _showSnack('Unexpected error: $e', isError: true);
+  //   }
+  // }
 }
 
 class SiblingInfo {
