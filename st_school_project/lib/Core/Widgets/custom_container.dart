@@ -1326,11 +1326,214 @@ class CustomContainer {
       ),
     );
   }
-
   static Widget studentInfoScreen({
     required String text,
     required TextEditingController controller,
     String? imagePath,
+    bool verticalDivider = true,
+    Function(String)? onChanged,
+    VoidCallback? onTap, // <-- added for dropdown tap
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+    double imageSize = 20,
+    int? maxLine,
+    int flex = 4,
+    bool isTamil = false,
+    bool isAadhaar = false,
+    bool isDOB = false,
+    bool isMobile = false,
+    bool isPincode = false,
+    BuildContext? context,
+    FormFieldValidator<String>? validator,
+    bool isError = false,
+    String? errorText,
+    bool? hasError = false,
+    FocusNode? focusNode,
+    Color borderColor = AppColor.lightRed,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: AppColor.lowGery1,
+            border: Border.all(
+              color: isError ? AppColor.lightRed : Colors.transparent,
+              width: 1.5,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 15),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: flex,
+                  child: GestureDetector(
+                    onTap: () async {
+                      // If it's a DOB picker
+                      if (isDOB && context != null) {
+                        final DateTime startDate = DateTime(2021, 6, 1);
+                        final DateTime endDate = DateTime(2022, 5, 31);
+                        final DateTime initialDate = DateTime(2021, 6, 2);
+
+                        final pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: initialDate,
+                          firstDate: DateTime(2020),
+                          lastDate: DateTime(2025),
+                          builder: (context, child) {
+                            return Theme(
+                              data: Theme.of(context).copyWith(
+                                dialogBackgroundColor: AppColor.white,
+                                colorScheme: ColorScheme.light(
+                                  primary: AppColor.blueG2,
+                                  onPrimary: Colors.white,
+                                  onSurface: AppColor.black,
+                                ),
+                                textButtonTheme: TextButtonThemeData(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: AppColor.blueG2,
+                                  ),
+                                ),
+                              ),
+                              child: child!,
+                            );
+                          },
+                        );
+
+                        if (pickedDate != null) {
+                          if (pickedDate.isBefore(startDate) ||
+                              pickedDate.isAfter(endDate)) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Invalid Date of Birth!\nPlease select a date between 01-06-2021 and 31-05-2022.',
+                                ),
+                                backgroundColor: Colors.red,
+                                duration: Duration(seconds: 3),
+                              ),
+                            );
+                          } else {
+                            controller.text =
+                            "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                          }
+                        }
+                      } else if (onTap != null) {
+                        // Custom tap handler (for dropdowns like Country/State/City)
+                        onTap();
+                      }
+                    },
+                    child: AbsorbPointer(
+                      absorbing: isDOB || onTap != null,
+                      child: TextFormField(
+                        focusNode: focusNode,
+                        onChanged: onChanged,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        controller: controller,
+                        validator: validator,
+                        maxLines: maxLine,
+                        maxLength: isMobile
+                            ? 10
+                            : isAadhaar
+                            ? 14
+                            : isPincode
+                            ? 6
+                            : null,
+                        keyboardType: keyboardType,
+                        inputFormatters: isMobile
+                            ? [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ]
+                            : isAadhaar
+                            ? [
+                          FilteringTextInputFormatter.digitsOnly,
+                          AadhaarInputFormatter(),
+                        ]
+                            : isPincode
+                            ? [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(6),
+                        ]
+                            : [],
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 14,
+                          color: AppColor.black,
+                        ),
+                        decoration: const InputDecoration(
+                          hintText: '',
+                          counterText: '',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                          border: InputBorder.none,
+                          isDense: true,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                if (verticalDivider)
+                  Container(
+                    width: 2,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.grey.shade200,
+                          Colors.grey.shade300,
+                          Colors.grey.shade200,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(1),
+                    ),
+                  ),
+                const SizedBox(width: 20),
+
+                if (imagePath == null)
+                  Expanded(
+                    child: CustomTextField.textWithSmall(
+                      text: text,
+                      fontSize: 14,
+                      color: AppColor.grey,
+                    ),
+                  ),
+                if (imagePath != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 15),
+                    child: Image.asset(
+                      imagePath,
+                      height: imageSize,
+                      width: imageSize,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        if (errorText != null && errorText.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0, top: 4),
+            child: Text(
+              errorText,
+              style: GoogleFont.ibmPlexSans(
+                color: AppColor.lightRed,
+                fontSize: 12,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+/*
+  static Widget studentInfoScreen({
+    required String text,
+    required TextEditingController controller,
+    String? imagePath,
+    VoidCallback? onTap, // <-- add this line
     bool verticalDivider = true,
     Function(String)? onChanged,
     TextInputType? keyboardType,
@@ -1350,7 +1553,8 @@ class CustomContainer {
     bool? hasError = false,
     FocusNode? focusNode,
     Color borderColor = AppColor.lightRed,
-  }) {
+  })
+  {
     DateTime today = DateTime.now();
 
     return Column(
@@ -1533,6 +1737,7 @@ class CustomContainer {
       ],
     );
   }
+*/
 
   static parentInfo({bool isSelected = true, required String text}) {
     return Container(

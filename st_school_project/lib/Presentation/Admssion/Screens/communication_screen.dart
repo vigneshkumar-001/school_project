@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
+import 'package:st_school_project/Presentation/Admssion/Controller/admission_controller.dart';
 
 import 'package:st_school_project/Presentation/Admssion/Screens/required_photo_screens.dart';
 
 class CommunicationScreen extends StatefulWidget {
-  const CommunicationScreen({super.key});
+  final int id;
+  const CommunicationScreen({super.key, required this.id});
 
   @override
   State<CommunicationScreen> createState() => _CommunicationScreenState();
@@ -29,6 +32,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
   final TextEditingController pincodeController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
 
+  final AdmissionController controller = Get.put(AdmissionController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,7 +108,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
-                      keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.number,
                     isError:
                         isSubmitted &&
                         primaryMobileController.text.trim().isEmpty,
@@ -139,7 +143,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   ),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
-                      keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.number,
                     isError:
                         isSubmitted &&
                         secondaryMobileController.text.trim().isEmpty,
@@ -250,7 +254,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   CustomTextField.richText(text: 'Pin Code', text2: ''),
                   SizedBox(height: 10),
                   CustomContainer.studentInfoScreen(
-                      keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.number,
                     isError:
                         isSubmitted && pincodeController.text.trim().isEmpty,
                     onChanged: (value) {
@@ -304,33 +308,68 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                   ),
 
                   SizedBox(height: 30),
-                  AppButton.button(
-                    onTap: () {
-                      HapticFeedback.heavyImpact();
-                      setState(() {
-                        isSubmitted = true;
-                      });
+                  Obx(
+                    () => AppButton.button(
+                      loader:
+                          controller.isLoading.value
+                              ? SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  color: Colors.white,
+                                ),
+                              )
+                              : null,
+                      onTap:
+                          controller.isLoading.value
+                              ? null
+                              : () {
+                                HapticFeedback.heavyImpact();
+                                controller.communicationDetails(
+                                  id: widget.id,
+                                  mobilePrimary:
+                                      primaryMobileController.text.trim(),
+                                  mobileSecondary:
+                                      secondaryMobileController.text.trim(),
+                                  country: countryController.text.trim(),
+                                  state: stateController.text.trim(),
+                                  city: cityController.text.trim(),
+                                  pinCode: pincodeController.text.trim(),
+                                  address: addressController.text.trim(),
+                                );
+                                // setState(() {
+                                //   isSubmitted = true;
+                                // });
+                                //
+                                // bool isGuardianFilled =
+                                //     primaryMobileController.text
+                                //         .trim()
+                                //         .isNotEmpty &&
+                                //     secondaryMobileController.text
+                                //         .trim()
+                                //         .isNotEmpty &&
+                                //     countryController.text.trim().isNotEmpty &&
+                                //     stateController.text.trim().isNotEmpty &&
+                                //     cityController.text.trim().isNotEmpty &&
+                                //     addressController.text.trim().isNotEmpty &&
+                                //     pincodeController.text.trim().isNotEmpty;
+                                // if (!isGuardianFilled) {
+                                //   Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //       builder:
+                                //           (context) => RequiredPhotoScreens(),
+                                //     ),
+                                //   );
+                                // }
+                              },
+                      text: 'Save & Continue',
 
-                      bool isGuardianFilled =
-                          primaryMobileController.text.trim().isNotEmpty &&
-                          secondaryMobileController.text.trim().isNotEmpty &&
-                          countryController.text.trim().isNotEmpty &&
-                          stateController.text.trim().isNotEmpty &&
-                          cityController.text.trim().isNotEmpty &&
-                          addressController.text.trim().isNotEmpty &&
-                          pincodeController.text.trim().isNotEmpty;
-                      if (isGuardianFilled) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RequiredPhotoScreens(),
-                          ),
-                        );
-                      }
-                    },
-                    text: 'Save & Continue',
-                    image: AppImages.rightSaitArrow,
+                      image: AppImages.rightSaitArrow,
+                    ),
                   ),
+
                   SizedBox(height: 20),
                 ],
               ),

@@ -1334,17 +1334,13 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
 
                   // Personal Ids
                   Obx(() {
-                    if (admissionController.isLoading.value) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
                     final dropData =
                         admissionController.religionCasteData.value;
 
                     if (dropData == null) {
                       return Center(
                         child: Text(
-                          'Failed to load dropdowns',
+                          ' ',
                           style: TextStyle(color: Colors.red),
                         ),
                       );
@@ -1358,6 +1354,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                           hint: 'Select or type',
                           validatorMsg: 'Religion is required',
                           isDropDown: true,
+
                           verticalDivider: false,
                           context: context,
                           options: dropData.religion,
@@ -1489,7 +1486,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                                   return;
                                 }
 
-                                _showSnack('Saved successfully');
+
 
                                 Navigator.push(
                                   context,

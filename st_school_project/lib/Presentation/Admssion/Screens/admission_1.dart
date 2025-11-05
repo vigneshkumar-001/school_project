@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
+import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
@@ -21,12 +22,6 @@ class Admission1 extends StatefulWidget {
 }
 
 class _Admission1State extends State<Admission1> {
-  // final List<String> points = [
-  //   "I hereby certify that the following information provided by me is correct and I understand that if the information is incorrect or false the ward shall be automatically debarred from the admission without any further notice.",
-  //   "I assure that I will never give any donation / contribution to anybody in the getting admission of the school.",
-  //   "I accept the process of admission undertaken by the school and I will abide by the decision taken by the school authorities.",
-  //   "I assure that I will allow my daughter to attend the Sports / Programmes / Classes given by Male teachers (If needed) appointed by the School Management.",
-  // ];
   final AdmissionController admissionController = Get.put(
     AdmissionController(),
   );
@@ -48,7 +43,7 @@ class _Admission1State extends State<Admission1> {
           final admissionList = admissionController.admissionList;
 
           if (isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: AppLoader.circularLoader());
           }
 
           if (admissionList.isEmpty) {
@@ -60,7 +55,7 @@ class _Admission1State extends State<Admission1> {
             );
           }
 
-          final admission = admissionList.first; // Use first or show list later
+          final admission = admissionList.first;
 
           return SingleChildScrollView(
             child: Padding(
@@ -76,7 +71,7 @@ class _Admission1State extends State<Admission1> {
                   ),
                   const SizedBox(height: 16),
                   Container(
-                    // Remove fixed height and use constraints
+
                     constraints: BoxConstraints(minHeight: screenHeight * 0.70),
                     child: Stack(
                       children: [

@@ -28,8 +28,13 @@ class ApiUrl {
   static String levelClassSection = '$baseUrl/admin/class/map/levels-to-sections';
 
 
+
   static String examDetails({required int examId}) {
     return '$baseUrl/student-exams/$examId/details';
+  }
+
+  static String statusCheck({required int admissionId}) {
+    return '$baseUrl/admissions/my-apps?search=$admissionId';
   }
 
   static String imageUrl =
@@ -100,5 +105,17 @@ class ApiUrl {
   }
   static String sistersInfo({required int id}) {
     return '$baseUrl/admissions/apps/$id/step3';
+  }
+
+  static String communicationDetails({required int id}) {
+    return '$baseUrl/admissions/apps/$id/step4';
+  }
+
+  static String submit({required int id}) {
+    return '$baseUrl/admissions/apps/$id/submit';
+  }
+
+  static String getCcavenue({required int id}) {
+    return '$baseUrl/admissions/apps/$id/pay/launch';
   }
 }

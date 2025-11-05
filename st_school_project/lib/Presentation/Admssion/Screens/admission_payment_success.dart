@@ -38,9 +38,10 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.only(left: 15.0, right: 15, top: 80),
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
           child: Column(
             children: [
+              SizedBox(height: 30),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 55.0),
                 child: Container(

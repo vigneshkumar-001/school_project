@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
+import 'package:st_school_project/Presentation/Admssion/Controller/admission_controller.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/submit_the_admission.dart';
 
 class RequiredPhotoScreens extends StatefulWidget {
-  const RequiredPhotoScreens({super.key});
+  final int id;
+  const RequiredPhotoScreens({super.key, required this.id});
 
   @override
   State<RequiredPhotoScreens> createState() => _RequiredPhotoScreensState();
 }
 
 class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
+  final AdmissionController controller = Get.put(AdmissionController());
   List<String> text = [
     "Birth Certificate",
     "Community Certificate",
@@ -35,17 +39,22 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
 
   String? errorText;
 
-  void validateAndNavigate() {
+  void validateAndNavigate() async {
     HapticFeedback.heavyImpact();
+
     final areAllSelected = isChecked.every((value) => value);
+
     if (!areAllSelected) {
-      setState(() => errorText = "");
+      setState(() => errorText = "Please check all required documents");
     } else {
       setState(() => errorText = null);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => SubmitTheAdmission()),
-      );
+
+      await controller.requiredPhotos(id: widget.id, isChecked: isChecked);
+
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => SubmitTheAdmission()),
+      // );
     }
   }
 
@@ -191,11 +200,24 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
 
                 const SizedBox(height: 30),
 
-                // Save Button
-                AppButton.button(
-                  onTap: validateAndNavigate,
-                  text: 'Save & Continue',
-                  image: AppImages.rightSaitArrow,
+                Obx(
+                  () => AppButton.button(
+                    loader:
+                        controller.isLoading.value
+                            ? SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
+                            )
+                            : null,
+                    onTap:
+                        controller.isLoading.value ? null : validateAndNavigate,
+                    text: 'Save & Continue',
+                    image: AppImages.rightSaitArrow,
+                  ),
                 ),
               ],
             ),

@@ -2,20 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
+import 'package:st_school_project/Presentation/Admssion/Controller/admission_controller.dart';
 
 import '../../../Core/Utility/app_color.dart';
 import '../../../Core/Utility/app_images.dart';
 import '../../../Core/Utility/google_font.dart';
 import 'admission_payment_success.dart';
+import 'package:get/get.dart';
 
 class SubmitTheAdmission extends StatefulWidget {
-  const SubmitTheAdmission({super.key});
+  final int id;
+  const SubmitTheAdmission({super.key, required this.id});
 
   @override
   State<SubmitTheAdmission> createState() => _SubmitTheAdmissionState();
 }
 
 class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
+  final AdmissionController controller = Get.put(AdmissionController());
   bool isChecked = false;
   bool showError = false;
 
@@ -31,7 +35,7 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -83,7 +87,7 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
                   backgroundColor: AppColor.lowGery1,
                   borderRadius: BorderRadius.circular(16),
                 ),
-                SizedBox(height: 34),
+                SizedBox(height: 20),
                 Text(
                   'Submit the Admission ',
                   style: GoogleFont.ibmPlexSans(
@@ -91,9 +95,9 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
                     fontSize: 26,
                   ),
                 ),
-                SizedBox(height: 22),
+                SizedBox(height: 20),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 35),
+                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                   decoration: BoxDecoration(
                     color: AppColor.lowGreen,
                     borderRadius: BorderRadius.circular(20),
@@ -116,7 +120,7 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
                         physics: NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
                           return Padding(
-                            padding: EdgeInsets.symmetric(vertical: 15.0),
+                            padding: EdgeInsets.symmetric(vertical: 10.0),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -149,42 +153,57 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
 
                 CustomContainer.tickContainer(
                   isChecked: isChecked,
-                  borderColor: showError
-                      ? AppColor.lightRed // Show red if error
-                      : isChecked
-                      ? AppColor.blue // Show blue if checked
-                      : AppColor.lowLightBlue, // Default color
+                  borderColor:
+                      showError
+                          ? AppColor
+                              .lightRed // Show red if error
+                          : isChecked
+                          ? AppColor
+                              .blue // Show blue if checked
+                          : AppColor.lowLightBlue, // Default color
                   onTap: () {
                     setState(() {
                       isChecked = !isChecked;
                       showError = !isChecked; // Red border if not checked
                     });
                   },
-                  text: 'I have read and understood the instructions furnished above',
+                  text:
+                      'I have read and understood the instructions furnished above',
                 ),
-
 
                 SizedBox(height: 38),
-                AppButton.button(
-                  text: 'Pay for Admission',
-                  image: AppImages.rightSaitArrow,
-                  width: 220,
-                  onTap: () {
-                    HapticFeedback.heavyImpact();
-                    if (!isChecked) {
-                      setState(() => showError = true);
-                      return;
-                    }
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AdmissionPaymentSuccess(),
-                      ),
-                    );
-                  },
+                Obx(
+                  () => AppButton.button(
+                    loader:
+                        controller.isLoading.value
+                            ? SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
+                            )
+                            : null,
+                    text: 'Pay for Admission',
+                    image: AppImages.rightSaitArrow,
+                    width: 220,
+                    onTap:
+                        controller.isLoading.value
+                            ? null
+                            : () {
+                              HapticFeedback.heavyImpact();
+                              if (!isChecked) {
+                                setState(() => showError = true);
+                                return;
+                              }
+                              controller.submitAdmission(
+                                id: widget.id,
+                                isChecked: isChecked,
+                              );
+                            },
+                  ),
                 ),
-
               ],
             ),
           ),
