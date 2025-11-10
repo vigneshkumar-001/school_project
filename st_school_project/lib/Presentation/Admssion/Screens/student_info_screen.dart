@@ -778,6 +778,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
@@ -832,43 +833,30 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
     AdmissionController(),
   );
 
-  // fields
-  final TextEditingController nameEnglishController = TextEditingController();
-  final TextEditingController nameTamilController = TextEditingController();
-  final TextEditingController aadharController = TextEditingController();
-  final TextEditingController dobController = TextEditingController();
-  final TextEditingController religionController = TextEditingController();
-  final TextEditingController casteController = TextEditingController();
-  final TextEditingController communityController = TextEditingController();
-  final TextEditingController tongueController = TextEditingController();
-  final TextEditingController nationalityController = TextEditingController();
-  final TextEditingController personalId1Controller = TextEditingController();
-  final TextEditingController personalId2Controller = TextEditingController();
-
   List<String> fatherSuggestions = [];
   bool isFatherLoading = false;
 
   final FocusNode tamilFocusNode = FocusNode();
   final FocusNode nextFieldFocusNode = FocusNode(); // used after DOB select
 
-  @override
-  void dispose() {
-    tamilFocusNode.dispose();
-    nextFieldFocusNode.dispose();
-
-    nameEnglishController.dispose();
-    nameTamilController.dispose();
-    aadharController.dispose();
-    dobController.dispose();
-    religionController.dispose();
-    casteController.dispose();
-    communityController.dispose();
-    tongueController.dispose();
-    nationalityController.dispose();
-    personalId1Controller.dispose();
-    personalId2Controller.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   tamilFocusNode.dispose();
+  //   nextFieldFocusNode.dispose();
+  //
+  //   nameEnglishController.dispose();
+  //   nameTamilController.dispose();
+  //   aadharController.dispose();
+  //   dobController.dispose();
+  //   religionController.dispose();
+  //   casteController.dispose();
+  //   communityController.dispose();
+  //   tongueController.dispose();
+  //   nationalityController.dispose();
+  //   personalId1Controller.dispose();
+  //   personalId2Controller.dispose();
+  //   super.dispose();
+  // }
 
   void _showSnack(String msg, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -893,47 +881,6 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
     return dob;
   }
 
-  // // Static option lists
-  // final List<String> _religions = const [
-  //   'Hindu',
-  //   'Christian',
-  //   'Muslim',
-  //   'Sikh',
-  //   'Buddhist',
-  //   'Jain',
-  //   'Other',
-  // ];
-  // final List<String> _castes = const [
-  //   'BC',
-  //   'MBC',
-  //   'SC',
-  //   'ST',
-  //   'OC',
-  //   'DNC',
-  //   'Other',
-  // ];
-  // final List<String> _communities = const [
-  //   'OC',
-  //   'BC',
-  //   'MBC',
-  //   'DNC',
-  //   'SC',
-  //   'ST',
-  //   'Other',
-  // ];
-  // final List<String> _motherTongues = const [
-  //   'Tamil',
-  //   'English',
-  //   'Telugu',
-  //   'Malayalam',
-  //   'Kannada',
-  //   'Hindi',
-  //   'Urdu',
-  //   'Other',
-  // ];
-  // final List<String> _nationalities = const ['Indian', 'Other'];
-
-  // Bottom sheet with Search + keyboard Done
   Future<void> _openSelectSheet({
     required BuildContext context,
     required String title,
@@ -1148,364 +1095,427 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       admissionController.studentDropDown();
+      admissionController.fetchAndSetUserData();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      CustomContainer.leftSaitArrow(
-                        onTap: () => Navigator.pop(context),
-                      ),
-                      SizedBox(width: 15),
-                      Text(
-                        '2025 - 2026 LKG Admission',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 30),
-                  LinearProgressIndicator(
-                    minHeight: 6,
-                    value: 0.2,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
-                    backgroundColor: AppColor.lowGery1,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  SizedBox(height: 40),
-                  CustomTextField.textWith600(
-                    text: 'Student Info',
-                    fontSize: 26,
-                  ),
-                  SizedBox(height: 30),
-
-                  // Name (English)
-                  buildField(
-                    label: 'Name of the Student ',
-                    subLabel: 'As per Birth Certificate',
-                    controller: nameEnglishController,
-                    hint: 'English',
-                    validatorMsg: 'Student Name is required',
-                  ),
-
-                  // Name (Tamil) + suggestions
-                  buildField(
-                    context: context,
-                    focusNode: tamilFocusNode,
-                    isTamilField: true,
-                    controller: nameTamilController,
-                    hint: 'Tamil',
-                    validatorMsg: 'Tamil name is required',
-                  ),
-                  if (isFatherLoading)
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  if (fatherSuggestions.isNotEmpty)
-                    Container(
-                      margin: const EdgeInsets.only(top: 4),
-                      constraints: const BoxConstraints(maxHeight: 150),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey),
-                      ),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: fatherSuggestions.length,
-                        itemBuilder: (context, index) {
-                          final suggestion = fatherSuggestions[index];
-                          return ListTile(
-                            title: Text(suggestion),
-                            onTap: () {
-                              TanglishTamilHelper.applySuggestion(
-                                controller: nameTamilController,
-                                suggestion: suggestion,
-                                onSuggestionApplied: () {
-                                  setState(() => fatherSuggestions = []);
-                                },
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
-
-                  // Aadhaar
-                  buildField(
-                    label: 'Student Aadhar Number',
-                    controller: aadharController,
-                    hint: 'Aadhar No',
-                    validatorMsg: 'Aadhar number is required',
-                    isAadhaar: true,
-                    isNumeric: true,
-                  ),
-
-                  // DOB (with range)
-                  buildField(
-                    context: context,
-                    label: 'Date of Birth ',
-                    subLabel: '01-06-2021 to 31-05-2022',
-                    controller: dobController,
-                    hint: '',
-                    validatorMsg: 'Select Date of Birth',
-                    isDOB: true,
-                  ),
-
-                  // Dropdowns with “type or pick”
-                  // buildField(
-                  //   label: 'Religion',
-                  //   controller: religionController,
-                  //   hint: 'Select or type',
-                  //   validatorMsg: 'Religion is required',
-                  //   isDropDown: true,
-                  //   verticalDivider: false,
-                  //   context: context,
-                  //   options: _religions,
-                  //   pickerTitle: 'Religion',
-                  //   iconSize: 11,
-                  // ),
-                  // buildField(
-                  //   label: 'Caste',
-                  //   controller: casteController,
-                  //   hint: 'Select or type',
-                  //   validatorMsg: 'Caste is required',
-                  //   isDropDown: true,
-                  //   verticalDivider: false,
-                  //   context: context,
-                  //   options: _castes,
-                  //   pickerTitle: 'Caste',
-                  //   iconSize: 11,
-                  // ),
-                  // buildField(
-                  //   label: 'Community',
-                  //   subLabel: 'As per Community Certificate',
-                  //   controller: communityController,
-                  //   hint: 'Select or type',
-                  //   validatorMsg: 'Community is required',
-                  //   isDropDown: true,
-                  //   verticalDivider: false,
-                  //   context: context,
-                  //   options: _communities,
-                  //   pickerTitle: 'Community',
-                  //   iconSize: 11,
-                  // ),
-                  // buildField(
-                  //   label: 'Mother Tongue',
-                  //   controller: tongueController,
-                  //   hint: 'Select or type',
-                  //   validatorMsg: 'Mother tongue is required',
-                  //   isDropDown: true,
-                  //   verticalDivider: false,
-                  //   context: context,
-                  //   options: _motherTongues,
-                  //   pickerTitle: 'Mother Tongue',
-                  //   iconSize: 11,
-                  // ),
-                  // buildField(
-                  //   label: 'Nationality',
-                  //   controller: nationalityController,
-                  //   hint: 'Select or type',
-                  //   validatorMsg: 'Nationality is required',
-                  //   isDropDown: true,
-                  //   verticalDivider: false,
-                  //   context: context,
-                  //   options: _nationalities,
-                  //   pickerTitle: 'Nationality',
-                  //   iconSize: 11,
-                  // ),
-
-                  // Personal Ids
-                  Obx(() {
-                    if (admissionController.isLoading.value) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    final dropData =
-                        admissionController.religionCasteData.value;
-
-                    if (dropData == null) {
-                      return Center(
-                        child: Text(
-                          'Failed to load dropdowns',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      );
-                    }
-
-                    return Column(
+    return WillPopScope(
+      onWillPop: () async {
+        return await false;
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       children: [
-                        buildField(
-                          label: 'Religion',
-                          controller: religionController,
-                          hint: 'Select or type',
-                          validatorMsg: 'Religion is required',
-                          isDropDown: true,
-                          verticalDivider: false,
-                          context: context,
-                          options: dropData.religion,
-                          pickerTitle: 'Religion',
-                          iconSize: 11,
+                        CustomContainer.leftSaitArrow(
+                          onTap: () async {
+                            final prefs = await SharedPreferences.getInstance();
+
+                            final currentStep =
+                                ctrl.currentAdmission.value?.step ?? 1;
+
+                            if (currentStep > 1) {
+
+                            } else {
+                              Navigator.pop(context);
+                            }
+                          },
                         ),
-                        buildField(
-                          label: 'Caste',
-                          controller: casteController,
-                          hint: 'Select or type',
-                          validatorMsg: 'Caste is required',
-                          isDropDown: true,
-                          verticalDivider: false,
-                          context: context,
-                          options: dropData.caste,
-                          pickerTitle: 'Caste',
-                          iconSize: 11,
-                        ),
-                        buildField(
-                          label: 'Community',
-                          subLabel: 'As per Community Certificate',
-                          controller: communityController,
-                          hint: 'Select or type',
-                          validatorMsg: 'Community is required',
-                          isDropDown: true,
-                          verticalDivider: false,
-                          context: context,
-                          options: dropData.community,
-                          pickerTitle: 'Community',
-                          iconSize: 11,
-                        ),
-                        buildField(
-                          label: 'Mother Tongue',
-                          controller: tongueController,
-                          hint: 'Select or type',
-                          validatorMsg: 'Mother tongue is required',
-                          isDropDown: true,
-                          verticalDivider: false,
-                          context: context,
-                          options: dropData.motherTongue,
-                          pickerTitle: 'Mother Tongue',
-                          iconSize: 11,
-                        ),
-                        buildField(
-                          label: 'Nationality',
-                          controller: nationalityController,
-                          hint: 'Select or type',
-                          validatorMsg: 'Nationality is required',
-                          isDropDown: true,
-                          verticalDivider: false,
-                          context: context,
-                          options: dropData.nationality,
-                          pickerTitle: 'Nationality',
-                          iconSize: 11,
+                        SizedBox(width: 15),
+                        Text(
+                          '2025 - 2026 LKG Admission',
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.black,
+                          ),
                         ),
                       ],
-                    );
-                  }),
+                    ),
+                    SizedBox(height: 30),
+                    LinearProgressIndicator(
+                      minHeight: 6,
+                      value: 0.2,
+                      valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
+                      backgroundColor: AppColor.lowGery1,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    SizedBox(height: 40),
+                    CustomTextField.textWith600(
+                      text: 'Student Info',
+                      fontSize: 26,
+                    ),
+                    SizedBox(height: 30),
 
-                  buildField(
-                    label: 'Personal Identification 1',
-                    controller: personalId1Controller,
-                    hint: '',
-                    validatorMsg: 'Personal ID 1 is required',
-                    verticalDivider: false,
-                  ),
-                  buildField(
-                    label: 'Personal Identification 2',
-                    controller: personalId2Controller,
-                    hint: '',
-                    validatorMsg: 'Personal ID 2 is required',
-                    verticalDivider: false,
-                  ),
+                    // Name (English)
+                    buildField(
+                      label: 'Name of the Student ',
+                      subLabel: 'As per Birth Certificate',
+                      controller: admissionController.nameEnglishController,
+                      hint: 'English',
+                      validatorMsg: 'Student Name is required',
+                    ),
 
-                  SizedBox(height: 30),
-
-                  // Save & Continue (with loader)
-                  Obx(() {
-                    final loading = ctrl.isLoading.value;
-                    return AppButton.button(
-                      image: loading ? null : AppImages.rightSaitArrow,
-                      text: loading ? 'Saving…' : 'Save & Continue',
-                      onTap:
-                          loading
-                              ? null
-                              : () async {
-                                HapticFeedback.heavyImpact();
-                                FocusScope.of(context).unfocus();
-
-                                if (!_formKey.currentState!.validate()) {
-                                  _showSnack(
-                                    'Please fix the highlighted fields',
-                                    isError: true,
-                                  );
-                                  return;
-                                }
-
-                                final formattedDob = _formatDobToIso(
-                                  dobController.text.trim(),
-                                );
-
-                                //  Single, correct API call
-                                final err = await ctrl.postStudentInfo(
-                                  id: widget.admissionId,
-                                  studentName:
-                                      nameEnglishController.text.trim(),
-                                  studentNameTamil:
-                                      nameTamilController.text.trim(),
-                                  aadhaar: aadharController.text.replaceAll(
-                                    ' ',
-                                    '',
-                                  ),
-                                  dob: formattedDob,
-                                  religion: religionController.text.trim(),
-                                  caste: casteController.text.trim(),
-                                  community: communityController.text.trim(),
-                                  motherTongue: tongueController.text.trim(),
-                                  nationality:
-                                      nationalityController.text.trim(),
-                                  idProof1: personalId1Controller.text.trim(),
-                                  idProof2: personalId2Controller.text.trim(),
-                                );
-
-                                if (err != null) {
-                                  _showSnack(
-                                    'Failed to save: $err',
-                                    isError: true,
-                                  );
-                                  return;
-                                }
-
-                                _showSnack('Saved successfully');
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) => ParentsInfoScreen(
-                                          id: widget.admissionId,
-                                        ),
-                                  ),
+                    // Name (Tamil) + suggestions
+                    buildField(
+                      context: context,
+                      focusNode: tamilFocusNode,
+                      isTamilField: true,
+                      controller: admissionController.nameTamilController,
+                      hint: 'Tamil',
+                      validatorMsg: 'Tamil name is required',
+                    ),
+                    if (isFatherLoading)
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    if (fatherSuggestions.isNotEmpty)
+                      Container(
+                        margin: const EdgeInsets.only(top: 4),
+                        constraints: const BoxConstraints(maxHeight: 150),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: fatherSuggestions.length,
+                          itemBuilder: (context, index) {
+                            final suggestion = fatherSuggestions[index];
+                            return ListTile(
+                              title: Text(suggestion),
+                              onTap: () {
+                                TanglishTamilHelper.applySuggestion(
+                                  controller:
+                                      admissionController.nameTamilController,
+                                  suggestion: suggestion,
+                                  onSuggestionApplied: () {
+                                    setState(() => fatherSuggestions = []);
+                                  },
                                 );
                               },
-                    );
-                  }),
+                            );
+                          },
+                        ),
+                      ),
 
-                  SizedBox(height: 10),
-                ],
+                    // Aadhaar
+                    buildField(
+                      label: 'Student Aadhar Number',
+                      controller: admissionController.aadharController,
+                      hint: 'Aadhar No',
+                      validatorMsg: 'Aadhar number is required',
+                      isAadhaar: true,
+                      isNumeric: true,
+                    ),
+
+                    // DOB (with range)
+                    buildField(
+                      context: context,
+                      label: 'Date of Birth ',
+                      subLabel: '01-06-2021 to 31-05-2022',
+                      controller: admissionController.dobController,
+                      hint: '',
+                      validatorMsg: 'Select Date of Birth',
+                      isDOB: true,
+                    ),
+                    buildField(
+                      context: context,
+                      label: 'Email Id',
+
+                      verticalDivider: false,
+                      controller: admissionController.emailIdController,
+                      hint: '',
+                      validatorMsg: 'Email id is required',
+                    ),
+
+                    // Dropdowns with “type or pick”
+                    // buildField(
+                    //   label: 'Religion',
+                    //   controller: religionController,
+                    //   hint: 'Select or type',
+                    //   validatorMsg: 'Religion is required',
+                    //   isDropDown: true,
+                    //   verticalDivider: false,
+                    //   context: context,
+                    //   options: _religions,
+                    //   pickerTitle: 'Religion',
+                    //   iconSize: 11,
+                    // ),
+                    // buildField(
+                    //   label: 'Caste',
+                    //   controller: casteController,
+                    //   hint: 'Select or type',
+                    //   validatorMsg: 'Caste is required',
+                    //   isDropDown: true,
+                    //   verticalDivider: false,
+                    //   context: context,
+                    //   options: _castes,
+                    //   pickerTitle: 'Caste',
+                    //   iconSize: 11,
+                    // ),
+                    // buildField(
+                    //   label: 'Community',
+                    //   subLabel: 'As per Community Certificate',
+                    //   controller: communityController,
+                    //   hint: 'Select or type',
+                    //   validatorMsg: 'Community is required',
+                    //   isDropDown: true,
+                    //   verticalDivider: false,
+                    //   context: context,
+                    //   options: _communities,
+                    //   pickerTitle: 'Community',
+                    //   iconSize: 11,
+                    // ),
+                    // buildField(
+                    //   label: 'Mother Tongue',
+                    //   controller: tongueController,
+                    //   hint: 'Select or type',
+                    //   validatorMsg: 'Mother tongue is required',
+                    //   isDropDown: true,
+                    //   verticalDivider: false,
+                    //   context: context,
+                    //   options: _motherTongues,
+                    //   pickerTitle: 'Mother Tongue',
+                    //   iconSize: 11,
+                    // ),
+                    // buildField(
+                    //   label: 'Nationality',
+                    //   controller: nationalityController,
+                    //   hint: 'Select or type',
+                    //   validatorMsg: 'Nationality is required',
+                    //   isDropDown: true,
+                    //   verticalDivider: false,
+                    //   context: context,
+                    //   options: _nationalities,
+                    //   pickerTitle: 'Nationality',
+                    //   iconSize: 11,
+                    // ),
+
+                    // Personal Ids
+                    Obx(() {
+                      final dropData =
+                          admissionController.religionCasteData.value;
+
+                      if (dropData == null) {
+                        return Center(
+                          child: Text(' ', style: TextStyle(color: Colors.red)),
+                        );
+                      }
+
+                      return Column(
+                        children: [
+                          buildField(
+                            label: 'Religion',
+                            controller: admissionController.religionController,
+                            hint: 'Select or type',
+                            validatorMsg: 'Religion is required',
+                            isDropDown: true,
+
+                            verticalDivider: false,
+                            context: context,
+                            options: dropData.religion,
+                            pickerTitle: 'Religion',
+                            iconSize: 11,
+                          ),
+                          buildField(
+                            label: 'Caste',
+                            controller: admissionController.casteController,
+                            hint: 'Select or type',
+                            validatorMsg: 'Caste is required',
+                            isDropDown: true,
+                            verticalDivider: false,
+                            context: context,
+                            options: dropData.caste,
+                            pickerTitle: 'Caste',
+                            iconSize: 11,
+                          ),
+                          buildField(
+                            label: 'Community',
+                            subLabel: 'As per Community Certificate',
+                            controller: admissionController.communityController,
+                            hint: 'Select or type',
+                            validatorMsg: 'Community is required',
+                            isDropDown: true,
+                            verticalDivider: false,
+                            context: context,
+                            options: dropData.community,
+                            pickerTitle: 'Community',
+                            iconSize: 11,
+                          ),
+                          buildField(
+                            label: 'Mother Tongue',
+                            controller: admissionController.tongueController,
+                            hint: 'Select or type',
+                            validatorMsg: 'Mother tongue is required',
+                            isDropDown: true,
+                            verticalDivider: false,
+                            context: context,
+                            options: dropData.motherTongue,
+                            pickerTitle: 'Mother Tongue',
+                            iconSize: 11,
+                          ),
+                          buildField(
+                            label: 'Nationality',
+                            controller:
+                                admissionController.nationalityController,
+                            hint: 'Select or type',
+                            validatorMsg: 'Nationality is required',
+                            isDropDown: true,
+                            verticalDivider: false,
+                            context: context,
+                            options: dropData.nationality,
+                            pickerTitle: 'Nationality',
+                            iconSize: 11,
+                          ),
+                        ],
+                      );
+                    }),
+
+                    buildField(
+                      label: 'Personal Identification 1',
+                      controller: admissionController.personalId1Controller,
+                      hint: '',
+                      validatorMsg: 'Personal ID 1 is required',
+                      verticalDivider: false,
+                    ),
+                    buildField(
+                      label: 'Personal Identification 2',
+                      controller: admissionController.personalId2Controller,
+                      hint: '',
+                      validatorMsg: 'Personal ID 2 is required',
+                      verticalDivider: false,
+                    ),
+
+                    SizedBox(height: 30),
+
+                    // Save & Continue (with loader)
+                    Obx(
+                      () => AppButton.button(
+                        loader:
+                            ctrl.isLoading.value
+                                ? SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    color: Colors.white,
+                                  ),
+                                )
+                                : null,
+                        image:
+                            ctrl.isLoading.value
+                                ? null
+                                : AppImages.rightSaitArrow,
+                        text: 'Save & Continue',
+                        onTap:
+                            ctrl.isLoading.value
+                                ? null
+                                : () async {
+                              final prefs = await SharedPreferences.getInstance();
+                              final admissionID = prefs.getInt('admissionId') ?? 0;
+                                  HapticFeedback.heavyImpact();
+                                  FocusScope.of(context).unfocus();
+
+                                  if (!_formKey.currentState!.validate()) {
+                                    _showSnack(
+                                      'Please fix the highlighted fields',
+                                      isError: true,
+                                    );
+                                    return;
+                                  }
+
+                                  final formattedDob = _formatDobToIso(
+                                    admissionController.dobController.text
+                                        .trim(),
+                                  );
+
+                                  //  Single, correct API call
+                                  final err = await ctrl.postStudentInfo(
+                                    emailId:
+                                        admissionController
+                                            .emailIdController
+                                            .text
+                                            .trim(),
+                                    id: admissionID,
+                                    studentName:
+                                        admissionController
+                                            .nameEnglishController
+                                            .text
+                                            .trim(),
+                                    studentNameTamil:
+                                        admissionController
+                                            .nameTamilController
+                                            .text
+                                            .trim(),
+                                    aadhaar: admissionController
+                                        .aadharController
+                                        .text
+                                        .replaceAll(' ', ''),
+                                    dob: formattedDob,
+                                    religion:
+                                        admissionController
+                                            .religionController
+                                            .text
+                                            .trim(),
+                                    caste:
+                                        admissionController.casteController.text
+                                            .trim(),
+                                    community:
+                                        admissionController
+                                            .communityController
+                                            .text
+                                            .trim(),
+                                    motherTongue:
+                                        admissionController
+                                            .tongueController
+                                            .text
+                                            .trim(),
+                                    nationality:
+                                        admissionController
+                                            .nationalityController
+                                            .text
+                                            .trim(),
+                                    idProof1:
+                                        admissionController
+                                            .personalId1Controller
+                                            .text
+                                            .trim(),
+                                    idProof2:
+                                        admissionController
+                                            .personalId2Controller
+                                            .text
+                                            .trim(),
+                                  );
+
+                                  if (err != null) {
+                                    _showSnack(
+                                      'Failed to save: $err',
+                                      isError: true,
+                                    );
+                                    return;
+                                  }
+                                },
+                      ),
+                    ),
+
+                    SizedBox(height: 10),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1514,7 +1524,6 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
     );
   }
 
-  /// Shared field builder
   Widget buildField({
     String? label,
     String? subLabel,
@@ -1552,10 +1561,18 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                 return 'Enter a valid Aadhaar number';
               }
             }
+            if (label != null && label.toLowerCase().contains('email')) {
+              final emailRegex = RegExp(
+                r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+              );
+              if (!emailRegex.hasMatch(text)) {
+                return 'Enter a valid email address';
+              }
+            }
 
             // Apply min length only to plain text fields (not dropdowns/DOB/Aadhaar)
-            if (!isAadhaar && !isDropDown && text.length < 5) {
-              return 'Enter at least 5 characters';
+            if (!isAadhaar && !isDropDown && text.length < 3) {
+              return 'Enter at least 3 characters';
             }
             return null;
           },
@@ -1638,7 +1655,13 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                       verticalDivider: verticalDivider,
                       context: isDOB ? context : null,
                       keyboardType:
-                          isNumeric ? TextInputType.number : TextInputType.text,
+                          isNumeric
+                              ? TextInputType.number
+                              : (label != null &&
+                                      label.toLowerCase().contains('email')
+                                  ? TextInputType.emailAddress
+                                  : TextInputType.text),
+
                       controller: controller,
                       text: hint,
                       imagePath:

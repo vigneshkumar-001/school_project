@@ -44,6 +44,7 @@ double? _parseDouble(dynamic value) {
 class AdmissionStudentData {
   final int? id;
   final int? windowId;
+  final int? step;
   final int? studentId;
   final String? studentName;
   final String? studentNameTamil;
@@ -85,7 +86,7 @@ class AdmissionStudentData {
   final String? city;
   final String? pinCode;
   final String? address;
-  final String? docsChecklist;
+  final List<DocsChecklist>? docsChecklist;
   final bool? consentAccepted;
   final String? status;
   final String? admissionCode;
@@ -96,6 +97,7 @@ class AdmissionStudentData {
   AdmissionStudentData({
     this.id,
     this.windowId,
+    this.step,
     this.studentId,
     this.studentName,
     this.studentNameTamil,
@@ -151,6 +153,7 @@ class AdmissionStudentData {
         id: _parseInt(json["id"]),
         windowId: _parseInt(json["windowId"]),
         studentId: _parseInt(json["studentId"]),
+        step: _parseInt(json["step"]),
         studentName: json["studentName"],
         studentNameTamil: json["studentNameTamil"],
         aadhaar: json["aadhaar"],
@@ -198,7 +201,9 @@ class AdmissionStudentData {
         city: json["city"],
         pinCode: json["pinCode"],
         address: json["address"],
-        docsChecklist: json["docsChecklist"],
+        docsChecklist: (json["docsChecklist"] as List?)
+            ?.map((e) => DocsChecklist.fromJson(e))
+            .toList(),
         consentAccepted: json["consentAccepted"],
         status: json["status"],
         admissionCode: json["admissionCode"],
@@ -212,6 +217,7 @@ class AdmissionStudentData {
     "windowId": windowId,
     "studentId": studentId,
     "studentName": studentName,
+    "step": step,
     "studentNameTamil": studentNameTamil,
     "aadhaar": aadhaar,
     "dob": dob,
@@ -251,7 +257,7 @@ class AdmissionStudentData {
     "city": city,
     "pinCode": pinCode,
     "address": address,
-    "docsChecklist": docsChecklist,
+    "docsChecklist": docsChecklist?.map((e) => e.toJson()).toList(),
     "consentAccepted": consentAccepted,
     "status": status,
     "admissionCode": admissionCode,
@@ -282,5 +288,28 @@ class SisterDetail {
     "admNo": admNo,
     "class": classes,
     "section": section,
+  };
+}
+class DocsChecklist {
+  final String? key;
+  final String? title;
+  final bool? provided;
+
+  DocsChecklist({
+    this.key,
+    this.title,
+    this.provided,
+  });
+
+  factory DocsChecklist.fromJson(Map<String, dynamic> json) => DocsChecklist(
+    key: json["key"],
+    title: json["title"],
+    provided: json["provided"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "key": key,
+    "title": title,
+    "provided": provided,
   };
 }

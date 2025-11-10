@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 
 import 'package:intl/intl.dart';
+import 'package:st_school_project/Presentation/Admssion/Model/country_model.dart';
+import 'package:st_school_project/Presentation/Admssion/Model/status_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/model/announcement_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/model/exam_result_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/model/student_home_response.dart';
@@ -16,9 +19,11 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/
 import '../../Presentation/Admssion/Model/admission1_nextbutton_response.dart';
 import '../../Presentation/Admssion/Model/admission_1_response.dart';
 import '../../Presentation/Admssion/Model/class_section_response.dart';
+import '../../Presentation/Admssion/Model/get_admission.dart';
 import '../../Presentation/Admssion/Model/parents_info_response.dart';
 import '../../Presentation/Admssion/Model/student_drop_down_response.dart';
 import '../../Presentation/Admssion/Model/student_info_response.dart';
+import '../../Presentation/Admssion/Model/submit_response.dart';
 import '../../Presentation/Onboarding/Screens/Announcements Screen/model/announcement_details_response.dart';
 import '../../Presentation/Onboarding/Screens/Announcements Screen/model/exam_details_response.dart';
 import '../../Presentation/Onboarding/Screens/Attendence Screen/model/attendance_response.dart';
@@ -962,6 +967,7 @@ class ApiDataSource extends BaseApiDataSource {
     required String studentName,
     required String studentNameTamil,
     required String aadhaar,
+    required String emailId,
     required String dob,
     required String religion,
     required String caste,
@@ -984,6 +990,7 @@ class ApiDataSource extends BaseApiDataSource {
           "religion": religion,
           "caste": caste,
           "community": community,
+          "email": emailId,
           "motherTongue": motherTongue,
           "nationality": nationality,
           "idProof1": idProof1,
@@ -992,22 +999,45 @@ class ApiDataSource extends BaseApiDataSource {
         'post',
         true,
       );
-      AppLogger.log.i(response);
 
-      // Accept both 200 and 201 as success
-      if (response is! DioException &&
-          (response.statusCode == 200 || response.statusCode == 201)) {
+      AppLogger.log.i(response); // Log the full response for debugging
+
+      // Check for DioException (API-related error)
+      if (response is DioException) {
+        // Log the Dio exception for more details
+        AppLogger.log.e("DioException: ${response.message}");
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      }
+
+      // If status code is 200 or 201, process the data
+      if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.data['status'] == true) {
           return Right(StudentInfoResponse.fromJson(response.data));
         } else {
-          return Left(ServerFailure(response.data['message']));
+          // Show the API error message, even if status is false
+          String errorMessage =
+              response.data['message'] ?? "Unknown error from server";
+          AppLogger.log.e("API Error: $errorMessage");
+          return Left(ServerFailure(errorMessage));
         }
-      } else if (response is DioException) {
-        return Left(ServerFailure(response.message ?? "Dio Error"));
+      }
+
+      // Check if response contains an error message in case of unexpected status code
+      if (response.data != null && response.data['message'] != null) {
+        // Extract the error message and return it
+        String apiErrorMessage = response.data['message'];
+        AppLogger.log.e("API Error: $apiErrorMessage");
+        return Left(ServerFailure(apiErrorMessage));
       } else {
-        return Left(ServerFailure("Unknown error"));
+        // If no message is found, return a generic message with the status code
+        String fallbackMessage =
+            "Unexpected error. Status code: ${response.statusCode}";
+        AppLogger.log.e(fallbackMessage);
+        return Left(ServerFailure(fallbackMessage));
       }
     } catch (e) {
+      // Catch any other exceptions and log the error
+      AppLogger.log.e("Exception: $e");
       return Left(ServerFailure(e.toString()));
     }
   }
@@ -1035,9 +1065,9 @@ class ApiDataSource extends BaseApiDataSource {
     String? guardianOfficeAddress,
   }) async {
     try {
-      String url = ApiUrl.parentsInfo(id: id);
+      final url = ApiUrl.parentsInfo(id: id);
 
-      dynamic response = await Request.sendRequest(
+      final response = await Request.sendRequest(
         url,
         {
           "id": id,
@@ -1064,22 +1094,37 @@ class ApiDataSource extends BaseApiDataSource {
         'post',
         true,
       );
+
       AppLogger.log.i(response);
 
-      // Accept both 200 and 201 as success
-      if (response is! DioException &&
-          (response.statusCode == 200 || response.statusCode == 201)) {
+      if (response is DioException) {
+        final statusCode = response.response?.statusCode;
+        final message =
+            response.response?.data?['message'] ??
+            response.message ??
+            'Request failed with status code $statusCode';
+        return Left(ServerFailure(message));
+      }
+
+      final statusCode = response.statusCode ?? 0;
+
+      if (statusCode == 200 || statusCode == 201) {
         if (response.data['status'] == true) {
           return Right(ParentsInfoResponse.fromJson(response.data));
         } else {
-          return Left(ServerFailure(response.data['message']));
+          return Left(
+            ServerFailure(response.data['message'] ?? 'Unknown API error'),
+          );
         }
-      } else if (response is DioException) {
-        return Left(ServerFailure(response.message ?? "Dio Error"));
       } else {
-        return Left(ServerFailure("Unknown error"));
+        // Handle all non-200 cases with actual server message
+        final message =
+            response.data?['message'] ??
+            'Server responded with status $statusCode';
+        return Left(ServerFailure(message));
       }
     } catch (e) {
+      // Catch anything unexpected (like parsing errors)
       return Left(ServerFailure(e.toString()));
     }
   }
@@ -1090,31 +1135,41 @@ class ApiDataSource extends BaseApiDataSource {
     required List<Map<String, String>> siblings,
   }) async {
     try {
-      String url = ApiUrl.sistersInfo(id: id);
+      final url = ApiUrl.sistersInfo(id: id);
 
       final payload =
           hasSisterInSchool != 'NoSiblings'
               ? {"hasSisterInSchool": true, "sisterDetails": siblings}
               : {"hasSisterInSchool": false, "sisterDetails": []};
 
-      dynamic response = await Request.sendRequest(url, payload, 'post', true);
+      final response = await Request.sendRequest(url, payload, 'post', true);
       AppLogger.log.i(response);
 
-      // Accept both 200 and 201 as success
-      if (response is! DioException &&
-          (response.statusCode == 200 || response.statusCode == 201)) {
-        if (response.data['status'] == true) {
-          return Right(ParentsInfoResponse.fromJson(response.data));
+      if (response is DioException) {
+        final message =
+            response.response?.data?['message'] ??
+            response.message ??
+            'Network error occurred';
+        return Left(ServerFailure(message));
+      }
+
+      final statusCode = response.statusCode;
+      final data = response.data;
+
+      if (statusCode == 200 || statusCode == 201) {
+        if (data['status'] == true) {
+          return Right(ParentsInfoResponse.fromJson(data));
         } else {
-          return Left(ServerFailure(response.data['message']));
+          return Left(ServerFailure(data['message'] ?? 'Unknown API error'));
         }
-      } else if (response is DioException) {
-        return Left(ServerFailure(response.message ?? "Dio Error"));
       } else {
-        return Left(ServerFailure("Unknown error"));
+        // ✅ Handle API errors like 400, 404, 500, etc.
+        final message =
+            data['message'] ?? 'Request failed with status code $statusCode';
+        return Left(ServerFailure(message));
       }
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure('Exception: ${e.toString()}'));
     }
   }
 
@@ -1143,7 +1198,7 @@ class ApiDataSource extends BaseApiDataSource {
     }
   }
 
-  Future<Either<Failure,ClassSectionResponse>> levelClassSection() async {
+  Future<Either<Failure, ClassSectionResponse>> levelClassSection() async {
     try {
       String url = ApiUrl.levelClassSection;
 
@@ -1155,6 +1210,301 @@ class ApiDataSource extends BaseApiDataSource {
           (response.statusCode == 200 || response.statusCode == 201)) {
         if (response.data['status'] == true) {
           return Right(ClassSectionResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, ParentsInfoResponse>> communicationDetails({
+    required int id,
+    required String mobilePrimary,
+    required String mobileSecondary,
+    required String country,
+    required String state,
+    required String city,
+    required String pinCode,
+    required String address,
+  }) async {
+    try {
+      String url = ApiUrl.communicationDetails(id: id);
+      final payLoad = {
+        "mobilePrimary": mobilePrimary,
+        "mobileSecondary": mobileSecondary,
+        "country": country,
+        "state": state,
+        "city": city,
+        "pinCode": pinCode,
+        "address": address,
+      };
+
+      dynamic response = await Request.sendRequest(url, payLoad, 'Post', true);
+      AppLogger.log.i(response);
+      AppLogger.log.i(payLoad);
+
+      // Accept both 200 and 201 as success
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(ParentsInfoResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        final message =
+            response.data['message'] ??
+            'Request failed with status code ${response.statusCode}';
+        return Left(ServerFailure(message));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, ParentsInfoResponse>> requiredPhotos({
+    required int id,
+    required List<bool> isChecked,
+  }) async {
+    try {
+      String url = ApiUrl.communicationDetails(id: id);
+      final payLoad = {
+        "docsChecklist": [
+          {
+            "key": "birth_cert",
+            "title": "New online downloaded birth certificate",
+            "provided": isChecked[0],
+          },
+          {
+            "key": "community_cert",
+            "title": "Community Certificate",
+            "provided": isChecked[1],
+          },
+          {
+            "key": "last_academic",
+            "title": "Last academic certificate",
+            "provided": isChecked[2],
+          },
+          {
+            "key": "residence_proof",
+            "title": "Proof of Residence",
+            "provided": isChecked[3],
+          },
+        ],
+      };
+
+      dynamic response = await Request.sendRequest(url, payLoad, 'Post', true);
+      AppLogger.log.i(response);
+      AppLogger.log.i(payLoad);
+
+      // Accept both 200 and 201 as success
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(ParentsInfoResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, SubmitResponse>> submit({
+    required int id,
+    required bool isChecked,
+  }) async {
+    try {
+      final url = ApiUrl.submit(id: id);
+      final payload = {"consentAccepted": isChecked};
+
+      final response = await Request.sendRequest(url, payload, 'Post', true);
+      AppLogger.log.i(response);
+      AppLogger.log.i(payload);
+
+      // Handle DioException separately
+      if (response is DioException) {
+        final message =
+            response.response?.data?['message'] ??
+            response.message ??
+            'Something went wrong';
+        return Left(ServerFailure(message));
+      }
+
+      final data = response.data;
+
+      // Always check API-level 'status'
+      if (data['status'] == true) {
+        final parsed = SubmitResponse.fromJson(data);
+        return Right(parsed);
+      } else {
+        // Show API message even for non-200 status
+        final message = data['message'] ?? 'Unknown error';
+        return Left(ServerFailure(message));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, String>> getCcavenue({required int id}) async {
+    try {
+      final url = ApiUrl.getCcavenue(id: id);
+      final response = await Request.sendGetRequest(url, {}, 'Post', true);
+
+      if (response is! DioException &&
+          (response?.statusCode == 200 || response?.statusCode == 201)) {
+        if (response?.data is String && response?.data.contains('<html')) {
+          // ✅ Direct HTML
+          return Right(response?.data as String);
+        } else {
+          return Left(ServerFailure("Unexpected response format"));
+        }
+      } else if (response is DioException) {
+        final msg = "Dio Error";
+        return Left(ServerFailure(msg));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, StatusResponse>> statusCheck({
+    required int admissionId,
+  }) async {
+    try {
+      String url = ApiUrl.statusCheck(admissionId: admissionId);
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(url);
+      AppLogger.log.i(response);
+
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(StatusResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, CountryResponse>> getCountries() async {
+    try {
+      String url = ApiUrl.countries;
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(url);
+      AppLogger.log.i(response);
+
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(CountryResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, StatesResponse>> getStates({
+    required String country,
+  }) async {
+    try {
+      String url = ApiUrl.getStates(country: country);
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(url);
+      AppLogger.log.i(response);
+
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(StatesResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, CityResponse>> getCities({
+    required String country,
+    required String state,
+  }) async {
+    try {
+      String url = ApiUrl.getCities(country: country, state: state);
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(url);
+      AppLogger.log.i(response);
+
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(CityResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, GetAdmissionResponse>> getAdmissionDetails({
+    required int id,
+  }) async {
+    try {
+      String url = ApiUrl.getAdmissionDetails(id: id);
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(response);
+
+      // Accept both 200 and 201 as success
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(GetAdmissionResponse.fromJson(response.data));
         } else {
           return Left(ServerFailure(response.data['message']));
         }

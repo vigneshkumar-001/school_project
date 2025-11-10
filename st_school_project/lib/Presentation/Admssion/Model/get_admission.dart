@@ -1,33 +1,35 @@
 import 'dart:convert';
 
-class SistersResponse {
+class GetAdmissionResponse {
   final bool status;
   final int code;
-  final AdmissionData data;
+  final GetAdmissionData? data;
 
-  SistersResponse({
+  GetAdmissionResponse({
     required this.status,
     required this.code,
     required this.data,
   });
 
-  factory SistersResponse.fromJson(Map<String, dynamic> json) =>
-      SistersResponse(
-        status: json["status"] ?? false,
-        code: json["code"] ?? 0,
-        data: AdmissionData.fromJson(json["data"] ?? {}),
-      );
+  factory GetAdmissionResponse.fromJson(
+    Map<String, dynamic> json,
+  ) => GetAdmissionResponse(
+    status: json["status"] ?? false,
+    code: json["code"] ?? 0,
+    data: json["data"] != null ? GetAdmissionData.fromJson(json["data"]) : null,
+  );
 
   Map<String, dynamic> toJson() => {
     "status": status,
     "code": code,
-    "data": data.toJson(),
+    "data": data?.toJson(),
   };
 }
 
-class AdmissionData {
+class GetAdmissionData {
   final int? id;
   final int? windowId;
+  final int step;
   final int? studentId;
   final String? studentName;
   final String? studentNameTamil;
@@ -41,27 +43,35 @@ class AdmissionData {
   final String? idProof1;
   final String? idProof2;
   final String? email;
+
+  // Father Info
   final String? fatherName;
   final String? fatherNameTamil;
   final String? fatherQualification;
   final String? fatherOccupation;
-  final int? fatherIncome;
+  final String? fatherIncome;
   final String? fatherOfficeAddress;
+
+  // Mother Info
   final String? motherName;
   final String? motherNameTamil;
   final String? motherQualification;
   final String? motherOccupation;
-  final int? motherIncome;
+  final String? motherIncome;
   final String? motherOfficeAddress;
+
+  // Guardian Info
   final bool hasGuardian;
   final String? guardianName;
   final String? guardianNameTamil;
   final String? guardianQualification;
   final String? guardianOccupation;
   final String? guardianOfficeAddress;
-  final int? guardianIncome;
+  final String? guardianIncome;
+
   final bool hasSisterInSchool;
   final String? sisterDetails;
+
   final String? mobilePrimary;
   final String? mobileSecondary;
   final String? country;
@@ -69,7 +79,8 @@ class AdmissionData {
   final String? city;
   final String? pinCode;
   final String? address;
-  final String? docsChecklist;
+
+  final List<DocsChecklist>? docsChecklist;
   final bool consentAccepted;
   final String? status;
   final String? admissionCode;
@@ -77,9 +88,10 @@ class AdmissionData {
   final String? createdAt;
   final String? updatedAt;
 
-  AdmissionData({
+  GetAdmissionData({
     this.id,
     this.windowId,
+    required this.step,
     this.studentId,
     this.studentName,
     this.studentNameTamil,
@@ -130,63 +142,86 @@ class AdmissionData {
     this.updatedAt,
   });
 
-  factory AdmissionData.fromJson(Map<String, dynamic> json) => AdmissionData(
-    id: json["id"],
-    windowId: json["windowId"],
-    studentId: json["studentId"],
-    studentName: json["studentName"],
-    studentNameTamil: json["studentNameTamil"],
-    aadhaar: json["aadhaar"],
-    dob: json["dob"],
-    religion: json["religion"],
-    caste: json["caste"],
-    community: json["community"],
-    motherTongue: json["motherTongue"],
-    nationality: json["nationality"],
-    idProof1: json["idProof1"],
-    idProof2: json["idProof2"],
-    email: json["email"],
-    fatherName: json["fatherName"],
-    fatherNameTamil: json["fatherNameTamil"],
-    fatherQualification: json["fatherQualification"],
-    fatherOccupation: json["fatherOccupation"],
-    fatherIncome: json["fatherIncome"],
-    fatherOfficeAddress: json["fatherOfficeAddress"],
-    motherName: json["motherName"],
-    motherNameTamil: json["motherNameTamil"],
-    motherQualification: json["motherQualification"],
-    motherOccupation: json["motherOccupation"],
-    motherIncome: json["motherIncome"],
-    motherOfficeAddress: json["motherOfficeAddress"],
-    hasGuardian: json["hasGuardian"] ?? false,
-    guardianName: json["guardianName"],
-    guardianNameTamil: json["guardianNameTamil"],
-    guardianQualification: json["guardianQualification"],
-    guardianOccupation: json["guardianOccupation"],
-    guardianOfficeAddress: json["guardianOfficeAddress"],
-    guardianIncome: json["guardianIncome"],
-    hasSisterInSchool: json["hasSisterInSchool"] ?? false,
-    sisterDetails: json["sisterDetails"],
-    mobilePrimary: json["mobilePrimary"],
-    mobileSecondary: json["mobileSecondary"],
-    country: json["country"],
-    state: json["state"],
-    city: json["city"],
-    pinCode: json["pinCode"],
-    address: json["address"],
-    docsChecklist: json["docsChecklist"],
-    consentAccepted: json["consentAccepted"] ?? false,
-    status: json["status"],
-    admissionCode: json["admissionCode"],
-    submittedAt: json["submittedAt"],
-    createdAt: json["createdAt"],
-    updatedAt: json["updatedAt"],
-  );
+  factory GetAdmissionData.fromJson(Map<String, dynamic> json) {
+    double? parseDouble(dynamic value) {
+      if (value == null) return null;
+      if (value is num) return value.toDouble();
+      if (value is String && value.isNotEmpty) {
+        return double.tryParse(value);
+      }
+      return null;
+    }
+
+    return GetAdmissionData(
+      id: json["id"],
+      windowId: json["windowId"],
+      studentId: json["studentId"],
+      step: json["step"],
+      studentName: json["studentName"],
+      studentNameTamil: json["studentNameTamil"],
+      aadhaar: json["aadhaar"],
+      dob: json["dob"],
+      religion: json["religion"],
+      caste: json["caste"],
+      community: json["community"],
+      motherTongue: json["motherTongue"],
+      nationality: json["nationality"],
+      idProof1: json["idProof1"],
+      idProof2: json["idProof2"],
+      email: json["email"],
+
+      fatherName: json["fatherName"],
+      fatherNameTamil: json["fatherNameTamil"],
+      fatherQualification: json["fatherQualification"],
+      fatherOccupation: json["fatherOccupation"],
+      fatherIncome: json["fatherIncome"],
+      fatherOfficeAddress: json["fatherOfficeAddress"],
+
+      motherName: json["motherName"],
+      motherNameTamil: json["motherNameTamil"],
+      motherQualification: json["motherQualification"],
+      motherOccupation: json["motherOccupation"],
+      motherIncome: json["motherIncome"],
+      motherOfficeAddress: json["motherOfficeAddress"],
+
+      hasGuardian: json["hasGuardian"] ?? false,
+      guardianName: json["guardianName"],
+      guardianNameTamil: json["guardianNameTamil"],
+      guardianQualification: json["guardianQualification"],
+      guardianOccupation: json["guardianOccupation"],
+      guardianOfficeAddress: json["guardianOfficeAddress"],
+      guardianIncome: json["guardianIncome"],
+
+      hasSisterInSchool: json["hasSisterInSchool"] ?? false,
+      sisterDetails: json["sisterDetails"],
+
+      mobilePrimary: json["mobilePrimary"],
+      mobileSecondary: json["mobileSecondary"],
+      country: json["country"],
+      state: json["state"],
+      city: json["city"],
+      pinCode: json["pinCode"],
+      address: json["address"],
+
+      docsChecklist:
+          (json["docsChecklist"] as List?)
+              ?.map((e) => DocsChecklist.fromJson(e))
+              .toList(),
+
+      consentAccepted: json["consentAccepted"] ?? false,
+      status: json["status"],
+      admissionCode: json["admissionCode"],
+      submittedAt: json["submittedAt"],
+      createdAt: json["createdAt"],
+      updatedAt: json["updatedAt"],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "windowId": windowId,
     "studentId": studentId,
+    "step": step,
     "studentName": studentName,
     "studentNameTamil": studentNameTamil,
     "aadhaar": aadhaar,
@@ -227,7 +262,7 @@ class AdmissionData {
     "city": city,
     "pinCode": pinCode,
     "address": address,
-    "docsChecklist": docsChecklist,
+    "docsChecklist": docsChecklist?.map((e) => e.toJson()).toList(),
     "consentAccepted": consentAccepted,
     "status": status,
     "admissionCode": admissionCode,
@@ -237,9 +272,22 @@ class AdmissionData {
   };
 }
 
-// Helper functions for quick conversion
-SistersResponse admissionResponseFromJson(String str) =>
-    SistersResponse.fromJson(json.decode(str));
+class DocsChecklist {
+  final String? key;
+  final String? title;
+  final bool? provided;
 
-String admissionResponseToJson(SistersResponse data) =>
-    json.encode(data.toJson());
+  DocsChecklist({this.key, this.title, this.provided});
+
+  factory DocsChecklist.fromJson(Map<String, dynamic> json) => DocsChecklist(
+    key: json["key"],
+    title: json["title"],
+    provided: json["provided"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "key": key,
+    "title": title,
+    "provided": provided,
+  };
+}

@@ -218,7 +218,7 @@ class AnnouncementController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getAnnouncement();
+
   }
 
   Future<void> getAnnouncement({bool showLoader = true}) async {

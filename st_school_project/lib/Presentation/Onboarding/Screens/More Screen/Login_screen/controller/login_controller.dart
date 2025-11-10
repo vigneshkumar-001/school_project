@@ -5,6 +5,7 @@ import 'package:st_school_project/Core/Widgets/consents.dart';
 
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:st_school_project/Presentation/Admssion/Controller/admission_controller.dart';
 
 import '../../../../../../Core/Widgets/bottom_navigationbar.dart';
 import '../../../../../../api/data_source/apiDataSource.dart';
@@ -22,13 +23,15 @@ class LoginController extends GetxController {
   RxBool isOtpLoading = false.obs;
   ApiDataSource apiDataSource = ApiDataSource();
   final StudentHomeController controller = Get.put(StudentHomeController());
+  final AdmissionController admissionController = Get.put(
+    AdmissionController(),
+  );
   final AnnouncementController announcementController = Get.put(
     AnnouncementController(),
   );
   final TeacherListController teacherListController = Get.put(
     TeacherListController(),
   );
-
 
   final RxInt resendCooldown = 0.obs;
   final RxInt otpExpiry = 0.obs;
@@ -208,14 +211,15 @@ class LoginController extends GetxController {
     final results = await apiDataSource.resentOtp(phone: phone);
 
     results.fold(
-          (failure) {
+      (failure) {
         isOtpLoading.value = false;
         CustomSnackBar.showError(failure.message);
       },
-          (response) {
+      (response) {
         isOtpLoading.value = false;
         resendCooldown.value = response.meta.nextAllowedIn;
-        otpExpiry.value = response.meta.nextAllowedIn; // same duration for OTP expiry
+        otpExpiry.value =
+            response.meta.nextAllowedIn; // same duration for OTP expiry
         CustomSnackBar.showSuccess(response.message);
         _startResendTimer();
         _startOtpExpiryTimer();
@@ -236,7 +240,7 @@ class LoginController extends GetxController {
 
   void _startOtpExpiryTimer() {
     _otpExpiryTimer?.cancel();
-    _otpExpiryTimer = Timer.periodic( Duration(seconds: 1), (timer) {
+    _otpExpiryTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (otpExpiry.value <= 1) {
         otpExpiry.value = 0;
         timer.cancel();
@@ -246,8 +250,6 @@ class LoginController extends GetxController {
       }
     });
   }
-
-
 
   Future<String?> changeNumberOtpLogin({
     required String phone,
@@ -284,37 +286,42 @@ class LoginController extends GetxController {
     return null;
   }
 
-  Future<void> checkTokenExpire() async {
+  Future<bool> checkTokenExpire() async {
     try {
       final results = await apiDataSource.checkTokenExpire();
-      results.fold(
-        (failure) {
+      return await results.fold(
+            (failure) {
           AppLogger.log.e(failure.message);
+          return false;
         },
-        (response) async {
+            (response) async {
           AppLogger.log.i(response.message);
 
           final prefs = await SharedPreferences.getInstance();
 
-          // Only replace token if the API returned a new one
           if (response.token.isNotEmpty) {
             accessToken = response.token;
             await prefs.setString('token', accessToken);
-            AppLogger.log.i('Token refreshed: $accessToken');
           } else {
-            // Keep the existing token
             accessToken = prefs.getString('token') ?? '';
-            AppLogger.log.i(
-              'Token still valid, using existing token: $accessToken',
-            );
+          }
+
+          if (response.role.toLowerCase() == 'applicant') {
+            final admissionID = prefs.getInt('admissionId');
+            if (admissionID != null) {
+              await admissionController.getAdmissionDetails(id: admissionID);
+            }
+            return true; // applicant
           }
 
           await _loadInitialData();
+          return false; // not applicant
         },
       );
     } catch (e) {
       AppLogger.log.e('Error checking token: $e');
-    } finally {}
+      return false;
+    }
   }
 
   Future<void> _loadInitialData() async {
