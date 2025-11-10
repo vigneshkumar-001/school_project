@@ -28,6 +28,7 @@ class Admission1NextButtonResponse {
 class AdmissionData {
   final int? id;
   final int? windowId;
+  final int? step;
   final int? studentId;
   final String? studentName;
   final String? studentNameTamil;
@@ -82,6 +83,7 @@ class AdmissionData {
     this.windowId,
     this.studentId,
     this.studentName,
+    this.step,
     this.studentNameTamil,
     this.aadhaar,
     this.dob,
@@ -135,6 +137,7 @@ class AdmissionData {
     windowId: json["windowId"],
     studentId: json["studentId"],
     studentName: json["studentName"],
+    step: json["step"] ?? 0,
     studentNameTamil: json["studentNameTamil"],
     aadhaar: json["aadhaar"],
     dob: json["dob"],
@@ -174,7 +177,9 @@ class AdmissionData {
     city: json["city"],
     pinCode: json["pinCode"],
     address: json["address"],
-    docsChecklist: json["docsChecklist"],
+    docsChecklist: json["docsChecklist"] is List
+        ? (json["docsChecklist"] as List).join(", ")
+        : json["docsChecklist"] as String?,
     consentAccepted: json["consentAccepted"] ?? false,
     status: json["status"],
     admissionCode: json["admissionCode"],
@@ -187,6 +192,7 @@ class AdmissionData {
     "id": id,
     "windowId": windowId,
     "studentId": studentId,
+    "step": step,
     "studentName": studentName,
     "studentNameTamil": studentNameTamil,
     "aadhaar": aadhaar,

@@ -3,12 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
+import 'package:st_school_project/Core/Utility/snack_bar.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 
 import 'check_admission_status.dart';
 
 class AdmissionPaymentSuccess extends StatefulWidget {
-  const AdmissionPaymentSuccess({super.key});
+  final String admissionCode;
+  const AdmissionPaymentSuccess({super.key, required this.admissionCode});
 
   @override
   State<AdmissionPaymentSuccess> createState() =>
@@ -17,21 +19,6 @@ class AdmissionPaymentSuccess extends StatefulWidget {
 
 class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
   bool _isCopied = false;
-
-  void handleCopy() {
-    Clipboard.setData(ClipboardData(text: 'SJ54956J6'));
-    setState(() {
-      _isCopied = true;
-    });
-
-    Future.delayed(Duration(seconds: 1), () {
-      if (mounted) {
-        setState(() {
-          _isCopied = false;
-        });
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +53,7 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
 
                           children: [
                             Text(
-                              'SJ54956J6',
+                              "SJ${widget.admissionCode}",
                               style: GoogleFont.ibmPlexSans(
                                 fontSize: 28,
                                 fontWeight: FontWeight.w700,
@@ -77,23 +64,21 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
                             Column(
                               children: [
                                 InkWell(
-                                  onTap: handleCopy,
+                                  onTap: () {
+                                    Clipboard.setData(
+                                      ClipboardData(text: widget.admissionCode),
+                                    );
+                                    CustomSnackBar.showSuccess('Copied');
+
+                                    setState(() {
+                                      _isCopied = true;
+                                    });
+                                  },
                                   child: Image.asset(
                                     AppImages.copyImage,
                                     height: 20,
                                   ),
                                 ),
-                                if (_isCopied)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 4),
-                                    child: Text(
-                                      'Copied',
-                                      style: GoogleFont.ibmPlexSans(
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
                               ],
                             ),
                           ],
@@ -155,7 +140,7 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
                 width: 220,
                 onTap: () {
                   HapticFeedback.heavyImpact();
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => CheckAdmissionStatus(),

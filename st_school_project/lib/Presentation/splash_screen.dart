@@ -87,43 +87,6 @@ class _SplashScreenState extends State<SplashScreen>
       _showUpdateBottomSheet();
     }
   }
-
-  // Future<void> _checkAppVersion() async {
-  //
-  //   String currentVersion =
-  //       controller.studentHomeData.value?.appVersions?.android.latestVersion
-  //           .toString() ??
-  //       '';
-  //   print(currentVersion);
-  //   if (currentVersion == latestVersion) {
-  //     _checkLoginStatus();
-  //   } else {
-  //     _showUpdateBottomSheet();
-  //   }
-  // }
-
-  // void _checkLoginStatus() async {
-  //   final isLoggedIn = await loginController.isLoggedIn();
-  //
-  //   if (!mounted) return;
-  //
-  //   if (isLoggedIn) {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (_) => const CommonBottomNavigation(initialIndex: 0),
-  //       ),
-  //     );
-  //   } else {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (_) => const ChangeMobileNumber(page: 'splash'),
-  //       ),
-  //     );
-  //   }
-  // }
-  /// Check token existence and expiration
   void _checkLoginStatus() async {
     if (!mounted) return;
 
@@ -131,9 +94,14 @@ class _SplashScreenState extends State<SplashScreen>
     final token = prefs.getString('token');
 
     if (token != null && token.isNotEmpty) {
-      await loginController.checkTokenExpire();
+      final isApplicant = await loginController.checkTokenExpire();
 
-      // After token check & loading data → navigate to Home
+      if (isApplicant) {
+        // Already navigated inside getAdmissionDetails()
+        return;
+      }
+
+      // Only navigate to CommonBottomNavigation if not applicant
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -150,6 +118,34 @@ class _SplashScreenState extends State<SplashScreen>
       );
     }
   }
+
+
+  // void _checkLoginStatus() async {
+  //   if (!mounted) return;
+  //
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token');
+  //
+  //   if (token != null && token.isNotEmpty) {
+  //     await loginController.checkTokenExpire();
+  //
+  //
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (_) => const CommonBottomNavigation(initialIndex: 0),
+  //       ),
+  //     );
+  //   } else {
+  //     // No token → navigate to login/change mobile
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (_) => const ChangeMobileNumber(page: 'splash'),
+  //       ),
+  //     );
+  //   }
+  // }
 
   void openPlayStore() async {
     final storeUrl =
@@ -174,26 +170,7 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
-  //
-  // void openPlayStore() async {
-  //   final storeUrl =
-  //       controller.studentHomeData.value?.appVersions?.android.storeUrl ?? '';
-  //
-  //
-  //
-  //   if (storeUrl.isEmpty) {
-  //     print('No Play Store URL available.');
-  //     return;
-  //   }
-  //
-  //   final uri = Uri.parse(storeUrl);
-  //
-  //   if (await canLaunchUrl(uri)) {
-  //     await launchUrl(uri, mode: LaunchMode.externalApplication);
-  //   } else {
-  //     print('Could not open the Play Store link.');
-  //   }
-  // }
+
 
   void _showUpdateBottomSheet() {
     showModalBottomSheet(
@@ -312,141 +289,3 @@ class _SplashScreenState extends State<SplashScreen>
   }
 }
 
-/*
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  double _progress = 0.0;
-  late AnimationController _controller;
-  final StudentHomeController controller = Get.put(StudentHomeController());
-  final LoginController loginController = Get.put(LoginController());
-  final AnnouncementController announcementController = Get.put(
-    AnnouncementController(),
-  );
-  final TeacherListController teacherListController = Get.put(
-    TeacherListController(),
-  );
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 8),
-    );
-
-    _controller.addListener(() {
-      setState(() {
-        _progress = _controller.value;
-      });
-    });
-
-    _controller.forward(); // start animation
-
-    // Check login after 12 seconds
-    Future.delayed(const Duration(seconds: 8), () {
-      _checkLoginStatus();
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _checkLoginStatus() async {
-    final isLoggedIn = await loginController.isLoggedIn();
-    if (isLoggedIn) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const CommonBottomNavigation(initialIndex: 0),
-        ),
-      );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ChangeMobileNumber(page: 'splash'),
-        ),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width * 0.7;
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(AppImages.splashBackImage1),
-                    Image.asset(AppImages.schoolLogo),
-                    Image.asset(AppImages.splashBackImage2),
-                  ],
-                ),
-              ),
-              Container(
-                width: width,
-                height: 12,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: AppColor.blueG2, width: 2),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(1.5),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Stack(
-                      children: [
-                        Container(color: AppColor.white),
-                        FractionallySizedBox(
-                          alignment: Alignment.centerLeft,
-                          widthFactor: _progress, // updated with controller
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              gradient: LinearGradient(
-                                colors: [AppColor.blueG1, AppColor.blueG2],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 35),
-              Text(
-                'V 1.2',
-                style: GoogleFonts.ibmPlexSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: AppColor.lowGrey,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-*/

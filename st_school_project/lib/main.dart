@@ -7,6 +7,7 @@ import 'package:st_school_project/Presentation/Admssion/Screens/communication_sc
 import 'package:st_school_project/Presentation/Admssion/Screens/parents_info_screen.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/required_photo_screens.dart';
+import 'package:st_school_project/Presentation/Admssion/Screens/submit_the_admission.dart';
 import 'Core/Firebase_service/firebase_service.dart';
 import 'Presentation/Admssion/Screens/admission_1.dart';
 import 'Presentation/Admssion/Screens/check_admission_status.dart';
@@ -54,7 +55,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // Initialize Firebase service first (pure logic, no dialogs/UI)
+
   final firebaseService = FirebaseService();
   await firebaseService.initializeFirebase();
   await firebaseService.fetchFCMTokenIfNeeded();
@@ -62,7 +63,7 @@ Future<void> main() async {
   // Make sure we build the app *first*
   runApp(const MyApp());
 
-  // Then initialize controllers that might trigger dialogs
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
   await initController();
 
   // Now set up listeners
@@ -75,6 +76,7 @@ Future<void> main() async {
       AppLogger.log.i('📬 [OPENED] ${msg.messageId}');
     },
   );
+  });
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -96,7 +98,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(scaffoldBackgroundColor: AppColor.white),
       debugShowCheckedModeBanner: false,
       // home: Admission1(),
-      home: RequiredPhotoScreens(id: 5),
+     home: SplashScreen(),
     );
   }
 }

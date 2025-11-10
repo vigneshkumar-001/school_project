@@ -25,6 +25,7 @@ class StudentInfoResponse {
 class AdmissionData {
   final int? id;
   final int? windowId;
+  final int? step;
   final int? studentId;
   final String? studentName;
   final String? studentNameTamil;
@@ -66,7 +67,7 @@ class AdmissionData {
   final String? city;
   final String? pinCode;
   final String? address;
-  final String? docsChecklist;
+  final List<DocsChecklist>? docsChecklist;
   final bool? consentAccepted;
   final String? status;
   final String? admissionCode;
@@ -77,6 +78,7 @@ class AdmissionData {
   AdmissionData({
     this.id,
     this.windowId,
+    this.step,
     this.studentId,
     this.studentName,
     this.studentNameTamil,
@@ -132,6 +134,7 @@ class AdmissionData {
     windowId: json["windowId"],
     studentId: json["studentId"],
     studentName: json["studentName"],
+    step: json["step"],
     studentNameTamil: json["studentNameTamil"],
     aadhaar: json["aadhaar"],
     dob: json["dob"],
@@ -171,7 +174,9 @@ class AdmissionData {
     city: json["city"],
     pinCode: json["pinCode"],
     address: json["address"],
-    docsChecklist: json["docsChecklist"],
+    docsChecklist: (json["docsChecklist"] as List?)
+        ?.map((e) => DocsChecklist.fromJson(e))
+        .toList(),
     consentAccepted: json["consentAccepted"],
     status: json["status"],
     admissionCode: json["admissionCode"],
@@ -184,6 +189,7 @@ class AdmissionData {
     "id": id,
     "windowId": windowId,
     "studentId": studentId,
+    "step": step,
     "studentName": studentName,
     "studentNameTamil": studentNameTamil,
     "aadhaar": aadhaar,
@@ -231,5 +237,28 @@ class AdmissionData {
     "submittedAt": submittedAt,
     "createdAt": createdAt,
     "updatedAt": updatedAt,
+  };
+}
+class DocsChecklist {
+  final String? key;
+  final String? title;
+  final bool? provided;
+
+  DocsChecklist({
+    this.key,
+    this.title,
+    this.provided,
+  });
+
+  factory DocsChecklist.fromJson(Map<String, dynamic> json) => DocsChecklist(
+    key: json["key"],
+    title: json["title"],
+    provided: json["provided"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "key": key,
+    "title": title,
+    "provided": provided,
   };
 }

@@ -22,12 +22,13 @@ class ApiUrl {
   static String studentMessageList = '$baseUrl/student-messages/history';
   static String reactMessage = '$baseUrl/student-messages/create';
   static String notifications = '$baseUrl/notifications/students/register';
-  static String profileImage = '$baseUrl/student-home/profiles/profile-image-url';
+  static String profileImage =
+      '$baseUrl/student-home/profiles/profile-image-url';
   static String getAdmission = '$baseUrl/admissions/visible';
   static String studentDropDown = '$baseUrl/admissions/meta';
-  static String levelClassSection = '$baseUrl/admin/class/map/levels-to-sections';
-
-
+  static String levelClassSection =
+      '$baseUrl/admin/class/map/levels-to-sections';
+  static String countries = '$baseUrl/geo/countries';
 
   static String examDetails({required int examId}) {
     return '$baseUrl/student-exams/$examId/details';
@@ -103,6 +104,7 @@ class ApiUrl {
   static String postAdmissionStart({required int id}) {
     return '$baseUrl/admissions/$id/start';
   }
+
   static String sistersInfo({required int id}) {
     return '$baseUrl/admissions/apps/$id/step3';
   }
@@ -117,5 +119,17 @@ class ApiUrl {
 
   static String getCcavenue({required int id}) {
     return '$baseUrl/admissions/apps/$id/pay/launch';
+  }
+
+  static String getStates({required String country}) {
+    return '$baseUrl/geo/states?country=$country';
+  }
+
+  static String getCities({required String state, required String country}) {
+    return '$baseUrl/geo/cities?country=$country&state=$state';
+  }
+
+  static String getAdmissionDetails({required int id}) {
+    return '$baseUrl/admissions/apps/$id';
   }
 }

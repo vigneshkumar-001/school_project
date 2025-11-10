@@ -3,12 +3,14 @@ class TokenResponse {
   final int code;
   final String message;
   final String token;
+  final String role;
 
   TokenResponse({
     required this.status,
     required this.code,
     required this.message,
     required this.token,
+    required this.role,
   });
 
   // From JSON
@@ -18,6 +20,7 @@ class TokenResponse {
       code: json['code'] as int,
       message: json['message'] as String,
       token: json['token'] as String,
+      role: json['role'] as String,
     );
   }
 
@@ -28,6 +31,7 @@ class TokenResponse {
       'code': code,
       'message': message,
       'token': token,
+      'role': role,
     };
   }
 }

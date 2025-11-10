@@ -1382,8 +1382,12 @@ class _HomeScreenState extends State<HomeTab>
                                                             context,
                                                             MaterialPageRoute(
                                                               builder:
-                                                                  (context) =>
-                                                                      Admission1(),
+                                                                  (
+                                                                    context,
+                                                                  ) => Admission1(
+                                                                    pages:
+                                                                        'homeScreen',
+                                                                  ),
                                                             ),
                                                           );
                                                         },
@@ -1534,8 +1538,12 @@ class _HomeScreenState extends State<HomeTab>
                                                             context,
                                                             MaterialPageRoute(
                                                               builder:
-                                                                  (context) =>
-                                                                      CheckAdmissionStatus(),
+                                                                  (
+                                                                    context,
+                                                                  ) => CheckAdmissionStatus(
+                                                                    page:
+                                                                        'homeScreen',
+                                                                  ),
                                                             ),
                                                           );
                                                         },

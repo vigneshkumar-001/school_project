@@ -48,7 +48,8 @@ import '../../../Core/Widgets/custom_textfield.dart';
 import '../../Onboarding/Screens/Home Screen/home_tab.dart';
 
 class CheckAdmissionStatus extends StatefulWidget {
-  const CheckAdmissionStatus({super.key});
+  final String? page;
+  const CheckAdmissionStatus({super.key,   this.page});
 
   @override
   State<CheckAdmissionStatus> createState() => _CheckAdmissionStatusState();
@@ -332,7 +333,10 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
   @override
   void initState() {
     super.initState();
-    controller.geStatusCheck(admissionId: 0);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.geStatusCheck(admissionId: 0);
+    });
   }
 
   void searchAdmission() {
@@ -351,200 +355,209 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomContainer.leftSaitArrow(
-                  onTap: () => Navigator.pop(context),
-                ),
-                SizedBox(height: 33),
-                Text(
-                  'Check Admission Status',
-                  style: GoogleFont.ibmPlexSans(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w500,
-                    color: AppColor.black,
-                  ),
-                ),
-                SizedBox(height: 14),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 4,
-                      child: CustomContainer.studentInfoScreen(
-                        controller: _admissionIdController,
-                        text: 'Admission Id',
-                        verticalDivider: true,
-                        flex: 2,
-                      ),
+    return WillPopScope(
+      onWillPop: () async {
+        return await false;
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (widget.page == "homeScreen")
+                    CustomContainer.leftSaitArrow(
+                      onTap: () => Navigator.pop(context),
                     ),
-                    Expanded(
-                      child: CustomContainer.checkMark(
-                        onTap: () {
-                          FocusScope.of(context).unfocus(); // ✅ Hide keyboard
-                          searchAdmission(); // ✅ Call your search function
-                        },
-                        imagePath: AppImages.searchImage,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 15),
-                RichText(
-                  text: TextSpan(
-                    text: '2025-26 result will be updated on',
+                  SizedBox(height: 33),
+                  Text(
+                    'Check Admission Status',
                     style: GoogleFont.ibmPlexSans(
-                      fontSize: 12,
-                      color: AppColor.lowGrey,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.black,
                     ),
+                  ),
+                  SizedBox(height: 14),
+                  Row(
                     children: [
-                      TextSpan(
-                        text: ' 25th May',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 12,
-                          color: AppColor.lightBlack,
-                          fontWeight: FontWeight.w500,
+                      Expanded(
+                        flex: 4,
+                        child: CustomContainer.studentInfoScreen(
+                          onChanged: (text) {
+                            searchAdmission();
+                          },
+                          controller: _admissionIdController,
+                          text: 'Admission Id',
+                          verticalDivider: true,
+                          flex: 2,
+                        ),
+                      ),
+                      Expanded(
+                        child: CustomContainer.checkMark(
+                          onTap: () {
+                            FocusScope.of(context).unfocus();
+                            searchAdmission(); // ✅ Call your search function
+                          },
+                          imagePath: AppImages.searchImage,
                         ),
                       ),
                     ],
                   ),
-                ),
-                SizedBox(height: 35),
-                Text(
-                  'My Admissions',
-                  style: GoogleFont.ibmPlexSans(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: AppColor.lightBlack,
+                  SizedBox(height: 15),
+                  RichText(
+                    text: TextSpan(
+                      text: '2025-26 result will be updated',
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 12,
+                        color: AppColor.lowGrey,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: '',
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 12,
+                            color: AppColor.lightBlack,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: 15),
-                Expanded(
-                  child: Obx(() {
-                    if (controller.isLoading.value) {
-                      return Center(child: AppLoader.circularLoader());
-                    }
-                    if (controller.statusData.isEmpty) {
-                      return const Center(child: Text('No Data Found'));
-                    }
+                  SizedBox(height: 35),
+                  Text(
+                    'My Admissions',
+                    style: GoogleFont.ibmPlexSans(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.lightBlack,
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  Expanded(
+                    child: Obx(() {
+                      if (controller.isLoading.value) {
+                        return Center(child: AppLoader.circularLoader());
+                      }
+                      if (controller.statusData.isEmpty) {
+                        return const Center(child: Text('No Data Found'));
+                      }
 
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: controller.statusData.length,
-                      itemBuilder: (context, index) {
-                        final data = controller.statusData[index];
-                        final status = (data.status ?? 'pending').toLowerCase();
+                      return ListView.builder(
 
-                        String imagePath;
-                        Color iconColor;
-                        Color bgColor;
 
-                        switch (status) {
-                          case 'approved':
-                            imagePath = AppImages.approvedImage;
-                            iconColor = AppColor.greenMore1;
-                            bgColor = AppColor.checkAdmissCont2;
-                            break;
+                        itemCount: controller.statusData.length,
+                        itemBuilder: (context, index) {
+                          final data = controller.statusData[index];
+                          final status = (data.status).toLowerCase();
 
-                          case 'rejected':
-                            imagePath = AppImages.rejectedImage;
-                            iconColor = AppColor.lightRed;
-                            bgColor = AppColor.checkAdmissCont3;
-                            break;
+                          String imagePath;
+                          Color iconColor;
+                          Color bgColor;
 
-                          default:
-                            imagePath = AppImages.clockIcon;
-                            iconColor = AppColor.blue;
-                            bgColor = AppColor.checkAdmissCont1;
-                            break;
-                        }
+                          switch (status) {
+                            case 'approved':
+                              imagePath = AppImages.approvedImage;
+                              iconColor = AppColor.greenMore1;
+                              bgColor = AppColor.checkAdmissCont2;
+                              break;
 
-                        return Column(
-                          children: [
-                            CustomContainer.myadmissions(
-                              imagepath: AppImages.clockIcon,
-                              iconColor: iconColor,
-                              backRoundColors: bgColor,
-                              iconTextColor: iconColor,
-                              maintext: data.studentName.toString() ?? '',
-                              subtext1: 'Submitted On ',
-                              subtext2:
-                                  data.submittedAt != null &&
-                                          data.submittedAt!.isNotEmpty
-                                      ? DateAndTimeConvert.formatDateTime(
-                                        showDate: true,
-                                        showTime: false,
-                                        data.submittedAt!,
-                                      )
-                                      : '',
+                            case 'rejected':
+                              imagePath = AppImages.rejectedImage;
+                              iconColor = AppColor.lightRed;
+                              bgColor = AppColor.checkAdmissCont3;
+                              break;
 
-                              iconText: 'Pending',
-                              onTap: () {
-                                AppLogger.log.i(data.downloadUrl);
-                                _downloadAndOpenPdf(data.downloadUrl);
-                              },
-                            ),
-                            SizedBox(height: 20),
-                          ],
-                        );
-                      },
-                    );
-                  }),
-                ),
-                // CustomContainer.myadmissions(
-                //   imagepath: AppImages.clockIcon,
-                //   iconColor: AppColor.blue,
-                //   backRoundColors: AppColor.checkAdmissCont1,
-                //   iconTextColor: AppColor.blue,
-                //   maintext: 'Suganya M',
-                //   subtext1: 'Submitted On ',
-                //   subtext2: '25 Jul 2025',
-                //   iconText: 'Pending',
-                //   onTap: () => _paymentReceipt(context),
-                // ),
-                // SizedBox(height: 20),
-                // CustomContainer.myadmissions(
-                //   imagepath: AppImages.approvedImage,
-                //   iconColor: AppColor.greenMore1,
-                //   backRoundColors: AppColor.checkAdmissCont2,
-                //   iconTextColor: AppColor.greenMore1,
-                //   maintext: 'Suganya M',
-                //   subtext1: 'Submitted On ',
-                //   subtext2: '25 Jul 2025',
-                //   iconText: 'Approved',
-                // ),
-                // SizedBox(height: 20),
-                // CustomContainer.myadmissions(
-                //   imagepath: AppImages.rejectedImage,
-                //   iconColor: AppColor.lightRed,
-                //   backRoundColors: AppColor.checkAdmissCont3,
-                //   iconTextColor: AppColor.lightRed,
-                //   maintext: 'Suganya M',
-                //   subtext1: 'Submitted On ',
-                //   subtext2: '25 Jul 2025',
-                //   iconText: 'Rejected',
-                // ),
-                // SizedBox(height: 30),
-                // AppButton.button(
-                //   text: 'Home Page',
-                //   onTap: () {
-                //     HapticFeedback.heavyImpact();
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (context) => CommonBottomNavigation(),
-                //       ),
-                //     );
-                //   },
-                // ),
-              ],
+                            default:
+                              imagePath = AppImages.pending;
+                              iconColor = AppColor.blue;
+                              bgColor = AppColor.checkAdmissCont1;
+                              break;
+                          }
+
+                          return Column(
+                            children: [
+                              CustomContainer.myadmissions(
+                                imagepath: imagePath,
+                                iconColor: iconColor,
+                                backRoundColors: bgColor,
+                                iconTextColor: iconColor,
+                                maintext: data.studentName.toString() ?? '',
+                                subtext1: 'Submitted On ',
+                                subtext2:
+                                    data.submittedAt != null &&
+                                            data.submittedAt!.isNotEmpty
+                                        ? DateAndTimeConvert.formatDateTime(
+                                          showDate: true,
+                                          showTime: false,
+                                          data.submittedAt!,
+                                        )
+                                        : '',
+
+                                iconText: data.status.toUpperCase(),
+                                onTap: () {
+                                  AppLogger.log.i(data.downloadUrl);
+                                  _downloadAndOpenPdf(data.downloadUrl);
+                                },
+                              ),
+                              SizedBox(height: 20),
+                            ],
+                          );
+                        },
+                      );
+                    }),
+                  ),
+                  // CustomContainer.myadmissions(
+                  //   imagepath: AppImages.clockIcon,
+                  //   iconColor: AppColor.blue,
+                  //   backRoundColors: AppColor.checkAdmissCont1,
+                  //   iconTextColor: AppColor.blue,
+                  //   maintext: 'Suganya M',
+                  //   subtext1: 'Submitted On ',
+                  //   subtext2: '25 Jul 2025',
+                  //   iconText: 'Pending',
+                  //   onTap: () => _paymentReceipt(context),
+                  // ),
+                  // SizedBox(height: 20),
+                  // CustomContainer.myadmissions(
+                  //   imagepath: AppImages.approvedImage,
+                  //   iconColor: AppColor.greenMore1,
+                  //   backRoundColors: AppColor.checkAdmissCont2,
+                  //   iconTextColor: AppColor.greenMore1,
+                  //   maintext: 'Suganya M',
+                  //   subtext1: 'Submitted On ',
+                  //   subtext2: '25 Jul 2025',
+                  //   iconText: 'Approved',
+                  // ),
+                  // SizedBox(height: 20),
+                  // CustomContainer.myadmissions(
+                  //   imagepath: AppImages.rejectedImage,
+                  //   iconColor: AppColor.lightRed,
+                  //   backRoundColors: AppColor.checkAdmissCont3,
+                  //   iconTextColor: AppColor.lightRed,
+                  //   maintext: 'Suganya M',
+                  //   subtext1: 'Submitted On ',
+                  //   subtext2: '25 Jul 2025',
+                  //   iconText: 'Rejected',
+                  // ),
+                  // SizedBox(height: 30),
+                  // AppButton.button(
+                  //   text: 'Home Page',
+                  //   onTap: () {
+                  //     HapticFeedback.heavyImpact();
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => CommonBottomNavigation(),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                ],
+              ),
             ),
           ),
         ),

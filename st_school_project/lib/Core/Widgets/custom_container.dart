@@ -1326,6 +1326,7 @@ class CustomContainer {
       ),
     );
   }
+
   static Widget studentInfoScreen({
     required String text,
     required TextEditingController controller,
@@ -1339,6 +1340,7 @@ class CustomContainer {
     int? maxLine,
     int flex = 4,
     bool isTamil = false,
+    bool readOnly = false,
     bool isAadhaar = false,
     bool isDOB = false,
     bool isMobile = false,
@@ -1416,7 +1418,7 @@ class CustomContainer {
                             );
                           } else {
                             controller.text =
-                            "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                           }
                         }
                       } else if (onTap != null) {
@@ -1427,36 +1429,39 @@ class CustomContainer {
                     child: AbsorbPointer(
                       absorbing: isDOB || onTap != null,
                       child: TextFormField(
+                        readOnly: readOnly,
                         focusNode: focusNode,
                         onChanged: onChanged,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         controller: controller,
                         validator: validator,
                         maxLines: maxLine,
-                        maxLength: isMobile
-                            ? 10
-                            : isAadhaar
-                            ? 14
-                            : isPincode
-                            ? 6
-                            : null,
+                        maxLength:
+                            isMobile
+                                ? 10
+                                : isAadhaar
+                                ? 14
+                                : isPincode
+                                ? 6
+                                : null,
                         keyboardType: keyboardType,
-                        inputFormatters: isMobile
-                            ? [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ]
-                            : isAadhaar
-                            ? [
-                          FilteringTextInputFormatter.digitsOnly,
-                          AadhaarInputFormatter(),
-                        ]
-                            : isPincode
-                            ? [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(6),
-                        ]
-                            : [],
+                        inputFormatters:
+                            isMobile
+                                ? [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                ]
+                                : isAadhaar
+                                ? [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  AadhaarInputFormatter(),
+                                ]
+                                : isPincode
+                                ? [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(6),
+                                ]
+                                : [],
                         style: GoogleFont.ibmPlexSans(
                           fontSize: 14,
                           color: AppColor.black,
@@ -1528,7 +1533,7 @@ class CustomContainer {
     );
   }
 
-/*
+  /*
   static Widget studentInfoScreen({
     required String text,
     required TextEditingController controller,

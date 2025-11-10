@@ -32,6 +32,7 @@ class Request {
           Response<dynamic> response,
           ResponseInterceptorHandler handler,
         ) {
+          AppLogger.log.i(body);
           AppLogger.log.i(
             "sendPostRequest \n API: $url \n RESPONSE: ${response.toString()}",
           );
@@ -43,8 +44,6 @@ class Request {
             return handler.reject(error);
           } else if (error.response?.statusCode == '406' ||
               error.response?.statusCode == '401') {
-
-
             return handler.reject(error);
           } else if (error.response?.statusCode == '429') {
             //Too many Attempts
@@ -190,6 +189,7 @@ class Request {
           Response<dynamic> response,
           ResponseInterceptorHandler handler,
         ) {
+          AppLogger.log.i(queryParams);
           AppLogger.log.i(
             "GET Request \n API: $url \n Token: $token \n RESPONSE: ${response.toString()}",
           );
