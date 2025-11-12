@@ -16,6 +16,8 @@ class ApiUrl {
   static String expireTokenCheck = '$baseUrl/auth-token/refresh-if-expired';
   static String changePhoneVerify = '$baseUrl/student/change-phone/verify';
   static String studentHome = '$baseUrl/student-home';
+  static String appVersionCheck = '$baseUrl/versions/student';
+  static String checkEmail = '$baseUrl/student-home/profiles/email';
   static String classList = '$baseUrl/teacher-student-attendance/class-list';
   static String task = '$baseUrl/student-home/tasks?';
   static String announcementList = '$baseUrl/student-announcement/list';

@@ -1,5 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:file_selector/file_selector.dart'
+    show getSavePath, XTypeGroup, XFile;
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,6 +16,9 @@ import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
+import 'package:st_school_project/Core/Utility/app_loader.dart';
+import 'package:st_school_project/Core/Utility/snack_bar.dart';
+import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
 import 'package:st_school_project/Core/Widgets/swicth_profile_sheet.dart';
@@ -17,6 +26,7 @@ import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/controller/teacher_list_controller.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/screen/profile_screen.dart';
 import '../../../../Core/Utility/app_color.dart' show AppColor;
+import '../../../../Core/Utility/download_file.dart';
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
 import '../../../../Core/Widgets/date_and_time_convert.dart';
 import '../../../../payment_web_view.dart';
@@ -29,7 +39,12 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More Screen/profile_screen/model/fees_history_response.dart';
 
+import 'package:open_filex/open_filex.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+
 // --- grayscale matrix
+
 const List<double> _kGrayscaleMatrix = <double>[
   0.2126,
   0.7152,
@@ -395,27 +410,41 @@ class _MoreScreenState extends State<MoreScreen>
             children: [
               GestureDetector(
                 onTap: () => _OTPonMobileNoEdit(context),
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
+                    Row(
+                      children: [
+                        Text(
+                          data?.student_phone.toString() ?? '',
+                          style: GoogleFont.ibmPlexSans(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            color: AppColor.lightBlack,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColor.white,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: Image.asset(AppImages.moreSnumberAdd, height: 13),
+                        ),
+                      ],
+                    ),
                     Text(
-                      data?.student_phone.toString() ?? '',
+                      data?.student_email.toString() ?? '',
                       style: GoogleFont.ibmPlexSans(
                         fontWeight: FontWeight.w500,
                         fontSize: 16,
                         color: AppColor.lightBlack,
                       ),
-                    ),
-                    const SizedBox(width: 5),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColor.white,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Image.asset(AppImages.moreSnumberAdd, height: 13),
                     ),
                   ],
                 ),
@@ -500,7 +529,7 @@ class _MoreScreenState extends State<MoreScreen>
       backgroundColor: Colors.transparent,
       builder: (_) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.30,
+          initialChildSize: 0.40,
           minChildSize: 0.20,
           maxChildSize: 0.50,
           expand: false,
@@ -585,7 +614,66 @@ class _MoreScreenState extends State<MoreScreen>
                       ),
                     ),
                     SizedBox(height: 20),
-
+                    ListTile(
+                      leading: Container(
+                        padding: EdgeInsets.all(17),
+                        decoration: BoxDecoration(
+                          color: AppColor.lightGrey,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Icon(Icons.email),
+                      ),
+                      title: GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ChangeMobileNumber(page: 'email'),
+                            ),
+                          );
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Change Email Id',
+                              style: GoogleFont.ibmPlexSans(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                color: AppColor.grey,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              data?.student_email.toString() ?? "",
+                              style: GoogleFont.ibmPlexSans(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 20,
+                                color: AppColor.lightBlack,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      trailing: InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ChangeMobileNumber(page: 'email',),
+                            ),
+                          );
+                        },
+                        child: Image.asset(
+                          AppImages.rightArrow,
+                          height: 16,
+                          width: 16,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -1126,9 +1214,13 @@ class _MoreScreenState extends State<MoreScreen>
                       ),
                     ),
                   GestureDetector(
-                    onTap: () {
-                      _downloadAndOpenPdf(plan.items[0].instructionUrl);
-                      //downloadAndOpenPdf(plan.items[0].instructionUrl);
+                    onTap: () async {
+                      await DownloadFile.downloadAndSavePdf(
+                        plan.items[0].instructionUrl,
+                        context: context,
+                        baseName: 'ST Joseph Payment Receipt',
+                      );
+                                         //downloadAndOpenPdf(plan.items[0].instructionUrl);
 
                       print(plan.items[0].instructionUrl);
                     },
@@ -1921,9 +2013,19 @@ class _MoreScreenState extends State<MoreScreen>
                       const SizedBox(height: 40),
 
                       GestureDetector(
-                        onTap:
-                            () async =>
-                                _downloadAndOpenPdf(plan.combinedDownloadUrl),
+                        onTap: () async {
+                          await DownloadFile.downloadAndSavePdf(
+                            plan.combinedDownloadUrl,
+                            context: context,
+                            baseName: 'ST Joseph Payment Receipt',
+                          );
+
+                        },
+                        // onTap:
+                        //     () async => _downloadAndOpenPdf(
+                        //       plan.combinedDownloadUrl,
+                        //       context: context,
+                        //     ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -2205,91 +2307,117 @@ class _MoreScreenState extends State<MoreScreen>
   }
 }
 
-/*Future<void> _downloadAndOpenPdf(String url) async {
-  if (url.isEmpty) {
-    Get.snackbar('Error', 'Download URL not available');
-    return;
+void _showLoading(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    barrierColor: Colors.black26,
+    builder: (_) => Center(child: AppLoader.circularLoader()),
+  );
+}
+
+void _hideLoading(BuildContext context) {
+  if (Navigator.of(context, rootNavigator: true).canPop()) {
+    Navigator.of(context, rootNavigator: true).pop();
   }
+}
 
-  // Check permission
-  if (Platform.isAndroid) {
-    var status = await Permission.manageExternalStorage.status;
-    if (!status.isGranted) {
-      bool openSettings = await Get.dialog(
-        AlertDialog(
-          title: Text('Permission Required'),
-          content: Text(
-            'Storage permission is required to download the receipt. Please enable it.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Get.back(result: false),
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Get.back(result: true),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-        barrierDismissible: false,
-      );
-
-      if (openSettings) {
-        bool isOpened = await openAppSettings();
-        if (!isOpened) {
-          Get.snackbar('Error', 'Cannot open settings');
-          return;
-        }
-
-        status = await Permission.manageExternalStorage.request();
-        if (!status.isGranted) {
-          Get.snackbar('Permission Denied', 'Storage permission not granted');
-          return;
-        }
-      } else {
-        return;
-      }
-    }
-  }
-
+Future<void> _downloadAndOpenPdf(
+  String url, {
+  required BuildContext context, // pass the bottom-sheet context
+  bool closeBottomSheet = true,
+}) async {
+  _showLoading(context);
   try {
-    Get.dialog(
-      const Center(child: CircularProgressIndicator()),
-      barrierDismissible: false,
-    );
+    // Suggested filename
+    const baseName = 'ST Joseph Payment Receipt';
+    final fileName =
+        baseName.toLowerCase().endsWith('.pdf') ? baseName : '$baseName.pdf';
 
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode != 200) {
-      Get.back();
-      Get.snackbar('Error', 'Failed to download file');
+    // Download -> bytes
+    final resp = await Dio().get<List<int>>(
+      url,
+      options: Options(responseType: ResponseType.bytes, followRedirects: true),
+    );
+    final bytes = Uint8List.fromList(resp.data ?? const <int>[]);
+    if (bytes.isEmpty) {
+      // (optional) brief error toast
+      CustomSnackBar.showError('Download failed');
+
       return;
     }
 
-    Directory? dir;
-    if (Platform.isAndroid) {
-      dir = Directory('/storage/emulated/0/Download'); // Downloads folder
-      if (!dir.existsSync()) {
-        dir.createSync(recursive: true);
-      }
-    } else {
-      dir = await getApplicationDocumentsDirectory();
+    // Save-as (file_picker on Android/iOS REQUIRES bytes)
+    final savedPath = await FilePicker.platform.saveFile(
+      dialogTitle: 'Save PDF as',
+      fileName: fileName,
+      type: FileType.custom,
+      allowedExtensions: const ['pdf'],
+      bytes: bytes,
+    );
+
+    if (savedPath == null) {
+      // user cancelled
+      return;
     }
 
-    final file = File(
-      '${dir.path}/receipt_${DateTime.now().millisecondsSinceEpoch}.pdf',
+    // (optional) tiny success note; or remove this entirely if you want pure silent
+    Get.snackbar(
+      'Success',
+      'Saved: ${p.basename(savedPath)}',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green.shade600,
+      colorText: Colors.white,
+      borderRadius: 12,
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      icon: Icon(Icons.check_circle_outline, color: Colors.white),
+      shouldIconPulse: false,
+      duration: Duration(seconds: 3),
+      snackStyle: SnackStyle.FLOATING,
+      padding: EdgeInsets.all(16),
     );
-    await file.writeAsBytes(response.bodyBytes);
-
-    Get.back(); // dismiss loading
-    Get.snackbar('Success', 'PDF saved to ${file.path}');
   } catch (e) {
-    Get.back();
-    Get.snackbar('Error', e.toString());
+    CustomSnackBar.showError('$e');
+  } finally {
+    _hideLoading(context); // close spinner
+    if (closeBottomSheet)
+      Navigator.of(context).pop(); // close your bottom sheet
   }
-}*/
+}
+// Future<void> _downloadAndOpenPdf(String url, {required BuildContext context}) async {
+//   final fromUrl = Uri.parse(url).pathSegments.isNotEmpty
+//       ? Uri.parse(url).pathSegments.last
+//       : 'document.pdf';
+//   final suggestedName = fromUrl.toLowerCase().endsWith('.pdf') ? fromUrl : '$fromUrl.pdf';
+//
+//   String? savePath = await FilePicker.platform.saveFile(
+//     dialogTitle: 'Save PDF as',
+//     fileName: suggestedName,
+//     type: FileType.custom,
+//     allowedExtensions: ['pdf'],
+//   );
+//
+//   if (savePath == null) {
+//     final dir = await FilePicker.platform.getDirectoryPath(dialogTitle: 'Choose folder');
+//     if (dir == null) {
+//       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cancelled')));
+//       return;
+//     }
+//     savePath = p.join(dir, suggestedName);
+//   }
+//
+//   final tempDir = await getTemporaryDirectory();
+//   final tempPath = p.join(tempDir.path, suggestedName);
+//   await Dio().download(url, tempPath);
+//
+//   final bytes = await File(tempPath).readAsBytes();
+//   await File(savePath).writeAsBytes(bytes, flush: true);
+//
+//   await OpenFilex.open(savePath);
+//   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Saved & opened PDF')));
+// }
 
-Future<void> _downloadAndOpenPdf(String url) async {
+/*Future<void> _downloadAndOpenPdf(String url) async {
   if (url.isEmpty) {
     Get.snackbar('Error', 'Download URL not available');
     return;
@@ -2385,87 +2513,5 @@ Future<void> _downloadAndOpenPdf(String url) async {
   } catch (e) {
     Get.back();
     Get.snackbar('Error', e.toString());
-  }
-}
-
-// Future<void> downloadAndOpenPdf(String url) async {
-//   try {
-//     final tempDir = await getTemporaryDirectory();
-//     final filePath = '${tempDir.path}/payment_instruction.pdf';
-//
-//     final dio = Dio();
-//
-//     final response = await dio.download(
-//       url,
-//       filePath,
-//       options: Options(
-//         headers: {'User-Agent': 'Mozilla/5.0'},
-//         responseType: ResponseType.bytes,
-//         followRedirects: true,
-//         validateStatus: (status) => status! < 500,
-//       ),
-//     );
-//
-//     if (response.statusCode == 200) {
-//       print('✅ PDF downloaded successfully to: $filePath');
-//       await OpenFile.open(filePath);
-//     } else if (response.statusCode == 403) {
-//       print('❌ Access denied (403). Check if the link is publicly accessible.');
-//     } else {
-//       print('❌ Failed to download file. Status code: ${response.statusCode}');
-//     }
-//   } catch (e) {
-//     print('❌ Error downloading PDF: $e');
-//   }
-// }
-
-/*Future<void> _downloadAndOpenPdf(String url) async {
-  if (url.isEmpty) {
-    CustomSnackBar.showError("Download URL not available");
-    return;
-  }
-
-  final uri = Uri.parse(url);
-  try {
-    // Optional: show a small loading UI
-    Get.dialog(
-      const Center(child: CircularProgressIndicator()),
-      barrierDismissible: false,
-    );
-
-    final dir = await getApplicationDocumentsDirectory();
-    final filename = 'receipt_${DateTime.now().millisecondsSinceEpoch}.pdf';
-    final savePath = p.join(dir.path, filename);
-
-    final dio = Dio();
-
-    // If your endpoint needs headers/cookies, set them here:
-    // dio.options.headers['Authorization'] = 'Bearer <token>';
-
-    await dio.downloadUri(
-      uri,
-      savePath,
-      onReceiveProgress: (received, total) {
-        // You can show progress if you want:
-        // debugPrint('Downloading: ${(received / (total == -1 ? 1 : total) * 100).toStringAsFixed(0)}%');
-      },
-      options: Options(
-        responseType: ResponseType.bytes,
-        followRedirects: true,
-        receiveTimeout: const Duration(minutes: 2),
-      ),
-    );
-
-    // Close loader
-    if (Get.isDialogOpen ?? false) Get.back();
-
-    CustomSnackBar.showSuccess("Receipt saved: $filename");
-    await OpenFilex.open(savePath); // triggers the OS PDF viewer
-  } on DioException catch (e) {
-    if (Get.isDialogOpen ?? false) Get.back();
-    CustomSnackBar.showError("Download failed: ${e.message}");
-  } catch (e) {
-    if (Get.isDialogOpen ?? false) Get.back();
-    CustomSnackBar.showError("Something went wrong");
   }
 }*/

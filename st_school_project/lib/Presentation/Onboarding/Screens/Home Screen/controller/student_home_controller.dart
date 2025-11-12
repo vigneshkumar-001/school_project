@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:st_school_project/Core/Utility/snack_bar.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/model/app_version_response.dart';
 import 'package:st_school_project/Presentation/splash_screen.dart';
 import '../../../../../../api/data_source/apiDataSource.dart';
 import '../../../../../Core/Utility/app_color.dart';
@@ -22,6 +23,7 @@ class StudentHomeController extends GetxController {
 
   // Observable to store student home data
   Rx<StudentHomeData?> studentHomeData = Rx<StudentHomeData?>(null);
+  Rx<AppVersionData?> appVersionData = Rx<AppVersionData?>(null);
   RxList<SiblingsData> siblingsList = RxList<SiblingsData>([]);
   Rx<SiblingsData?> selectedStudent = Rx<SiblingsData?>(null);
   RxList<NotificationItem> messageList = <NotificationItem>[].obs;
@@ -29,6 +31,7 @@ class StudentHomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    getAppVersion();
     getStudentHome();
     getMessageList();
   }
@@ -226,6 +229,44 @@ class StudentHomeController extends GetxController {
       isLoading.value = false;
       AppLogger.log.e(e);
     }
+  }
+
+  Future<String?> getAppVersion() async {
+    try {
+      isLoading.value = true;
+
+      final results = await apiDataSource.appVersionCheck();
+
+      results.fold(
+            (failure) {
+          isLoading.value = false;
+
+          AppLogger.log.e(failure.message);
+        },
+            (response) async {
+          isLoading.value = false;
+
+          AppLogger.log.i(response.message);
+
+          appVersionData.value = response.data;
+
+          AppLogger.log.i(
+            "Student Name: ${appVersionData.value?. android}, Class: ${appVersionData.value?.ios}",
+          );
+        },
+      );
+    } catch (e) {
+      isLoading.value = false;
+      if (!hasLoadedOnce.value) {
+        studentHomeData.value = null;
+      }
+      AppLogger.log.e(e);
+      return e.toString();
+    } finally {
+      hasLoadedOnce.value = true;
+      isLoading.value = false;
+    }
+    return null;
   }
 
   void showPopupLoader() {

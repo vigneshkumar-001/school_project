@@ -39,12 +39,14 @@ class TeachersStudentData {
   final String student_phone;
   final String school_contact;
   final String student_image;
+  final String? student_email;
   final String section;
   final List<Teacher> teachers;
 
   TeachersStudentData({
     required this.studentName,
     required this.student_image,
+    this.student_email,
     required this.studentClass,
     required this.section,
     required this.teachers,
@@ -57,6 +59,7 @@ class TeachersStudentData {
       studentName: json['student_name'] ?? '',
       studentClass: json['class'] ?? '',
       student_image: json['student_image'] ?? '',
+      student_email: json['student_email'] ?? '',
       student_phone: json['student_phone'] ?? '',
       school_contact: json['school_contact'] ?? '',
       section: json['section'] ?? '',
@@ -71,6 +74,7 @@ class TeachersStudentData {
     return {
       "student_name": studentName,
       "class": studentClass,
+      "student_email": student_email,
       "section": section,
       "student_image": student_image,
       "teachers": teachers.map((e) => e.toJson()).toList(),
