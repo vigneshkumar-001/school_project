@@ -21,7 +21,8 @@ import '../Controller/admission_controller.dart';
 
 class ParentsInfoScreen extends StatefulWidget {
   final int id;
-  const ParentsInfoScreen({super.key, required this.id});
+  final String pages;
+  const ParentsInfoScreen({super.key, required this.id, required this.pages});
 
   @override
   State<ParentsInfoScreen> createState() => _ParentsInfoScreenState();
@@ -323,39 +324,39 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
     return formOk && basicOk;
   }
 
-  void _validateAndContinue() {
-    HapticFeedback.heavyImpact();
-    setState(() => isSubmitted = true);
-
-    if (selected == 'Father & Mother') {
-      final ok = _validateFatherMother();
-      if (!ok && isBothOfficeAddressEmpty) {
-        // show unobtrusive snackbar to explain the special rule
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Enter at least one Office Address (Father or Mother).',
-            ),
-            behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 3),
-          ),
-        );
-      }
-      if (ok) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => SiblingsFormScreen(id: widget.id)),
-        );
-      }
-    } else {
-      if (_validateGuardian()) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => SiblingsFormScreen(id: widget.id)),
-        );
-      }
-    }
-  }
+  // void _validateAndContinue() {
+  //   HapticFeedback.heavyImpact();
+  //   setState(() => isSubmitted = true);
+  //
+  //   if (selected == 'Father & Mother') {
+  //     final ok = _validateFatherMother();
+  //     if (!ok && isBothOfficeAddressEmpty) {
+  //       // show unobtrusive snackbar to explain the special rule
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text(
+  //             'Enter at least one Office Address (Father or Mother).',
+  //           ),
+  //           behavior: SnackBarBehavior.floating,
+  //           duration: Duration(seconds: 3),
+  //         ),
+  //       );
+  //     }
+  //     if (ok) {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => SiblingsFormScreen(id: widget.id)),
+  //       );
+  //     }
+  //   } else {
+  //     if (_validateGuardian()) {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => SiblingsFormScreen(id: widget.id)),
+  //       );
+  //     }
+  //   }
+  // }
 
   @override
   void initState() {
@@ -832,6 +833,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                                   }
 
                                   final err = await ctrl.saveParentsInfo(
+                                    pages: widget.pages,
                                     id: widget.id,
                                     fatherName:
                                         ctrl.englishController.text.trim(),
@@ -877,14 +879,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                                     return;
                                   }
 
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (_) =>
-                                              SiblingsFormScreen(id: widget.id),
-                                    ),
-                                  );
+
                                 } else {
                                   // Guardian case
                                   if (_isGuardianFormInvalid()) {
@@ -896,6 +891,8 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                                   }
 
                                   final err = await ctrl.saveParentsInfo(
+                                    pages: widget.pages,
+
                                     id: widget.id,
                                     fatherName: '',
                                     fatherNameTamil: '',

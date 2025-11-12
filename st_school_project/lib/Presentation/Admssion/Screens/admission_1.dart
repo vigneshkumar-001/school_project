@@ -103,12 +103,12 @@ class _Admission1State extends State<Admission1> {
                   children: [
                     CustomContainer.leftSaitArrow(
                       onTap: () {
-                         widget.pages == 'homeScreen'
-                             ? Navigator.pop(context)
-                             : null;
-
+                        widget.pages == 'homeScreen'
+                            ? Navigator.pop(context)
+                            : null;
                       },
                     ),
+
                     const SizedBox(height: 16),
                     Container(
                       constraints: BoxConstraints(
@@ -306,12 +306,12 @@ class _Admission1State extends State<Admission1> {
                         await admissionController.postAdmission1NextButton(
                           id: id,
                         );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => StudentInfoScreen(admissionId: id),
-                          ),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (_) => StudentInfoScreen(admissionId: id,),
+                        //   ),
+                        // );
                       },
                       text:
                           widget.pages == "otpScreen"

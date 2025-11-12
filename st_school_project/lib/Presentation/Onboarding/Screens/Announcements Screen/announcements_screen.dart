@@ -11,7 +11,9 @@ import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/controller/announcement_controller.dart';
 import '../../../../Core/Utility/app_images.dart' show AppImages;
+import '../../../../Core/Utility/download_file.dart';
 import '../../../../Core/Utility/google_font.dart' show GoogleFont;
+import '../../../../Core/Utility/snack_bar.dart';
 import '../../../../Core/Widgets/bottom_navigationbar.dart';
 import '../../../../Core/Widgets/custom_container.dart' show CustomContainer;
 import '../../../../Core/Widgets/custom_textfield.dart';
@@ -1800,12 +1802,12 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                 ),
                                 child: Row(
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       CupertinoIcons.info,
                                       size: 18,
                                       color: AppColor.grayop,
                                     ),
-                                    const SizedBox(width: 8),
+                                    SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
                                         'This plan is cash only. Please pay at the office.',
@@ -1820,15 +1822,32 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                 ),
                               ),
 
-                            const SizedBox(height: 10),
+                            SizedBox(height: 10),
 
                             GestureDetector(
-                              onTap:
-                                  () => _downloadAndOpenPdf(
-                                    items.isNotEmpty
-                                        ? items[0].instructionUrl
-                                        : null,
-                                  ),
+                              onTap: () {
+                                if (items.isNotEmpty &&
+                                    items[0].instructionUrl != null) {
+                                  DownloadFile.downloadAndSavePdf(
+                                    items[0].instructionUrl!,
+                                    context:
+                                        context, // pass the BuildContext here
+                                    baseName:
+                                        'Instruction', // optional, default is 'document'
+                                  );
+                                } else {
+                                  CustomSnackBar.showError(
+                                    'No PDF available to download',
+                                  );
+                                }
+                              },
+
+                              // onTap:
+                              //     () => _downloadAndOpenPdf(
+                              //       items.isNotEmpty
+                              //           ? items[0].instructionUrl
+                              //           : null,
+                              //     ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -1848,7 +1867,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                                           AppImages.downloadImage,
                                           height: 20,
                                         ),
-                                        const SizedBox(width: 10),
+                                        SizedBox(width: 10),
                                         CustomTextField.textWithSmall(
                                           fontSize: 13,
                                           text: 'Download Payment Instructions',
@@ -1861,7 +1880,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                               ),
                             ),
 
-                            const SizedBox(height: 20),
+                            SizedBox(height: 20),
 
                             _navHeader(
                               ctx: context,
@@ -2638,7 +2657,11 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
             String _txt(Object? v) => v?.toString() ?? '';
             final d = _detailsAd as AnnouncementDetails;
 
-            Future<void> _gotoDelta(int d, BuildContext ctx, StateSetter setSheetState) async {
+            Future<void> _gotoDelta(
+              int d,
+              BuildContext ctx,
+              StateSetter setSheetState,
+            ) async {
               final next = _currIndexAd + d;
               if (next < 0 || next >= _orderAd.length) return;
               setSheetState(() => _loadingAd = true);
@@ -3293,7 +3316,9 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                     parent: BouncingScrollPhysics(),
                   ),
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(15),
                       child: Column(
@@ -3311,28 +3336,32 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                           ),
                           const SizedBox(height: 20),
                           Column(
-                            children: data.items.map((item) {
-                              final formattedDate =
-                              DateFormat("dd-MMM-yy").format(item.notifyDate);
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 16),
-                                child: CustomContainer.announcementsScreen(
-                                  mainText: item.announcementCategory,
-                                  backRoundImage: item.image,
-                                  iconData: CupertinoIcons.clock_fill,
-                                  additionalText1: "Date",
-                                  additionalText2: formattedDate,
-                                  verticalPadding: 12,
-                                  gradientStartColor: AppColor.black.withOpacity(0.01),
-                                  gradientEndColor: AppColor.black,
-                                  onDetailsTap: () => _openById(
-                                    context,
-                                    item.id,
-                                    forceType: item.type,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
+                            children:
+                                data.items.map((item) {
+                                  final formattedDate = DateFormat(
+                                    "dd-MMM-yy",
+                                  ).format(item.notifyDate);
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 16),
+                                    child: CustomContainer.announcementsScreen(
+                                      mainText: item.announcementCategory,
+                                      backRoundImage: item.image,
+                                      iconData: CupertinoIcons.clock_fill,
+                                      additionalText1: "Date",
+                                      additionalText2: formattedDate,
+                                      verticalPadding: 12,
+                                      gradientStartColor: AppColor.black
+                                          .withOpacity(0.01),
+                                      gradientEndColor: AppColor.black,
+                                      onDetailsTap:
+                                          () => _openById(
+                                            context,
+                                            item.id,
+                                            forceType: item.type,
+                                          ),
+                                    ),
+                                  );
+                                }).toList(),
                           ),
                         ],
                       ),
@@ -3342,7 +3371,6 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
               },
             ),
           );
-
 
           /*return RefreshIndicator(
             onRefresh: () async => controller.getAnnouncement(),

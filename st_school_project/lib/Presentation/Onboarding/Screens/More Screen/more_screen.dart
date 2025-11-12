@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:file_selector/file_selector.dart'
-    show getSavePath, XTypeGroup, XFile;
+// import 'package:file_selector/file_selector.dart'
+//     show getSavePath, XTypeGroup, XFile;
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';

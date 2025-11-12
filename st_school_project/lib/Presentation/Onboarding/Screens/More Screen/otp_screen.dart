@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,6 +32,20 @@ class _OtpScreenState extends State<OtpScreen> {
   String? otpError;
   String verifyCode = '';
   StreamController<ErrorAnimationType>? errorController;
+  Future<void> initFcmToken() async {
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+
+    if (fcmToken != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('fcmToken', fcmToken);
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    initFcmToken();
+
+  }
   @override
   Widget build(BuildContext context) {
     String mobileNumber = widget.mobileNumber.toString() ?? '';

@@ -182,7 +182,7 @@ class LoginController extends GetxController {
 
           String? token = prefs.getString('token');
           final fcmToken = prefs.getString('fcmToken');
-          sendFcmToken(fcmToken!);
+          sendFcmToken(fcmToken?? '');
           await _loadInitialData();
           // if (response == 'student') {
           //   prefs.setBool('isAdmissionCompleted', true);
@@ -290,11 +290,11 @@ class LoginController extends GetxController {
     try {
       final results = await apiDataSource.checkTokenExpire();
       return await results.fold(
-            (failure) {
+        (failure) {
           AppLogger.log.e(failure.message);
           return false;
         },
-            (response) async {
+        (response) async {
           AppLogger.log.i(response.message);
 
           final prefs = await SharedPreferences.getInstance();
@@ -347,6 +347,7 @@ class LoginController extends GetxController {
 
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
     await prefs.remove('token');
     accessToken = '';
     Get.offAll(() => ChangeMobileNumber(page: 'splash'));

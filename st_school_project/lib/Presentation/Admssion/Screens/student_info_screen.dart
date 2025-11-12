@@ -791,14 +791,16 @@ import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Utility/snack_bar.dart' as UI;
 import 'package:st_school_project/Core/Utility/app_loader.dart';
+import 'package:st_school_project/Presentation/Admssion/Screens/admission_1.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/parents_info_screen.dart';
 
 import '../Controller/admission_controller.dart';
 
 class StudentInfoScreen extends StatefulWidget {
+  final String? pages;
   final int admissionId; // <-- supply this when navigating
 
-  const StudentInfoScreen({super.key, required this.admissionId});
+  const StudentInfoScreen({super.key, required this.admissionId, this.pages});
 
   @override
   State<StudentInfoScreen> createState() => _StudentInfoScreenState();
@@ -1128,9 +1130,10 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                                 ctrl.currentAdmission.value?.step ?? 1;
 
                             if (currentStep > 1) {
-
-                            } else {
+                            } else if (widget.pages == 'homeScreen') {
                               Navigator.pop(context);
+                            } else {
+                              // Get.off(Admission1( ));
                             }
                           },
                         ),
@@ -1145,6 +1148,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                         ),
                       ],
                     ),
+
                     SizedBox(height: 30),
                     LinearProgressIndicator(
                       minHeight: 6,
@@ -1426,8 +1430,10 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                             ctrl.isLoading.value
                                 ? null
                                 : () async {
-                              final prefs = await SharedPreferences.getInstance();
-                              final admissionID = prefs.getInt('admissionId') ?? 0;
+                                  final prefs =
+                                      await SharedPreferences.getInstance();
+                                  final admissionID =
+                                      prefs.getInt('admissionId') ?? 0;
                                   HapticFeedback.heavyImpact();
                                   FocusScope.of(context).unfocus();
 
@@ -1446,6 +1452,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
 
                                   //  Single, correct API call
                                   final err = await ctrl.postStudentInfo(
+                                    page: widget.pages ?? '',
                                     emailId:
                                         admissionController
                                             .emailIdController
