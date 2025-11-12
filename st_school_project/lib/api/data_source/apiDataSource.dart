@@ -10,7 +10,9 @@ import 'package:st_school_project/Presentation/Admssion/Model/country_model.dart
 import 'package:st_school_project/Presentation/Admssion/Model/status_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/model/announcement_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/model/exam_result_response.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/model/app_version_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/model/student_home_response.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/model/email_update_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/model/fees_details_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/model/fees_history_response.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Task%20Screen/model/home_work_id_response.dart';
@@ -1505,6 +1507,59 @@ class ApiDataSource extends BaseApiDataSource {
           (response.statusCode == 200 || response.statusCode == 201)) {
         if (response.data['status'] == true) {
           return Right(GetAdmissionResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, AppVersionResponse>> appVersionCheck() async {
+    try {
+      String url = ApiUrl.appVersionCheck;
+
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(response);
+
+      // Accept both 200 and 201 as success
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(AppVersionResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, EmailUpdateResponse>> checkEmail({
+    required String email,
+  }) async {
+    try {
+      String url = ApiUrl.checkEmail;
+      final payLoad = {"email": email};
+      dynamic response = await Request.sendRequest(url, payLoad, 'get', true);
+      AppLogger.log.i(response);
+      AppLogger.log.i(payLoad);
+
+      // Accept both 200 and 201 as success
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(EmailUpdateResponse.fromJson(response.data));
         } else {
           return Left(ServerFailure(response.data['message']));
         }

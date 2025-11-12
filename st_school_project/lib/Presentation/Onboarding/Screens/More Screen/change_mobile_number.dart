@@ -9,6 +9,7 @@ import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/profile_screen/controller/teacher_list_controller.dart';
 import '../../../../Core/Utility/app_color.dart' show AppColor;
 import 'Login_screen/controller/login_controller.dart';
 import 'otp_screen.dart' show OtpScreen;
@@ -23,6 +24,9 @@ class ChangeMobileNumber extends StatefulWidget {
 
 class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
   final LoginController loginController = Get.put(LoginController());
+  final TeacherListController teacherListController = Get.put(
+    TeacherListController(),
+  );
   final TextEditingController mobileNumberController = TextEditingController();
   bool _showClear = false;
   bool _isFormatting = false;
@@ -122,6 +126,24 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                     ),
                                   ),
                                 ),
+                              ] else if (widget.page == 'email') ...[
+                                CustomContainer.leftSaitArrow(
+                                  onTap: () => Navigator.pop(context),
+                                ),
+                                const SizedBox(height: 20),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 15,
+                                  ),
+                                  child: Text(
+                                    'Change to New Email Id',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColor.lightBlack,
+                                    ),
+                                  ),
+                                ),
                               ] else ...[
                                 CustomContainer.leftSaitArrow(
                                   onTap: () => Navigator.pop(context),
@@ -141,140 +163,339 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                   ),
                                 ),
                               ],
-                              // Mobile input container
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 11,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColor.lightGrey,
-                                  borderRadius: BorderRadius.circular(15),
-                                  border: Border.all(
-                                    color:
-                                        mobileNumberController.text.isNotEmpty
-                                            ? AppColor.black
-                                            : AppColor.lightGrey,
-                                    width:
-                                        mobileNumberController.text.isNotEmpty
-                                            ? 2
-                                            : 1,
+                              if (widget.page == 'email') ...[
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 11,
                                   ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '+91',
-                                          style: GoogleFont.inter(
-                                            fontSize: 14,
-                                            color: AppColor.grey,
-                                          ),
-                                        ),
-                                        Text(
-                                          'India',
-                                          style: GoogleFont.inter(
-                                            fontSize: 10,
-                                            color: AppColor.grey,
-                                          ),
-                                        ),
-                                      ],
+                                  decoration: BoxDecoration(
+                                    color: AppColor.lightGrey,
+                                    borderRadius: BorderRadius.circular(15),
+                                    border: Border.all(
+                                      color:
+                                          mobileNumberController.text.isNotEmpty
+                                              ? (errorText != null
+                                                  ? Colors.red
+                                                  : AppColor.black)
+                                              : AppColor.lightGrey,
+                                      width:
+                                          mobileNumberController.text.isNotEmpty
+                                              ? 2
+                                              : 1,
                                     ),
-                                    SizedBox(width: 10),
-                                    SizedBox(
-                                      height: 35,
-                                      child: VerticalDivider(),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Expanded(
-                                      flex: 9,
-                                      child: TextFormField(
-                                        autovalidateMode:
-                                            AutovalidateMode.onUserInteraction,
-                                        controller: mobileNumberController,
-                                        keyboardType: TextInputType.phone,
-                                        style: GoogleFont.inter(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 20,
-                                        ),
-                                        maxLength: 12,
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                        ],
-                                        onChanged: (value) {
-                                          _formatPhoneNumber(value);
-                                          setState(() {});
-                                        },
-                                        decoration: InputDecoration(
-                                          counterText: '',
-                                          hintText: '9000 000 000',
-                                          hintStyle: GoogleFont.inter(
-                                            color: AppColor.grayop,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 9,
+                                        child: TextFormField(
+                                          controller:
+                                              mobileNumberController, // can rename to emailController
+                                          keyboardType:
+                                              TextInputType.emailAddress,
+                                          style: GoogleFont.inter(
+                                            fontWeight: FontWeight.w600,
                                             fontSize: 20,
                                           ),
-                                          border: InputBorder.none,
-                                          suffixIcon:
-                                              mobileNumberController
-                                                      .text
-                                                      .isNotEmpty
-                                                  ? GestureDetector(
-                                                    onTap: () {
-                                                      mobileNumberController
-                                                          .clear();
-                                                      setState(() {});
-                                                    },
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                            top: 12,
-                                                            right: 8,
-                                                          ),
-                                                      child: Text(
-                                                        'Clear',
-                                                        style:
-                                                            GoogleFont.ibmPlexSans(
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              color:
-                                                                  AppColor
-                                                                      .grayop,
+                                          maxLength: 50,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              // Validate email on every change
+                                              if (value.isEmpty) {
+                                                errorText =
+                                                    'Please enter your email';
+                                              } else {
+                                                final emailRegex = RegExp(
+                                                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                                );
+                                                errorText =
+                                                    (emailRegex.hasMatch(value)
+                                                        ? null
+                                                        : 'Please enter a valid email') ??
+                                                    '';
+                                              }
+                                            });
+                                          },
+                                          decoration: InputDecoration(
+                                            counterText: '',
+                                            hintText: 'xxx@gmail.com',
+                                            hintStyle: GoogleFont.inter(
+                                              color: AppColor.grayop,
+                                              fontSize: 20,
+                                            ),
+                                            border: InputBorder.none,
+                                            suffixIcon:
+                                                mobileNumberController
+                                                        .text
+                                                        .isNotEmpty
+                                                    ? GestureDetector(
+                                                      onTap: () {
+                                                        mobileNumberController
+                                                            .clear();
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              top: 12,
+                                                              right: 8,
                                                             ),
+                                                        child: Text(
+                                                          'Clear',
+                                                          style:
+                                                              GoogleFont.ibmPlexSans(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color:
+                                                                    AppColor
+                                                                        .grayop,
+                                                              ),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  )
-                                                  : null,
+                                                    )
+                                                    : null,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (errorText != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 12.0,
+                                      top: 6,
+                                    ),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        errorText!,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
                                         ),
                                       ),
                                     ),
-                                  ],
+                                  ),
+                                SizedBox(height: 10),
+                              ] else ...[
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 11,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColor.lightGrey,
+                                    borderRadius: BorderRadius.circular(15),
+                                    border: Border.all(
+                                      color:
+                                          mobileNumberController.text.isNotEmpty
+                                              ? AppColor.black
+                                              : AppColor.lightGrey,
+                                      width:
+                                          mobileNumberController.text.isNotEmpty
+                                              ? 2
+                                              : 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '+91',
+                                            style: GoogleFont.inter(
+                                              fontSize: 14,
+                                              color: AppColor.grey,
+                                            ),
+                                          ),
+                                          Text(
+                                            'India',
+                                            style: GoogleFont.inter(
+                                              fontSize: 10,
+                                              color: AppColor.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(width: 10),
+                                      SizedBox(
+                                        height: 35,
+                                        child: VerticalDivider(),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        flex: 9,
+                                        child: TextFormField(
+                                          autovalidateMode:
+                                              AutovalidateMode
+                                                  .onUserInteraction,
+                                          controller: mobileNumberController,
+                                          keyboardType: TextInputType.phone,
+                                          style: GoogleFont.inter(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 20,
+                                          ),
+                                          maxLength: 12,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                          ],
+                                          onChanged: (value) {
+                                            _formatPhoneNumber(value);
+                                            setState(() {});
+                                          },
+                                          decoration: InputDecoration(
+                                            counterText: '',
+                                            hintText: '9000 000 000',
+                                            hintStyle: GoogleFont.inter(
+                                              color: AppColor.grayop,
+                                              fontSize: 20,
+                                            ),
+                                            border: InputBorder.none,
+                                            suffixIcon:
+                                                mobileNumberController
+                                                        .text
+                                                        .isNotEmpty
+                                                    ? GestureDetector(
+                                                      onTap: () {
+                                                        mobileNumberController
+                                                            .clear();
+                                                        setState(() {});
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              top: 12,
+                                                              right: 8,
+                                                            ),
+                                                        child: Text(
+                                                          'Clear',
+                                                          style:
+                                                              GoogleFont.ibmPlexSans(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color:
+                                                                    AppColor
+                                                                        .grayop,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                    : null,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 12.0,
-                                  top: 4,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.topRight,
-                                  child: Text(
-                                    errorText,
-                                    style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 12,
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 12.0,
+                                    top: 4,
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.topRight,
+                                    child: Text(
+                                      errorText,
+                                      style: const TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 12,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-
+                              ],
                               Obx(() {
                                 return AppButton.button(
-                                  text: 'Get OTP',
+                                  text:
+                                      widget.page == 'email'
+                                          ? 'Submit'
+                                          : 'Get OTP',
+                                  loader:
+                                      loginController.isLoading.value
+                                          ? SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                          : null,
+                                  width: double.infinity,
+                                  onTap: () {
+                                    final String input =
+                                        mobileNumberController.text
+                                            .trim(); // rename to emailController if email
+                                    if (widget.page == 'email') {
+                                      // Email validation
+                                      if (input.isEmpty) {
+                                        setState(() {
+                                          errorText = 'Email is required';
+                                        });
+                                      } else {
+                                        final emailRegex = RegExp(
+                                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                        );
+                                        if (!emailRegex.hasMatch(input)) {
+                                          setState(() {
+                                            errorText =
+                                                'Please enter a valid email';
+                                          });
+                                        } else {
+                                          setState(() {
+                                            errorText = '';
+                                          });
+                                          // Call your controller method for email submission
+                                          teacherListController.emailUpdate(
+                                            context: context,
+                                            showLoader: true,
+                                            email: input,
+                                          );
+                                        }
+                                      }
+                                    } else {
+                                      // Mobile number validation (existing logic)
+                                      final String mbl = input.replaceAll(
+                                        ' ',
+                                        '',
+                                      );
+                                      if (mbl.isEmpty) {
+                                        setState(() {
+                                          errorText =
+                                              'Mobile Number is Required';
+                                        });
+                                      } else if (mbl.length != 10) {
+                                        setState(() {
+                                          errorText =
+                                              'Mobile Number must be exactly 10 digits';
+                                        });
+                                      } else {
+                                        setState(() {
+                                          errorText = '';
+                                        });
+                                        widget.page == 'splash'
+                                            ? loginController.mobileNumberLogin(
+                                              mbl,
+                                            )
+                                            : loginController
+                                                .changeMobileNumber(mbl);
+                                      }
+                                    }
+                                  },
+                                );
+                              }),
+
+                              /*       Obx(() {
+                                return AppButton.button(
+                                  text: widget.page == 'email' ? 'Submit' : 'Get OTP',
                                   loader:
                                       loginController.isLoading.value
                                           ? SizedBox(
@@ -315,7 +536,7 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                     }
                                   },
                                 );
-                              }),
+                              }),*/
                             ],
                           ),
                         ),

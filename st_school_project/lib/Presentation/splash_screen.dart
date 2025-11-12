@@ -72,14 +72,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _checkAppVersion() async {
     String currentVersion =
-        controller.studentHomeData.value?.appVersions?.android.latestVersion
-            .toString() ??
-        '';
-
-    if (currentVersion == null || currentVersion.isEmpty) {
-      _checkLoginStatus();
-      return;
-    }
+        controller.appVersionData.value?.android.latestVersion.toString() ?? '';
 
     if (currentVersion == latestVersion) {
       _checkLoginStatus();
@@ -87,6 +80,7 @@ class _SplashScreenState extends State<SplashScreen>
       _showUpdateBottomSheet();
     }
   }
+
   void _checkLoginStatus() async {
     if (!mounted) return;
 
@@ -119,7 +113,6 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
-
   // void _checkLoginStatus() async {
   //   if (!mounted) return;
   //
@@ -148,8 +141,7 @@ class _SplashScreenState extends State<SplashScreen>
   // }
 
   void openPlayStore() async {
-    final storeUrl =
-        controller.studentHomeData.value?.appVersions?.android.storeUrl ?? '';
+    final storeUrl = controller.appVersionData.value?.android.storeUrl ?? '';
 
     if (storeUrl.isEmpty) {
       print('No URL available.');
@@ -169,8 +161,6 @@ class _SplashScreenState extends State<SplashScreen>
       print('Could not open the link. Maybe no browser is installed.');
     }
   }
-
-
 
   void _showUpdateBottomSheet() {
     showModalBottomSheet(
@@ -288,4 +278,3 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 }
-

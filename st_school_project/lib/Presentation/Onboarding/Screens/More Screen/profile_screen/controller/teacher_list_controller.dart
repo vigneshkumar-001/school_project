@@ -80,10 +80,38 @@ class TeacherListController extends GetxController {
           AppLogger.log.e(failure.message);
         },
         (response) async {
-        await  controller.getSiblingsData();
+          await controller.getSiblingsData();
           if (showLoader) hidePopupLoader();
-          Get.back();
+
           AppLogger.log.i(response);
+        },
+      );
+    } catch (e) {
+      if (showLoader) hidePopupLoader();
+      AppLogger.log.e(e);
+    }
+    return null;
+  }
+
+  Future<void> emailUpdate({
+    bool showLoader = false,
+ required BuildContext context,
+    required String email,
+  }) async {
+    try {
+      if (showLoader) showPopupLoader();
+      final results = await apiDataSource.checkEmail(email: email);
+      return results.fold(
+        (failure) {
+          AppLogger.log.e(failure.message);
+        },
+        (response) async {
+        await  teacherListData();
+          if (showLoader) hidePopupLoader();
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context); // go back after success
+          }
+
         },
       );
     } catch (e) {
