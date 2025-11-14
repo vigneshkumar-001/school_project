@@ -45,7 +45,7 @@ class DownloadFile {
         bytes: bytes,
       );
 
-      if (savedPath == null) return; // user cancelled
+      if (savedPath == null) return;
 
       // Open file automatically
       await OpenFilex.open(savedPath);
