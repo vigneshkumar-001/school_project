@@ -13,7 +13,8 @@ import 'admission_payment_success.dart';
 
 class SubmitTheAdmission extends StatefulWidget {
   final int id;
-  const SubmitTheAdmission({super.key, required this.id});
+  final String pages;
+  const SubmitTheAdmission({super.key, required this.id, required this.pages});
 
   @override
   State<SubmitTheAdmission> createState() => _SubmitTheAdmissionState();
@@ -34,7 +35,6 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
   @override
   void initState() {
     super.initState();
-
   }
 
   Future<void> validateAndSubmit() async {
@@ -45,7 +45,11 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
 
     // If API already accepted consent, skip validation
     if (apiConsent == true) {
-      await controller.submitAdmission(id: widget.id, isChecked: true);
+      await controller.submitAdmission(
+        id: widget.id,
+        isChecked: true,
+        page: widget.pages,
+      );
       return;
     }
 
@@ -56,7 +60,11 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
     }
 
     setState(() => showError = false);
-    await controller.submitAdmission(id: widget.id, isChecked: isChecked);
+    await controller.submitAdmission(
+      id: widget.id,
+      isChecked: isChecked,
+      page: widget.pages,
+    );
   }
 
   @override
@@ -65,7 +73,7 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
       onWillPop: () async {
         final prefs = await SharedPreferences.getInstance();
         final admissionId = prefs.getInt('admissionId') ?? 0;
-        Get.off(RequiredPhotoScreens(id: admissionId));
+        Get.off(RequiredPhotoScreens(id: admissionId, pages: widget.pages));
         return false;
       },
       child: Scaffold(
@@ -82,7 +90,12 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
                       onTap: () async {
                         final prefs = await SharedPreferences.getInstance();
                         final admissionId = prefs.getInt('admissionId') ?? 0;
-                        Get.off(RequiredPhotoScreens(id: admissionId));
+                        Get.off(
+                          RequiredPhotoScreens(
+                            id: admissionId,
+                            pages: widget.pages,
+                          ),
+                        );
                       },
                     ),
                     const SizedBox(width: 15),
@@ -120,8 +133,10 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
 
                 /// Instructions box
                 Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 25,
+                    vertical: 20,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColor.lowGreen,
                     borderRadius: BorderRadius.circular(20),
@@ -177,8 +192,8 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
 
                 /// Consent Checkbox Logic
                 Obx(() {
-                  final apiConsent = controller
-                      .currentAdmission.value?.consentAccepted ??
+                  final apiConsent =
+                      controller.currentAdmission.value?.consentAccepted ??
                       false;
 
                   // API says consent already given → show prechecked and disabled
@@ -186,20 +201,21 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
                     return CustomContainer.tickContainer(
                       isChecked: true,
                       borderColor: AppColor.blue,
-                      onTap: (){}, // disable tapping
+                      onTap: () {}, // disable tapping
                       text:
-                      'I have read and understood the instructions furnished above',
+                          'I have read and understood the instructions furnished above',
                     );
                   }
 
                   // API no consent yet → user must check
                   return CustomContainer.tickContainer(
                     isChecked: isChecked,
-                    borderColor: showError
-                        ? AppColor.lightRed
-                        : isChecked
-                        ? AppColor.blue
-                        : AppColor.lowLightBlue,
+                    borderColor:
+                        showError
+                            ? AppColor.lightRed
+                            : isChecked
+                            ? AppColor.blue
+                            : AppColor.lowLightBlue,
                     onTap: () {
                       setState(() {
                         isChecked = !isChecked;
@@ -207,7 +223,7 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
                       });
                     },
                     text:
-                    'I have read and understood the instructions furnished above',
+                        'I have read and understood the instructions furnished above',
                   );
                 }),
 
@@ -224,23 +240,23 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
 
                 /// Submit button
                 Obx(
-                      () => AppButton.button(
-                    loader: controller.isLoading.value
-                        ? const SizedBox(
-                      height: 24,
-                      width: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        color: Colors.white,
-                      ),
-                    )
-                        : null,
+                  () => AppButton.button(
+                    loader:
+                        controller.isLoading.value
+                            ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
+                            )
+                            : null,
                     text: 'Pay for Admission',
                     image: AppImages.rightSaitArrow,
                     width: 220,
-                    onTap: controller.isLoading.value
-                        ? null
-                        : validateAndSubmit,
+                    onTap:
+                        controller.isLoading.value ? null : validateAndSubmit,
                   ),
                 ),
               ],
@@ -251,7 +267,6 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
     );
   }
 }
-
 
 // import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';

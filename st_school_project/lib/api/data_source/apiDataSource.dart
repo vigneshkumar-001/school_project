@@ -1493,32 +1493,34 @@ class ApiDataSource extends BaseApiDataSource {
     }
   }
 
-  Future<Either<Failure, GetAdmissionResponse>> getAdmissionDetails({
-    required int id,
-  }) async {
-    try {
-      String url = ApiUrl.getAdmissionDetails(id: id);
 
-      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
-      AppLogger.log.i(response);
 
-      // Accept both 200 and 201 as success
-      if (response is! DioException &&
-          (response.statusCode == 200 || response.statusCode == 201)) {
-        if (response.data['status'] == true) {
-          return Right(GetAdmissionResponse.fromJson(response.data));
-        } else {
-          return Left(ServerFailure(response.data['message']));
-        }
-      } else if (response is DioException) {
-        return Left(ServerFailure(response.message ?? "Dio Error"));
-      } else {
-        return Left(ServerFailure("Unknown error"));
-      }
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
-    }
-  }
+ Future<Either<Failure, GetAdmissionResponse>> getAdmissionDetails({
+   required int id,
+ }) async {
+   try {
+     String url = ApiUrl.getAdmissionDetails(id: id);
+
+     dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+     AppLogger.log.i(response);
+
+     // Accept both 200 and 201 as success
+     if (response is! DioException &&
+         (response.statusCode == 200 || response.statusCode == 201)) {
+       if (response.data['status'] == true) {
+         return Right(GetAdmissionResponse.fromJson(response.data));
+       } else {
+         return Left(ServerFailure(response.data['message']));
+       }
+     } else if (response is DioException) {
+       return Left(ServerFailure(response.message ?? "Dio Error"));
+     } else {
+       return Left(ServerFailure("Unknown error"));
+     }
+   } catch (e) {
+     return Left(ServerFailure(e.toString()));
+   }
+ }
 
   Future<Either<Failure, AppVersionResponse>> appVersionCheck() async {
     try {

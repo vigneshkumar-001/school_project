@@ -14,7 +14,12 @@ import 'package:st_school_project/Presentation/Admssion/Screens/submit_the_admis
 
 class RequiredPhotoScreens extends StatefulWidget {
   final int id;
-  const RequiredPhotoScreens({super.key, required this.id});
+  final String pages;
+  const RequiredPhotoScreens({
+    super.key,
+    required this.id,
+    required this.pages,
+  });
 
   @override
   State<RequiredPhotoScreens> createState() => _RequiredPhotoScreensState();
@@ -66,7 +71,7 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
 
     // If API already has provided == true for all docs, just proceed
     if (docs.isNotEmpty && docs.every((d) => d.provided == true)) {
-      await controller.requiredPhotos(id: widget.id, isChecked: isChecked);
+      await controller.requiredPhotos(id: widget.id, isChecked: isChecked,pages: widget.pages);
       return;
     }
 
@@ -79,7 +84,7 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
     }
 
     setState(() => errorText = null);
-    await controller.requiredPhotos(id: widget.id, isChecked: isChecked);
+    await controller.requiredPhotos(id: widget.id, isChecked: isChecked,pages: widget.pages);
   }
 
   @override
@@ -104,7 +109,12 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
                           final prefs = await SharedPreferences.getInstance();
                           final admissionId = prefs.getInt('admissionId') ?? 0;
 
-                          Get.off(CommunicationScreen(id: admissionId));
+                          Get.off(
+                            CommunicationScreen(
+                              id: admissionId,
+                              page: widget.pages,
+                            ),
+                          );
                         },
                       ),
                       // InkWell(
@@ -261,9 +271,7 @@ class _RequiredPhotoScreensState extends State<RequiredPhotoScreens> {
                                 text[index], // no label since you said don’t show name
                             isChecked: true,
                             borderColor: AppColor.blue,
-                            onTap: () {
-
-                            }, // disabled
+                            onTap: () {}, // disabled
                           ),
                         );
                       }),

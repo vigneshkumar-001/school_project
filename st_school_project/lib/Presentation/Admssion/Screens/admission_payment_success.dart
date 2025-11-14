@@ -10,7 +10,12 @@ import 'check_admission_status.dart';
 
 class AdmissionPaymentSuccess extends StatefulWidget {
   final String admissionCode;
-  const AdmissionPaymentSuccess({super.key, required this.admissionCode});
+  final String pages;
+  const AdmissionPaymentSuccess({
+    super.key,
+    required this.admissionCode,
+    required this.pages,
+  });
 
   @override
   State<AdmissionPaymentSuccess> createState() =>
@@ -143,7 +148,8 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CheckAdmissionStatus(),
+                      builder:
+                          (context) => CheckAdmissionStatus(page: widget.pages),
                     ),
                   );
                 },

@@ -17,7 +17,8 @@ import 'package:st_school_project/Presentation/Admssion/Screens/parents_info_scr
 
 class SiblingsFormScreen extends StatefulWidget {
   final int id;
-  const SiblingsFormScreen({super.key, required this.id});
+  final String page;
+  const SiblingsFormScreen({super.key, required this.id, required this.page});
 
   @override
   State<SiblingsFormScreen> createState() => _SiblingsFormScreenState();
@@ -88,7 +89,7 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
                         final prefs = await SharedPreferences.getInstance();
                         final admissionId = prefs.getInt('admissionId') ?? 0;
 
-                        Get.off(ParentsInfoScreen(id: admissionId));
+                        Get.off(ParentsInfoScreen(id: admissionId,pages: widget. page,));
                       },
                     ),
                     const SizedBox(width: 15),
@@ -488,6 +489,8 @@ class _SiblingsFormScreenState extends State<SiblingsFormScreen> {
 
       admissionController.isLoading.value = true;
       final error = await admissionController.sistersInfo(
+        pages: widget.page,
+
         id: widget.id,
         siblings: siblingList,
         hasSisterInSchool: hasSiblings,

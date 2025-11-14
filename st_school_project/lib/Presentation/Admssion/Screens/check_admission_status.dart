@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'package:open_filex/open_filex.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
@@ -42,6 +43,7 @@ import 'package:st_school_project/Presentation/Admssion/Controller/admission_con
 
 import '../../../Core/Utility/app_color.dart';
 import '../../../Core/Utility/app_images.dart';
+import '../../../Core/Utility/download_file.dart';
 import '../../../Core/Utility/google_font.dart';
 import '../../../Core/Widgets/bottom_navigationbar.dart';
 import '../../../Core/Widgets/custom_textfield.dart';
@@ -49,7 +51,8 @@ import '../../Onboarding/Screens/Home Screen/home_tab.dart';
 
 class CheckAdmissionStatus extends StatefulWidget {
   final String? page;
-  const CheckAdmissionStatus({super.key,   this.page});
+  final bool showBackArrow;
+  const CheckAdmissionStatus({super.key, this.page, this.showBackArrow = true});
 
   @override
   State<CheckAdmissionStatus> createState() => _CheckAdmissionStatusState();
@@ -59,276 +62,6 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
   final AdmissionController controller = Get.put(AdmissionController());
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _admissionIdController = TextEditingController();
-
-  void _paymentReceipt(BuildContext context, String url, String admissionNo) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.80,
-          minChildSize: 0.20,
-          maxChildSize: 0.85,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: BoxDecoration(
-                color: AppColor.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              child: ListView(
-                controller: scrollController,
-                padding: const EdgeInsets.all(16),
-                children: [
-                  Center(
-                    child: Container(
-                      height: 4,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: AppColor.grayop,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Column(
-                    children: [
-                      Image.asset(AppImages.paidImage, height: 98),
-                      SizedBox(height: 14),
-                      Text(
-                        'Rs. 3500',
-                        style: GoogleFont.ibmPlexSans(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 34,
-                          color: AppColor.greenMore1,
-                        ),
-                      ),
-                      Text(
-                        'Paid to Third term fees',
-                        style: GoogleFont.ibmPlexSans(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18,
-                          color: AppColor.lightBlack,
-                        ),
-                      ),
-                      SizedBox(height: 34),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 35.0),
-                        child: DottedLine(
-                          dashColor: AppColor.grayop,
-                          dashGapLength: 6,
-                          dashLength: 7,
-                        ),
-                      ),
-                      SizedBox(height: 40),
-                      Stack(
-                        children: [
-                          Positioned.fill(
-                            child: Image.asset(
-                              AppImages.examResultBCImage,
-                              height: 250,
-                              width: 280,
-                            ),
-                          ),
-                          Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColor.lightGrey,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(17.0),
-                                      child: Image.asset(
-                                        AppImages.receiptNo,
-                                        height: 24,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 15),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Receipt No',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14,
-                                          color: AppColor.grey,
-                                        ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        'GJGFH87GHJG8II',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20,
-                                          color: AppColor.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 25),
-                              Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColor.lightGrey,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(17.0),
-                                      child: Image.asset(
-                                        AppImages.admissionNo,
-                                        height: 24,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 15),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Admission No',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14,
-                                          color: AppColor.grey,
-                                        ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        admissionNo,
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20,
-                                          color: AppColor.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 25),
-                              Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColor.lightGrey,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(17.0),
-                                      child: Image.asset(
-                                        AppImages.timeImage,
-                                        height: 24,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 15),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Time',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14,
-                                          color: AppColor.grey,
-                                        ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      RichText(
-                                        text: TextSpan(
-                                          text: '12.00Pm   ',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 20,
-                                            color: AppColor.black,
-                                          ),
-                                          children: [
-                                            TextSpan(
-                                              text: '16 Jun 2025',
-                                              style: GoogleFont.ibmPlexSans(
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 20,
-                                                color: AppColor.grey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 40),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 35.0),
-                        child: DottedLine(
-                          dashColor: AppColor.grayop,
-                          dashGapLength: 6,
-                          dashLength: 7,
-                        ),
-                      ),
-                      SizedBox(height: 40),
-                      GestureDetector(
-                        onTap: () async => _downloadAndOpenPdf(url),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 27,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: AppColor.blue,
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    AppImages.downloadImage,
-                                    height: 20,
-                                  ),
-                                  SizedBox(width: 10),
-                                  CustomTextField.textWithSmall(
-                                    text: 'Download Receipt',
-                                    color: AppColor.blue,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
 
   @override
   void initState() {
@@ -370,8 +103,11 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                 children: [
                   if (widget.page == "homeScreen")
                     CustomContainer.leftSaitArrow(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () {
+                        Get.offAll(CommonBottomNavigation(initialIndex: 0,));
+                      },
                     ),
+
                   SizedBox(height: 33),
                   Text(
                     'Check Admission Status',
@@ -400,7 +136,7 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                         child: CustomContainer.checkMark(
                           onTap: () {
                             FocusScope.of(context).unfocus();
-                            searchAdmission(); // ✅ Call your search function
+                            searchAdmission();
                           },
                           imagePath: AppImages.searchImage,
                         ),
@@ -447,8 +183,6 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                       }
 
                       return ListView.builder(
-
-
                         itemCount: controller.statusData.length,
                         itemBuilder: (context, index) {
                           final data = controller.statusData[index];
@@ -496,13 +230,50 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                                           data.submittedAt!,
                                         )
                                         : '',
-
                                 iconText: data.status.toUpperCase(),
                                 onTap: () {
-                                  AppLogger.log.i(data.downloadUrl);
-                                  _downloadAndOpenPdf(data.downloadUrl);
+                                  if (data.downloadUrl != null &&
+                                      data.downloadUrl!.isNotEmpty) {
+                                    DownloadFile.openInBrowser(
+                                      data.downloadUrl!,
+                                      context: context,
+                                    );
+                                  } else {
+                                    Get.snackbar(
+                                      'Error',
+                                      'No download link available',
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: Colors.red.shade600,
+                                      colorText: Colors.white,
+                                    );
+                                  }
                                 },
                               ),
+
+                              // CustomContainer.myadmissions(
+                              //   imagepath: imagePath,
+                              //   iconColor: iconColor,
+                              //   backRoundColors: bgColor,
+                              //   iconTextColor: iconColor,
+                              //   maintext: data.studentName.toString() ?? '',
+                              //   subtext1: 'Submitted On ',
+                              //   subtext2:
+                              //       data.submittedAt != null &&
+                              //               data.submittedAt!.isNotEmpty
+                              //           ? DateAndTimeConvert.formatDateTime(
+                              //             showDate: true,
+                              //             showTime: false,
+                              //             data.submittedAt!,
+                              //           )
+                              //           : '',
+                              //
+                              //   iconText: data.status.toUpperCase(),
+                              //
+                              //   onTap: () {
+                              //     AppLogger.log.i(data.downloadUrl);
+                              //     _downloadAndOpenPdf(data.downloadUrl);
+                              //   },
+                              // ),
                               SizedBox(height: 20),
                             ],
                           );
@@ -563,105 +334,5 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
         ),
       ),
     );
-  }
-
-  Future<void> _downloadAndOpenPdf(String url) async {
-    if (url.isEmpty) {
-      Get.snackbar('Error', 'Download URL not available');
-      return;
-    }
-
-    if (Platform.isAndroid) {
-      var status = await Permission.manageExternalStorage.status;
-      if (!status.isGranted) {
-        bool openSettings = await Get.dialog(
-          AlertDialog(
-            title: Text('Permission Required'),
-            content: Text(
-              'Storage permission is required to download the receipt. Please enable it.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Get.back(result: false),
-                child: Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () => Get.back(result: true),
-                child: Text('OK'),
-              ),
-            ],
-          ),
-          barrierDismissible: false,
-        );
-
-        if (openSettings) {
-          bool isOpened = await openAppSettings();
-          if (!isOpened) {
-            Get.snackbar('Error', 'Cannot open settings');
-            return;
-          }
-
-          status = await Permission.manageExternalStorage.request();
-          if (!status.isGranted) {
-            Get.snackbar('Permission Denied', 'Storage permission not granted');
-            return;
-          }
-        } else {
-          return;
-        }
-      }
-    }
-
-    try {
-      Get.dialog(
-        const Center(child: CircularProgressIndicator()),
-        barrierDismissible: false,
-      );
-
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode != 200) {
-        Get.back();
-
-        CustomSnackBar.showError('Failed to download file');
-        return;
-      }
-
-      Directory dir;
-      if (Platform.isAndroid) {
-        dir = Directory('/storage/emulated/0/Download');
-        if (!dir.existsSync()) {
-          dir.createSync(recursive: true);
-        }
-      } else {
-        dir = await getApplicationDocumentsDirectory();
-      }
-
-      final file = File(
-        '${dir.path}/receipt_${DateTime.now().millisecondsSinceEpoch}.pdf',
-      );
-      await file.writeAsBytes(response.bodyBytes);
-
-      Get.back();
-      CustomSnackBar.showSuccess('PDF saved to ${file.path}');
-      // Get.snackbar(
-      //   'Success',
-      //   'PDF saved to ${file.path}',
-      //   snackPosition: SnackPosition.BOTTOM,
-      //   backgroundColor: Colors.green.shade600,
-      //   colorText: Colors.white,
-      //   borderRadius: 12,
-      //   margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      //   icon: Icon(Icons.check_circle_outline, color: Colors.white),
-      //   shouldIconPulse: false,
-      //   duration: Duration(seconds: 3),
-      //   snackStyle: SnackStyle.FLOATING,
-      //   padding: EdgeInsets.all(16),
-      // );
-
-      // Share PDF
-    } catch (e) {
-      Get.back();
-      CustomSnackBar.showError(e.toString());
-    }
   }
 }

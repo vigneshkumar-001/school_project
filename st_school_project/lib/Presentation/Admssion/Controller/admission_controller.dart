@@ -172,34 +172,76 @@ class AdmissionController extends GetxController {
     return null;
   }
 
-  Future<String?> postAdmission1NextButton({required int id}) async {
+  // Future<String?> postAdmission1NextButton({required int id}) async {
+  //   try {
+  //     isLoading.value = true;
+  //     final prefs = await SharedPreferences.getInstance();
+  //     final results = await apiDataSource.postAdmission1NextButton(id: id);
+  //
+  //     results.fold(
+  //       (failure) {
+  //         isLoading.value = false;
+  //         AppLogger.log.e(failure.message);
+  //       },
+  //       (response) async {
+  //         final data = response.data.id;
+  //         AppLogger.log.i("Next button success for ID: $id");
+  //         AppLogger.log.i(data);
+  //         await prefs.setInt('admissionId', response.data?.id ?? 0);
+  //         final admissionID = prefs.getInt('admissionId') ?? '';
+  //         AppLogger.log.i(" Showing SharedPrefs Admission Id = $admissionID");
+  //         await getAdmissionDetails(id: response.data.id ?? 0);
+  //         isLoading.value = false;
+  //         Get.to(StudentInfoScreen(admissionId: id, pages: 'homeScreen'));
+  //
+  //         // Convert JSON to model
+  //       },
+  //     );
+  //   } catch (e) {
+  //     isLoading.value = false;
+  //     AppLogger.log.e(e);
+  //     return e.toString();
+  //   }
+  //   return null;
+  // }
+
+  Future<String?> postAdmission1NextButton({
+    required int id,
+    String? sourcePage, // 👈 from Admission1.pages
+  }) async {
     try {
       isLoading.value = true;
       final prefs = await SharedPreferences.getInstance();
       final results = await apiDataSource.postAdmission1NextButton(id: id);
 
-      results.fold(
-        (failure) {
+      await results.fold(
+        (failure) async {
           isLoading.value = false;
           AppLogger.log.e(failure.message);
         },
         (response) async {
-          isLoading.value = false;
-          final data = response.data.id;
-          AppLogger.log.i("Next button success for ID: $id");
-          AppLogger.log.i(data);
-          await prefs.setInt('admissionId', response.data?.id ?? 0);
-          final admissionID = prefs.getInt('admissionId') ?? '';
-          AppLogger.log.i(" Showing SharedPrefs Admission Id = $admissionID");
+          final int newId = response.data?.id ?? id;
 
-          // Convert JSON to model
+          AppLogger.log.i("Next button success for ID: $newId");
+
+          await prefs.setInt('admissionId', newId);
+          await getAdmissionDetails(id: newId);
+
+          isLoading.value = false;
+
+          Get.to(
+            () => StudentInfoScreen(
+              admissionId: newId,
+              pages: sourcePage, // 👈 VERY IMPORTANT
+            ),
+          );
         },
       );
     } catch (e) {
       isLoading.value = false;
-      AppLogger.log.e(e);
-      return e.toString();
+      AppLogger.log.e(e.toString());
     }
+
     return null;
   }
 
@@ -211,6 +253,7 @@ class AdmissionController extends GetxController {
     required String aadhaar,
     required String dob,
     required String religion,
+    required String page,
     required String caste,
     required String community,
     required String motherTongue,
@@ -245,7 +288,7 @@ class AdmissionController extends GetxController {
         },
         (response) async {
           isLoading.value = false;
-          Get.to(ParentsInfoScreen(id: response.data?.id ?? 0));
+          Get.to(ParentsInfoScreen(id: response.data?.id ?? 0, pages: page));
 
           AppLogger.log.i(response.data?.id);
 
@@ -260,78 +303,10 @@ class AdmissionController extends GetxController {
     return null;
   }
 
-  // Future<String?> ParentsInfo({
-  //   required int id,
-  //   required String fatherName,
-  //   required String fatherNameTamil,
-  //   required String fatherQualification,
-  //   required String fatherOccupation,
-  //   required int fatherIncome,
-  //   required String fatherOfficeAddress,
-  //   required String motherName,
-  //   required String motherNameTamil,
-  //   required String motherQualification,
-  //   required String motherOccupation,
-  //   required int motherIncome,
-  //   required String motherOfficeAddress,
-  //   required bool hasGuardian,
-  //   String? guardianName,
-  //   String? guardianNameTamil,
-  //   String? guardianQualification,
-  //   String? guardianOccupation,
-  //   int? guardianIncome,
-  //   String? guardianOfficeAddress,
-  // }) async {
-  //   try {
-  //     isLoading.value = true;
-  //
-  //     final results = await apiDataSource.ParentsInfo(
-  //       id: id,
-  //       fatherName: fatherName,
-  //       fatherNameTamil: fatherNameTamil,
-  //       fatherQualification: fatherQualification,
-  //       fatherOccupation: fatherOccupation,
-  //       fatherIncome: fatherIncome,
-  //       fatherOfficeAddress: fatherOfficeAddress,
-  //       motherName: motherName,
-  //       motherNameTamil: motherNameTamil,
-  //       motherQualification: motherQualification,
-  //       motherOccupation: motherOccupation,
-  //       motherIncome: motherIncome,
-  //       motherOfficeAddress: motherOfficeAddress,
-  //       hasGuardian: hasGuardian,
-  //       guardianName: guardianName,
-  //       guardianNameTamil: guardianNameTamil,
-  //       guardianQualification: guardianQualification,
-  //       guardianOccupation: guardianOccupation,
-  //       guardianIncome: guardianIncome,
-  //       guardianOfficeAddress: guardianOfficeAddress,
-  //     );
-  //
-  //     results.fold(
-  //       (failure) {
-  //         isLoading.value = false;
-  //         AppLogger.log.e(failure.message);
-  //       },
-  //       (response) async {
-  //         isLoading.value = false;
-  //         // admissionList.value = response.data;
-  //         AppLogger.log.i("fetched: ${admissionList.length}");
-  //
-  //         // Convert JSON to model
-  //       },
-  //     );
-  //   } catch (e) {
-  //     isLoading.value = false;
-  //     AppLogger.log.e(e);
-  //     return e.toString();
-  //   }
-  //   return null;
-  // }
-
   Future<String?> saveParentsInfo({
     required int id,
     required String fatherName,
+    required String pages,
     required String fatherNameTamil,
     required String fatherQualification,
     required String fatherOccupation,
@@ -388,7 +363,7 @@ class AdmissionController extends GetxController {
         },
         (response) async {
           isParentsSaving.value = false;
-          Get.to(SiblingsFormScreen(id: id));
+          Get.to(SiblingsFormScreen(id: id, page: pages));
         },
       );
 
@@ -405,6 +380,7 @@ class AdmissionController extends GetxController {
   Future<String?> sistersInfo({
     required int id,
     required String hasSisterInSchool,
+    required String pages,
     required List<Map<String, String>> siblings,
   }) async {
     try {
@@ -430,7 +406,7 @@ class AdmissionController extends GetxController {
           AppLogger.log.i("SistersInfo Sucess: ${response.data}");
           isLoading.value = false;
 
-          Get.to(CommunicationScreen(id: id));
+          Get.to(CommunicationScreen(id: id, page: pages));
         },
       );
 
@@ -491,6 +467,7 @@ class AdmissionController extends GetxController {
     required String mobilePrimary,
     required String mobileSecondary,
     required String country,
+    required String pages,
     required String state,
     required String city,
     required String pinCode,
@@ -522,7 +499,7 @@ class AdmissionController extends GetxController {
 
           AppLogger.log.i("Fetched class-section successfully");
           AppLogger.log.i("Parsed data: ${response.data}");
-          Get.to(RequiredPhotoScreens(id: id));
+          Get.to(RequiredPhotoScreens(id: id, pages: pages));
           return '';
         },
       );
@@ -536,6 +513,7 @@ class AdmissionController extends GetxController {
 
   Future<String?> requiredPhotos({
     required int id,
+    required String pages,
     required List<bool> isChecked,
   }) async {
     try {
@@ -555,7 +533,7 @@ class AdmissionController extends GetxController {
         },
         (response) async {
           isLoading.value = false;
-          Get.to(SubmitTheAdmission(id: id));
+          Get.to(SubmitTheAdmission(id: id, pages: pages));
           AppLogger.log.i("Fetched class-section successfully");
           AppLogger.log.i("Parsed data: ${response.data}");
 
@@ -573,6 +551,7 @@ class AdmissionController extends GetxController {
   Future<String?> submitAdmission({
     required int id,
     required bool isChecked,
+    required String page,
   }) async {
     try {
       isLoading.value = true;
@@ -604,6 +583,7 @@ class AdmissionController extends GetxController {
             // Navigate to your custom success page
             Get.to(
               AdmissionPaymentSuccess(
+                pages: page,
                 admissionCode: response.data?.admissionCode ?? '',
               ),
             );
@@ -713,12 +693,12 @@ class AdmissionController extends GetxController {
 
   Map<int, Widget> admissionScreens(int admissionId) => {
     1: StudentInfoScreen(admissionId: admissionId),
-    2: ParentsInfoScreen(id: admissionId),
-    3: SiblingsFormScreen(id: admissionId),
-    4: CommunicationScreen(id: admissionId),
-    5: RequiredPhotoScreens(id: admissionId),
-    6: SubmitTheAdmission(id: admissionId),
-    7: CheckAdmissionStatus(),
+    2: ParentsInfoScreen(id: admissionId, pages: ''),
+    3: SiblingsFormScreen(id: admissionId, page: ''),
+    4: CommunicationScreen(id: admissionId, page: ''),
+    5: RequiredPhotoScreens(id: admissionId, pages: ''),
+    6: SubmitTheAdmission(id: admissionId, pages: ''),
+    7: CheckAdmissionStatus(showBackArrow: false), // or false, as intended
   };
 
   Future<void> fetchAndSetUserData() async {
@@ -866,7 +846,7 @@ class AdmissionController extends GetxController {
 
       guardianAnnualIncome.text =
           guardianAnnualIncome.text.isEmpty
-              ? profile.guardianIncome.toString()
+              ? (profile.guardianIncome?.toString() ?? '')
               : guardianAnnualIncome.text;
 
       guardianOfficeAddress.text =

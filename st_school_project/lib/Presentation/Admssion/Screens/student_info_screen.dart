@@ -791,14 +791,16 @@ import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Utility/snack_bar.dart' as UI;
 import 'package:st_school_project/Core/Utility/app_loader.dart';
+import 'package:st_school_project/Presentation/Admssion/Screens/admission_1.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/parents_info_screen.dart';
 
 import '../Controller/admission_controller.dart';
 
 class StudentInfoScreen extends StatefulWidget {
+  final String? pages;
   final int admissionId; // <-- supply this when navigating
 
-  const StudentInfoScreen({super.key, required this.admissionId});
+  const StudentInfoScreen({super.key, required this.admissionId, this.pages});
 
   @override
   State<StudentInfoScreen> createState() => _StudentInfoScreenState();
@@ -1106,8 +1108,31 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return await false;
+        final shouldGoBack = await showDialog<bool>(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              title: const Text('Confirmation'),
+              content: const Text('Are you sure you want to go back?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+        return shouldGoBack ?? false;
       },
+
+      // onWillPop: () async {
+      //   return await false;
+      // },
       child: Scaffold(
         body: SafeArea(
           child: Padding(
@@ -1122,19 +1147,58 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                       children: [
                         CustomContainer.leftSaitArrow(
                           onTap: () async {
-                            final prefs = await SharedPreferences.getInstance();
+                            final shouldGoBack = await showDialog<bool>(
+                              context: context,
+                              builder: (ctx) {
+                                return AlertDialog(
+                                  title: const Text('Confirmation'),
+                                  content: const Text(
+                                    'Are you sure you want to go back?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed:
+                                          () => Navigator.pop(ctx, false),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx, true),
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
 
-                            final currentStep =
-                                ctrl.currentAdmission.value?.step ?? 1;
+                            if (shouldGoBack == true) {
+                              // If Admission1 doesn’t require parameters:
+                              Get.off(() => Admission1());
 
-                            if (currentStep > 1) {
-
-                            } else {
-                              Navigator.pop(context);
+                              // If Admission1 needs admissionId like before:
+                              // final prefs = await SharedPreferences.getInstance();
+                              // final admissionId = prefs.getInt('admissionId') ?? 0;
+                              // Get.off(() => Admission1(admissionId: admissionId));
                             }
                           },
                         ),
+
+                        // CustomContainer.leftSaitArrow(
+                        //   onTap: () async {
+                        //     final currentStep =
+                        //         ctrl.currentAdmission.value?.step ?? 1;
+                        //
+                        //     if (currentStep > 1) {
+                        //       // handle step logic if needed
+                        //     } else if (widget.pages == 'homeScreen') {
+                        //       Get.back(); // <-- works even with Get.to()
+                        //     } else {
+                        //       // Example: navigate to Admission1 screen
+                        //       // Get.off(Admission1());
+                        //     }
+                        //   },
+                        // ),
                         SizedBox(width: 15),
+
                         Text(
                           '2025 - 2026 LKG Admission',
                           style: GoogleFont.ibmPlexSans(
@@ -1145,6 +1209,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                         ),
                       ],
                     ),
+
                     SizedBox(height: 30),
                     LinearProgressIndicator(
                       minHeight: 6,
@@ -1426,8 +1491,10 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                             ctrl.isLoading.value
                                 ? null
                                 : () async {
-                              final prefs = await SharedPreferences.getInstance();
-                              final admissionID = prefs.getInt('admissionId') ?? 0;
+                                  final prefs =
+                                      await SharedPreferences.getInstance();
+                                  final admissionID =
+                                      prefs.getInt('admissionId') ?? 0;
                                   HapticFeedback.heavyImpact();
                                   FocusScope.of(context).unfocus();
 
@@ -1446,6 +1513,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
 
                                   //  Single, correct API call
                                   final err = await ctrl.postStudentInfo(
+                                    page: widget.pages ?? '',
                                     emailId:
                                         admissionController
                                             .emailIdController

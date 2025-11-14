@@ -18,8 +18,9 @@ import 'package:st_school_project/Presentation/Admssion/Screens/siblings_form_sc
 
 class CommunicationScreen extends StatefulWidget {
   final int id;
+  final String page;
 
-  const CommunicationScreen({super.key, required this.id});
+  const CommunicationScreen({super.key, required this.id, required this.page});
 
   @override
   State<CommunicationScreen> createState() => _CommunicationScreenState();
@@ -65,7 +66,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                             final admissionId =
                                 prefs.getInt('admissionId') ?? 0;
 
-                            Get.off(SiblingsFormScreen(id: admissionId));
+                            Get.off(SiblingsFormScreen(id: admissionId,page: widget.page,));
                           },
                         ),
                         // InkWell(
@@ -102,7 +103,6 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                         ),
                       ],
                     ),
-
                     SizedBox(height: 30),
                     LinearProgressIndicator(
                       minHeight: 6,
@@ -125,8 +125,10 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                     ),
                     SizedBox(height: 10),
                     CustomContainer.studentInfoScreen(
-                      readOnly: true,
+                      readOnly: false,
                       keyboardType: TextInputType.number,
+
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       isError:
                           isSubmitted &&
                           controller.primaryMobileController.text
@@ -499,6 +501,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                                 : () {
                                   HapticFeedback.heavyImpact();
                                   controller.communicationDetails(
+                                    pages: widget.page,
                                     id: widget.id,
                                     mobilePrimary:
                                         controller.primaryMobileController.text

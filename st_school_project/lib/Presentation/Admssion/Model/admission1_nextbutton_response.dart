@@ -62,7 +62,7 @@ class AdmissionData {
   final String? guardianOfficeAddress;
   final String? guardianIncome;
   final bool hasSisterInSchool;
-  final String? sisterDetails;
+  final List<SisterDetail>? sisterDetails;
   final String? mobilePrimary;
   final String? mobileSecondary;
   final String? country;
@@ -81,9 +81,9 @@ class AdmissionData {
   AdmissionData({
     this.id,
     this.windowId,
+    this.step,
     this.studentId,
     this.studentName,
-    this.step,
     this.studentNameTamil,
     this.aadhaar,
     this.dob,
@@ -135,9 +135,9 @@ class AdmissionData {
   factory AdmissionData.fromJson(Map<String, dynamic> json) => AdmissionData(
     id: json["id"],
     windowId: json["windowId"],
+    step: json["step"] ?? 0,
     studentId: json["studentId"],
     studentName: json["studentName"],
-    step: json["step"] ?? 0,
     studentNameTamil: json["studentNameTamil"],
     aadhaar: json["aadhaar"],
     dob: json["dob"],
@@ -169,7 +169,12 @@ class AdmissionData {
     guardianOfficeAddress: json["guardianOfficeAddress"],
     guardianIncome: json["guardianIncome"],
     hasSisterInSchool: json["hasSisterInSchool"] ?? false,
-    sisterDetails: json["sisterDetails"],
+    sisterDetails: json["sisterDetails"] == null
+        ? []
+        : (json["sisterDetails"] is List
+        ? List<SisterDetail>.from(
+        json["sisterDetails"].map((x) => SisterDetail.fromJson(x)))
+        : []),
     mobilePrimary: json["mobilePrimary"],
     mobileSecondary: json["mobileSecondary"],
     country: json["country"],
@@ -191,8 +196,8 @@ class AdmissionData {
   Map<String, dynamic> toJson() => {
     "id": id,
     "windowId": windowId,
-    "studentId": studentId,
     "step": step,
+    "studentId": studentId,
     "studentName": studentName,
     "studentNameTamil": studentNameTamil,
     "aadhaar": aadhaar,
@@ -225,7 +230,9 @@ class AdmissionData {
     "guardianOfficeAddress": guardianOfficeAddress,
     "guardianIncome": guardianIncome,
     "hasSisterInSchool": hasSisterInSchool,
-    "sisterDetails": sisterDetails,
+    "sisterDetails": sisterDetails == null
+        ? []
+        : List<dynamic>.from(sisterDetails!.map((x) => x.toJson())),
     "mobilePrimary": mobilePrimary,
     "mobileSecondary": mobileSecondary,
     "country": country,
@@ -240,5 +247,33 @@ class AdmissionData {
     "submittedAt": submittedAt,
     "createdAt": createdAt,
     "updatedAt": updatedAt,
+  };
+}
+
+class SisterDetail {
+  final String? name;
+  final String? admNo;
+  final String? className;
+  final String? section;
+
+  SisterDetail({
+    this.name,
+    this.admNo,
+    this.className,
+    this.section,
+  });
+
+  factory SisterDetail.fromJson(Map<String, dynamic> json) => SisterDetail(
+    name: json["name"],
+    admNo: json["admNo"],
+    className: json["class"],
+    section: json["section"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "name": name,
+    "admNo": admNo,
+    "class": className,
+    "section": section,
   };
 }
