@@ -147,7 +147,7 @@ class LoginController extends GetxController {
             Get.offAll(CommonBottomNavigation(initialIndex: 0));
           } else {
             prefs.setBool('isAdmissionCompleted', false);
-            Get.offAll(Admission1());
+            Get.offAll(Admission1(pages: 'otpScreen'));
           }
 
           isOtpLoading.value = false;

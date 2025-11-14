@@ -172,36 +172,76 @@ class AdmissionController extends GetxController {
     return null;
   }
 
-  Future<String?> postAdmission1NextButton({required int id}) async {
+  // Future<String?> postAdmission1NextButton({required int id}) async {
+  //   try {
+  //     isLoading.value = true;
+  //     final prefs = await SharedPreferences.getInstance();
+  //     final results = await apiDataSource.postAdmission1NextButton(id: id);
+  //
+  //     results.fold(
+  //       (failure) {
+  //         isLoading.value = false;
+  //         AppLogger.log.e(failure.message);
+  //       },
+  //       (response) async {
+  //         final data = response.data.id;
+  //         AppLogger.log.i("Next button success for ID: $id");
+  //         AppLogger.log.i(data);
+  //         await prefs.setInt('admissionId', response.data?.id ?? 0);
+  //         final admissionID = prefs.getInt('admissionId') ?? '';
+  //         AppLogger.log.i(" Showing SharedPrefs Admission Id = $admissionID");
+  //         await getAdmissionDetails(id: response.data.id ?? 0);
+  //         isLoading.value = false;
+  //         Get.to(StudentInfoScreen(admissionId: id, pages: 'homeScreen'));
+  //
+  //         // Convert JSON to model
+  //       },
+  //     );
+  //   } catch (e) {
+  //     isLoading.value = false;
+  //     AppLogger.log.e(e);
+  //     return e.toString();
+  //   }
+  //   return null;
+  // }
+
+  Future<String?> postAdmission1NextButton({
+    required int id,
+    String? sourcePage, // 👈 from Admission1.pages
+  }) async {
     try {
       isLoading.value = true;
       final prefs = await SharedPreferences.getInstance();
       final results = await apiDataSource.postAdmission1NextButton(id: id);
 
-      results.fold(
-        (failure) {
+      await results.fold(
+        (failure) async {
           isLoading.value = false;
           AppLogger.log.e(failure.message);
         },
         (response) async {
+          final int newId = response.data?.id ?? id;
+
+          AppLogger.log.i("Next button success for ID: $newId");
+
+          await prefs.setInt('admissionId', newId);
+          await getAdmissionDetails(id: newId);
+
           isLoading.value = false;
-          final data = response.data.id;
-          AppLogger.log.i("Next button success for ID: $id");
-          AppLogger.log.i(data);
-          await prefs.setInt('admissionId', response.data?.id ?? 0);
-          final admissionID = prefs.getInt('admissionId') ?? '';
-          AppLogger.log.i(" Showing SharedPrefs Admission Id = $admissionID");
-         Get.to(StudentInfoScreen(admissionId: id, pages: 'homeScreen'));
 
-
-          // Convert JSON to model
+          Get.to(
+            () => StudentInfoScreen(
+              admissionId: newId,
+              pages: sourcePage, // 👈 VERY IMPORTANT
+            ),
+          );
         },
       );
     } catch (e) {
       isLoading.value = false;
-      AppLogger.log.e(e);
-      return e.toString();
+      AppLogger.log.e(e.toString());
     }
+
     return null;
   }
 
@@ -543,7 +583,7 @@ class AdmissionController extends GetxController {
             // Navigate to your custom success page
             Get.to(
               AdmissionPaymentSuccess(
-                pages : page,
+                pages: page,
                 admissionCode: response.data?.admissionCode ?? '',
               ),
             );
@@ -806,7 +846,7 @@ class AdmissionController extends GetxController {
 
       guardianAnnualIncome.text =
           guardianAnnualIncome.text.isEmpty
-              ? profile.guardianIncome.toString()
+              ? (profile.guardianIncome?.toString() ?? '')
               : guardianAnnualIncome.text;
 
       guardianOfficeAddress.text =

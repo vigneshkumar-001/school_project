@@ -43,6 +43,7 @@ import 'package:st_school_project/Presentation/Admssion/Controller/admission_con
 
 import '../../../Core/Utility/app_color.dart';
 import '../../../Core/Utility/app_images.dart';
+import '../../../Core/Utility/download_file.dart';
 import '../../../Core/Utility/google_font.dart';
 import '../../../Core/Widgets/bottom_navigationbar.dart';
 import '../../../Core/Widgets/custom_textfield.dart';
@@ -103,7 +104,7 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                   if (widget.page == "homeScreen")
                     CustomContainer.leftSaitArrow(
                       onTap: () {
-                        Get.offAll(HomeTab());
+                        Get.offAll(CommonBottomNavigation(initialIndex: 0,));
                       },
                     ),
 
@@ -229,13 +230,50 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                                           data.submittedAt!,
                                         )
                                         : '',
-
                                 iconText: data.status.toUpperCase(),
                                 onTap: () {
-                                  AppLogger.log.i(data.downloadUrl);
-                                  _downloadAndOpenPdf(data.downloadUrl);
+                                  if (data.downloadUrl != null &&
+                                      data.downloadUrl!.isNotEmpty) {
+                                    DownloadFile.openInBrowser(
+                                      data.downloadUrl!,
+                                      context: context,
+                                    );
+                                  } else {
+                                    Get.snackbar(
+                                      'Error',
+                                      'No download link available',
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: Colors.red.shade600,
+                                      colorText: Colors.white,
+                                    );
+                                  }
                                 },
                               ),
+
+                              // CustomContainer.myadmissions(
+                              //   imagepath: imagePath,
+                              //   iconColor: iconColor,
+                              //   backRoundColors: bgColor,
+                              //   iconTextColor: iconColor,
+                              //   maintext: data.studentName.toString() ?? '',
+                              //   subtext1: 'Submitted On ',
+                              //   subtext2:
+                              //       data.submittedAt != null &&
+                              //               data.submittedAt!.isNotEmpty
+                              //           ? DateAndTimeConvert.formatDateTime(
+                              //             showDate: true,
+                              //             showTime: false,
+                              //             data.submittedAt!,
+                              //           )
+                              //           : '',
+                              //
+                              //   iconText: data.status.toUpperCase(),
+                              //
+                              //   onTap: () {
+                              //     AppLogger.log.i(data.downloadUrl);
+                              //     _downloadAndOpenPdf(data.downloadUrl);
+                              //   },
+                              // ),
                               SizedBox(height: 20),
                             ],
                           );
@@ -296,67 +334,5 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
         ),
       ),
     );
-  }
-
-  Future<void> _downloadAndOpenPdf(String url) async {
-    if (url.isEmpty) {
-      Get.snackbar('Error', 'Download URL not available');
-      return;
-    }
-
-    if (Platform.isAndroid) {
-      var status = await Permission.manageExternalStorage.status;
-      if (!status.isGranted) {
-        await Permission.manageExternalStorage.request();
-        if (!await Permission.manageExternalStorage.isGranted) {
-          Get.snackbar('Permission Denied', 'Storage permission not granted');
-          return;
-        }
-      }
-    }
-
-    try {
-      Get.dialog(
-        const Center(child: CircularProgressIndicator()),
-        barrierDismissible: false,
-      );
-
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode != 200) {
-        Get.back();
-        CustomSnackBar.showError('Failed to download file');
-        return;
-      }
-
-      final filename = 'receipt_${DateTime.now().millisecondsSinceEpoch}.pdf';
-      final bytes = response.bodyBytes;
-
-      //  Use MediaStore insert for Android 10+
-      if (Platform.isAndroid) {
-        const channel = MethodChannel('file_downloader');
-        final result = await channel.invokeMethod('saveToDownloads', {
-          'name': filename,
-          'bytes': bytes,
-        });
-
-        Get.back();
-        if (result == true) {
-          CustomSnackBar.showSuccess('PDF saved in Downloads');
-        } else {
-          CustomSnackBar.showError('Failed to save to Downloads');
-        }
-      } else {
-        // iOS fallback
-        final dir = await getApplicationDocumentsDirectory();
-        final file = File('${dir.path}/$filename');
-        await file.writeAsBytes(bytes);
-        Get.back();
-        CustomSnackBar.showSuccess('PDF saved to ${file.path}');
-        await OpenFilex.open(file.path);
-      }
-    } catch (e) {
-      Get.back();
-      CustomSnackBar.showError(e.toString());
-    }
   }
 }

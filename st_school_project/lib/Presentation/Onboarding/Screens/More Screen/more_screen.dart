@@ -251,8 +251,6 @@ class _MoreScreenState extends State<MoreScreen>
   bool _isShowingReceipt = false; // in-flight guard
   Future<void>? _receiptModalFuture; // the active bottom-sheet future (if any)
 
-  bool _receiptOpened = false; // 👈 guard so we open only once
-
   @override
   void initState() {
     super.initState();
@@ -413,7 +411,6 @@ class _MoreScreenState extends State<MoreScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     Row(
                       children: [
                         Text(
@@ -434,7 +431,10 @@ class _MoreScreenState extends State<MoreScreen>
                             color: AppColor.white,
                             borderRadius: BorderRadius.circular(50),
                           ),
-                          child: Image.asset(AppImages.moreSnumberAdd, height: 13),
+                          child: Image.asset(
+                            AppImages.moreSnumberAdd,
+                            height: 13,
+                          ),
                         ),
                       ],
                     ),
@@ -662,7 +662,7 @@ class _MoreScreenState extends State<MoreScreen>
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => ChangeMobileNumber(page: 'email',),
+                              builder: (_) => ChangeMobileNumber(page: 'email'),
                             ),
                           );
                         },
@@ -1215,12 +1215,12 @@ class _MoreScreenState extends State<MoreScreen>
                     ),
                   GestureDetector(
                     onTap: () async {
-                      await DownloadFile.downloadAndSavePdf(
+                      await DownloadFile.openInBrowser(
                         plan.items[0].instructionUrl,
                         context: context,
-                        baseName: 'ST Joseph Payment Receipt',
+                        // baseName: 'ST Joseph Payment Receipt',
                       );
-                                         //downloadAndOpenPdf(plan.items[0].instructionUrl);
+                      //downloadAndOpenPdf(plan.items[0].instructionUrl);
 
                       print(plan.items[0].instructionUrl);
                     },
@@ -1459,299 +1459,6 @@ class _MoreScreenState extends State<MoreScreen>
       },
     );
   }
-
-  /*Future<void> _paymentReceipt(BuildContext context, int planId) async {
-    final planData = await announcementController.getStudentPaymentPlan(
-      id: planId,
-    );
-    if (planData == null || planData.items.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("No data found for plan $planId")));
-      return;
-    }
-    final plan = planData.items.firstWhere(
-      (p) => p.planId == planId,
-      orElse: () => planData.items.first,
-    );
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      useRootNavigator: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.90,
-          minChildSize: 0.20,
-          maxChildSize: 0.95,
-
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: BoxDecoration(
-                color: AppColor.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              child: ListView(
-                controller: scrollController,
-                padding: const EdgeInsets.all(16),
-                children: [
-                  Center(
-                    child: Container(
-                      height: 4,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: AppColor.grayop,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Column(
-                    children: [
-                      Image.asset(AppImages.paidImage, height: 98),
-                      SizedBox(height: 14),
-                      Text(
-                        'Rs. ${plan.summary.totalAmount}',
-                        style: GoogleFont.ibmPlexSans(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 34,
-                          color: AppColor.greenMore1,
-                        ),
-                      ),
-                      Text(
-                        'Paid to ${plan.name}',
-                        style: GoogleFont.ibmPlexSans(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18,
-                          color: AppColor.lightBlack,
-                        ),
-                      ),
-                      SizedBox(height: 34),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 35.0),
-                        child: DottedLine(
-                          dashColor: AppColor.grayop,
-                          dashGapLength: 6,
-                          dashLength: 7,
-                        ),
-                      ),
-                      SizedBox(height: 40),
-                      Stack(
-                        children: [
-                          Positioned.fill(
-                            child: Image.asset(
-                              AppImages.examResultBCImage,
-                              height: 250,
-                              width: 280,
-                            ),
-                          ),
-                          Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColor.lightGrey,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(17.0),
-                                      child: Image.asset(
-                                        AppImages.receiptNo,
-                                        height: 24,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 15),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Receipt No',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                            color: AppColor.grey,
-                                          ),
-                                        ),
-                                        SizedBox(height: 5),
-                                        Text(
-                                          plan.items
-                                              .map((e) => e.receiptNo)
-                                              .whereType<String>()
-                                              .join(', '),
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 20,
-                                            color: AppColor.black,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              SizedBox(height: 25),
-                              Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColor.lightGrey,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(17.0),
-                                      child: Image.asset(
-                                        AppImages.admissionNo,
-                                        height: 24,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 15),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Admission No',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14,
-                                          color: AppColor.grey,
-                                        ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        plan.items[0].admissionNo.toString() ??
-                                            '',
-                                        style: GoogleFont.ibmPlexSans(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20,
-                                          color: AppColor.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 25),
-                              Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColor.lightGrey,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(17.0),
-                                      child: Image.asset(
-                                        AppImages.timeImage,
-                                        height: 24,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 15),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Time',
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                            color: AppColor.grey,
-                                          ),
-                                        ),
-                                        SizedBox(height: 5),
-                                        Text(
-                                          // format each paidAt using your helper
-                                          plan.items
-                                              .where((e) => e.paidAt != null)
-                                              .map(
-                                                (e) =>
-                                                    DateAndTimeConvert.timeAndDate(
-                                                      e.paidAt.toString() ?? '',
-                                                    ),
-                                              )
-                                              .join(', '),
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 20,
-                                            color: AppColor.black,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 40),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 35.0),
-                        child: DottedLine(
-                          dashColor: AppColor.grayop,
-                          dashGapLength: 6,
-                          dashLength: 7,
-                        ),
-                      ),
-                      SizedBox(height: 40),
-                      GestureDetector(
-                        onTap:
-                            () async =>
-                                _downloadAndOpenPdf(plan.combinedDownloadUrl),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 27,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: AppColor.blue,
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    AppImages.downloadImage,
-                                    height: 20,
-                                  ),
-                                  SizedBox(width: 10),
-                                  CustomTextField.textWithSmall(
-                                    text: 'Download Receipt',
-                                    color: AppColor.blue,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }*/
 
   Future<void> _paymentReceipt(BuildContext context, int planId) async {
     final planData = await announcementController.getStudentPaymentPlan(
@@ -2014,13 +1721,14 @@ class _MoreScreenState extends State<MoreScreen>
 
                       GestureDetector(
                         onTap: () async {
-                          await DownloadFile.downloadAndSavePdf(
+                          await DownloadFile.openInBrowser(
                             plan.combinedDownloadUrl,
                             context: context,
-                            baseName: 'ST Joseph Payment Receipt',
+                            // baseName: 'ST Joseph Payment Receipt',
                           );
 
                         },
+                        ///
                         // onTap:
                         //     () async => _downloadAndOpenPdf(
                         //       plan.combinedDownloadUrl,
@@ -2306,212 +2014,3 @@ class _MoreScreenState extends State<MoreScreen>
     );
   }
 }
-
-void _showLoading(BuildContext context) {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    barrierColor: Colors.black26,
-    builder: (_) => Center(child: AppLoader.circularLoader()),
-  );
-}
-
-void _hideLoading(BuildContext context) {
-  if (Navigator.of(context, rootNavigator: true).canPop()) {
-    Navigator.of(context, rootNavigator: true).pop();
-  }
-}
-
-Future<void> _downloadAndOpenPdf(
-  String url, {
-  required BuildContext context, // pass the bottom-sheet context
-  bool closeBottomSheet = true,
-}) async {
-  _showLoading(context);
-  try {
-    // Suggested filename
-    const baseName = 'ST Joseph Payment Receipt';
-    final fileName =
-        baseName.toLowerCase().endsWith('.pdf') ? baseName : '$baseName.pdf';
-
-    // Download -> bytes
-    final resp = await Dio().get<List<int>>(
-      url,
-      options: Options(responseType: ResponseType.bytes, followRedirects: true),
-    );
-    final bytes = Uint8List.fromList(resp.data ?? const <int>[]);
-    if (bytes.isEmpty) {
-      // (optional) brief error toast
-      CustomSnackBar.showError('Download failed');
-
-      return;
-    }
-
-    // Save-as (file_picker on Android/iOS REQUIRES bytes)
-    final savedPath = await FilePicker.platform.saveFile(
-      dialogTitle: 'Save PDF as',
-      fileName: fileName,
-      type: FileType.custom,
-      allowedExtensions: const ['pdf'],
-      bytes: bytes,
-    );
-
-    if (savedPath == null) {
-      // user cancelled
-      return;
-    }
-
-    // (optional) tiny success note; or remove this entirely if you want pure silent
-    Get.snackbar(
-      'Success',
-      'Saved: ${p.basename(savedPath)}',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green.shade600,
-      colorText: Colors.white,
-      borderRadius: 12,
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      icon: Icon(Icons.check_circle_outline, color: Colors.white),
-      shouldIconPulse: false,
-      duration: Duration(seconds: 3),
-      snackStyle: SnackStyle.FLOATING,
-      padding: EdgeInsets.all(16),
-    );
-  } catch (e) {
-    CustomSnackBar.showError('$e');
-  } finally {
-    _hideLoading(context); // close spinner
-    if (closeBottomSheet)
-      Navigator.of(context).pop(); // close your bottom sheet
-  }
-}
-// Future<void> _downloadAndOpenPdf(String url, {required BuildContext context}) async {
-//   final fromUrl = Uri.parse(url).pathSegments.isNotEmpty
-//       ? Uri.parse(url).pathSegments.last
-//       : 'document.pdf';
-//   final suggestedName = fromUrl.toLowerCase().endsWith('.pdf') ? fromUrl : '$fromUrl.pdf';
-//
-//   String? savePath = await FilePicker.platform.saveFile(
-//     dialogTitle: 'Save PDF as',
-//     fileName: suggestedName,
-//     type: FileType.custom,
-//     allowedExtensions: ['pdf'],
-//   );
-//
-//   if (savePath == null) {
-//     final dir = await FilePicker.platform.getDirectoryPath(dialogTitle: 'Choose folder');
-//     if (dir == null) {
-//       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cancelled')));
-//       return;
-//     }
-//     savePath = p.join(dir, suggestedName);
-//   }
-//
-//   final tempDir = await getTemporaryDirectory();
-//   final tempPath = p.join(tempDir.path, suggestedName);
-//   await Dio().download(url, tempPath);
-//
-//   final bytes = await File(tempPath).readAsBytes();
-//   await File(savePath).writeAsBytes(bytes, flush: true);
-//
-//   await OpenFilex.open(savePath);
-//   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Saved & opened PDF')));
-// }
-
-/*Future<void> _downloadAndOpenPdf(String url) async {
-  if (url.isEmpty) {
-    Get.snackbar('Error', 'Download URL not available');
-    return;
-  }
-
-  // Check storage permission for Android
-  if (Platform.isAndroid) {
-    var status = await Permission.manageExternalStorage.status;
-    if (!status.isGranted) {
-      bool openSettings = await Get.dialog(
-        AlertDialog(
-          title: Text('Permission Required'),
-          content: Text(
-            'Storage permission is required to download the receipt. Please enable it.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Get.back(result: false),
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Get.back(result: true),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-        barrierDismissible: false,
-      );
-
-      if (openSettings) {
-        bool isOpened = await openAppSettings();
-        if (!isOpened) {
-          Get.snackbar('Error', 'Cannot open settings');
-          return;
-        }
-
-        status = await Permission.manageExternalStorage.request();
-        if (!status.isGranted) {
-          Get.snackbar('Permission Denied', 'Storage permission not granted');
-          return;
-        }
-      } else {
-        return;
-      }
-    }
-  }
-
-  try {
-    Get.dialog(
-      const Center(child: CircularProgressIndicator()),
-      barrierDismissible: false,
-    );
-
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode != 200) {
-      Get.back();
-      Get.snackbar('Error', 'Failed to download file');
-      return;
-    }
-
-    Directory dir;
-    if (Platform.isAndroid) {
-      dir = Directory('/storage/emulated/0/Download');
-      if (!dir.existsSync()) {
-        dir.createSync(recursive: true);
-      }
-    } else {
-      dir = await getApplicationDocumentsDirectory();
-    }
-
-    final file = File(
-      '${dir.path}/receipt_${DateTime.now().millisecondsSinceEpoch}.pdf',
-    );
-    await file.writeAsBytes(response.bodyBytes);
-
-    Get.back(); // dismiss loading
-    Get.snackbar(
-      'Success',
-      'PDF saved to ${file.path}',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green.shade600,
-      colorText: Colors.white,
-      borderRadius: 12,
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      icon: Icon(Icons.check_circle_outline, color: Colors.white),
-      shouldIconPulse: false,
-      duration: Duration(seconds: 3),
-      snackStyle: SnackStyle.FLOATING,
-      padding: EdgeInsets.all(16),
-    );
-
-    // Share PDF
-  } catch (e) {
-    Get.back();
-    Get.snackbar('Error', e.toString());
-  }
-}*/

@@ -5,6 +5,7 @@ import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
+import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
@@ -38,39 +39,61 @@ class _Admission1State extends State<Admission1> {
     final screenHeight = MediaQuery.of(context).size.height;
     return WillPopScope(
       onWillPop: () async {
-        // Check the current screen and decide whether to pop or not
-        if (widget.pages == 'homeScreen') {
-          Navigator.pop(context); // Close the screen if it's homeScreen
-          return false; // Prevent the default back button behavior
-        } else {
-          // Optionally, show a confirmation dialog if it's not the home screen
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Are you sure?'),
-                content: Text('You will exit this screen.'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.pop(context); // Close the screen
-                    },
-                    child: Text('Yes'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(); // Close the dialog
-                    },
-                    child: Text('No'),
-                  ),
-                ],
-              );
-            },
+        //  OTP screen la irundhu dhaan vandhurukka
+        if (widget.pages == 'otpScreen') {
+          // Back totally disable
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('You cannot go back from this screen.'),
+            ),
           );
-          return false; // Prevent the default back button behavior
+          return false;
         }
+
+        //  Vera yentha screen la irunthalum -> always Home screen
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const CommonBottomNavigation(initialIndex: 0),
+          ),
+              (route) => false,
+        );
+        return false;
       },
+      // onWillPop: () async {
+      //   // Check the current screen and decide whether to pop or not
+      //   if (widget.pages == 'homeScreen') {
+      //     Navigator.pop(context); // Close the screen if it's homeScreen
+      //     return false; // Prevent the default back button behavior
+      //   } else {
+      //     // Optionally, show a confirmation dialog if it's not the home screen
+      //     showDialog(
+      //       context: context,
+      //       builder: (BuildContext context) {
+      //         return AlertDialog(
+      //           title: Text('Are you sure?'),
+      //           content: Text('You will exit this screen.'),
+      //           actions: <Widget>[
+      //             TextButton(
+      //               onPressed: () {
+      //                 Navigator.of(context).pop();
+      //                 Navigator.pop(context); // Close the screen
+      //               },
+      //               child: Text('Yes'),
+      //             ),
+      //             TextButton(
+      //               onPressed: () {
+      //                 Navigator.of(context).pop(); // Close the dialog
+      //               },
+      //               child: Text('No'),
+      //             ),
+      //           ],
+      //         );
+      //       },
+      //     );
+      //     return false; // Prevent the default back button behavior
+      //   }
+      // },
       child: Scaffold(
         body: SafeArea(
           child: Obx(() {
@@ -103,13 +126,40 @@ class _Admission1State extends State<Admission1> {
                   children: [
                     CustomContainer.leftSaitArrow(
                       onTap: () {
-                        widget.pages == 'homeScreen'
-                            ? Navigator.pop(context)
-                            : null;
+                        if (widget.pages == 'otpScreen') {
+                          // 🔹 OTP la irundhu vandha – back illa
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'You cannot go back from this screen.',
+                              ),
+                            ),
+                          );
+                        } else {
+                          // 🔹 Vera yentha screen la irundhaalum – Home-ku
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (_) => const CommonBottomNavigation(
+                                    initialIndex: 0,
+                                  ),
+                            ),
+                            (route) => false,
+                          );
+                        }
                       },
                     ),
 
-                    const SizedBox(height: 16),
+                    // CustomContainer.leftSaitArrow(
+                    //   onTap: () {
+                    //     widget.pages == 'homeScreen'
+                    //         ? CommonBottomNavigation(initialIndex: 0)
+                    //         // Navigator.pop(context)
+                    //         : null;
+                    //   },
+                    // ),
+                    SizedBox(height: 16),
                     Container(
                       constraints: BoxConstraints(
                         minHeight: screenHeight * 0.70,

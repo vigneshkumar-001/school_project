@@ -1108,8 +1108,31 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return await false;
+        final shouldGoBack = await showDialog<bool>(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              title: const Text('Confirmation'),
+              content: const Text('Are you sure you want to go back?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+        return shouldGoBack ?? false;
       },
+
+      // onWillPop: () async {
+      //   return await false;
+      // },
       child: Scaffold(
         body: SafeArea(
           child: Padding(
@@ -1124,20 +1147,58 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                       children: [
                         CustomContainer.leftSaitArrow(
                           onTap: () async {
-                            final prefs = await SharedPreferences.getInstance();
+                            final shouldGoBack = await showDialog<bool>(
+                              context: context,
+                              builder: (ctx) {
+                                return AlertDialog(
+                                  title: const Text('Confirmation'),
+                                  content: const Text(
+                                    'Are you sure you want to go back?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed:
+                                          () => Navigator.pop(ctx, false),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx, true),
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
 
-                            final currentStep =
-                                ctrl.currentAdmission.value?.step ?? 1;
+                            if (shouldGoBack == true) {
+                              // If Admission1 doesn’t require parameters:
+                              Get.off(() => Admission1());
 
-                            if (currentStep > 1) {
-                            } else if (widget.pages == 'homeScreen') {
-                              Navigator.pop(context);
-                            } else {
-                              // Get.off(Admission1( ));
+                              // If Admission1 needs admissionId like before:
+                              // final prefs = await SharedPreferences.getInstance();
+                              // final admissionId = prefs.getInt('admissionId') ?? 0;
+                              // Get.off(() => Admission1(admissionId: admissionId));
                             }
                           },
                         ),
+
+                        // CustomContainer.leftSaitArrow(
+                        //   onTap: () async {
+                        //     final currentStep =
+                        //         ctrl.currentAdmission.value?.step ?? 1;
+                        //
+                        //     if (currentStep > 1) {
+                        //       // handle step logic if needed
+                        //     } else if (widget.pages == 'homeScreen') {
+                        //       Get.back(); // <-- works even with Get.to()
+                        //     } else {
+                        //       // Example: navigate to Admission1 screen
+                        //       // Get.off(Admission1());
+                        //     }
+                        //   },
+                        // ),
                         SizedBox(width: 15),
+
                         Text(
                           '2025 - 2026 LKG Admission',
                           style: GoogleFont.ibmPlexSans(

@@ -738,6 +738,7 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                           ),
                           const SizedBox(height: 10),
                           CustomContainer.studentInfoScreen(
+                            isMobile: true,
                             isError:
                                 isSubmitted &&
                                 ctrl.guardianAnnualIncome.text.trim().isEmpty,

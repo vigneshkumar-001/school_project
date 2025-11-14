@@ -1828,12 +1828,11 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                               onTap: () {
                                 if (items.isNotEmpty &&
                                     items[0].instructionUrl != null) {
-                                  DownloadFile.downloadAndSavePdf(
+                                  DownloadFile.openInBrowser(
                                     items[0].instructionUrl!,
                                     context:
                                         context, // pass the BuildContext here
-                                    baseName:
-                                        'Instruction', // optional, default is 'document'
+                                    // baseName: 'Instruction',
                                   );
                                 } else {
                                   CustomSnackBar.showError(
