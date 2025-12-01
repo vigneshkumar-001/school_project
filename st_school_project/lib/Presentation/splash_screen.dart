@@ -7,6 +7,7 @@ import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
+import 'package:st_school_project/Presentation/Admssion/Screens/admission_1.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Home%20Screen/controller/student_home_controller.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/Login_screen/controller/login_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -38,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen>
     TeacherListController(),
   );
 
-  final String latestVersion = "2.3.4";
+  final String latestVersion = "2.3.5";
 
   @override
   void initState() {
@@ -91,11 +92,14 @@ class _SplashScreenState extends State<SplashScreen>
       final isApplicant = await loginController.checkTokenExpire();
 
       if (isApplicant) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const Admission1()),
+        );
         // Already navigated inside getAdmissionDetails()
         return;
       }
 
-      // Only navigate to CommonBottomNavigation if not applicant
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -103,7 +107,6 @@ class _SplashScreenState extends State<SplashScreen>
         ),
       );
     } else {
-      // No token → navigate to login/change mobile
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -112,6 +115,38 @@ class _SplashScreenState extends State<SplashScreen>
       );
     }
   }
+
+  // void _checkLoginStatus() async {
+  //   if (!mounted) return;
+  //
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token');
+  //
+  //   if (token != null && token.isNotEmpty) {
+  //     final isApplicant = await loginController.checkTokenExpire();
+  //
+  //     if (isApplicant) {
+  //       // Already navigated inside getAdmissionDetails()
+  //       return;
+  //     }
+  //
+  //     // Only navigate to CommonBottomNavigation if not applicant
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (_) => const CommonBottomNavigation(initialIndex: 0),
+  //       ),
+  //     );
+  //   } else {
+  //     // No token → navigate to login/change mobile
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (_) => const ChangeMobileNumber(page: 'splash'),
+  //       ),
+  //     );
+  //   }
+  // }
 
   // void _checkLoginStatus() async {
   //   if (!mounted) return;
@@ -256,7 +291,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
               ),
-              const SizedBox(height: 35),
+               SizedBox(height: 35),
               // ElevatedButton(
               //   onPressed: () {
               //     _showUpdateBottomSheet();

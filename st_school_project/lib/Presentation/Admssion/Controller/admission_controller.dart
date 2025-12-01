@@ -662,25 +662,55 @@ class AdmissionController extends GetxController {
     try {
       final results = await apiDataSource.getAdmissionDetails(id: id);
       final prefs = await SharedPreferences.getInstance();
+
       results.fold(
         (failure) {
           AppLogger.log.e(failure.message);
         },
         (response) async {
           AppLogger.log.i("Fetched admission data successfully");
-          final admissionID = prefs.getInt('admissionId');
+
+
+
           final currentStep = response.data?.step ?? 1;
           currentAdmission.value = response.data;
-
+          final admissionID = prefs.getInt('admissionId') ?? 0;
           navigateToStep(currentStep, admissionId: admissionID ?? 0);
-          response.data;
-          AppLogger.log.i("Fetched dropdowns successfully");
+          fetchAndSetUserData();
+
+
+          // navigateToStep(response.data?.step ?? 1, admissionId: admissionID);
+        return  response.data;
         },
       );
     } catch (e) {
       AppLogger.log.e(e);
     }
   }
+
+  // Future<void> getAdmissionDetails({required int id}) async {
+  //   try {
+  //     final results = await apiDataSource.getAdmissionDetails(id: id);
+  //     final prefs = await SharedPreferences.getInstance();
+  //     results.fold(
+  //       (failure) {
+  //         AppLogger.log.e(failure.message);
+  //       },
+  //       (response) async {
+  //         AppLogger.log.i("Fetched admission data successfully");
+  //         final admissionID = prefs.getInt('admissionId');
+  //         final currentStep = response.data?.step ?? 1;
+  //         currentAdmission.value = response.data;
+  //
+  //         navigateToStep(currentStep, admissionId: admissionID ?? 0);
+  //         response.data;
+  //         AppLogger.log.i("Fetched dropdowns successfully");
+  //       },
+  //     );
+  //   } catch (e) {
+  //     AppLogger.log.e(e);
+  //   }
+  // }
 
   void navigateToStep(int step, {required int admissionId}) {
     final screen = admissionScreens(admissionId)[step];
@@ -700,196 +730,254 @@ class AdmissionController extends GetxController {
     6: SubmitTheAdmission(id: admissionId, pages: ''),
     7: CheckAdmissionStatus(showBackArrow: false), // or false, as intended
   };
-
   Future<void> fetchAndSetUserData() async {
-    final profile = Get.find<AdmissionController>().currentAdmission.value;
+    final profile = currentAdmission.value;
+    if (profile == null) return;
 
-    if (profile != null) {
-      docsChecklist.value = profile.docsChecklist ?? [];
-      nameEnglishController.text =
-          nameEnglishController.text.isEmpty
-              ? profile.studentName ?? ''
-              : nameEnglishController.text;
+    docsChecklist.value = profile.docsChecklist ?? [];
 
-      nameTamilController.text =
-          nameTamilController.text.isEmpty
-              ? profile.studentNameTamil ?? ''
-              : nameTamilController.text;
+    // Student Info
+    nameEnglishController.text = profile.studentName ?? '';
+    nameTamilController.text = profile.studentNameTamil ?? '';
+    dobController.text = profile.dob ?? '';
+    aadharController.text = profile.aadhaar ?? '';
+    religionController.text = profile.religion ?? '';
+    casteController.text = profile.caste ?? '';
+    communityController.text = profile.community ?? '';
+    tongueController.text = profile.motherTongue ?? '';
+    nationalityController.text = profile.nationality ?? '';
+    personalId1Controller.text = profile.idProof1 ?? '';
+    personalId2Controller.text = profile.idProof2 ?? '';
+    emailIdController.text = profile.email ?? '';
 
-      dobController.text =
-          dobController.text.isEmpty ? profile.dob ?? '' : dobController.text;
+    // Father Info
+    englishController.text = profile.fatherName ?? '';
+    tamilController.text = profile.fatherNameTamil ?? '';
+    fatherOccupation.text = profile.fatherOccupation ?? '';
+    fatherQualification.text = profile.fatherQualification ?? '';
+    fatherAnnualIncome.text = profile.fatherIncome?.toString() ?? '';
+    officeAddress.text = profile.fatherOfficeAddress ?? '';
 
-      aadharController.text =
-          aadharController.text.isEmpty
-              ? profile.aadhaar ?? ''
-              : aadharController.text;
+    // Mother Info
+    motherQualification.text = profile.motherQualification ?? '';
+    motherNameTamilController.text = profile.motherNameTamil ?? '';
+    motherNameEnglishController.text = profile.motherName ?? '';
+    motherOccupation.text = profile.motherOccupation ?? '';
+    motherOfficeAddressController.text = profile.motherOfficeAddress ?? '';
+    motherAnnualIncome.text = profile.motherIncome?.toString() ?? '';
 
-      religionController.text =
-          religionController.text.isEmpty
-              ? profile.religion ?? ''
-              : religionController.text;
+    // Guardian Info
+    guardianEnglish.text = profile.guardianName ?? '';
+    guardianTamil.text = profile.guardianNameTamil ?? '';
+    guardianQualification.text = profile.guardianQualification ?? '';
+    guardianOccupation.text = profile.guardianOccupation ?? '';
+    guardianAnnualIncome.text = profile.guardianIncome?.toString() ?? '';
+    guardianOfficeAddress.text = profile.guardianOfficeAddress ?? '';
 
-      casteController.text =
-          casteController.text.isEmpty
-              ? profile.caste ?? ''
-              : casteController.text;
+    // Contact Info
+    primaryMobileController.text = profile.mobilePrimary ?? '';
+    secondaryMobileController.text = profile.mobileSecondary ?? '';
 
-      communityController.text =
-          communityController.text.isEmpty
-              ? profile.community ?? ''
-              : communityController.text;
-
-      tongueController.text =
-          tongueController.text.isEmpty
-              ? profile.motherTongue ?? ''
-              : tongueController.text;
-
-      nationalityController.text =
-          nationalityController.text.isEmpty
-              ? profile.nationality ?? ''
-              : nationalityController.text;
-
-      personalId1Controller.text =
-          personalId1Controller.text.isEmpty
-              ? profile.idProof1 ?? ''
-              : personalId1Controller.text;
-
-      personalId2Controller.text =
-          personalId2Controller.text.isEmpty
-              ? profile.idProof2 ?? ''
-              : personalId2Controller.text;
-
-      emailIdController.text =
-          emailIdController.text.isEmpty
-              ? profile.email ?? ''
-              : emailIdController.text;
-      // Parents Info //
-      englishController.text =
-          englishController.text.isEmpty
-              ? profile.fatherName ?? ''
-              : englishController.text;
-
-      tamilController.text =
-          tamilController.text.isEmpty
-              ? profile.fatherNameTamil ?? ''
-              : tamilController.text;
-
-      fatherOccupation.text =
-          fatherOccupation.text.isEmpty
-              ? profile.fatherOccupation ?? ''
-              : fatherOccupation.text;
-
-      fatherQualification.text =
-          fatherQualification.text.isEmpty
-              ? profile.fatherQualification ?? ''
-              : fatherQualification.text;
-
-      fatherAnnualIncome.text =
-          fatherAnnualIncome.text.isEmpty
-              ? (profile.fatherIncome?.toString() ?? '')
-              : fatherAnnualIncome.text;
-
-      officeAddress.text =
-          officeAddress.text.isEmpty
-              ? profile.fatherOfficeAddress ?? ''
-              : officeAddress.text;
-
-      motherQualification.text =
-          motherQualification.text.isEmpty
-              ? profile.motherOfficeAddress ?? ''
-              : motherQualification.text;
-
-      motherNameTamilController.text =
-          motherNameTamilController.text.isEmpty
-              ? profile.motherNameTamil ?? ''
-              : motherNameTamilController.text;
-
-      motherNameEnglishController.text =
-          motherNameEnglishController.text.isEmpty
-              ? profile.motherName ?? ''
-              : motherNameEnglishController.text;
-
-      motherOccupation.text =
-          motherOccupation.text.isEmpty
-              ? profile.motherOccupation ?? ''
-              : motherOccupation.text;
-
-      motherOfficeAddressController.text =
-          motherOfficeAddressController.text.isEmpty
-              ? profile.motherOfficeAddress ?? ''
-              : motherOfficeAddressController.text;
-
-      motherAnnualIncome.text =
-          motherAnnualIncome.text.isEmpty
-              ? (profile.motherIncome?.toString() ?? '')
-              : motherAnnualIncome.text;
-
-      guardianEnglish.text =
-          guardianEnglish.text.isEmpty
-              ? profile.guardianName ?? ''
-              : guardianEnglish.text;
-
-      guardianTamil.text =
-          guardianTamil.text.isEmpty
-              ? profile.guardianNameTamil ?? ''
-              : guardianTamil.text;
-
-      guardianQualification.text =
-          guardianQualification.text.isEmpty
-              ? profile.guardianQualification ?? ''
-              : guardianQualification.text;
-
-      guardianOccupation.text =
-          guardianOccupation.text.isEmpty
-              ? profile.guardianOccupation ?? ''
-              : guardianOccupation.text;
-
-      guardianAnnualIncome.text =
-          guardianAnnualIncome.text.isEmpty
-              ? (profile.guardianIncome?.toString() ?? '')
-              : guardianAnnualIncome.text;
-
-      guardianOfficeAddress.text =
-          guardianOfficeAddress.text.isEmpty
-              ? profile.guardianOfficeAddress ?? ''
-              : guardianOfficeAddress.text;
-
-      primaryMobileController.text =
-          primaryMobileController.text.isEmpty
-              ? profile.mobilePrimary ?? ''
-              : primaryMobileController.text;
-
-      secondaryMobileController.text =
-          secondaryMobileController.text.isEmpty
-              ? profile.mobileSecondary ?? ''
-              : secondaryMobileController.text;
-
-      countryController.text =
-          countryController.text.isEmpty
-              ? profile.country ?? ''
-              : countryController.text;
-
-      stateController.text =
-          stateController.text.isEmpty
-              ? profile.state ?? ''
-              : stateController.text;
-
-      cityController.text =
-          cityController.text.isEmpty
-              ? profile.city ?? ''
-              : cityController.text;
-
-      pincodeController.text =
-          pincodeController.text.isEmpty
-              ? profile.pinCode ?? ''
-              : pincodeController.text;
-
-      addressController.text =
-          addressController.text.isEmpty
-              ? profile.address ?? ''
-              : addressController.text;
-    }
+    // Address Info
+    countryController.text = profile.country ?? '';
+    stateController.text = profile.state ?? '';
+    cityController.text = profile.city ?? '';
+    pincodeController.text = profile.pinCode ?? '';
+    addressController.text = profile.address ?? '';
 
     update();
   }
+
+  // Future<void> fetchAndSetUserData() async {
+  //   final profile = currentAdmission.value;
+  //
+  //
+  //   if (profile != null) {
+  //     docsChecklist.value = profile.docsChecklist ?? [];
+  //     nameEnglishController.text =
+  //         nameEnglishController.text.isEmpty
+  //             ? profile.studentName ?? ''
+  //             : nameEnglishController.text;
+  //
+  //     nameTamilController.text =
+  //         nameTamilController.text.isEmpty
+  //             ? profile.studentNameTamil ?? ''
+  //             : nameTamilController.text;
+  //
+  //     dobController.text =
+  //         dobController.text.isEmpty ? profile.dob ?? '' : dobController.text;
+  //
+  //     aadharController.text =
+  //         aadharController.text.isEmpty
+  //             ? profile.aadhaar ?? ''
+  //             : aadharController.text;
+  //
+  //     religionController.text =
+  //         religionController.text.isEmpty
+  //             ? profile.religion ?? ''
+  //             : religionController.text;
+  //
+  //     casteController.text =
+  //         casteController.text.isEmpty
+  //             ? profile.caste ?? ''
+  //             : casteController.text;
+  //
+  //     communityController.text =
+  //         communityController.text.isEmpty
+  //             ? profile.community ?? ''
+  //             : communityController.text;
+  //
+  //     tongueController.text =
+  //         tongueController.text.isEmpty
+  //             ? profile.motherTongue ?? ''
+  //             : tongueController.text;
+  //
+  //     nationalityController.text =
+  //         nationalityController.text.isEmpty
+  //             ? profile.nationality ?? ''
+  //             : nationalityController.text;
+  //
+  //     personalId1Controller.text =
+  //         personalId1Controller.text.isEmpty
+  //             ? profile.idProof1 ?? ''
+  //             : personalId1Controller.text;
+  //
+  //     personalId2Controller.text =
+  //         personalId2Controller.text.isEmpty
+  //             ? profile.idProof2 ?? ''
+  //             : personalId2Controller.text;
+  //
+  //     emailIdController.text =
+  //         emailIdController.text.isEmpty
+  //             ? profile.email ?? ''
+  //             : emailIdController.text;
+  //     // Parents Info //
+  //     englishController.text =
+  //         englishController.text.isEmpty
+  //             ? profile.fatherName ?? ''
+  //             : englishController.text;
+  //
+  //     tamilController.text =
+  //         tamilController.text.isEmpty
+  //             ? profile.fatherNameTamil ?? ''
+  //             : tamilController.text;
+  //
+  //     fatherOccupation.text =
+  //         fatherOccupation.text.isEmpty
+  //             ? profile.fatherOccupation ?? ''
+  //             : fatherOccupation.text;
+  //
+  //     fatherQualification.text =
+  //         fatherQualification.text.isEmpty
+  //             ? profile.fatherQualification ?? ''
+  //             : fatherQualification.text;
+  //
+  //     fatherAnnualIncome.text =
+  //         fatherAnnualIncome.text.isEmpty
+  //             ? (profile.fatherIncome?.toString() ?? '')
+  //             : fatherAnnualIncome.text;
+  //
+  //     officeAddress.text =
+  //         officeAddress.text.isEmpty
+  //             ? profile.fatherOfficeAddress ?? ''
+  //             : officeAddress.text;
+  //
+  //     motherQualification.text =
+  //         motherQualification.text.isEmpty
+  //             ? profile.motherOfficeAddress ?? ''
+  //             : motherQualification.text;
+  //
+  //     motherNameTamilController.text =
+  //         motherNameTamilController.text.isEmpty
+  //             ? profile.motherNameTamil ?? ''
+  //             : motherNameTamilController.text;
+  //
+  //     motherNameEnglishController.text =
+  //         motherNameEnglishController.text.isEmpty
+  //             ? profile.motherName ?? ''
+  //             : motherNameEnglishController.text;
+  //
+  //     motherOccupation.text =
+  //         motherOccupation.text.isEmpty
+  //             ? profile.motherOccupation ?? ''
+  //             : motherOccupation.text;
+  //
+  //     motherOfficeAddressController.text =
+  //         motherOfficeAddressController.text.isEmpty
+  //             ? profile.motherOfficeAddress ?? ''
+  //             : motherOfficeAddressController.text;
+  //
+  //     motherAnnualIncome.text =
+  //         motherAnnualIncome.text.isEmpty
+  //             ? (profile.motherIncome?.toString() ?? '')
+  //             : motherAnnualIncome.text;
+  //
+  //     guardianEnglish.text =
+  //         guardianEnglish.text.isEmpty
+  //             ? profile.guardianName ?? ''
+  //             : guardianEnglish.text;
+  //
+  //     guardianTamil.text =
+  //         guardianTamil.text.isEmpty
+  //             ? profile.guardianNameTamil ?? ''
+  //             : guardianTamil.text;
+  //
+  //     guardianQualification.text =
+  //         guardianQualification.text.isEmpty
+  //             ? profile.guardianQualification ?? ''
+  //             : guardianQualification.text;
+  //
+  //     guardianOccupation.text =
+  //         guardianOccupation.text.isEmpty
+  //             ? profile.guardianOccupation ?? ''
+  //             : guardianOccupation.text;
+  //
+  //     guardianAnnualIncome.text =
+  //         guardianAnnualIncome.text.isEmpty
+  //             ? (profile.guardianIncome?.toString() ?? '')
+  //             : guardianAnnualIncome.text;
+  //
+  //     guardianOfficeAddress.text =
+  //         guardianOfficeAddress.text.isEmpty
+  //             ? profile.guardianOfficeAddress ?? ''
+  //             : guardianOfficeAddress.text;
+  //
+  //     primaryMobileController.text =
+  //         primaryMobileController.text.isEmpty
+  //             ? profile.mobilePrimary ?? ''
+  //             : primaryMobileController.text;
+  //
+  //     secondaryMobileController.text =
+  //         secondaryMobileController.text.isEmpty
+  //             ? profile.mobileSecondary ?? ''
+  //             : secondaryMobileController.text;
+  //
+  //     countryController.text =
+  //         countryController.text.isEmpty
+  //             ? profile.country ?? ''
+  //             : countryController.text;
+  //
+  //     stateController.text =
+  //         stateController.text.isEmpty
+  //             ? profile.state ?? ''
+  //             : stateController.text;
+  //
+  //     cityController.text =
+  //         cityController.text.isEmpty
+  //             ? profile.city ?? ''
+  //             : cityController.text;
+  //
+  //     pincodeController.text =
+  //         pincodeController.text.isEmpty
+  //             ? profile.pinCode ?? ''
+  //             : pincodeController.text;
+  //
+  //     addressController.text =
+  //         addressController.text.isEmpty
+  //             ? profile.address ?? ''
+  //             : addressController.text;
+  //   }
+  //
+  //   update();
+  // }
 }

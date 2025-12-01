@@ -33,6 +33,8 @@ import '../../../../payment_web_view.dart';
 import '../Announcements Screen/controller/announcement_controller.dart';
 import '../Home Screen/controller/student_home_controller.dart';
 import 'Login_screen/controller/login_controller.dart';
+import 'Refresh/Controller/refresh_controller.dart' show RefreshController;
+import 'Refresh/Model/reconcile_response.dart';
 import 'change_mobile_number.dart' show ChangeMobileNumber;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -225,6 +227,31 @@ class _MoreScreenState extends State<MoreScreen>
   final TeacherListController teacherListController = Get.put(
     TeacherListController(),
   );
+  final RefreshController refreshController = Get.put(RefreshController());
+
+  Future<void> _handleReconcile(int planId, {bool showLoader = false}) async {
+    // Call your RefreshController API
+    final res = await refreshController.refreshData(
+      id: planId,
+      showLoader: showLoader,
+    );
+
+    if (!mounted) return;
+
+    if (res == null) {
+      // API failed
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to reconcile. Please try again.')),
+      );
+      return;
+    }
+
+    //  Show result bottom sheet
+    // _showReconcileResultSheet(res);
+
+    // 🔄 Refresh the fees list so UI updates
+    await feesController.feesHistoryList();
+  }
 
   Future<void> _openGoogleMap() async {
     final url = Uri.parse(
@@ -326,33 +353,6 @@ class _MoreScreenState extends State<MoreScreen>
     }
   }
 
-  /*  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-
-    if (widget.planIdToShowReceipt != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await _paymentReceipt(context, widget.planIdToShowReceipt!);
-      });
-    }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (feesController.feesData.value == null) {
-        feesController.feesHistoryList();
-      }
-
-      if (teacherListController.teacherListResponse.value == null) {
-        teacherListController.teacherListData();
-      }
-
-      final id = widget.openReceiptForPlanId;
-      if (id != null) {
-        _paymentReceipt(context, id); // your existing receipt bottom-sheet
-      }
-    });
-  }*/
-
   void _handleTabChange() {
     if (_tabController.index == 2 && _tabController.indexIsChanging) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -371,6 +371,162 @@ class _MoreScreenState extends State<MoreScreen>
     _tabController.dispose();
     super.dispose();
   }
+
+  // void _showReconcileResultSheet(ReconcileResponse res) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: false,
+  //     backgroundColor: Colors.transparent,
+  //     builder: (_) {
+  //       final bool success = res.status && res.code == 200;
+  //
+  //       return Container(
+  //         padding: const EdgeInsets.all(20),
+  //         decoration: BoxDecoration(
+  //           color: AppColor.white,
+  //           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+  //         ),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             Container(
+  //               height: 4,
+  //               width: 40,
+  //               decoration: BoxDecoration(
+  //                 color: AppColor.grayop,
+  //                 borderRadius: BorderRadius.circular(2),
+  //               ),
+  //             ),
+  //             const SizedBox(height: 20),
+  //
+  //             // Icon + Title
+  //             Row(
+  //               children: [
+  //                 Container(
+  //                   padding: const EdgeInsets.all(14),
+  //                   decoration: BoxDecoration(
+  //                     color:
+  //                         success
+  //                             ? AppColor.greenMore1.withOpacity(0.08)
+  //                             : AppColor.red01G1.withOpacity(0.08),
+  //                     borderRadius: BorderRadius.circular(16),
+  //                   ),
+  //                   child: Icon(
+  //                     success ? Icons.verified_rounded : Icons.error_outline,
+  //                     color: success ? AppColor.greenMore1 : AppColor.red01G1,
+  //                     size: 28,
+  //                   ),
+  //                 ),
+  //                 const SizedBox(width: 16),
+  //                 Expanded(
+  //                   child: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       Text(
+  //                         success
+  //                             ? 'Reconciliation Complete'
+  //                             : 'Reconciliation Failed',
+  //                         style: GoogleFont.ibmPlexSans(
+  //                           fontSize: 18,
+  //                           fontWeight: FontWeight.w600,
+  //                           color: AppColor.black,
+  //                         ),
+  //                       ),
+  //                       const SizedBox(height: 4),
+  //                       Text(
+  //                         res.message.isNotEmpty
+  //                             ? res.message
+  //                             : (success
+  //                                 ? 'Payment status has been synchronized.'
+  //                                 : 'Unable to sync payment status.'),
+  //                         style: GoogleFont.ibmPlexSans(
+  //                           fontSize: 13,
+  //                           color: AppColor.grey,
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //
+  //             const SizedBox(height: 18),
+  //
+  //             // Count tile
+  //             Container(
+  //               width: double.infinity,
+  //               padding: const EdgeInsets.symmetric(
+  //                 horizontal: 16,
+  //                 vertical: 14,
+  //               ),
+  //               decoration: BoxDecoration(
+  //                 color: AppColor.lowWhite,
+  //                 borderRadius: BorderRadius.circular(14),
+  //                 border: Border.all(color: AppColor.grey.withOpacity(0.15)),
+  //               ),
+  //               child: Row(
+  //                 children: [
+  //                   Icon(
+  //                     Icons.receipt_long,
+  //                     size: 22,
+  //                     color: AppColor.lightBlack,
+  //                   ),
+  //                   const SizedBox(width: 10),
+  //                   Expanded(
+  //                     child: Text(
+  //                       'Transactions reconciled',
+  //                       style: GoogleFont.ibmPlexSans(
+  //                         fontSize: 14,
+  //                         fontWeight: FontWeight.w500,
+  //                         color: AppColor.lightBlack,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   Text(
+  //                     res.data.reconciled.toString(),
+  //                     style: GoogleFont.ibmPlexSans(
+  //                       fontSize: 18,
+  //                       fontWeight: FontWeight.w700,
+  //                       color: success ? AppColor.greenMore1 : AppColor.red01G1,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //
+  //             const SizedBox(height: 18),
+  //
+  //             // Close button
+  //             SizedBox(
+  //               width: double.infinity,
+  //               child: ElevatedButton(
+  //                 style: ElevatedButton.styleFrom(
+  //                   backgroundColor: AppColor.blue,
+  //                   foregroundColor: Colors.white,
+  //                   shape: RoundedRectangleBorder(
+  //                     borderRadius: BorderRadius.circular(14),
+  //                   ),
+  //                   padding: const EdgeInsets.symmetric(vertical: 12),
+  //                   elevation: 0,
+  //                 ),
+  //                 onPressed: () => Navigator.pop(context),
+  //                 child: Text(
+  //                   'Close',
+  //                   style: GoogleFont.ibmPlexSans(
+  //                     fontSize: 15,
+  //                     fontWeight: FontWeight.w600,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //
+  //             const SizedBox(height: 6),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildHeaderStudentTile() {
     return Obx(() {
@@ -997,6 +1153,7 @@ class _MoreScreenState extends State<MoreScreen>
                     ],
                   ),
                   const SizedBox(height: 20),
+
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: List.generate(items.length, (index) {
@@ -1013,13 +1170,13 @@ class _MoreScreenState extends State<MoreScreen>
                                 color: AppColor.lightBlack,
                               ),
                             ),
-                            const SizedBox(height: 25),
+                            SizedBox(height: 25),
 
                             if (plan.paymentType == "online")
                               plan.items[index].status == "paid"
                                   ? Container(
                                     width: double.infinity,
-                                    padding: const EdgeInsets.symmetric(
+                                    padding: EdgeInsets.symmetric(
                                       vertical: 12,
                                       horizontal: 16,
                                     ),
@@ -1067,7 +1224,7 @@ class _MoreScreenState extends State<MoreScreen>
                                         );
                                         if (result != null) {
                                           if (result["status"] == "success") {
-                                            print("✅ Payment successful");
+                                            print(" Payment successful");
                                             if (context.mounted) {
                                               Navigator.pop(context);
                                             }
@@ -1477,7 +1634,7 @@ class _MoreScreenState extends State<MoreScreen>
       orElse: () => planData.items.first,
     );
 
-    // ✅ IMPORTANT: return the Future so callers can await and avoid double-open
+    //  IMPORTANT: return the Future so callers can await and avoid double-open
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -1525,6 +1682,7 @@ class _MoreScreenState extends State<MoreScreen>
                           color: AppColor.greenMore1,
                         ),
                       ),
+
                       Text(
                         'Paid to ${plan.name}',
                         style: GoogleFont.ibmPlexSans(
@@ -1533,8 +1691,9 @@ class _MoreScreenState extends State<MoreScreen>
                           color: AppColor.lightBlack,
                         ),
                       ),
-                      const SizedBox(height: 34),
-                      const Padding(
+
+                      SizedBox(height: 34),
+                      Padding(
                         padding: EdgeInsets.symmetric(horizontal: 35.0),
                         child: DottedLine(
                           dashColor: AppColor.grayop,
@@ -1726,8 +1885,8 @@ class _MoreScreenState extends State<MoreScreen>
                             context: context,
                             // baseName: 'ST Joseph Payment Receipt',
                           );
-
                         },
+
                         ///
                         // onTap:
                         //     () async => _downloadAndOpenPdf(
@@ -1890,7 +2049,7 @@ class _MoreScreenState extends State<MoreScreen>
             body: TabBarView(
               controller: _tabController,
               children: [
-                // --- Payment tab ---
+
                 Obx(() {
                   final data = feesController.feesData.value;
                   final isLoading = feesController.isLoading.value;
@@ -1938,16 +2097,41 @@ class _MoreScreenState extends State<MoreScreen>
                       itemCount: data.items.length,
                       itemBuilder: (context, index) {
                         final plan = data.items[index];
+
                         return CustomContainer.moreScreen(
-                          onDetailsTap:
-                              () => _paymentReceipt(context, plan.planId),
                           termTitle: plan.name ?? '',
                           timeDate: plan.dueDate ?? '',
                           amount: "Rs. ${plan.summary.totalAmount}",
                           isPaid: plan.summary.unpaidCount == 0,
+                          onDetailsTap:
+                              () => _paymentReceipt(context, plan.planId),
+
+                          onRefresh: plan.items.any((e) => e.canRefresh),
+
+                          onRefresh1: () async {
+                            await _handleReconcile(
+                              plan.planId,
+                              // showLoader: true,
+                            );
+                          },
+
                           payNowButton: () => _feessSheet(context, plan),
                         );
                       },
+
+                      //   CustomContainer.moreScreen(
+                      //   onRefresh1: () {},
+                      //   onRefresh2: () {},
+                      //   onRefresh3: () {},
+                      //   onRefresh4: () {},
+                      //   onDetailsTap:
+                      //       () => _paymentReceipt(context, plan.planId),
+                      //   termTitle: plan.name ?? '',
+                      //   timeDate: plan.dueDate ?? '',
+                      //   amount: "Rs. ${plan.summary.totalAmount}",
+                      //   isPaid: plan.summary.unpaidCount == 0,
+                      //   payNowButton: () => _feessSheet(context, plan),
+                      // );
                     ),
                   );
                 }),

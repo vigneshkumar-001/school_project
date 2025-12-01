@@ -39,6 +39,7 @@ import '../../Presentation/Onboarding/Screens/More Screen/Login_screen/Model/tok
 import '../../Presentation/Onboarding/Screens/More Screen/Quiz Screen/Model/quiz_attend.dart';
 import '../../Presentation/Onboarding/Screens/More Screen/Quiz Screen/Model/quiz_result_response.dart';
 import '../../Presentation/Onboarding/Screens/More Screen/Quiz Screen/Model/quiz_submit.dart';
+import '../../Presentation/Onboarding/Screens/More Screen/Refresh/Model/reconcile_response.dart';
 import '../../Presentation/Onboarding/Screens/More Screen/profile_screen/model/student_image_response.dart';
 import '../../Presentation/Onboarding/Screens/More Screen/profile_screen/model/teacher_profile_response.dart';
 import '../../Presentation/Onboarding/Screens/More Screen/profile_screen/model/user_image_response.dart';
@@ -1493,34 +1494,32 @@ class ApiDataSource extends BaseApiDataSource {
     }
   }
 
+  Future<Either<Failure, GetAdmissionResponse>> getAdmissionDetails({
+    required int id,
+  }) async {
+    try {
+      String url = ApiUrl.getAdmissionDetails(id: id);
 
+      dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
+      AppLogger.log.i(response);
 
- Future<Either<Failure, GetAdmissionResponse>> getAdmissionDetails({
-   required int id,
- }) async {
-   try {
-     String url = ApiUrl.getAdmissionDetails(id: id);
-
-     dynamic response = await Request.sendGetRequest(url, {}, 'get', true);
-     AppLogger.log.i(response);
-
-     // Accept both 200 and 201 as success
-     if (response is! DioException &&
-         (response.statusCode == 200 || response.statusCode == 201)) {
-       if (response.data['status'] == true) {
-         return Right(GetAdmissionResponse.fromJson(response.data));
-       } else {
-         return Left(ServerFailure(response.data['message']));
-       }
-     } else if (response is DioException) {
-       return Left(ServerFailure(response.message ?? "Dio Error"));
-     } else {
-       return Left(ServerFailure("Unknown error"));
-     }
-   } catch (e) {
-     return Left(ServerFailure(e.toString()));
-   }
- }
+      // Accept both 200 and 201 as success
+      if (response is! DioException &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        if (response.data['status'] == true) {
+          return Right(GetAdmissionResponse.fromJson(response.data));
+        } else {
+          return Left(ServerFailure(response.data['message']));
+        }
+      } else if (response is DioException) {
+        return Left(ServerFailure(response.message ?? "Dio Error"));
+      } else {
+        return Left(ServerFailure("Unknown error"));
+      }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 
   Future<Either<Failure, AppVersionResponse>> appVersionCheck() async {
     try {
@@ -1570,6 +1569,58 @@ class ApiDataSource extends BaseApiDataSource {
       } else {
         return Left(ServerFailure("Unknown error"));
       }
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, ReconcileResponse>> refresh({required int id}) async {
+    try {
+      final url = ApiUrl.refreshURL(id: id);
+
+      final response = await Request.sendRequest(url, {}, 'Post', true);
+
+      if (response is DioException) {
+        final dioError = response as DioException;
+        final msg = 'Dio Error: ${dioError.message ?? 'Unknown error'}';
+        return Left(ServerFailure(msg));
+      }
+
+      if (response == null) {
+        return Left(ServerFailure('No response from server'));
+      }
+
+      final int statusCode = response.statusCode ?? 0;
+      final dynamic data = response.data;
+
+      if (statusCode == 200 || statusCode == 201) {
+        if (data is Map<String, dynamic>) {
+          final parsed = ReconcileResponse.fromJson(data);
+          return Right(parsed);
+        }
+
+        if (data is String) {
+          if (data.contains('<html')) {
+            return Left(ServerFailure('Server returned HTML instead of JSON'));
+          }
+
+          try {
+            final decoded = jsonDecode(data);
+            if (decoded is Map<String, dynamic>) {
+              final parsed = ReconcileResponse.fromJson(decoded);
+              return Right(parsed);
+            } else {
+              return Left(ServerFailure('Unexpected JSON structure'));
+            }
+          } catch (e) {
+            return Left(ServerFailure('Failed to parse JSON: $e'));
+          }
+        }
+
+        return Left(ServerFailure('Unexpected response format'));
+      }
+
+      return Left(ServerFailure('HTTP error: $statusCode'));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
