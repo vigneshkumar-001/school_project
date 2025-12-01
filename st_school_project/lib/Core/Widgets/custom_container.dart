@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
+import 'package:st_school_project/Core/Widgets/rotating_refresh_icon.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/announcements_screen.dart';
 
 import '../../Presentation/Admssion/Screens/student_info_screen.dart';
@@ -462,89 +463,104 @@ class CustomContainer {
     );
   }
 
-  static moreScreen({
+  static Widget moreScreen({
     required String termTitle,
     required String timeDate,
     required String amount,
+    bool? onRefresh = false,
     bool isPaid = true,
     VoidCallback? onDetailsTap,
     VoidCallback? payNowButton,
+
+    /// Async refresh callbacks
+    Future<void> Function()? onRefresh1,
   }) {
+    // Keys to control the spinning icons
+    final refreshIconKeyPaid = GlobalKey<RotatingRefreshIconState>();
+    final refreshIconKeyUnpaid = GlobalKey<RotatingRefreshIconState>();
+
     return Container(
-      margin: EdgeInsets.only(bottom: 20),
+      margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
         border: Border.all(color: AppColor.grey.withOpacity(0.2)),
         borderRadius: BorderRadius.circular(15),
       ),
       child:
           isPaid
-              ? ListTile(
-                title: Text(
-                  'Paid for',
-                  style: GoogleFont.ibmPlexSans(
-                    fontSize: 12,
-                    color: AppColor.lowGrey,
-                  ),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 7),
-                    Text(
-                      termTitle,
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 16,
-                        color: AppColor.black,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    SizedBox(height: 7),
-                    Text(
-                      timeDate,
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 12,
-                        color: AppColor.grey,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Row(
+              ? Stack(
+                children: [
+                  // MAIN PAID CONTENT
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 82.0),
-                            child: GestureDetector(
-                              onTap: onDetailsTap,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 5),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      AppColor.green01G3,
-                                      AppColor.greenMore1,
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
+                        // LEFT SIDE CONTENT
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // "Paid for" + space for refresh
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Paid for',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 12,
+                                      color: AppColor.lowGrey,
+                                    ),
                                   ),
-                                  borderRadius: BorderRadius.circular(30),
+                                  SizedBox(width: 60),
+                                ],
+                              ),
+                              SizedBox(height: 7),
+                              Text(
+                                termTitle,
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 16,
+                                  color: AppColor.black,
+                                  fontWeight: FontWeight.w800,
                                 ),
-                                child: Padding(
+                              ),
+                              SizedBox(height: 7),
+                              Text(
+                                timeDate,
+                                style: GoogleFont.ibmPlexSans(
+                                  fontSize: 12,
+                                  color: AppColor.grey,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+
+                              // View Receipt Button
+                              GestureDetector(
+                                onTap: onDetailsTap,
+                                child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0,
+                                    horizontal: 8,
                                     vertical: 5,
                                   ),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        AppColor.green01G3,
+                                        AppColor.greenMore1,
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
                                   child: Row(
-                                    mainAxisSize: MainAxisSize.min, // important
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Flexible(
-                                        child: Text(
-                                          'View Receipt',
-                                          // overflow: TextOverflow.ellipsis,
-                                          softWrap: false,
-                                          style: GoogleFont.ibmPlexSans(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColor.white,
-                                          ),
+                                      Text(
+                                        'View Receipt',
+                                        softWrap: false,
+                                        style: GoogleFont.ibmPlexSans(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColor.white,
                                         ),
                                       ),
                                       SizedBox(width: 4),
@@ -557,57 +573,130 @@ class CustomContainer {
                                   ),
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.only(top: 40.0, right: 10),
+                          child: Text(
+                            amount,
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 20,
+                              color: AppColor.greenMore1,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
                       ],
                     ),
-
-                    // GestureDetector(
-                    //   onTap: onDetailsTap,
-                    //   child: Row(
-                    //     children: [
-                    //
-                    //       Text(
-                    //         'View Receipt',
-                    //         style: GoogleFont.ibmPlexSans(
-                    //           fontSize: 12,
-                    //           color: AppColor.greenMore1,
-                    //           fontWeight: FontWeight.w600,
-                    //         ),
-                    //       ),
-                    //       SizedBox(width: 1),
-                    //       Icon(
-                    //         CupertinoIcons.right_chevron,
-                    //         size: 10,
-                    //         color: AppColor.lowGrey,
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                  ],
-                ),
-                trailing: Text(
-                  amount,
-                  style: GoogleFont.ibmPlexSans(
-                    fontSize: 20,
-                    color: AppColor.greenMore1,
-                    fontWeight: FontWeight.w500,
                   ),
-                ),
+
+                  if (onRefresh == true)
+                    Positioned(
+                      right: 20,
+                      top: 15,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+
+                        // Tap anywhere on the chip
+                        onTap: () async {
+                          // 1) Spin icon
+                          refreshIconKeyPaid.currentState?.spin();
+
+                          await onRefresh1!();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppColor.lightGrey),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 6,
+                          ),
+                          child: Row(
+                            children: [
+                              RotatingRefreshIcon(
+                                key: refreshIconKeyPaid,
+                                size: 15,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                'Refresh',
+                                style: GoogleFont.ibmPlexSans(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               )
               : Padding(
                 padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      termTitle,
-                      style: GoogleFont.ibmPlexSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    // Title + Refresh chip (UNPAID)
+                    Row(
+                      children: [
+                        Text(
+                          termTitle,
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Spacer(),
+                        if (onRefresh == true)
+                          Padding(
+                            padding: EdgeInsets.only(right: 10),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(12),
+
+                              // Tap anywhere on chip
+                              onTap: () async {
+                                // 1) Spin icon
+                                refreshIconKeyUnpaid.currentState?.spin();
+
+                                // 2) Prefer silent refresh (onRefresh4), else popup (onRefresh2)
+
+                                await onRefresh1!();
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: AppColor.lightGrey),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 6,
+                                ),
+                                child: Row(
+                                  children: [
+                                    RotatingRefreshIcon(
+                                      key: refreshIconKeyUnpaid,
+                                      size: 18,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'Refresh',
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
+
+                    SizedBox(height: 10),
+
+                    // Amount + Pay Now
                     Row(
                       children: [
                         Text(
@@ -622,12 +711,12 @@ class CustomContainer {
                         GestureDetector(
                           onTap: payNowButton,
                           child: Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                               horizontal: 20,
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
+                              gradient: const LinearGradient(
                                 colors: [AppColor.blueG1, AppColor.blueG2],
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
@@ -646,7 +735,10 @@ class CustomContainer {
                         ),
                       ],
                     ),
+
                     SizedBox(height: 7),
+
+                    // Due date
                     RichText(
                       text: TextSpan(
                         text: 'Due Date',
@@ -672,6 +764,459 @@ class CustomContainer {
               ),
     );
   }
+
+  // static moreScreen({
+  //   required String termTitle,
+  //   required String timeDate,
+  //   required String amount,
+  //   bool isPaid = true,
+  //   VoidCallback? onDetailsTap,
+  //   VoidCallback? payNowButton,
+  //   VoidCallback? onRefresh1, // popup loader
+  //   VoidCallback? onRefresh2, // popup loader (unpaid)
+  //   VoidCallback? onRefresh3, // silent (paid)
+  //   VoidCallback? onRefresh4, // silent (unpaid)
+  // }) {
+  //   final refreshIconKey = GlobalKey<RotatingRefreshIconState>();
+  //   final refreshIconKeyUnpaid = GlobalKey<RotatingRefreshIconState>();
+  //   return Container(
+  //     margin: EdgeInsets.only(bottom: 20),
+  //     decoration: BoxDecoration(
+  //       border: Border.all(color: AppColor.grey.withOpacity(0.2)),
+  //       borderRadius: BorderRadius.circular(15),
+  //     ),
+  //     child:
+  //         isPaid
+  //             ? Stack(
+  //               children: [
+  //                 // Main Row (Left content + Amount)
+  //                 Padding(
+  //                   padding: const EdgeInsets.all(20),
+  //                   child: Row(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       // LEFT SIDE CONTENT
+  //                       Expanded(
+  //                         child: Column(
+  //                           crossAxisAlignment: CrossAxisAlignment.start,
+  //                           children: [
+  //                             // Paid For + spacing for refresh
+  //                             Row(
+  //                               mainAxisAlignment:
+  //                                   MainAxisAlignment.spaceBetween,
+  //                               children: [
+  //                                 Text(
+  //                                   'Paid for',
+  //                                   style: GoogleFont.ibmPlexSans(
+  //                                     fontSize: 12,
+  //                                     color: AppColor.lowGrey,
+  //                                   ),
+  //                                 ),
+  //
+  //                                 // empty box so refresh stays overlapped via Stack
+  //                                 SizedBox(width: 60),
+  //                               ],
+  //                             ),
+  //
+  //                             SizedBox(height: 7),
+  //
+  //                             Text(
+  //                               termTitle,
+  //                               style: GoogleFont.ibmPlexSans(
+  //                                 fontSize: 16,
+  //                                 color: AppColor.black,
+  //                                 fontWeight: FontWeight.w800,
+  //                               ),
+  //                             ),
+  //
+  //                             SizedBox(height: 7),
+  //
+  //                             Text(
+  //                               timeDate,
+  //                               style: GoogleFont.ibmPlexSans(
+  //                                 fontSize: 12,
+  //                                 color: AppColor.grey,
+  //                               ),
+  //                             ),
+  //
+  //                             SizedBox(height: 10),
+  //
+  //                             // View Receipt Button
+  //                             GestureDetector(
+  //                               onTap: onDetailsTap,
+  //                               child: Container(
+  //                                 padding: EdgeInsets.symmetric(
+  //                                   horizontal: 8,
+  //                                   vertical: 5,
+  //                                 ),
+  //                                 decoration: BoxDecoration(
+  //                                   gradient: LinearGradient(
+  //                                     colors: [
+  //                                       AppColor.green01G3,
+  //                                       AppColor.greenMore1,
+  //                                     ],
+  //                                   ),
+  //                                   borderRadius: BorderRadius.circular(30),
+  //                                 ),
+  //                                 child: Row(
+  //                                   mainAxisSize: MainAxisSize.min,
+  //                                   children: [
+  //                                     Text(
+  //                                       'View Receipt',
+  //                                       softWrap: false,
+  //                                       style: GoogleFont.ibmPlexSans(
+  //                                         fontSize: 11,
+  //                                         fontWeight: FontWeight.w500,
+  //                                         color: AppColor.white,
+  //                                       ),
+  //                                     ),
+  //                                     SizedBox(width: 4),
+  //                                     Image.asset(
+  //                                       AppImages.rightArrow,
+  //                                       height: 9,
+  //                                       color: AppColor.white,
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //
+  //                       // RIGHT SIDE AMOUNT
+  //                       Padding(
+  //                         padding: const EdgeInsets.only(top: 40.0, right: 10),
+  //                         child: Text(
+  //                           amount,
+  //                           style: GoogleFont.ibmPlexSans(
+  //                             fontSize: 20,
+  //                             color: AppColor.greenMore1,
+  //                             fontWeight: FontWeight.w500,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //
+  //                   if (onRefresh1 != null || onRefresh3 != null)
+  //                     Positioned(
+  //                       right: 20,
+  //                       top: 15,
+  //                       child: InkWell(
+  //                         borderRadius: BorderRadius.circular(12),
+  //                         onTap: () async {
+  //                           // spin icon
+  //                           refreshIconKey.currentState?.spin();
+  //
+  //                           // 👇 now we can legally await
+  //                           if (onRefresh3 != null) {
+  //                             await onRefresh3!(); // silent
+  //                           } else if (onRefresh1 != null) {
+  //                             await onRefresh1!(); // popup loader
+  //                           }
+  //                         },
+  //                         child: Container(
+  //                           decoration: BoxDecoration(
+  //                             border: Border.all(color: AppColor.lightGrey),
+  //                             borderRadius: BorderRadius.circular(12),
+  //                           ),
+  //                           padding: const EdgeInsets.symmetric(
+  //                             horizontal: 8,
+  //                             vertical: 6,
+  //                           ),
+  //                           child: Row(
+  //                             children: [
+  //                               RotatingRefreshIcon(
+  //                                 key: refreshIconKey,
+  //                                 size: 15,
+  //                               ),
+  //                               const SizedBox(width: 4),
+  //                               Text(
+  //                                 'Refresh',
+  //                                 style: GoogleFont.ibmPlexSans(fontSize: 12),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //               ],
+  //             )
+  //             // ListTile(
+  //             //       title: Row(
+  //             //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             //         children: [
+  //             //           Text(
+  //             //             'Paid for',
+  //             //             style: GoogleFont.ibmPlexSans(
+  //             //               fontSize: 12,
+  //             //               color: AppColor.lowGrey,
+  //             //             ),
+  //             //           ),
+  //             //
+  //             //           // Right Side Button
+  //             //           Container(
+  //             //             decoration: BoxDecoration(
+  //             //               border: Border.all(color: AppColor.lightGrey),
+  //             //               borderRadius: BorderRadius.circular(12),
+  //             //             ),
+  //             //             padding: const EdgeInsets.symmetric(
+  //             //               horizontal: 8,
+  //             //               vertical: 6,
+  //             //             ),
+  //             //             child: Row(
+  //             //               children: [
+  //             //                 Image.asset(AppImages.refresh, height: 10),
+  //             //                 SizedBox(width: 4),
+  //             //                 Text(
+  //             //                   'Refresh',
+  //             //                   style: GoogleFont.ibmPlexSans(fontSize: 10),
+  //             //                 ),
+  //             //               ],
+  //             //             ),
+  //             //           ),
+  //             //         ],
+  //             //       ),
+  //             //       subtitle: Column(
+  //             //         crossAxisAlignment: CrossAxisAlignment.start,
+  //             //         children: [
+  //             //           SizedBox(height: 7),
+  //             //           Text(
+  //             //             termTitle,
+  //             //             style: GoogleFont.ibmPlexSans(
+  //             //               fontSize: 16,
+  //             //               color: AppColor.black,
+  //             //               fontWeight: FontWeight.w800,
+  //             //             ),
+  //             //           ),
+  //             //           SizedBox(height: 7),
+  //             //           Text(
+  //             //             timeDate,
+  //             //             style: GoogleFont.ibmPlexSans(
+  //             //               fontSize: 12,
+  //             //               color: AppColor.grey,
+  //             //             ),
+  //             //           ),
+  //             //           SizedBox(height: 10),
+  //             //           Row(
+  //             //             children: [
+  //             //               Flexible(
+  //             //                 child: Padding(
+  //             //                   padding: const EdgeInsets.only(right: 82.0),
+  //             //                   child: GestureDetector(
+  //             //                     onTap: onDetailsTap,
+  //             //                     child: Container(
+  //             //                       padding: EdgeInsets.symmetric(horizontal: 5),
+  //             //                       decoration: BoxDecoration(
+  //             //                         gradient: LinearGradient(
+  //             //                           colors: [
+  //             //                             AppColor.green01G3,
+  //             //                             AppColor.greenMore1,
+  //             //                           ],
+  //             //                           begin: Alignment.topCenter,
+  //             //                           end: Alignment.bottomCenter,
+  //             //                         ),
+  //             //                         borderRadius: BorderRadius.circular(30),
+  //             //                       ),
+  //             //                       child: Padding(
+  //             //                         padding: const EdgeInsets.symmetric(
+  //             //                           horizontal: 8.0,
+  //             //                           vertical: 5,
+  //             //                         ),
+  //             //                         child: Row(
+  //             //                           mainAxisSize: MainAxisSize.min, // important
+  //             //                           children: [
+  //             //                             Flexible(
+  //             //                               child: Text(
+  //             //                                 'View Receipt',
+  //             //                                 // overflow: TextOverflow.ellipsis,
+  //             //                                 softWrap: false,
+  //             //                                 style: GoogleFont.ibmPlexSans(
+  //             //                                   fontSize: 11,
+  //             //                                   fontWeight: FontWeight.w500,
+  //             //                                   color: AppColor.white,
+  //             //                                 ),
+  //             //                               ),
+  //             //                             ),
+  //             //                             SizedBox(width: 4),
+  //             //                             Image.asset(
+  //             //                               AppImages.rightArrow,
+  //             //                               height: 9,
+  //             //                               color: AppColor.white,
+  //             //                             ),
+  //             //                           ],
+  //             //                         ),
+  //             //                       ),
+  //             //                     ),
+  //             //                   ),
+  //             //                 ),
+  //             //               ),
+  //             //             ],
+  //             //           ),
+  //             //
+  //             //           // GestureDetector(
+  //             //           //   onTap: onDetailsTap,
+  //             //           //   child: Row(
+  //             //           //     children: [
+  //             //           //
+  //             //           //       Text(
+  //             //           //         'View Receipt',
+  //             //           //         style: GoogleFont.ibmPlexSans(
+  //             //           //           fontSize: 12,
+  //             //           //           color: AppColor.greenMore1,
+  //             //           //           fontWeight: FontWeight.w600,
+  //             //           //         ),
+  //             //           //       ),
+  //             //           //       SizedBox(width: 1),
+  //             //           //       Icon(
+  //             //           //         CupertinoIcons.right_chevron,
+  //             //           //         size: 10,
+  //             //           //         color: AppColor.lowGrey,
+  //             //           //       ),
+  //             //           //     ],
+  //             //           //   ),
+  //             //           // ),
+  //             //         ],
+  //             //       ),
+  //             //       trailing: Text(
+  //             //         amount,
+  //             //         style: GoogleFont.ibmPlexSans(
+  //             //           fontSize: 20,
+  //             //           color: AppColor.greenMore1,
+  //             //           fontWeight: FontWeight.w500,
+  //             //         ),
+  //             //       ),
+  //             //     )
+  //             : Padding(
+  //               padding: EdgeInsets.all(20),
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   Row(
+  //                     children: [
+  //                       Text(
+  //                         termTitle,
+  //                         style: GoogleFont.ibmPlexSans(
+  //                           fontSize: 16,
+  //                           fontWeight: FontWeight.w600,
+  //                         ),
+  //                       ),
+  //                       const Spacer(),
+  //                       if (onRefresh2 != null || onRefresh4 != null)
+  //                         Padding(
+  //                           padding: const EdgeInsets.only(right: 10),
+  //                           child: InkWell(
+  //                             borderRadius: BorderRadius.circular(12),
+  //
+  //                             // 👇 tap anywhere on chip
+  //                             onTap: () async {
+  //                               // 1) spin icon
+  //                               refreshIconKeyUnpaid.currentState?.spin();
+  //
+  //                               // 2) call silent first if available, else popup
+  //                               if (onRefresh4 != null) {
+  //                                 await onRefresh4!();
+  //                               } else if (onRefresh2 != null) {
+  //                                 await onRefresh2!();
+  //                               }
+  //                             },
+  //                             child: Container(
+  //                               decoration: BoxDecoration(
+  //                                 border: Border.all(color: AppColor.lightGrey),
+  //                                 borderRadius: BorderRadius.circular(12),
+  //                               ),
+  //                               padding: const EdgeInsets.symmetric(
+  //                                 horizontal: 8,
+  //                                 vertical: 6,
+  //                               ),
+  //                               child: Row(
+  //                                 children: [
+  //                                   RotatingRefreshIcon(
+  //                                     key: refreshIconKeyUnpaid,
+  //                                     size: 15,
+  //                                   ),
+  //                                   const SizedBox(width: 4),
+  //                                   Text(
+  //                                     'Refresh',
+  //                                     style: GoogleFont.ibmPlexSans(
+  //                                       fontSize: 12,
+  //                                     ),
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                     ],
+  //                   ),
+  //
+  //                   SizedBox(height: 10),
+  //                   Row(
+  //                     children: [
+  //                       Text(
+  //                         amount,
+  //                         style: GoogleFont.ibmPlexSans(
+  //                           fontSize: 20,
+  //                           fontWeight: FontWeight.w600,
+  //                           color: AppColor.blue,
+  //                         ),
+  //                       ),
+  //                       Spacer(),
+  //                       GestureDetector(
+  //                         onTap: payNowButton,
+  //                         child: Container(
+  //                           padding: EdgeInsets.symmetric(
+  //                             horizontal: 20,
+  //                             vertical: 4,
+  //                           ),
+  //                           decoration: BoxDecoration(
+  //                             gradient: LinearGradient(
+  //                               colors: [AppColor.blueG1, AppColor.blueG2],
+  //                               begin: Alignment.topCenter,
+  //                               end: Alignment.bottomCenter,
+  //                             ),
+  //                             borderRadius: BorderRadius.circular(30),
+  //                           ),
+  //                           child: Text(
+  //                             'Pay Now',
+  //                             style: GoogleFont.ibmPlexSans(
+  //                               fontSize: 16,
+  //                               fontWeight: FontWeight.w700,
+  //                               color: AppColor.white,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                   SizedBox(height: 7),
+  //                   RichText(
+  //                     text: TextSpan(
+  //                       text: 'Due Date',
+  //                       style: GoogleFont.ibmPlexSans(
+  //                         fontSize: 12,
+  //                         fontWeight: FontWeight.w700,
+  //                         color: AppColor.grey,
+  //                       ),
+  //                       children: [
+  //                         TextSpan(
+  //                           text: ' $timeDate',
+  //                           style: GoogleFont.ibmPlexSans(
+  //                             fontSize: 12,
+  //                             fontWeight: FontWeight.w700,
+  //                             color: AppColor.lightBlack,
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //   );
+  // }
 
   static Widget teacherTab({
     required String teachresName,

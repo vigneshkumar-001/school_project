@@ -66,7 +66,12 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                             final admissionId =
                                 prefs.getInt('admissionId') ?? 0;
 
-                            Get.off(SiblingsFormScreen(id: admissionId,page: widget.page,));
+                            Get.off(
+                              SiblingsFormScreen(
+                                id: admissionId,
+                                page: widget.page,
+                              ),
+                            );
                           },
                         ),
                         // InkWell(

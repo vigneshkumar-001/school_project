@@ -1100,7 +1100,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       admissionController.studentDropDown();
-      admissionController.fetchAndSetUserData();
+      admissionController.getAdmissionDetails(id: admissionId);
     });
   }
 

@@ -50,6 +50,7 @@ class AppImages {
   static String teacher4 = 'assets/images/Teacher4.png';
   static String phoneIcon = 'assets/images/PhoneIcon.png';
   static String likeImage = 'assets/images/Like Image.png';
+  static String refresh = 'assets/images/Refresh_Image.png';
 
   static String clockIcon = 'assets/images/clockIcon.png';
   static String pending = 'assets/images/pending.png';

@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
+import 'package:st_school_project/Presentation/Onboarding/Screens/More%20Screen/change_mobile_number.dart';
 
 import 'Core/Utility/app_color.dart';
+import 'Core/Widgets/bottom_navigationbar.dart';
 
-class NoDataFoundScreen extends StatefulWidget {
-  const NoDataFoundScreen({super.key});
+class NoDataFoundScreen extends StatelessWidget {
+  final String page;
+  const NoDataFoundScreen({super.key, required this.page});
 
-  @override
-  State<NoDataFoundScreen> createState() => _NoDataFoundScreenState();
-}
-
-class _NoDataFoundScreenState extends State<NoDataFoundScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +44,23 @@ class _NoDataFoundScreenState extends State<NoDataFoundScreen> {
                 text: 'Back',
                 isBorder: true,
                 onTap: () {
-                  Navigator.pop(context);
+                  if (page == 'homeScreen') {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (_) =>
+                                const CommonBottomNavigation(initialIndex: 0),
+                      ),
+                    );
+                  } else {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ChangeMobileNumber(page: 'splash'),
+                      ),
+                    );
+                  }
                 },
               ),
             ],

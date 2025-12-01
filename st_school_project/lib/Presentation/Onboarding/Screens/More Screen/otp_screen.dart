@@ -40,12 +40,13 @@ class _OtpScreenState extends State<OtpScreen> {
       await prefs.setString('fcmToken', fcmToken);
     }
   }
+
   @override
   void initState() {
     super.initState();
     initFcmToken();
-
   }
+
   @override
   Widget build(BuildContext context) {
     String mobileNumber = widget.mobileNumber.toString() ?? '';
@@ -101,9 +102,12 @@ class _OtpScreenState extends State<OtpScreen> {
                         SizedBox(width: 8),
                       ],
                       GestureDetector(
-                        onTap: cooldown == 0 && !isLoading
-                            ? () => otpController.resentOtpWithTimer(widget.mobileNumber!)
-                            : null,
+                        onTap:
+                            cooldown == 0 && !isLoading
+                                ? () => otpController.resentOtpWithTimer(
+                                  widget.mobileNumber!,
+                                )
+                                : null,
                         child: Text(
                           cooldown == 0
                               ? 'Resend OTP'
@@ -111,9 +115,10 @@ class _OtpScreenState extends State<OtpScreen> {
                           style: GoogleFont.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            color: (cooldown == 0 && !isLoading)
-                                ? AppColor.blueG2
-                                : AppColor.blueG2,
+                            color:
+                                (cooldown == 0 && !isLoading)
+                                    ? AppColor.blueG2
+                                    : AppColor.blueG2,
                           ),
                         ),
                       ),

@@ -311,7 +311,7 @@ class LoginController extends GetxController {
             if (admissionID != null) {
               await admissionController.getAdmissionDetails(id: admissionID);
             }
-            return true; // applicant
+            return true;
           }
 
           await _loadInitialData();

@@ -140,6 +140,7 @@ class FeeItem {
   final String? receiptNo;
   final String? receiptLink;
   final ActionModel? action;
+  final bool canRefresh;
 
   FeeItem({
     required this.itemId,
@@ -147,6 +148,7 @@ class FeeItem {
     required this.feeTypeName,
     required this.amount,
     required this.instructionUrl,
+    required this.canRefresh,
 
     required this.status,
     this.paidAt,
@@ -158,6 +160,18 @@ class FeeItem {
   });
 
   factory FeeItem.fromJson(Map<String, dynamic> json) {
+    final dynamic cr = json['canRefresh'];
+
+    bool parsedCanRefresh;
+    if (cr is bool) {
+      parsedCanRefresh = cr;
+    } else if (cr is num) {
+      parsedCanRefresh = cr != 0;
+    } else if (cr is String) {
+      parsedCanRefresh = cr.toLowerCase() == 'true' || cr == '1';
+    } else {
+      parsedCanRefresh = false;
+    }
     return FeeItem(
       itemId: json['itemId'] ?? 0,
       studentId: json['studentId'] ?? 0,
@@ -170,6 +184,7 @@ class FeeItem {
       receiptNo: json['receiptNo'],
       admissionNo: json['admissionNo'],
       receiptLink: json['receiptLink'],
+      canRefresh: parsedCanRefresh,
       method: json['method'],
       action:
           json['action'] != null ? ActionModel.fromJson(json['action']) : null,
@@ -183,6 +198,7 @@ class FeeItem {
     "instructionUrl": instructionUrl,
     "amount": amount,
     "status": status,
+    "canRefresh": canRefresh,
     "paidAt": paidAt,
     "method": method,
     "receiptNo": receiptNo,

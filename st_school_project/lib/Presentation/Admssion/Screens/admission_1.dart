@@ -11,6 +11,7 @@ import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/student_info_screen.dart';
 
+import '../../../noDataFound_screen.dart';
 import '../Controller/admission_controller.dart';
 import 'check_admission_status.dart';
 
@@ -39,7 +40,6 @@ class _Admission1State extends State<Admission1> {
     final screenHeight = MediaQuery.of(context).size.height;
     return WillPopScope(
       onWillPop: () async {
-        //  OTP screen la irundhu dhaan vandhurukka
         if (widget.pages == 'otpScreen') {
           // Back totally disable
           ScaffoldMessenger.of(context).showSnackBar(
@@ -50,13 +50,12 @@ class _Admission1State extends State<Admission1> {
           return false;
         }
 
-        //  Vera yentha screen la irunthalum -> always Home screen
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (_) => const CommonBottomNavigation(initialIndex: 0),
           ),
-              (route) => false,
+          (route) => false,
         );
         return false;
       },
@@ -105,12 +104,7 @@ class _Admission1State extends State<Admission1> {
             }
 
             if (admissionList.isEmpty) {
-              return Center(
-                child: Text(
-                  'No admission data available',
-                  style: GoogleFont.ibmPlexSans(fontSize: 16),
-                ),
-              );
+              return NoDataFoundScreen(page:widget. pages?? '');
             }
 
             final admission = admissionList.first;
