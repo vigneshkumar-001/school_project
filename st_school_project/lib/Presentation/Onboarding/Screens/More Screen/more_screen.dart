@@ -1,24 +1,11 @@
-import 'package:dio/dio.dart';
-// import 'package:file_selector/file_selector.dart'
-//     show getSavePath, XTypeGroup, XFile;
-import 'dart:typed_data';
 
-import 'package:file_picker/file_picker.dart';
-import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
-
-import 'package:permission_handler/permission_handler.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 import 'dart:math' as math;
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
-import 'package:st_school_project/Core/Utility/app_loader.dart';
-import 'package:st_school_project/Core/Utility/snack_bar.dart';
-import 'package:st_school_project/Core/Widgets/consents.dart';
+
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
 import 'package:st_school_project/Core/Widgets/swicth_profile_sheet.dart';
@@ -34,18 +21,12 @@ import '../Announcements Screen/controller/announcement_controller.dart';
 import '../Home Screen/controller/student_home_controller.dart';
 import 'Login_screen/controller/login_controller.dart';
 import 'Refresh/Controller/refresh_controller.dart' show RefreshController;
-import 'Refresh/Model/reconcile_response.dart';
 import 'change_mobile_number.dart' show ChangeMobileNumber;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/More Screen/profile_screen/model/fees_history_response.dart';
 
-import 'package:open_filex/open_filex.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
-
-// --- grayscale matrix
 
 const List<double> _kGrayscaleMatrix = <double>[
   0.2126,

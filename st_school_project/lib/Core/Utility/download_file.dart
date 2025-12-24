@@ -230,7 +230,8 @@ class DownloadFile {
   static Future<void> openInBrowser(
     String url, {
     required BuildContext context,
-  }) async {
+  }) async
+  {
     try {
       url = url.trim();
 
