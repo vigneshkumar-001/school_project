@@ -32,7 +32,7 @@ android {
 
     defaultConfig {
         applicationId = "com.fenizo.st_school_project.st_school_project"
-        minSdk = 23
+        minSdk = flutter.minSdkVersion
         targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName

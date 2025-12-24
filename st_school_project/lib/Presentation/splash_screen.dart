@@ -39,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen>
     TeacherListController(),
   );
 
-  final String latestVersion = "2.3.5";
+  final String latestVersion = "2.3.6";
 
   @override
   void initState() {
@@ -72,8 +72,17 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _checkAppVersion() async {
-    String currentVersion =
+    // ✅ Force fetch (or ensure fetched) and wait for it
+    await controller.getAppVersion();
+
+    final currentVersion =
         controller.appVersionData.value?.android.latestVersion.toString() ?? '';
+
+    if (currentVersion.isEmpty) {
+      // if API failed, don't block user with update popup
+      _checkLoginStatus();
+      return;
+    }
 
     if (currentVersion == latestVersion) {
       _checkLoginStatus();
@@ -291,7 +300,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
               ),
-               SizedBox(height: 35),
+              SizedBox(height: 35),
               // ElevatedButton(
               //   onPressed: () {
               //     _showUpdateBottomSheet();
