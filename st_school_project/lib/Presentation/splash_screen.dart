@@ -39,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen>
     TeacherListController(),
   );
 
-  final String latestVersion = "2.3.5";
+  final String latestVersion = "3.0.0";
 
   @override
   void initState() {
