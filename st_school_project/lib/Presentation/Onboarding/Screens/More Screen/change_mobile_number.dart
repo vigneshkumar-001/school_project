@@ -433,7 +433,7 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                           )
                                           : null,
                                   width: double.infinity,
-                                  onTap: () {
+                                  onTap:loginController.isLoading.value? null : () {
                                     final String input =
                                         mobileNumberController.text
                                             .trim(); // rename to emailController if email

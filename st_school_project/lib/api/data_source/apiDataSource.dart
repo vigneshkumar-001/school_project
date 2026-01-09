@@ -55,50 +55,6 @@ abstract class BaseApiDataSource {
 }
 
 class ApiDataSource extends BaseApiDataSource {
-  // @override
-  // Future<Either<Failure, LoginResponse>> mobileNumberLogin(String phone) async {
-  //   try {
-  //     String url = ApiUrl.login;
-  //
-  //     dynamic response = await Request.sendRequest(
-  //       url,
-  //       {"phone": phone},
-  //       'Post',
-  //       false,
-  //     );
-  //
-  //     AppLogger.log.i(response);
-  //
-  //     // Not a DioException -> means it's an HTTP Response
-  //     if (response is! DioException) {
-  //       // If status code is success
-  //       if (response.statusCode == 200 || response.statusCode == 201) {
-  //         if (response.data['status'] == true) {
-  //           return Right(LoginResponse.fromJson(response.data));
-  //         } else {
-  //           return Left(
-  //             ServerFailure(response.data['message'] ?? "Login failed"),
-  //           );
-  //         }
-  //       } else {
-  //         // ❗ API returned non-success code but has JSON error message
-  //         return Left(
-  //           ServerFailure(response.data['message'] ?? "Something went wrong"),
-  //         );
-  //       }
-  //     }
-  //     // Is DioException
-  //     else {
-  //       final errorData = response.response?.data;
-  //       if (errorData is Map && errorData.containsKey('message')) {
-  //         return Left(ServerFailure(errorData['message']));
-  //       }
-  //       return Left(ServerFailure(response.message ?? "Unknown Dio error"));
-  //     }
-  //   } catch (e) {
-  //     return Left(ServerFailure(e.toString()));
-  //   }
-  // }
   @override
   Future<Either<Failure, LoginResponse>> mobileNumberLogin(String phone) async {
     try {
@@ -113,34 +69,78 @@ class ApiDataSource extends BaseApiDataSource {
 
       AppLogger.log.i(response);
 
-      // HTTP Response
+      // Not a DioException -> means it's an HTTP Response
       if (response is! DioException) {
-        // success
+        // If status code is success
         if (response.statusCode == 200 || response.statusCode == 201) {
           if (response.data['status'] == true) {
             return Right(LoginResponse.fromJson(response.data));
           } else {
-            // ✅ send full JSON so controller can read startDate
-            return Left(ServerFailure(jsonEncode(response.data)));
+            return Left(
+              ServerFailure(response.data['message'] ?? "Login failed"),
+            );
           }
         } else {
-          // ✅ send full JSON error (code 400 also comes here)
-          return Left(ServerFailure(jsonEncode(response.data)));
+          // ❗ API returned non-success code but has JSON error message
+          return Left(
+            ServerFailure(response.data['message'] ?? "Something went wrong"),
+          );
         }
       }
-
-      // DioException
-      final errorData = response.response?.data;
-      if (errorData is Map) {
-        // ✅ send full JSON
-        return Left(ServerFailure(jsonEncode(errorData)));
+      // Is DioException
+      else {
+        final errorData = response.response?.data;
+        if (errorData is Map && errorData.containsKey('message')) {
+          return Left(ServerFailure(errorData['message']));
+        }
+        return Left(ServerFailure(response.message ?? "Unknown Dio error"));
       }
-
-      return Left(ServerFailure(response.message ?? "Unknown Dio error"));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
   }
+  // @override
+  // Future<Either<Failure, LoginResponse>> mobileNumberLogin(String phone) async {
+  //   try {
+  //     String url = ApiUrl.login;
+  //
+  //     dynamic response = await Request.sendRequest(
+  //       url,
+  //       {"phone": phone},
+  //       'Post',
+  //       false,
+  //     );
+  //
+  //     AppLogger.log.i(response);
+  //
+  //     // HTTP Response
+  //     if (response is! DioException) {
+  //       // success
+  //       if (response.statusCode == 200 || response.statusCode == 201) {
+  //         if (response.data['status'] == true) {
+  //           return Right(LoginResponse.fromJson(response.data));
+  //         } else {
+  //           // ✅ send full JSON so controller can read startDate
+  //           return Left(ServerFailure(jsonEncode(response.data)));
+  //         }
+  //       } else {
+  //         // ✅ send full JSON error (code 400 also comes here)
+  //         return Left(ServerFailure(jsonEncode(response.data)));
+  //       }
+  //     }
+  //
+  //     // DioException
+  //     final errorData = response.response?.data;
+  //     if (errorData is Map) {
+  //       // ✅ send full JSON
+  //       return Left(ServerFailure(jsonEncode(errorData)));
+  //     }
+  //
+  //     return Left(ServerFailure(response.message ?? "Unknown Dio error"));
+  //   } catch (e) {
+  //     return Left(ServerFailure(e.toString()));
+  //   }
+  // }
   Future<Either<Failure, LoginResponse>> changeMobileNumber(String phone) async {
     try {
       String url = ApiUrl.changePhoneNumber;
