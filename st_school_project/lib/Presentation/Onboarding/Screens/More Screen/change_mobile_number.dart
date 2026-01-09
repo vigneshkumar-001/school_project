@@ -43,7 +43,6 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
     AppImages.advertisement2,
   ];
 
-
   @override
   void initState() {
     super.initState();

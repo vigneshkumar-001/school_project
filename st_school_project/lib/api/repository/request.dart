@@ -19,7 +19,7 @@ class Request {
     // // OtpController otpController = getx.Get.find();
     Dio dio = Dio(
       BaseOptions(
-        connectTimeout: const Duration(seconds: 10),
+        connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
       ),
     );

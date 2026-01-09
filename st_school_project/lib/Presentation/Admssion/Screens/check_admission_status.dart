@@ -48,6 +48,7 @@ import '../../../Core/Utility/google_font.dart';
 import '../../../Core/Widgets/bottom_navigationbar.dart';
 import '../../../Core/Widgets/custom_textfield.dart';
 import '../../Onboarding/Screens/Home Screen/home_tab.dart';
+import '../../Onboarding/Screens/More Screen/change_mobile_number.dart';
 
 class CheckAdmissionStatus extends StatefulWidget {
   final String? page;
@@ -104,7 +105,7 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                   if (widget.page == "homeScreen")
                     CustomContainer.leftSaitArrow(
                       onTap: () {
-                        Get.offAll(CommonBottomNavigation(initialIndex: 0,));
+                        Get.offAll(CommonBottomNavigation(initialIndex: 0));
                       },
                     ),
 
@@ -178,6 +179,7 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                       if (controller.isLoading.value) {
                         return Center(child: AppLoader.circularLoader());
                       }
+
                       if (controller.statusData.isEmpty) {
                         return const Center(child: Text('No Data Found'));
                       }
@@ -186,7 +188,8 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                         itemCount: controller.statusData.length,
                         itemBuilder: (context, index) {
                           final data = controller.statusData[index];
-                          final status = (data.status).toLowerCase();
+                          final status = data.status.toLowerCase();
+                          final bool isApproved = status == 'approved';
 
                           String imagePath;
                           Color iconColor;
@@ -216,10 +219,31 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                             children: [
                               CustomContainer.myadmissions(
                                 imagepath: imagePath,
+                                trailing:
+                                    isApproved
+                                        ? AppButton.button(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (_) =>
+                                                        const ChangeMobileNumber(
+                                                          page: 'splash',
+                                                        ),
+                                              ),
+                                            );
+                                          },
+                                          image: AppImages.rightSaitArrow,
+                                          width: 100,
+                                          height: 50,
+                                          text: 'Login',
+                                        )
+                                        : null,
                                 iconColor: iconColor,
                                 backRoundColors: bgColor,
                                 iconTextColor: iconColor,
-                                maintext: data.studentName.toString() ?? '',
+                                maintext: data.studentName ?? '',
                                 subtext1: 'Submitted On ',
                                 subtext2:
                                     data.submittedAt != null &&
@@ -232,10 +256,25 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                                         : '',
                                 iconText: data.status.toUpperCase(),
                                 onTap: () {
+                                  if (isApproved) {
+                                    // ✅ Approved → Login
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => const ChangeMobileNumber(
+                                              page: 'splash',
+                                            ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  // ❌ Not approved → Download
                                   if (data.downloadUrl != null &&
-                                      data.downloadUrl!.isNotEmpty) {
+                                      data.downloadUrl.isNotEmpty) {
                                     DownloadFile.openInBrowser(
-                                      data.downloadUrl!,
+                                      data.downloadUrl,
                                       context: context,
                                     );
                                   } else {
@@ -250,82 +289,98 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                                 },
                               ),
 
-                              // CustomContainer.myadmissions(
-                              //   imagepath: imagePath,
-                              //   iconColor: iconColor,
-                              //   backRoundColors: bgColor,
-                              //   iconTextColor: iconColor,
-                              //   maintext: data.studentName.toString() ?? '',
-                              //   subtext1: 'Submitted On ',
-                              //   subtext2:
-                              //       data.submittedAt != null &&
-                              //               data.submittedAt!.isNotEmpty
-                              //           ? DateAndTimeConvert.formatDateTime(
-                              //             showDate: true,
-                              //             showTime: false,
-                              //             data.submittedAt!,
-                              //           )
-                              //           : '',
-                              //
-                              //   iconText: data.status.toUpperCase(),
-                              //
-                              //   onTap: () {
-                              //     AppLogger.log.i(data.downloadUrl);
-                              //     _downloadAndOpenPdf(data.downloadUrl);
-                              //   },
-                              // ),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                             ],
                           );
                         },
                       );
                     }),
                   ),
-                  // CustomContainer.myadmissions(
-                  //   imagepath: AppImages.clockIcon,
-                  //   iconColor: AppColor.blue,
-                  //   backRoundColors: AppColor.checkAdmissCont1,
-                  //   iconTextColor: AppColor.blue,
-                  //   maintext: 'Suganya M',
-                  //   subtext1: 'Submitted On ',
-                  //   subtext2: '25 Jul 2025',
-                  //   iconText: 'Pending',
-                  //   onTap: () => _paymentReceipt(context),
-                  // ),
-                  // SizedBox(height: 20),
-                  // CustomContainer.myadmissions(
-                  //   imagepath: AppImages.approvedImage,
-                  //   iconColor: AppColor.greenMore1,
-                  //   backRoundColors: AppColor.checkAdmissCont2,
-                  //   iconTextColor: AppColor.greenMore1,
-                  //   maintext: 'Suganya M',
-                  //   subtext1: 'Submitted On ',
-                  //   subtext2: '25 Jul 2025',
-                  //   iconText: 'Approved',
-                  // ),
-                  // SizedBox(height: 20),
-                  // CustomContainer.myadmissions(
-                  //   imagepath: AppImages.rejectedImage,
-                  //   iconColor: AppColor.lightRed,
-                  //   backRoundColors: AppColor.checkAdmissCont3,
-                  //   iconTextColor: AppColor.lightRed,
-                  //   maintext: 'Suganya M',
-                  //   subtext1: 'Submitted On ',
-                  //   subtext2: '25 Jul 2025',
-                  //   iconText: 'Rejected',
-                  // ),
-                  // SizedBox(height: 30),
-                  // AppButton.button(
-                  //   text: 'Home Page',
-                  //   onTap: () {
-                  //     HapticFeedback.heavyImpact();
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => CommonBottomNavigation(),
-                  //       ),
+
+                  // Expanded(
+                  //   child: Obx(() {
+                  //     if (controller.isLoading.value) {
+                  //       return Center(child: AppLoader.circularLoader());
+                  //     }
+                  //     if (controller.statusData.isEmpty) {
+                  //       return const Center(child: Text('No Data Found'));
+                  //     }
+                  //
+                  //     return ListView.builder(
+                  //       itemCount: controller.statusData.length,
+                  //       itemBuilder: (context, index) {
+                  //         final data = controller.statusData[index];
+                  //         final status = (data.status).toLowerCase();
+                  //
+                  //         String imagePath;
+                  //         Color iconColor;
+                  //         Color bgColor;
+                  //
+                  //         switch (status) {
+                  //           case 'approved':
+                  //             imagePath = AppImages.approvedImage;
+                  //             iconColor = AppColor.greenMore1;
+                  //             bgColor = AppColor.checkAdmissCont2;
+                  //             break;
+                  //
+                  //           case 'rejected':
+                  //             imagePath = AppImages.rejectedImage;
+                  //             iconColor = AppColor.lightRed;
+                  //             bgColor = AppColor.checkAdmissCont3;
+                  //             break;
+                  //
+                  //           default:
+                  //             imagePath = AppImages.pending;
+                  //             iconColor = AppColor.blue;
+                  //             bgColor = AppColor.checkAdmissCont1;
+                  //             break;
+                  //         }
+                  //
+                  //         return Column(
+                  //           children: [
+                  //             CustomContainer.myadmissions(
+                  //               imagepath: imagePath,
+                  //               iconColor: iconColor,
+                  //               backRoundColors: bgColor,
+                  //               iconTextColor: iconColor,
+                  //               maintext: data.studentName.toString() ?? '',
+                  //               subtext1: 'Submitted On ',
+                  //               subtext2:
+                  //                   data.submittedAt != null &&
+                  //                           data.submittedAt!.isNotEmpty
+                  //                       ? DateAndTimeConvert.formatDateTime(
+                  //                         showDate: true,
+                  //                         showTime: false,
+                  //                         data.submittedAt!,
+                  //                       )
+                  //                       : '',
+                  //               iconText: data.status.toUpperCase(),
+                  //               onTap: () {
+                  //                 if (data.downloadUrl != null &&
+                  //                     data.downloadUrl!.isNotEmpty) {
+                  //                   DownloadFile.openInBrowser(
+                  //                     data.downloadUrl!,
+                  //                     context: context,
+                  //                   );
+                  //                 } else {
+                  //                   Get.snackbar(
+                  //                     'Error',
+                  //                     'No download link available',
+                  //                     snackPosition: SnackPosition.BOTTOM,
+                  //                     backgroundColor: Colors.red.shade600,
+                  //                     colorText: Colors.white,
+                  //                   );
+                  //                 }
+                  //               },
+                  //             ),
+                  //
+                  //
+                  //             SizedBox(height: 20),
+                  //           ],
+                  //         );
+                  //       },
                   //     );
-                  //   },
+                  //   }),
                   // ),
                 ],
               ),

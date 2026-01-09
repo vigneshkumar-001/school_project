@@ -126,7 +126,7 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
 
                     CustomTextField.richText(
                       text: 'Mobile Number - Primary',
-                      text2: '',
+                      text2: 'Login Mobile Number',
                     ),
                     SizedBox(height: 10),
                     CustomContainer.studentInfoScreen(
