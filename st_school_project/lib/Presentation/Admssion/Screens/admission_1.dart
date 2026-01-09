@@ -104,7 +104,7 @@ class _Admission1State extends State<Admission1> {
             }
 
             if (admissionList.isEmpty) {
-              return NoDataFoundScreen(page:widget. pages?? '');
+              return NoDataFoundScreen(page: widget.pages ?? '');
             }
 
             final admission = admissionList.first;

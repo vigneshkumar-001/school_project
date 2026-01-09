@@ -2357,7 +2357,108 @@ class CustomContainer {
       ],
     );
   }
-
+  //
+  // static myadmissions({
+  //   required String maintext,
+  //   required String subtext1,
+  //   required String subtext2,
+  //   required String iconText,
+  //   VoidCallback? onTap,
+  //
+  //   String imagepath = '',
+  //   Color? backRoundColors,
+  //   Color? iconColor,
+  //   Color? iconTextColor,
+  // }) {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       borderRadius: BorderRadius.circular(15),
+  //       border: Border.all(color: AppColor.lightGrey),
+  //     ),
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(13.0),
+  //       child: Row(
+  //         children: [
+  //           Container(
+  //             decoration: BoxDecoration(
+  //               color: backRoundColors,
+  //               borderRadius: BorderRadius.circular(20),
+  //             ),
+  //             child: Padding(
+  //               padding: EdgeInsets.symmetric(horizontal: 17, vertical: 10),
+  //               child: Column(
+  //                 children: [
+  //                   Image.asset(imagepath, height: 29, color: iconColor),
+  //                   SizedBox(height: 4),
+  //                   Text(
+  //                     iconText,
+  //                     style: GoogleFont.ibmPlexSans(
+  //                       fontSize: 8,
+  //                       fontWeight: FontWeight.w500,
+  //                       color: iconTextColor,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //           SizedBox(width: 15),
+  //           Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Text(
+  //                 maintext,
+  //                 style: GoogleFont.ibmPlexSans(
+  //                   fontSize: 16,
+  //                   fontWeight: FontWeight.w600,
+  //                   color: AppColor.lightBlack,
+  //                 ),
+  //               ),
+  //               SizedBox(height: 5),
+  //               RichText(
+  //                 text: TextSpan(
+  //                   text: subtext1,
+  //                   style: GoogleFont.ibmPlexSans(
+  //                     fontSize: 12,
+  //                     color: AppColor.lowGrey,
+  //                   ),
+  //                   children: [
+  //                     TextSpan(
+  //                       text: subtext2,
+  //                       style: GoogleFont.ibmPlexSans(
+  //                         fontSize: 12,
+  //                         color: AppColor.grey,
+  //                         fontWeight: FontWeight.w500,
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //           Spacer(),
+  //           InkWell(
+  //             onTap: onTap,
+  //             child: Column(
+  //               children: [
+  //                 Image.asset(AppImages.downloadImage, height: 29),
+  //                 SizedBox(height: 5),
+  //                 Text(
+  //                   'Download',
+  //                   style: GoogleFont.ibmPlexSans(
+  //                     fontSize: 10,
+  //                     fontWeight: FontWeight.w500,
+  //                     color: AppColor.blue,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
   static myadmissions({
     required String maintext,
     required String subtext1,
@@ -2369,6 +2470,8 @@ class CustomContainer {
     Color? backRoundColors,
     Color? iconColor,
     Color? iconTextColor,
+
+    Widget? trailing, // ✅ NEW
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -2385,11 +2488,11 @@ class CustomContainer {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 17, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 10),
                 child: Column(
                   children: [
                     Image.asset(imagepath, height: 29, color: iconColor),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       iconText,
                       style: GoogleFont.ibmPlexSans(
@@ -2402,63 +2505,69 @@ class CustomContainer {
                 ),
               ),
             ),
-            SizedBox(width: 15),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  maintext,
-                  style: GoogleFont.ibmPlexSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColor.lightBlack,
-                  ),
-                ),
-                SizedBox(height: 5),
-                RichText(
-                  text: TextSpan(
-                    text: subtext1,
-                    style: GoogleFont.ibmPlexSans(
-                      fontSize: 12,
-                      color: AppColor.lowGrey,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: subtext2,
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 12,
-                          color: AppColor.grey,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Spacer(),
-            InkWell(
-              onTap: onTap,
+            const SizedBox(width: 15),
+
+            Expanded( // ✅ avoid overflow
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset(AppImages.downloadImage, height: 29),
-                  SizedBox(height: 5),
                   Text(
-                    'Download',
+                    maintext,
                     style: GoogleFont.ibmPlexSans(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                      color: AppColor.blue,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColor.lightBlack,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  RichText(
+                    text: TextSpan(
+                      text: subtext1,
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 12,
+                        color: AppColor.lowGrey,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: subtext2,
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 12,
+                            color: AppColor.grey,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
+
+            // ✅ Right side: if trailing provided use it else default Download
+            trailing ??
+                InkWell(
+                  onTap: onTap,
+                  child: Column(
+                    children: [
+                      Image.asset(AppImages.downloadImage, height: 29),
+                      const SizedBox(height: 5),
+                      Text(
+                        'Download',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                          color: AppColor.blue,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
           ],
         ),
       ),
     );
   }
+
 
   static horizonalDivider() {
     return Container(
