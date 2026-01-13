@@ -99,6 +99,7 @@ class ApiDataSource extends BaseApiDataSource {
       return Left(ServerFailure(e.toString()));
     }
   }
+
   // @override
   // Future<Either<Failure, LoginResponse>> mobileNumberLogin(String phone) async {
   //   try {
@@ -141,7 +142,9 @@ class ApiDataSource extends BaseApiDataSource {
   //     return Left(ServerFailure(e.toString()));
   //   }
   // }
-  Future<Either<Failure, LoginResponse>> changeMobileNumber(String phone) async {
+  Future<Either<Failure, LoginResponse>> changeMobileNumber(
+    String phone,
+  ) async {
     try {
       String url = ApiUrl.changePhoneNumber;
 
@@ -176,7 +179,6 @@ class ApiDataSource extends BaseApiDataSource {
       return Left(ServerFailure(e.toString()));
     }
   }
-
 
   // Future<Either<Failure, LoginResponse>> changeMobileNumber(
   //   String phone,
@@ -1016,6 +1018,7 @@ class ApiDataSource extends BaseApiDataSource {
       String url = ApiUrl.expireTokenCheck;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
+
       dynamic response = await Request.sendRequest(
         url,
         {"token": token},

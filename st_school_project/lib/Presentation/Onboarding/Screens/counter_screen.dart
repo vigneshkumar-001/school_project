@@ -8,7 +8,12 @@ import 'More Screen/Login_screen/controller/login_controller.dart';
 
 class AdmissionCountdownScreen extends StatefulWidget {
   final String message;
-  const AdmissionCountdownScreen({super.key, required this.message});
+  final String pages;
+  const AdmissionCountdownScreen({
+    super.key,
+    required this.message,
+    required this.pages,
+  });
 
   @override
   State<AdmissionCountdownScreen> createState() =>
@@ -18,13 +23,13 @@ class AdmissionCountdownScreen extends StatefulWidget {
 class _AdmissionCountdownScreenState extends State<AdmissionCountdownScreen> {
   final LoginController loginController = Get.find<LoginController>();
 
-  bool _navigated = false; // ✅ prevent multiple navigations
+  bool _navigated = false;
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return await false;
+        return widget.pages == 'homeScreen';
       },
       child: Scaffold(
         backgroundColor: AppColor.white,
@@ -32,10 +37,14 @@ class _AdmissionCountdownScreenState extends State<AdmissionCountdownScreen> {
         appBar: AppBar(
           backgroundColor: AppColor.white,
           elevation: 0,
-          // leading: IconButton(
-          //   icon: const Icon(Icons.arrow_back),
-          //   onPressed: () => Get.back(),
-          // ),
+          automaticallyImplyLeading: false,
+          leading:
+              widget.pages == 'homeScreen'
+                  ? IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () => Get.back(),
+                  )
+                  : SizedBox.shrink(),
           title: Text(
             "Please wait",
             style: GoogleFont.ibmPlexSans(
@@ -65,7 +74,7 @@ class _AdmissionCountdownScreenState extends State<AdmissionCountdownScreen> {
                     sec == 0) {
                   _navigated = true;
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Get.offAll(() => Admission1(pages: 'otpScreen'));
+                    Get.offAll(() => Admission1(pages: widget.pages));
                   });
                 }
 
@@ -104,7 +113,7 @@ class _AdmissionCountdownScreenState extends State<AdmissionCountdownScreen> {
                       const SizedBox(height: 14),
 
                       Text(
-                        'Announcement phase - admission window has not opened at: $openAtText',
+                        'Announcement phase - The admission window will open at: $openAtText',
                         textAlign: TextAlign.center,
                         style: GoogleFont.ibmPlexSans(
                           fontSize: 14,

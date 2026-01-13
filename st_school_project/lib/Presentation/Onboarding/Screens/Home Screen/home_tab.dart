@@ -273,187 +273,6 @@ class _HomeScreenState extends State<HomeTab>
     );
   }
 
-  /*  void switchProfileOrLogout(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.35,
-          minChildSize: 0.25,
-          maxChildSize: 0.6,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: BoxDecoration(
-                color: AppColor.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              child: Obx(() {
-                final students = controller.siblingsList;
-
-                return ListView(
-                  controller: scrollController,
-                  padding: EdgeInsets.all(16),
-                  children: [
-                    Center(
-                      child: Container(
-                        height: 4,
-                        width: 30,
-                        decoration: BoxDecoration(color: AppColor.grayop),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-
-                    // Header Row: Switch Profile & Logout
-                    Row(
-                      children: [
-                        Text(
-                          'Switch Profile',
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600,
-                            color: AppColor.black,
-                          ),
-                        ),
-                        Spacer(),
-                        InkWell(
-                          onTap: () async {
-                            await controller.clearData();
-                            // navigate to login screen
-                            // Get.offAllNamed('/login');
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                'Logout',
-                                style: GoogleFont.ibmPlexSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColor.lightRed,
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              Image.asset(AppImages.logOut, height: 26),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 32),
-
-                    // List of students
-                    ...students.map((student) {
-                      final isActive =
-                          student.id == controller.selectedStudent.value?.id;
-
-                      return InkWell(
-                        onTap: () async {
-                          // Call API to switch student
-                          Navigator.pop(context);
-                          await controller.switchSiblings(id: student.id);
-
-
-                          controller.selectStudent(student);
-                        },
-                        child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 8),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color:
-                                isActive
-                                    ? AppColor.lightBlue.withOpacity(0.2)
-                                    : Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
-                            border:
-                                isActive
-                                    ? Border.all(
-                                      color: AppColor.blue,
-                                      width: 1.5,
-                                    )
-                                    : null,
-                          ),
-                          child: Row(
-                            children: [
-                              ClipOval(
-                                child: Image.network(
-                                  student.avatar,
-                                  width: 58,
-                                  height: 58,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Image.asset(
-                                      AppImages.moreSimage1,
-                                      width: 58,
-                                      height: 58,
-                                      fit: BoxFit.cover,
-                                    );
-                                  },
-                                ),
-                              ),
-                              SizedBox(width: 12),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    student.name,
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColor.black,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Class ${student.studentClass} - ${student.section}',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontSize: 14,
-                                      color: Colors.grey[700],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Spacer(),
-                              if (isActive)
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: AppColor.blue,
-                                      width: 1.2,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Active',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColor.blue,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ],
-                );
-              }),
-            );
-          },
-        );
-      },
-    );
-  }*/
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -1046,18 +865,34 @@ class _HomeScreenState extends State<HomeTab>
 
                                                       InkWell(
                                                         onTap: () {
-                                                          Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder:
-                                                                  (
-                                                                    context,
-                                                                  ) => Admission1(
-                                                                    pages:
-                                                                        'homeScreen',
-                                                                  ),
-                                                            ),
-                                                          );
+
+                                                          final ann =
+                                                              controller
+                                                                  .studentHomeData
+                                                                  .value
+                                                                  ?.announcements[0];
+                                                          print(ann?.toJson());
+                                                          if (ann == null)
+                                                            return;
+
+                                                          loginController
+                                                              .handleHomeAdmissionTapFromAnnouncement(
+                                                                ann,
+                                                                page:
+                                                                    'homeScreen',
+                                                              );
+                                                          // Navigator.push(
+                                                          //   context,
+                                                          //   MaterialPageRoute(
+                                                          //     builder:
+                                                          //         (
+                                                          //           context,
+                                                          //         ) => Admission1(
+                                                          //           pages:
+                                                          //               'homeScreen',
+                                                          //         ),
+                                                          //   ),
+                                                          // );
                                                         },
                                                         child: Row(
                                                           children: [

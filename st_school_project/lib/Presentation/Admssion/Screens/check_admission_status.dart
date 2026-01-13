@@ -227,10 +227,13 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                                               context,
                                               MaterialPageRoute(
                                                 builder:
-                                                    (_) =>
-                                                        const ChangeMobileNumber(
-                                                          page: 'splash',
-                                                        ),
+                                                    (_) => ChangeMobileNumber(
+                                                      mobileNumber:
+                                                          data.phone
+                                                              .toString() ??
+                                                          '',
+                                                      page: 'splash',
+                                                    ),
                                               ),
                                             );
                                           },
