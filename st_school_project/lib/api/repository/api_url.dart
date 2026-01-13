@@ -1,7 +1,7 @@
 class ApiUrl {
-  static String baseUrl = 'https://school-back-end-594f59bea6cb.herokuapp.com';
+  // static String baseUrl = 'https://school-back-end-594f59bea6cb.herokuapp.com';
 
-  // static String baseUrl = 'https://backend.stjosephmatricschool.com';
+  static String baseUrl = 'https://backend.stjosephmatricschool.com';
   // static String baseUrl = 'http://192.168.29.18:3000';
 
   // static String baseUrl2 =
