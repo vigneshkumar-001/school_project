@@ -785,6 +785,7 @@ import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Utility/thanglish_to_tamil.dart';
 import 'package:st_school_project/Core/Utility/snack_bar.dart';
+import 'package:st_school_project/Core/Widgets/consents.dart';
 
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
@@ -876,7 +877,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
       try {
         final date = DateFormat(format).parseStrict(cleanDob);
         // Use strict ISO format for full compatibility
-        return DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(date.toUtc());
+        return DateFormat("yyyy-MM-dd").format(date.toUtc());
       } catch (_) {}
     }
     debugPrint('DOB format not recognized: $dob');
@@ -1510,7 +1511,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                                     admissionController.dobController.text
                                         .trim(),
                                   );
-
+                                  AppLogger.log.i(formattedDob);
                                   //  Single, correct API call
                                   final err = await ctrl.postStudentInfo(
                                     page: widget.pages ?? '',
