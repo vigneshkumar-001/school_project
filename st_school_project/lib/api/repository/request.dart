@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:st_school_project/Core/Utility/auth_redirect.dart';
 import 'package:st_school_project/Core/Widgets/consents.dart';
 
 import 'package:dio/dio.dart';
@@ -12,7 +13,9 @@ class Request {
     bool isTokenRequired,
   ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
+   String? token = prefs.getString('token');
+   //String? token =
+   //    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOjI0NTMsInBob25lIjoiODE0NDIwMzQ4NyIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzY3NTkwMzQ5LCJleHAiOjE3NzAxODIzNDl9.03hQR7HLOr0JsqFRroVYR8fXaRrsJ0SV_vN-yN6vQGgssss';
     String? userId = prefs.getString('userId');
 
     // AuthController authController = getx.Get.find();
@@ -32,6 +35,12 @@ class Request {
           Response<dynamic> response,
           ResponseInterceptorHandler handler,
         ) {
+          final httpCode = response.statusCode;
+
+          // ✅ 1) Normal HTTP Unauthorized
+          if (httpCode == 401 || httpCode == 406) {
+            AuthRedirect.toLogin();
+          }
           AppLogger.log.i(body);
           AppLogger.log.i(
             "sendPostRequest \n API: $url \n RESPONSE: ${response.toString()}",
@@ -44,6 +53,7 @@ class Request {
             return handler.reject(error);
           } else if (error.response?.statusCode == '406' ||
               error.response?.statusCode == '401') {
+            AuthRedirect.toLogin(); // ✅ Redirect here
             return handler.reject(error);
           } else if (error.response?.statusCode == '429') {
             //Too many Attempts
@@ -189,6 +199,12 @@ class Request {
           Response<dynamic> response,
           ResponseInterceptorHandler handler,
         ) {
+          final httpCode = response.statusCode;
+
+          // ✅ 1) Normal HTTP Unauthorized
+          if (httpCode == 401 || httpCode == 406) {
+            AuthRedirect.toLogin();
+          }
           AppLogger.log.i(queryParams);
           AppLogger.log.i(
             "GET Request \n API: $url \n Token: $token \n RESPONSE: ${response.toString()}",
@@ -200,6 +216,7 @@ class Request {
             return handler.reject(error);
           } else if (error.response?.statusCode == 406 ||
               error.response?.statusCode == 401) {
+            AuthRedirect.toLogin(); // ✅ Redirect here
             return handler.reject(error);
           } else if (error.response?.statusCode == 429) {
             return handler.reject(error);

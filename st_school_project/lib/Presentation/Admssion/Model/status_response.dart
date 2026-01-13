@@ -38,6 +38,7 @@ class StatusData {
   final String status;
   final String? submittedAt;
   final String createdAt;
+  final String phone;
   final WindowData? window;
   final String downloadUrl;
   final String viewUrl;
@@ -47,6 +48,7 @@ class StatusData {
     required this.admissionCode,
     required this.studentName,
     required this.status,
+    required this.phone,
     this.submittedAt,
     required this.createdAt,
     this.window,
@@ -61,6 +63,7 @@ class StatusData {
       studentName: json['studentName'] ?? '',
       status: json['status'] ?? '',
       submittedAt: json['submittedAt'],
+      phone: json['phone']?? '',
       createdAt: json['createdAt'] ?? '',
       window: json['window'] != null ? WindowData.fromJson(json['window']) : null,
       downloadUrl: json['downloadUrl'] ?? '',
@@ -74,6 +77,7 @@ class StatusData {
     'studentName': studentName,
     'status': status,
     'submittedAt': submittedAt,
+    'phone': phone,
     'createdAt': createdAt,
     'window': window?.toJson(),
     'downloadUrl': downloadUrl,

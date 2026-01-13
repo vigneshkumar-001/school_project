@@ -18,7 +18,8 @@ import 'otp_screen.dart' show OtpScreen;
 
 class ChangeMobileNumber extends StatefulWidget {
   final String? page;
-  const ChangeMobileNumber({super.key, this.page});
+  final String? mobileNumber;
+  const ChangeMobileNumber({super.key, this.page, this.mobileNumber});
 
   @override
   State<ChangeMobileNumber> createState() => _ChangeMobileNumberState();
@@ -46,8 +47,7 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
   @override
   void initState() {
     super.initState();
-
-    mobileNumberController.clear();
+    mobileNumberController.text = widget.mobileNumber ?? '';
   }
 
   void _formatPhoneNumber(String value) {
@@ -433,66 +433,72 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                           )
                                           : null,
                                   width: double.infinity,
-                                  onTap:loginController.isLoading.value? null : () {
-                                    final String input =
-                                        mobileNumberController.text
-                                            .trim(); // rename to emailController if email
-                                    if (widget.page == 'email') {
-                                      // Email validation
-                                      if (input.isEmpty) {
-                                        setState(() {
-                                          errorText = 'Email is required';
-                                        });
-                                      } else {
-                                        final emailRegex = RegExp(
-                                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                                        );
-                                        if (!emailRegex.hasMatch(input)) {
-                                          setState(() {
-                                            errorText =
-                                                'Please enter a valid email';
-                                          });
-                                        } else {
-                                          setState(() {
-                                            errorText = '';
-                                          });
-                                          // Call your controller method for email submission
-                                          teacherListController.emailUpdate(
-                                            context: context,
-                                            showLoader: true,
-                                            email: input,
-                                          );
-                                        }
-                                      }
-                                    } else {
-                                      // Mobile number validation (existing logic)
-                                      final String mbl = input.replaceAll(
-                                        ' ',
-                                        '',
-                                      );
-                                      if (mbl.isEmpty) {
-                                        setState(() {
-                                          errorText =
-                                              'Mobile Number is Required';
-                                        });
-                                      } else if (mbl.length != 10) {
-                                        setState(() {
-                                          errorText =
-                                              'Mobile Number must be exactly 10 digits';
-                                        });
-                                      } else {
-                                        setState(() {
-                                          errorText = '';
-                                        });
-                                        widget.page == 'splash'
-                                            ? loginController.mobileNumberLogin(
-                                              mbl,
-                                            )
-                                            : loginController
-                                                .changeMobileNumber(mbl);
-                                      }
-                                    }
-                                  },
+                                  onTap:
+                                      loginController.isLoading.value
+                                          ? null
+                                          : () {
+                                            final String input =
+                                                mobileNumberController.text
+                                                    .trim(); // rename to emailController if email
+                                            if (widget.page == 'email') {
+                                              // Email validation
+                                              if (input.isEmpty) {
+                                                setState(() {
+                                                  errorText =
+                                                      'Email is required';
+                                                });
+                                              } else {
+                                                final emailRegex = RegExp(
+                                                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                                );
+                                                if (!emailRegex.hasMatch(
+                                                  input,
+                                                )) {
+                                                  setState(() {
+                                                    errorText =
+                                                        'Please enter a valid email';
+                                                  });
+                                                } else {
+                                                  setState(() {
+                                                    errorText = '';
+                                                  });
+                                                  // Call your controller method for email submission
+                                                  teacherListController
+                                                      .emailUpdate(
+                                                        context: context,
+                                                        showLoader: true,
+                                                        email: input,
+                                                      );
+                                                }
+                                              }
+                                            } else {
+                                              // Mobile number validation (existing logic)
+                                              final String mbl = input
+                                                  .replaceAll(' ', '');
+                                              if (mbl.isEmpty) {
+                                                setState(() {
+                                                  errorText =
+                                                      'Mobile Number is Required';
+                                                });
+                                              } else if (mbl.length != 10) {
+                                                setState(() {
+                                                  errorText =
+                                                      'Mobile Number must be exactly 10 digits';
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  errorText = '';
+                                                });
+                                                widget.page == 'splash'
+                                                    ? loginController
+                                                        .mobileNumberLogin(mbl)
+                                                    : loginController
+                                                        .changeMobileNumber(
+                                                          mbl,
+                                                        );
+                                              }
+                                            }
+                                          },
                                 );
                               }),
 

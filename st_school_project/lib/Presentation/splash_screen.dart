@@ -90,22 +90,79 @@ class _SplashScreenState extends State<SplashScreen>
       _showUpdateBottomSheet();
     }
   }
-
+  //
+  // void _checkLoginStatus() async {
+  //   if (!mounted) return;
+  //
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token');
+  //   final forceLogin = prefs.getBool('forceLoginOnRestart') ?? false;
+  //   if (forceLogin) {
+  //     // ✅ clear it so next time normal flow works
+  //     await prefs.remove('forceLoginOnRestart');
+  //
+  //     Get.offAll(() => ChangeMobileNumber(page: 'splash')); // ✅ your login screen
+  //     return;
+  //   }
+  //   if (token != null && token.isNotEmpty) {
+  //     final isApplicant = await loginController.checkTokenExpire();
+  //
+  //     if (isApplicant) {
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => const Admission1()),
+  //       );
+  //       // Already navigated inside getAdmissionDetails()
+  //       return;
+  //     }
+  //
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (_) => const CommonBottomNavigation(initialIndex: 0),
+  //       ),
+  //     );
+  //   } else {
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (_) => const ChangeMobileNumber(page: 'splash'),
+  //       ),
+  //     );
+  //   }
+  // }
   void _checkLoginStatus() async {
     if (!mounted) return;
 
     final prefs = await SharedPreferences.getInstance();
+
+    // ✅ 1) Force login after restart (when counter was shown before)
+    final forceLogin = prefs.getBool('forceLoginOnRestart') ?? false;
+    if (forceLogin) {
+      await prefs.remove('forceLoginOnRestart');
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const ChangeMobileNumber(page: 'splash'),
+        ),
+      );
+      return;
+    }
+
+    // ✅ 2) Normal flow
     final token = prefs.getString('token');
 
     if (token != null && token.isNotEmpty) {
       final isApplicant = await loginController.checkTokenExpire();
+      if (!mounted) return;
 
       if (isApplicant) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const Admission1()),
         );
-        // Already navigated inside getAdmissionDetails()
         return;
       }
 
@@ -124,65 +181,6 @@ class _SplashScreenState extends State<SplashScreen>
       );
     }
   }
-
-  // void _checkLoginStatus() async {
-  //   if (!mounted) return;
-  //
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final token = prefs.getString('token');
-  //
-  //   if (token != null && token.isNotEmpty) {
-  //     final isApplicant = await loginController.checkTokenExpire();
-  //
-  //     if (isApplicant) {
-  //       // Already navigated inside getAdmissionDetails()
-  //       return;
-  //     }
-  //
-  //     // Only navigate to CommonBottomNavigation if not applicant
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (_) => const CommonBottomNavigation(initialIndex: 0),
-  //       ),
-  //     );
-  //   } else {
-  //     // No token → navigate to login/change mobile
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (_) => const ChangeMobileNumber(page: 'splash'),
-  //       ),
-  //     );
-  //   }
-  // }
-
-  // void _checkLoginStatus() async {
-  //   if (!mounted) return;
-  //
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final token = prefs.getString('token');
-  //
-  //   if (token != null && token.isNotEmpty) {
-  //     await loginController.checkTokenExpire();
-  //
-  //
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (_) => const CommonBottomNavigation(initialIndex: 0),
-  //       ),
-  //     );
-  //   } else {
-  //     // No token → navigate to login/change mobile
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (_) => const ChangeMobileNumber(page: 'splash'),
-  //       ),
-  //     );
-  //   }
-  // }
 
   void openPlayStore() async {
     final storeUrl = controller.appVersionData.value?.android.storeUrl ?? '';
