@@ -216,6 +216,7 @@ class AdmissionController extends GetxController {
 
       await results.fold(
         (failure) async {
+          CustomSnackBar.showError(failure.message);
           isLoading.value = false;
           AppLogger.log.e(failure.message);
         },

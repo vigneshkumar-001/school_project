@@ -97,6 +97,9 @@ class Attendance {
 
 class Announcement {
   final bool newAdmissionStatus;
+  final bool new_testing_addmission_status;
+  final bool addmissionStatusTesting;
+
   final bool admissionStatus;
   final bool examStatus;
   final bool noticeBoardStatus;
@@ -107,6 +110,8 @@ class Announcement {
 
   Announcement({
     this.newAdmissionStatus = false,
+    this.new_testing_addmission_status = false,
+    this.addmissionStatusTesting = false,
     this.admissionStatus = false,
     this.examStatus = false,
     this.noticeBoardStatus = false,
@@ -119,6 +124,9 @@ class Announcement {
   factory Announcement.fromJson(Map<String, dynamic> json) {
     return Announcement(
       newAdmissionStatus: json['new_addmission_status'] == true,
+      new_testing_addmission_status:
+          json['new_testing_addmission_status'] == true,
+      addmissionStatusTesting: json['addmission_status_testing'] == true,
       admissionStatus: json['addmission_status'] == true,
       examStatus: json['exam_status'] == true,
       noticeBoardStatus: json['notice_board_status'] == true,
@@ -131,6 +139,8 @@ class Announcement {
 
   Map<String, dynamic> toJson() => {
     'new_addmission_status': newAdmissionStatus,
+    'new_testing_addmission_status': new_testing_addmission_status,
+    'addmission_status_testing': addmissionStatusTesting,
     'addmission_status': admissionStatus,
     'exam_status': examStatus,
     'notice_board_status': noticeBoardStatus,

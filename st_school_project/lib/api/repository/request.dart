@@ -80,7 +80,7 @@ class Request {
             ),
           )
           .timeout(
-            const Duration(seconds: 10),
+            const Duration(seconds: 15),
             onTimeout: () {
               throw TimeoutException("Request timed out after 10 seconds");
             },

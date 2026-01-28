@@ -2,6 +2,8 @@ class ApiUrl {
   // static String baseUrl = 'https://school-back-end-594f59bea6cb.herokuapp.com';
 
   static String baseUrl = 'https://backend.stjosephmatricschool.com';
+
+  // static String baseUrl = 'https://q29l3cr9-4000.inc1.devtunnels.ms';
   // static String baseUrl = 'http://192.168.29.18:3000';
 
   // static String baseUrl2 =
@@ -41,8 +43,7 @@ class ApiUrl {
     return '$baseUrl/admissions/my-apps?search=$admissionId';
   }
 
-  static String imageUrl =
-      "https://next.fenizotechnologies.com/Adrox/api/image-save";
+  static String imageUrl = baseUrl;
   static String attendance =
       '$baseUrl/teacher-student-attendance/mark-attendance';
   static String quizSubmit = '$baseUrl/student-quiz/submit';

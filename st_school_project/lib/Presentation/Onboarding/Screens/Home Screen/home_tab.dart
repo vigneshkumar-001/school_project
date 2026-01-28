@@ -631,7 +631,7 @@ class _HomeScreenState extends State<HomeTab>
                                                       ),
                                                       SizedBox(height: 3),
                                                       Text(
-                                                        'Afternon',
+                                                        'Afternoon',
                                                         style:
                                                             GoogleFont.ibmPlexSans(
                                                               fontSize: 10,
@@ -668,7 +668,7 @@ class _HomeScreenState extends State<HomeTab>
                                                   ),
                                                 ),
                                                 Text(
-                                                  'Attendence',
+                                                  'Attendance',
                                                   style: GoogleFont.ibmPlexSans(
                                                     fontSize: 18,
                                                     color: AppColor.white,
@@ -734,6 +734,94 @@ class _HomeScreenState extends State<HomeTab>
                                               ],
                                             ),
                                           ),
+
+                                          if (controller
+                                                  .studentHomeData
+                                                  .value
+                                                  ?.announcements[0]
+                                                  .new_testing_addmission_status ==
+                                              true) ...[
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (context) => Admission1(
+                                                          pages: 'homeScreen',
+                                                        ),
+                                                  ),
+                                                );
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    'Start Admission',
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color:
+                                                              AppColor
+                                                                  .lightGrey,
+                                                        ),
+                                                  ),
+                                                  SizedBox(width: 2),
+                                                  Image.asset(
+                                                    AppImages.rightArrow,
+                                                    height: 9,
+                                                    color: AppColor.lightGrey,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+
+                                          if (controller
+                                                  .studentHomeData
+                                                  .value
+                                                  ?.announcements[1]
+                                                  .addmissionStatusTesting ==
+                                              true) ...[
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (context) =>
+                                                            CheckAdmissionStatus(
+                                                              page:
+                                                                  'homeScreen',
+                                                            ),
+                                                  ),
+                                                );
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    'Check Admission Status',
+                                                    style:
+                                                        GoogleFont.ibmPlexSans(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color:
+                                                              AppColor
+                                                                  .lightGrey,
+                                                        ),
+                                                  ),
+                                                  SizedBox(width: 2),
+                                                  Image.asset(
+                                                    AppImages.rightArrow,
+                                                    height: 9,
+                                                    color: AppColor.lightGrey,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ],
                                       ),
                                       Positioned(
@@ -865,7 +953,6 @@ class _HomeScreenState extends State<HomeTab>
 
                                                       InkWell(
                                                         onTap: () {
-
                                                           final ann =
                                                               controller
                                                                   .studentHomeData
