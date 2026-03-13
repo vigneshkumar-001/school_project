@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
@@ -74,38 +75,32 @@ class _CommunicationScreenState extends State<CommunicationScreen> {
                             );
                           },
                         ),
-                        // InkWell(
-                        //   onTap: () {
-                        //     Navigator.pop(context);
-                        //   },
-                        //   child: Container(
-                        //     decoration: BoxDecoration(
-                        //       color: AppColor.lightGrey,
-                        //       border: Border.all(
-                        //         color: AppColor.lowLightBlue,
-                        //         width: 1,
-                        //       ),
-                        //       borderRadius: BorderRadius.circular(30),
-                        //     ),
-                        //     child: Padding(
-                        //       padding: const EdgeInsets.all(10),
-                        //       child: Image.asset(
-                        //         AppImages.leftArrow,
-                        //         height: 12,
-                        //         width: 12,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
+
                         SizedBox(width: 15),
-                        Text(
-                          '2025 - 2026 LKG Admission',
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColor.black,
-                          ),
-                        ),
+                        Obx(() {
+                          String year = controller.academicYear.value;
+                          String title = controller.admissionTitle.value;
+
+                          if (year.isEmpty && title.isEmpty) {
+                            return Text(
+                              "Admission",
+                              style: GoogleFonts.ibmPlexSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.black,
+                              ),
+                            );
+                          }
+
+                          return Text(
+                            "$year $title",
+                            style: GoogleFonts.ibmPlexSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.black,
+                            ),
+                          );
+                        }),
                       ],
                     ),
                     SizedBox(height: 30),

@@ -39,7 +39,8 @@ class AdmissionController extends GetxController {
 
   RxList<AdmissionData> admissionList = <AdmissionData>[].obs;
   RxList<StatusData> statusData = <StatusData>[].obs;
-
+  RxString admissionTitle = ''.obs;
+  RxString academicYear = ''.obs;
   final religionCasteData = Rxn<ReligionCasteData>();
   final classSectionResponse = Rxn<ClassSectionResponse>();
 
@@ -108,7 +109,12 @@ class AdmissionController extends GetxController {
       isBottomSheetLoading.value = false;
     }
   }
+  Future<void> loadAdmissionFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
 
+    admissionTitle.value = prefs.getString('admissionTitle') ?? '';
+    academicYear.value = prefs.getString('academicYear') ?? '';
+  }
   Future<void> fetchStates({required String country}) async {
     try {
       isBottomSheetLoading.value = true;
@@ -160,6 +166,18 @@ class AdmissionController extends GetxController {
           isLoading.value = false;
           admissionList.value = response.data;
           AppLogger.log.i("Fetched admission data successfully");
+          if (response.data.isNotEmpty) {
+            final first = response.data.first;
+
+            admissionTitle.value = first.title;
+            academicYear.value = first.academicYear;
+
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('admissionTitle', first.title);
+            await prefs.setString('academicYear', first.academicYear);
+          }
+
+          AppLogger.log.i("Fetched admission data successfully");
 
           // Convert JSON to model
         },
@@ -207,6 +225,7 @@ class AdmissionController extends GetxController {
 
   Future<String?> postAdmission1NextButton({
     required int id,
+
     String? sourcePage, // 👈 from Admission1.pages
   }) async {
     try {
@@ -500,7 +519,7 @@ class AdmissionController extends GetxController {
 
           AppLogger.log.i("Fetched class-section successfully");
           AppLogger.log.i("Parsed data: ${response.data}");
-          Get.to(RequiredPhotoScreens(id: id, pages: pages));
+          Get.to(SubmitTheAdmission(id: id, pages: pages));
           return '';
         },
       );
@@ -671,17 +690,14 @@ class AdmissionController extends GetxController {
         (response) async {
           AppLogger.log.i("Fetched admission data successfully");
 
-
-
           final currentStep = response.data?.step ?? 1;
           currentAdmission.value = response.data;
           final admissionID = prefs.getInt('admissionId') ?? 0;
           navigateToStep(currentStep, admissionId: admissionID ?? 0);
           fetchAndSetUserData();
 
-
           // navigateToStep(response.data?.step ?? 1, admissionId: admissionID);
-        return  response.data;
+          return response.data;
         },
       );
     } catch (e) {
@@ -727,9 +743,9 @@ class AdmissionController extends GetxController {
     2: ParentsInfoScreen(id: admissionId, pages: ''),
     3: SiblingsFormScreen(id: admissionId, page: ''),
     4: CommunicationScreen(id: admissionId, page: ''),
-    5: RequiredPhotoScreens(id: admissionId, pages: ''),
-    6: SubmitTheAdmission(id: admissionId, pages: ''),
-    7: CheckAdmissionStatus(showBackArrow: false), // or false, as intended
+    // 5: RequiredPhotoScreens(id: admissionId, pages: ''),
+    5: SubmitTheAdmission(id: admissionId, pages: ''),
+    6: CheckAdmissionStatus(showBackArrow: false), // or false, as intended
   };
   Future<void> fetchAndSetUserData() async {
     final profile = currentAdmission.value;

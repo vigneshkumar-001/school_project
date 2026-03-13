@@ -125,8 +125,8 @@ class Announcement {
     return Announcement(
       newAdmissionStatus: json['new_addmission_status'] == true,
       new_testing_addmission_status:
-          json['new_testing_addmission_status'] == true,
-      addmissionStatusTesting: json['addmission_status_testing'] == true,
+          json['dev_new_testing_addmission_status'] == true,
+      addmissionStatusTesting: json['dev_addmission_status_testing'] == true,
       admissionStatus: json['addmission_status'] == true,
       examStatus: json['exam_status'] == true,
       noticeBoardStatus: json['notice_board_status'] == true,
@@ -139,8 +139,8 @@ class Announcement {
 
   Map<String, dynamic> toJson() => {
     'new_addmission_status': newAdmissionStatus,
-    'new_testing_addmission_status': new_testing_addmission_status,
-    'addmission_status_testing': addmissionStatusTesting,
+    'dev_new_testing_addmission_status': new_testing_addmission_status,
+    'dev_addmission_status_testing': addmissionStatusTesting,
     'addmission_status': admissionStatus,
     'exam_status': examStatus,
     'notice_board_status': noticeBoardStatus,

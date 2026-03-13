@@ -58,7 +58,7 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
 
                           children: [
                             Text(
-                              "SJ${widget.admissionCode}",
+                              "SJM${widget.admissionCode}",
                               style: GoogleFont.ibmPlexSans(
                                 fontSize: 28,
                                 fontWeight: FontWeight.w700,

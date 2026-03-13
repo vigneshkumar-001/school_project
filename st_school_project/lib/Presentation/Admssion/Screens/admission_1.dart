@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -6,7 +7,6 @@ import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
-import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/student_info_screen.dart';
@@ -30,7 +30,6 @@ class _Admission1State extends State<Admission1> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     admissionController.getAdmissions();
   }
@@ -38,10 +37,10 @@ class _Admission1State extends State<Admission1> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+
     return WillPopScope(
       onWillPop: () async {
         if (widget.pages == 'otpScreen') {
-          // Back totally disable
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('You cannot go back from this screen.'),
@@ -59,40 +58,6 @@ class _Admission1State extends State<Admission1> {
         );
         return false;
       },
-      // onWillPop: () async {
-      //   // Check the current screen and decide whether to pop or not
-      //   if (widget.pages == 'homeScreen') {
-      //     Navigator.pop(context); // Close the screen if it's homeScreen
-      //     return false; // Prevent the default back button behavior
-      //   } else {
-      //     // Optionally, show a confirmation dialog if it's not the home screen
-      //     showDialog(
-      //       context: context,
-      //       builder: (BuildContext context) {
-      //         return AlertDialog(
-      //           title: Text('Are you sure?'),
-      //           content: Text('You will exit this screen.'),
-      //           actions: <Widget>[
-      //             TextButton(
-      //               onPressed: () {
-      //                 Navigator.of(context).pop();
-      //                 Navigator.pop(context); // Close the screen
-      //               },
-      //               child: Text('Yes'),
-      //             ),
-      //             TextButton(
-      //               onPressed: () {
-      //                 Navigator.of(context).pop(); // Close the dialog
-      //               },
-      //               child: Text('No'),
-      //             ),
-      //           ],
-      //         );
-      //       },
-      //     );
-      //     return false; // Prevent the default back button behavior
-      //   }
-      // },
       child: Scaffold(
         body: SafeArea(
           child: Obx(() {
@@ -109,19 +74,14 @@ class _Admission1State extends State<Admission1> {
 
             final admission = admissionList.first;
 
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 15,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            return ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+              children: [
+                Row(
                   children: [
                     CustomContainer.leftSaitArrow(
                       onTap: () {
                         if (widget.pages == 'otpScreen') {
-                          // 🔹 OTP la irundhu vandha – back illa
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
@@ -130,7 +90,6 @@ class _Admission1State extends State<Admission1> {
                             ),
                           );
                         } else {
-                          // 🔹 Vera yentha screen la irundhaalum – Home-ku
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
@@ -144,266 +103,225 @@ class _Admission1State extends State<Admission1> {
                         }
                       },
                     ),
+                  ],
+                ),
 
-                    // CustomContainer.leftSaitArrow(
-                    //   onTap: () {
-                    //     widget.pages == 'homeScreen'
-                    //         ? CommonBottomNavigation(initialIndex: 0)
-                    //         // Navigator.pop(context)
-                    //         : null;
-                    //   },
-                    // ),
-                    SizedBox(height: 16),
-                    Container(
-                      constraints: BoxConstraints(
-                        minHeight: screenHeight * 0.70,
-                      ),
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.network(
-                              admission.bannerUrl,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
+                const SizedBox(height: 16),
+
+                /// Banner Section
+                Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: CachedNetworkImage(
+                        imageUrl: admission.bannerUrl,
+                        width: double.infinity,
+                        height: screenHeight * 0.22,
+                        fit: BoxFit.cover,
+
+                        placeholder:
+                            (context, url) => Container(
                               height: screenHeight * 0.22,
+                              alignment: Alignment.center,
+                              child: const CircularProgressIndicator(),
+                            ),
+
+                        errorWidget:
+                            (context, url, error) => Container(
+                              height: screenHeight * 0.22,
+                              color: Colors.grey.shade300,
+                              alignment: Alignment.center,
+                              child: const Icon(Icons.broken_image, size: 40),
+                            ),
+                      ),
+                    ),
+
+                    Container(
+                      height: screenHeight * 0.22,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColor.blackG1.withOpacity(0.7),
+                            Colors.transparent,
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+
+                    Positioned(
+                      left: 30,
+                      top: 40,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Start',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 23,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.white,
                             ),
                           ),
-                          Container(
-                            height: screenHeight * 0.25,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  AppColor.blackG1.withOpacity(0.7),
-                                  AppColor.black.withOpacity(0.0),
-                                  Colors.transparent,
-                                ],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
+                          Text(
+                            admission.title,
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.white,
                             ),
                           ),
-                          Positioned(
-                            left: 30,
-                            top: 40,
-                            child: Column(
+                          Text(
+                            admission.academicYear,
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 27,
+                              fontWeight: FontWeight.w900,
+                              color: AppColor.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                /// Instructions Container
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [AppColor.lowLightBlueG1, AppColor.white],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        admission.introText,
+                        style: GoogleFont.ibmPlexSans(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          color: AppColor.lightBlack,
+                        ),
+                      ),
+
+                      const SizedBox(height: 15),
+
+                      ListView.builder(
+                        itemCount: admission.instructions.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Start',
+                                  "${index + 1}. ",
                                   style: GoogleFont.ibmPlexSans(
-                                    fontSize: 23,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColor.white,
+                                    fontSize: 12,
+                                    height: 1.5,
                                   ),
                                 ),
-                                Text(
-                                  admission.title,
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColor.white,
-                                  ),
-                                ),
-                                Text(
-                                  admission.academicYear,
-                                  style: GoogleFont.ibmPlexSans(
-                                    fontSize: 27,
-                                    fontWeight: FontWeight.w900,
-                                    color: AppColor.white,
+                                Expanded(
+                                  child: Text(
+                                    admission.instructions[index],
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 12,
+                                      height: 1.5,
+                                      color: AppColor.lightBlack,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                          Positioned(
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            top: screenHeight * 0.19,
-                            child: Container(
-                              padding: EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    AppColor.lowLightBlueG1,
-                                    AppColor.white,
-                                  ],
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                ),
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(20),
-                                  topLeft: Radius.circular(20),
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    // 'Instructions',
-                                    admission.introText,
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 18,
-                                      color: AppColor.lightBlack,
-                                    ),
-                                  ),
-                                  //   SizedBox(height: 10),
-                                  // if (admission.introText.isNotEmpty)
-                                  //   Text(
-                                  //     admission.introText,
-                                  //     style: GoogleFont.ibmPlexSans(
-                                  //       fontSize: 13,
-                                  //       height: 1.5,
-                                  //       color: AppColor.lightBlack,
-                                  //     ),
-                                  //   ),
-                                  SizedBox(height: 15),
-                                  ListView.builder(
-                                    itemCount: admission.instructions.length,
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) {
-                                      return Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 10.0,
-                                        ),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "${index + 1}. ",
-                                              style: GoogleFont.ibmPlexSans(
-                                                fontSize: 12,
-                                                height: 1.5,
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                admission.instructions[index],
-                                                style: GoogleFont.ibmPlexSans(
-                                                  fontSize: 12,
-                                                  height: 1.5,
-                                                  color: AppColor.lightBlack,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 15),
-
-                    // AppButton.button(
-                    //   onTap: () {
-                    //     final id = admissionController.admissionList[0].id;
-                    //     AppLogger.log.i(id);
-                    //     HapticFeedback.heavyImpact();
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         builder:
-                    //             (context) => StudentInfoScreen(admissionId: id),
-                    //       ),
-                    //     );
-                    //   },
-                    //   text:
-                    //       widget.pages == "otpScreen"
-                    //           ? 'Create New Admission'
-                    //           : 'Next Step',
-                    //   width: 250,
-                    //   image: AppImages.rightSaitArrow,
-                    // ),
-                    AppButton.button(
-                      onTap: () async {
-                        if (admissionController.admissionList.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('No admission record available'),
-                            ),
                           );
-                          return;
-                        }
-
-                        final id = admissionController.admissionList.first.id;
-                        if (id == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Invalid admission ID'),
-                            ),
-                          );
-                          return;
-                        }
-                        HapticFeedback.heavyImpact();
-
-                        await admissionController.postAdmission1NextButton(
-                          id: id,
-                        );
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (_) => StudentInfoScreen(admissionId: id,),
-                        //   ),
-                        // );
-                      },
-                      text:
-                          widget.pages == "otpScreen"
-                              ? 'Create New Admission'
-                              : 'Next Step',
-                      width: 250,
-                      image: AppImages.rightSaitArrow,
-                    ),
-
-                    if (widget.pages == "otpScreen")
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              HapticFeedback.heavyImpact();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CheckAdmissionStatus(),
-                                ),
-                              );
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 20.0,
-                              ),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    'Check Admission Status',
-                                    style: GoogleFont.ibmPlexSans(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColor.blueG2,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Image.asset(AppImages.rightArrow, height: 10),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                        },
                       ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+
+                const SizedBox(height: 20),
+
+                /// Button
+                AppButton.button(
+                  onTap: () async {
+                    if (admissionController.admissionList.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('No admission record available'),
+                        ),
+                      );
+                      return;
+                    }
+
+                    final id = admissionController.admissionList.first.id;
+
+                    if (id == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Invalid admission ID')),
+                      );
+                      return;
+                    }
+
+                    HapticFeedback.heavyImpact();
+
+                    await admissionController.postAdmission1NextButton(
+                      id: id,
+
+                    );
+                  },
+                  text:
+                      widget.pages == "otpScreen"
+                          ? 'Create New Admission'
+                          : 'Next Step',
+                  width: 250,
+                  image: AppImages.rightSaitArrow,
+                ),
+
+                /// Check Admission Status
+                if (widget.pages == "otpScreen")
+                  Center(
+                    child: InkWell(
+                      onTap: () {
+                        HapticFeedback.heavyImpact();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CheckAdmissionStatus(),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Check Admission Status',
+                              style: GoogleFont.ibmPlexSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: AppColor.blueG2,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Image.asset(AppImages.rightArrow, height: 10),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             );
           }),
         ),
@@ -411,3 +329,417 @@ class _Admission1State extends State<Admission1> {
     );
   }
 }
+
+// import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
+// import 'package:get/get.dart';
+// import 'package:st_school_project/Core/Utility/app_color.dart';
+// import 'package:st_school_project/Core/Utility/app_images.dart';
+// import 'package:st_school_project/Core/Utility/app_loader.dart';
+// import 'package:st_school_project/Core/Utility/google_font.dart';
+// import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
+// import 'package:st_school_project/Core/Widgets/consents.dart';
+// import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
+// import 'package:st_school_project/Core/Widgets/custom_container.dart';
+// import 'package:st_school_project/Presentation/Admssion/Screens/student_info_screen.dart';
+//
+// import '../../../noDataFound_screen.dart';
+// import '../Controller/admission_controller.dart';
+// import 'check_admission_status.dart';
+//
+// class Admission1 extends StatefulWidget {
+//   final String? pages;
+//   const Admission1({super.key, this.pages});
+//
+//   @override
+//   State<Admission1> createState() => _Admission1State();
+// }
+//
+// class _Admission1State extends State<Admission1> {
+//   final AdmissionController admissionController = Get.put(
+//     AdmissionController(),
+//   );
+//
+//   @override
+//   void initState() {
+//     // TODO: implement initState
+//     super.initState();
+//     admissionController.getAdmissions();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final screenHeight = MediaQuery.of(context).size.height;
+//     return WillPopScope(
+//       onWillPop: () async {
+//         if (widget.pages == 'otpScreen') {
+//           // Back totally disable
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             const SnackBar(
+//               content: Text('You cannot go back from this screen.'),
+//             ),
+//           );
+//           return false;
+//         }
+//
+//         Navigator.pushAndRemoveUntil(
+//           context,
+//           MaterialPageRoute(
+//             builder: (_) => const CommonBottomNavigation(initialIndex: 0),
+//           ),
+//           (route) => false,
+//         );
+//         return false;
+//       },
+//       // onWillPop: () async {
+//       //   // Check the current screen and decide whether to pop or not
+//       //   if (widget.pages == 'homeScreen') {
+//       //     Navigator.pop(context); // Close the screen if it's homeScreen
+//       //     return false; // Prevent the default back button behavior
+//       //   } else {
+//       //     // Optionally, show a confirmation dialog if it's not the home screen
+//       //     showDialog(
+//       //       context: context,
+//       //       builder: (BuildContext context) {
+//       //         return AlertDialog(
+//       //           title: Text('Are you sure?'),
+//       //           content: Text('You will exit this screen.'),
+//       //           actions: <Widget>[
+//       //             TextButton(
+//       //               onPressed: () {
+//       //                 Navigator.of(context).pop();
+//       //                 Navigator.pop(context); // Close the screen
+//       //               },
+//       //               child: Text('Yes'),
+//       //             ),
+//       //             TextButton(
+//       //               onPressed: () {
+//       //                 Navigator.of(context).pop(); // Close the dialog
+//       //               },
+//       //               child: Text('No'),
+//       //             ),
+//       //           ],
+//       //         );
+//       //       },
+//       //     );
+//       //     return false; // Prevent the default back button behavior
+//       //   }
+//       // },
+//       child: Scaffold(
+//         body: SafeArea(
+//           child: Obx(() {
+//             final isLoading = admissionController.isLoading.value;
+//             final admissionList = admissionController.admissionList;
+//
+//             if (isLoading) {
+//               return Center(child: AppLoader.circularLoader());
+//             }
+//
+//             if (admissionList.isEmpty) {
+//               return NoDataFoundScreen(page: widget.pages ?? '');
+//             }
+//
+//             final admission = admissionList.first;
+//
+//             return SingleChildScrollView(
+//               child: Padding(
+//                 padding: const EdgeInsets.symmetric(
+//                   horizontal: 16.0,
+//                   vertical: 15,
+//                 ),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     CustomContainer.leftSaitArrow(
+//                       onTap: () {
+//                         if (widget.pages == 'otpScreen') {
+//                           // 🔹 OTP la irundhu vandha – back illa
+//                           ScaffoldMessenger.of(context).showSnackBar(
+//                             const SnackBar(
+//                               content: Text(
+//                                 'You cannot go back from this screen.',
+//                               ),
+//                             ),
+//                           );
+//                         } else {
+//                           // 🔹 Vera yentha screen la irundhaalum – Home-ku
+//                           Navigator.pushAndRemoveUntil(
+//                             context,
+//                             MaterialPageRoute(
+//                               builder:
+//                                   (_) => const CommonBottomNavigation(
+//                                     initialIndex: 0,
+//                                   ),
+//                             ),
+//                             (route) => false,
+//                           );
+//                         }
+//                       },
+//                     ),
+//
+//                     // CustomContainer.leftSaitArrow(
+//                     //   onTap: () {
+//                     //     widget.pages == 'homeScreen'
+//                     //         ? CommonBottomNavigation(initialIndex: 0)
+//                     //         // Navigator.pop(context)
+//                     //         : null;
+//                     //   },
+//                     // ),
+//                     SizedBox(height: 16),
+//                     Container(
+//                       constraints: BoxConstraints(
+//                         minHeight: screenHeight * 0.70,
+//                       ),
+//                       child: Stack(
+//                         children: [
+//                           ClipRRect(
+//                             borderRadius: BorderRadius.circular(20),
+//                             child: Image.network(
+//                               admission.bannerUrl,
+//                               fit: BoxFit.cover,
+//                               width: double.infinity,
+//                               height: screenHeight * 0.22,
+//                             ),
+//                           ),
+//                           Container(
+//                             height: screenHeight * 0.25,
+//                             decoration: BoxDecoration(
+//                               gradient: LinearGradient(
+//                                 colors: [
+//                                   AppColor.blackG1.withOpacity(0.7),
+//                                   AppColor.black.withOpacity(0.0),
+//                                   Colors.transparent,
+//                                 ],
+//                                 begin: Alignment.centerLeft,
+//                                 end: Alignment.centerRight,
+//                               ),
+//                               borderRadius: BorderRadius.circular(20),
+//                             ),
+//                           ),
+//                           Positioned(
+//                             left: 30,
+//                             top: 40,
+//                             child: Column(
+//                               crossAxisAlignment: CrossAxisAlignment.start,
+//                               children: [
+//                                 Text(
+//                                   'Start',
+//                                   style: GoogleFont.ibmPlexSans(
+//                                     fontSize: 23,
+//                                     fontWeight: FontWeight.w600,
+//                                     color: AppColor.white,
+//                                   ),
+//                                 ),
+//                                 Text(
+//                                   admission.title,
+//                                   style: GoogleFont.ibmPlexSans(
+//                                     fontSize: 25,
+//                                     fontWeight: FontWeight.w600,
+//                                     color: AppColor.white,
+//                                   ),
+//                                 ),
+//                                 Text(
+//                                   admission.academicYear,
+//                                   style: GoogleFont.ibmPlexSans(
+//                                     fontSize: 27,
+//                                     fontWeight: FontWeight.w900,
+//                                     color: AppColor.white,
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                           Positioned(
+//                             left: 0,
+//                             right: 0,
+//                             bottom: 0,
+//                             top: screenHeight * 0.19,
+//                             child: Container(
+//                               padding: EdgeInsets.all(16),
+//                               decoration: BoxDecoration(
+//                                 gradient: LinearGradient(
+//                                   colors: [
+//                                     AppColor.lowLightBlueG1,
+//                                     AppColor.white,
+//                                   ],
+//                                   begin: Alignment.topCenter,
+//                                   end: Alignment.bottomCenter,
+//                                 ),
+//                                 borderRadius: BorderRadius.only(
+//                                   topRight: Radius.circular(20),
+//                                   topLeft: Radius.circular(20),
+//                                 ),
+//                               ),
+//                               child: Column(
+//                                 crossAxisAlignment: CrossAxisAlignment.start,
+//                                 children: [
+//                                   Text(
+//                                     // 'Instructions',
+//                                     admission.introText,
+//                                     style: GoogleFont.ibmPlexSans(
+//                                       fontWeight: FontWeight.w600,
+//                                       fontSize: 18,
+//                                       color: AppColor.lightBlack,
+//                                     ),
+//                                   ),
+//                                   //   SizedBox(height: 10),
+//                                   // if (admission.introText.isNotEmpty)
+//                                   //   Text(
+//                                   //     admission.introText,
+//                                   //     style: GoogleFont.ibmPlexSans(
+//                                   //       fontSize: 13,
+//                                   //       height: 1.5,
+//                                   //       color: AppColor.lightBlack,
+//                                   //     ),
+//                                   //   ),
+//                                   SizedBox(height: 15),
+//                                   ListView.builder(
+//                                     itemCount: admission.instructions.length,
+//                                     shrinkWrap: true,
+//                                     physics: NeverScrollableScrollPhysics(),
+//                                     itemBuilder: (context, index) {
+//                                       return Padding(
+//                                         padding: EdgeInsets.symmetric(
+//                                           vertical: 10.0,
+//                                         ),
+//                                         child: Row(
+//                                           crossAxisAlignment:
+//                                               CrossAxisAlignment.start,
+//                                           children: [
+//                                             Text(
+//                                               "${index + 1}. ",
+//                                               style: GoogleFont.ibmPlexSans(
+//                                                 fontSize: 12,
+//                                                 height: 1.5,
+//                                               ),
+//                                             ),
+//                                             Expanded(
+//                                               child: Text(
+//                                                 admission.instructions[index],
+//                                                 style: GoogleFont.ibmPlexSans(
+//                                                   fontSize: 12,
+//                                                   height: 1.5,
+//                                                   color: AppColor.lightBlack,
+//                                                 ),
+//                                               ),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                       );
+//                                     },
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                     SizedBox(height: 15),
+//
+//                     // AppButton.button(
+//                     //   onTap: () {
+//                     //     final id = admissionController.admissionList[0].id;
+//                     //     AppLogger.log.i(id);
+//                     //     HapticFeedback.heavyImpact();
+//                     //     Navigator.push(
+//                     //       context,
+//                     //       MaterialPageRoute(
+//                     //         builder:
+//                     //             (context) => StudentInfoScreen(admissionId: id),
+//                     //       ),
+//                     //     );
+//                     //   },
+//                     //   text:
+//                     //       widget.pages == "otpScreen"
+//                     //           ? 'Create New Admission'
+//                     //           : 'Next Step',
+//                     //   width: 250,
+//                     //   image: AppImages.rightSaitArrow,
+//                     // ),
+//                     AppButton.button(
+//                       onTap: () async {
+//                         if (admissionController.admissionList.isEmpty) {
+//                           ScaffoldMessenger.of(context).showSnackBar(
+//                             const SnackBar(
+//                               content: Text('No admission record available'),
+//                             ),
+//                           );
+//                           return;
+//                         }
+//
+//                         final id = admissionController.admissionList.first.id;
+//                         if (id == null) {
+//                           ScaffoldMessenger.of(context).showSnackBar(
+//                             const SnackBar(
+//                               content: Text('Invalid admission ID'),
+//                             ),
+//                           );
+//                           return;
+//                         }
+//                         HapticFeedback.heavyImpact();
+//
+//                         await admissionController.postAdmission1NextButton(
+//                           id: id,
+//                         );
+//                         // Navigator.push(
+//                         //   context,
+//                         //   MaterialPageRoute(
+//                         //     builder: (_) => StudentInfoScreen(admissionId: id,),
+//                         //   ),
+//                         // );
+//                       },
+//                       text:
+//                           widget.pages == "otpScreen"
+//                               ? 'Create New Admission'
+//                               : 'Next Step',
+//                       width: 250,
+//                       image: AppImages.rightSaitArrow,
+//                     ),
+//
+//                     if (widget.pages == "otpScreen")
+//                       Row(
+//                         mainAxisAlignment: MainAxisAlignment.center,
+//                         children: [
+//                           InkWell(
+//                             onTap: () {
+//                               HapticFeedback.heavyImpact();
+//                               Navigator.push(
+//                                 context,
+//                                 MaterialPageRoute(
+//                                   builder: (context) => CheckAdmissionStatus(),
+//                                 ),
+//                               );
+//                             },
+//                             child: Padding(
+//                               padding: const EdgeInsets.symmetric(
+//                                 vertical: 20.0,
+//                               ),
+//                               child: Row(
+//                                 children: [
+//                                   Text(
+//                                     'Check Admission Status',
+//                                     style: GoogleFont.ibmPlexSans(
+//                                       fontSize: 16,
+//                                       fontWeight: FontWeight.w500,
+//                                       color: AppColor.blueG2,
+//                                     ),
+//                                   ),
+//                                   SizedBox(width: 10),
+//                                   Image.asset(AppImages.rightArrow, height: 10),
+//                                 ],
+//                               ),
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                   ],
+//                 ),
+//               ),
+//             );
+//           }),
+//         ),
+//       ),
+//     );
+//   }
+// }

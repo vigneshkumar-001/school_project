@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
@@ -394,14 +395,30 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                       ),
 
                       SizedBox(width: 15),
-                      Text(
-                        '2025 - 2026 LKG Admission',
-                        style: GoogleFont.ibmPlexSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.black,
-                        ),
-                      ),
+                      Obx(() {
+                        String year = ctrl.academicYear.value;
+                        String title = ctrl.admissionTitle.value;
+
+                        if (year.isEmpty && title.isEmpty) {
+                          return Text(
+                            "Admission",
+                            style: GoogleFonts.ibmPlexSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.black,
+                            ),
+                          );
+                        }
+
+                        return Text(
+                          "$year $title",
+                          style: GoogleFonts.ibmPlexSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.black,
+                          ),
+                        );
+                      }),
                     ],
                   ),
                   const SizedBox(height: 30),
@@ -879,8 +896,6 @@ class _ParentsInfoScreenState extends State<ParentsInfoScreen> {
                                     );
                                     return;
                                   }
-
-
                                 } else {
                                   // Guardian case
                                   if (_isGuardianFormInvalid()) {

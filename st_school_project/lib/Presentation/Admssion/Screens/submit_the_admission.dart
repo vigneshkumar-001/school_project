@@ -1,14 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 import 'package:st_school_project/Core/Utility/app_color.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
+import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Presentation/Admssion/Controller/admission_controller.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/check_admission_status.dart';
+import 'package:st_school_project/Presentation/Admssion/Screens/communication_screen.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/required_photo_screens.dart';
 import 'admission_payment_success.dart';
 
@@ -23,6 +27,7 @@ class SubmitTheAdmission extends StatefulWidget {
 
 class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
   final AdmissionController controller = Get.put(AdmissionController());
+
   bool isChecked = false;
   bool showError = false;
 
@@ -70,16 +75,223 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     return WillPopScope(
       onWillPop: () async {
         final prefs = await SharedPreferences.getInstance();
         final admissionId = prefs.getInt('admissionId') ?? 0;
-        Get.off(RequiredPhotoScreens(id: admissionId, pages: widget.pages));
+        Get.off(CommunicationScreen(id: admissionId, page: widget.pages));
         return false;
       },
       child: Scaffold(
         body: SafeArea(
-          child: SingleChildScrollView(
+          child: Obx(() {
+            final isLoading = controller.isLoading.value;
+            final admissionList = controller.admissionList;
+
+            if (isLoading) {
+              return Center(child: AppLoader.circularLoader());
+            }
+
+            final admission = admissionList.first;
+
+            return ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+              children: [
+                Row(
+                  children: [
+                    CustomContainer.leftSaitArrow(
+                      onTap: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        final admissionId = prefs.getInt('admissionId') ?? 0;
+                        Get.off(
+                          CommunicationScreen(
+                            id: admissionId,
+                            page: widget.pages,
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 15),
+                    Obx(() {
+                      String year = controller.academicYear.value;
+                      String title = controller.admissionTitle.value;
+
+                      if (year.isEmpty && title.isEmpty) {
+                        return Text(
+                          "Admission",
+                          style: GoogleFonts.ibmPlexSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.black,
+                          ),
+                        );
+                      }
+
+                      return Text(
+                        "$year $title",
+                        style: GoogleFonts.ibmPlexSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.black,
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+
+                const SizedBox(height: 30),
+                LinearProgressIndicator(
+                  minHeight: 6,
+                  value: 1,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColor.blue),
+                  backgroundColor: AppColor.lowGery1,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Submit the Admission',
+                  style: GoogleFont.ibmPlexSans(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 26,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                /// Instructions Container
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColor.lowGreen,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        admission.introText,
+                        style: GoogleFont.ibmPlexSans(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          color: AppColor.lightBlack,
+                        ),
+                      ),
+
+                      const SizedBox(height: 15),
+
+                      ListView.builder(
+                        itemCount: admission.instructions.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${index + 1}. ",
+                                  style: GoogleFont.ibmPlexSans(
+                                    fontSize: 12,
+                                    height: 1.5,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    admission.instructions[index],
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 12,
+                                      height: 1.5,
+                                      color: AppColor.lightBlack,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+                Obx(() {
+                  final apiConsent =
+                      controller.currentAdmission.value?.consentAccepted ??
+                      false;
+
+                  // API says consent already given → show prechecked and disabled
+                  if (apiConsent) {
+                    return CustomContainer.tickContainer(
+                      isChecked: true,
+                      borderColor: AppColor.blue,
+                      onTap: () {}, // disable tapping
+                      text:
+                          'I have read and understood the instructions furnished above',
+                    );
+                  }
+
+                  // API no consent yet → user must check
+                  return CustomContainer.tickContainer(
+                    isChecked: isChecked,
+                    borderColor:
+                        showError
+                            ? AppColor.lightRed
+                            : isChecked
+                            ? AppColor.blue
+                            : AppColor.lowLightBlue,
+                    onTap: () {
+                      setState(() {
+                        isChecked = !isChecked;
+                        showError = !isChecked;
+                      });
+                    },
+                    text:
+                        'I have read and understood the instructions furnished above',
+                  );
+                }),
+
+                if (showError)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      "Please accept before continuing",
+                      style: TextStyle(color: AppColor.lightRed, fontSize: 13),
+                    ),
+                  ),
+
+                const SizedBox(height: 38),
+
+                /// Button
+                Obx(
+                  () => AppButton.button(
+                    loader:
+                        controller.isLoading.value
+                            ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
+                            )
+                            : null,
+                    text: 'Pay for Admission Form',
+                    image: AppImages.rightSaitArrow,
+                    width: 250,
+                    // onTap: (){
+                    //   Navigator.push(context, MaterialPageRoute(builder: (context)=>CheckAdmissionStatus()));
+                    // }
+                    onTap:
+                        controller.isLoading.value ? null : validateAndSubmit,
+                  ),
+                ),
+              ],
+            );
+          }),
+
+          /*SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,10 +478,9 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
                 ),
               ],
             ),
-          ),
+          ),*/
         ),
       ),
     );
   }
 }
-
