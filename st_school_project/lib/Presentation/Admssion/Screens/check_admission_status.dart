@@ -218,6 +218,7 @@ class _CheckAdmissionStatusState extends State<CheckAdmissionStatus> {
                           return Column(
                             children: [
                               CustomContainer.myadmissions(
+                                copyUrl:data.viewUrl.toString() ?? '',
                                 imagepath: imagePath,
                                 trailing:
                                     isApproved

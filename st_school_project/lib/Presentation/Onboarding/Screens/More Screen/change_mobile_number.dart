@@ -6,6 +6,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
@@ -83,6 +84,11 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
   void dispose() {
     mobileNumberController.dispose();
     super.dispose();
+  }
+
+  Future<void> _openFenizoWebsite() async {
+    final Uri url = Uri.parse('https://www.fenizotechnologies.com/');
+    await launchUrl(url, mode: LaunchMode.externalApplication);
   }
 
   @override
@@ -708,51 +714,6 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                                         ),
                                       ),
 
-                                      /*  CarouselSlider(
-                              items:
-                                  images.map((imagePath) {
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.asset(
-                                        imagePath,
-                                        fit: BoxFit.cover,
-                                        width: 265,
-                                      ),
-                                    );
-                                  }).toList(),
-                              options: CarouselOptions(
-                                height: 120,
-                                autoPlayInterval: Duration(seconds: 3),
-                                viewportFraction: 0.75,   // 👈 two images fit in one view
-                                enlargeCenterPage: false, // 👈 no zoom on center image
-                                disableCenter: true,      // 👈 removes centering
-                                autoPlay: true,
-                                // viewportFraction: 0.70,
-                                // enlargeCenterPage: false,
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            CarouselSlider(
-                              items:
-                                  images1.map((imagePath) {
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(15),
-                                      child: Image.asset(
-                                        imagePath,
-                                        fit: BoxFit.cover,
-                                        width: 320,
-                                      ),
-                                    );
-                                  }).toList(),
-                              options: CarouselOptions(
-                                height: 115,
-                                autoPlay: true,
-                                autoPlayInterval: Duration(seconds: 3),
-                                viewportFraction: 0.85,
-                                enlargeCenterPage: false,
-                                reverse: true,
-                              ),
-                            ),*/
                                       SizedBox(height: 25),
                                     ],
                                   ],
@@ -771,6 +732,74 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                             ],
                           )
                           : Container(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 5,
+                          horizontal: 15,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: InkWell(
+                                onTap: _openFenizoWebsite,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Developed by',
+                                      style: GoogleFont.inter(
+                                        fontSize: 11,
+                                        color: AppColor.grey,
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Fenizo ',
+                                          style: GoogleFont.inter(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.blue,
+                                          ),
+                                        ),
+                                        Image.asset(
+                                          AppImages.rightArrow,
+                                          height: 10,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'Marketed by',
+                                    textAlign: TextAlign.right,
+                                    style: GoogleFont.inter(
+                                      fontSize: 11,
+                                      color: AppColor.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Suviinfotech',
+                                    textAlign: TextAlign.right,
+                                    style: GoogleFont.inter(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColor.lightBlack,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -781,299 +810,4 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
       ),
     );
   }
-
-  /*  Widget build(BuildContext context) {
-    bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
-
-    return Scaffold(
-      backgroundColor: AppColor.white,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 10,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 10),
-                    if (widget.page == 'splash') ...[
-                      Image.asset(AppImages.schoolLogo),
-                      const SizedBox(height: 30),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        child: Text(
-                          'Enter Mobile Number',
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600,
-                            color: AppColor.lightBlack,
-                          ),
-                        ),
-                      ),
-                    ] else ...[
-                      CustomContainer.leftSaitArrow(
-                        onTap: () => Navigator.pop(context),
-                      ),
-                      const SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        child: Text(
-                          'Change to New Mobile Number',
-                          style: GoogleFont.ibmPlexSans(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600,
-                            color: AppColor.lightBlack,
-                          ),
-                        ),
-                      ),
-                    ],
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 11,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColor.lightGrey,
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(
-                          color:
-                              mobileNumberController.text.isNotEmpty
-                                  ? AppColor.black
-                                  : AppColor.lightGrey,
-                          width: mobileNumberController.text.isNotEmpty ? 2 : 1,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '+91',
-                                style: GoogleFont.inter(
-                                  fontSize: 14,
-                                  color: AppColor.grey,
-                                ),
-                              ),
-                              Text(
-                                'India',
-                                style: GoogleFont.inter(
-                                  fontSize: 10,
-                                  color: AppColor.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: 10),
-                          SizedBox(height: 35, child: VerticalDivider()),
-                          SizedBox(width: 10),
-                          Expanded(
-                            flex: 9,
-                            child: TextFormField(
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              controller: mobileNumberController,
-                              keyboardType: TextInputType.phone,
-                              style: GoogleFont.inter(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 20,
-                              ),
-                              maxLength: 12,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-                              onChanged: (value) {
-                                _formatPhoneNumber(value);
-                                setState(() {});
-                              },
-                              decoration: InputDecoration(
-                                counterText: '',
-                                hintText: '9000 000 000',
-                                hintStyle: GoogleFont.inter(
-                                  color: AppColor.grayop,
-                                  fontSize: 20,
-                                ),
-                                border: InputBorder.none,
-                                suffixIcon:
-                                    mobileNumberController.text.isNotEmpty
-                                        ? GestureDetector(
-                                          onTap: () {
-                                            mobileNumberController.clear();
-                                            setState(() {});
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 12,
-                                              right: 8,
-                                            ),
-                                            child: Text(
-                                              'Clear',
-                                              style: GoogleFont.ibmPlexSans(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: AppColor.grayop,
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                        : null,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 12.0, top: 4),
-                      child: Align(
-                        alignment: Alignment.topRight,
-                        child: Text(
-                          errorText,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Obx(() {
-                      return AppButton.button(
-                        text: 'Get OTP',
-                        loader:
-                            loginController.isLoading.value
-                                ? SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                                : null,
-                        width: double.infinity,
-                        onTap: () {
-                          final String mbl = mobileNumberController.text
-                              .replaceAll(' ', '');
-                          if (mbl.isEmpty) {
-                            setState(() {
-                              errorText = 'Mobile Number is Required';
-                            });
-                          } else if (mbl.length != 10) {
-                            setState(() {
-                              errorText =
-                                  'Mobile Number must be exactly 10 digits';
-                            });
-                          } else {
-                            setState(() {
-                              errorText = '';
-                            });
-
-                            */ /*7904005315*/ /*
-                            */ /*9894143252*/ /*
-                            widget.page == 'splash'
-                                ? loginController.mobileNumberLogin(mbl)
-                                : loginController.changeMobileNumber(mbl);
-                            // Get.to(
-                            //   OtpScreen(mobileNumber: mbl, pages: 'splash'),
-                            // );
-                          }
-                        },
-                      );
-                    }),
-                  ],
-                ),
-              ),
-            ),
-
-            widget.page == 'splash'
-                ? Stack(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 43),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [AppColor.splash, Colors.white],
-                        ),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(25),
-                          topRight: Radius.circular(25),
-                        ),
-                      ),
-                      padding: EdgeInsets.only(top: 40),
-                      child: Column(
-                        children: [
-                          if (!isKeyboardOpen) ...[
-                            CarouselSlider(
-                              items:
-                                  images.map((imagePath) {
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.asset(
-                                        imagePath,
-                                        fit: BoxFit.cover,
-                                        width: 265,
-                                      ),
-                                    );
-                                  }).toList(),
-                              options: CarouselOptions(
-                                height: 120,
-                                autoPlayInterval: Duration(seconds: 3),
-                                autoPlay: true,
-                                viewportFraction: 0.7,
-                                enlargeCenterPage: false,
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            CarouselSlider(
-                              items:
-                                  images1.map((imagePath) {
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(15),
-                                      child: Image.asset(
-                                        imagePath,
-                                        fit: BoxFit.cover,
-                                        width: 265,
-                                      ),
-                                    );
-                                  }).toList(),
-                              options: CarouselOptions(
-                                height: 120,
-                                autoPlay: true,
-                                autoPlayInterval: Duration(seconds: 3),
-                                viewportFraction: 0.7,
-                                enlargeCenterPage: false,
-                                reverse: true,
-                              ),
-                            ),
-                            SizedBox(height: 25),
-                          ],
-                        ],
-                      ),
-                    ),
-
-                    Positioned(
-                      top: 0,
-                      right: 15,
-                      child: CustomTextField.textWithSmall(
-                        text: 'We Are',
-                        color: AppColor.weAreColor,
-                        fontSize: 47,
-                      ),
-                    ),
-                  ],
-                )
-                : Container(),
-          ],
-        ),
-      ),
-    );
-  }*/
 }

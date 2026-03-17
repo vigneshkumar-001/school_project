@@ -43,6 +43,7 @@ class AdmissionController extends GetxController {
   RxString academicYear = ''.obs;
   final religionCasteData = Rxn<ReligionCasteData>();
   final classSectionResponse = Rxn<ClassSectionResponse>();
+  final RxString submitErrorMessage = ''.obs;
 
   final isParentsSaving = false.obs;
   final studentId = 0;
@@ -109,12 +110,14 @@ class AdmissionController extends GetxController {
       isBottomSheetLoading.value = false;
     }
   }
+
   Future<void> loadAdmissionFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
 
     admissionTitle.value = prefs.getString('admissionTitle') ?? '';
     academicYear.value = prefs.getString('academicYear') ?? '';
   }
+
   Future<void> fetchStates({required String country}) async {
     try {
       isBottomSheetLoading.value = true;
@@ -164,6 +167,7 @@ class AdmissionController extends GetxController {
         },
         (response) async {
           isLoading.value = false;
+          submitErrorMessage.value = '';
           admissionList.value = response.data;
           AppLogger.log.i("Fetched admission data successfully");
           if (response.data.isNotEmpty) {
@@ -245,7 +249,6 @@ class AdmissionController extends GetxController {
           AppLogger.log.i("Next button success for ID: $newId");
 
           await prefs.setInt('admissionId', newId);
-          await getAdmissionDetails(id: newId);
 
           isLoading.value = false;
 
@@ -525,6 +528,7 @@ class AdmissionController extends GetxController {
       );
     } catch (e) {
       isLoading.value = false;
+      submitErrorMessage.value = 'Something went wrong. Please try again.';
       AppLogger.log.e(e);
       return '';
     }
@@ -575,12 +579,13 @@ class AdmissionController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
+      submitErrorMessage.value = '';
 
       final results = await apiDataSource.submit(isChecked: isChecked, id: id);
 
       results.fold(
         (failure) {
-          CustomSnackBar.showError(failure.message);
+          submitErrorMessage.value = failure.message;
           isLoading.value = false;
           AppLogger.log.e(failure.message);
           return '';
@@ -600,6 +605,7 @@ class AdmissionController extends GetxController {
 
           if (paymentResult != null && paymentResult["status"] == "success") {
             isLoading.value = false;
+            submitErrorMessage.value = '';
             // Navigate to your custom success page
             Get.to(
               AdmissionPaymentSuccess(
@@ -609,8 +615,8 @@ class AdmissionController extends GetxController {
             );
           } else {
             isLoading.value = false;
-            // Handle failure/cancel
-            CustomSnackBar.showError("Payment failed or cancelled!");
+            submitErrorMessage.value = '';
+            CustomSnackBar.showError('Payment failed or cancelled!');
           }
 
           AppLogger.log.i(
@@ -690,10 +696,7 @@ class AdmissionController extends GetxController {
         (response) async {
           AppLogger.log.i("Fetched admission data successfully");
 
-          final currentStep = response.data?.step ?? 1;
           currentAdmission.value = response.data;
-          final admissionID = prefs.getInt('admissionId') ?? 0;
-          navigateToStep(currentStep, admissionId: admissionID ?? 0);
           fetchAndSetUserData();
 
           // navigateToStep(response.data?.step ?? 1, admissionId: admissionID);

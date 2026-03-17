@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -10,6 +8,7 @@ import 'Core/Firebase_service/firebase_service.dart';
 import 'Core/Widgets/consents.dart';
 import 'Presentation/splash_screen.dart';
 import 'Core/Utility/app_color.dart';
+import 'Core/Utility/snack_bar.dart';
 import 'init_controller.dart';
 
 // TOP-LEVEL handler (outside any class)
@@ -27,8 +26,8 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   final firebaseService = FirebaseService();
-  await firebaseService.initializeFirebase();      // no BG registration inside
-  await firebaseService.fetchFCMTokenIfNeeded();   // has retry below
+  await firebaseService.initializeFirebase(); // no BG registration inside
+  await firebaseService.fetchFCMTokenIfNeeded(); // has retry below
 
   runApp(const MyApp());
 
@@ -45,13 +44,15 @@ Future<void> main() async {
     );
   });
 
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: AppColor.white,
-    statusBarIconBrightness: Brightness.dark,
-    statusBarBrightness: Brightness.light,
-    systemNavigationBarColor: AppColor.white,
-    systemNavigationBarIconBrightness: Brightness.dark,
-  ));
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: AppColor.white,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+      systemNavigationBarColor: AppColor.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -59,6 +60,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      scaffoldMessengerKey: CustomSnackBar.scaffoldMessengerKey,
       theme: ThemeData(scaffoldBackgroundColor: AppColor.white),
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),

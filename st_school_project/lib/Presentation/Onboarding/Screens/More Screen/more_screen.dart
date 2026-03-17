@@ -1,4 +1,5 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:math' as math;
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
@@ -821,12 +822,37 @@ class _MoreScreenState extends State<MoreScreen>
                       child: ListTile(
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(20),
-                          child: Image.network(
-                            data?.student_image.toString() ?? '',
-                            height: 55,
-                            fit: BoxFit.cover,
-                            width: 55,
-                          ),
+                          child:  CachedNetworkImage(
+                                            imageUrl:     data?.student_image.toString() ?? '',
+                                               height: 55,
+                                                  width: 55,
+                                                fit: BoxFit.cover,
+
+                                                placeholder: (context, url) =>
+                                                    Container(
+                                                      width: 310,
+                                                      height: 230,
+                                                      color: Colors.grey[300],
+                                                      child: Center(
+                                                        child:
+                                                            CircularProgressIndicator(),
+                                                      ),
+                                                    ),
+                                                // The errorWidget is shown if the image fails to load
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Container(
+                                                          width: 310,
+                                                          height: 230,
+                                                          color:
+                                                              Colors.grey[300],
+                                                          child: const Icon(
+                                                            Icons.broken_image,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
+                                              ),                          
+                        
                         ),
 
                         title: Column(

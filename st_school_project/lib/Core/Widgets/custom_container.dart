@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:st_school_project/Core/Utility/snack_bar.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
 import 'package:st_school_project/Core/Widgets/rotating_refresh_icon.dart';
 import 'package:st_school_project/Presentation/Onboarding/Screens/Announcements%20Screen/announcements_screen.dart';
@@ -2357,6 +2358,7 @@ class CustomContainer {
       ],
     );
   }
+
   //
   // static myadmissions({
   //   required String maintext,
@@ -2464,6 +2466,168 @@ class CustomContainer {
     required String subtext1,
     required String subtext2,
     required String iconText,
+    required String copyUrl,
+    VoidCallback? onTap,
+    String imagepath = '',
+    Color? backRoundColors,
+    Color? iconColor,
+    Color? iconTextColor,
+    Widget? trailing,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: AppColor.lightGrey),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(13.0),
+        child: Row(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: backRoundColors,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 17,
+                  vertical: 10,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      imagepath,
+                      height: 29,
+                      width: 29,
+                      color: iconColor,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      iconText,
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w500,
+                        color: iconTextColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    maintext,
+                    style: GoogleFont.ibmPlexSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColor.lightBlack,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  RichText(
+                    text: TextSpan(
+                      text: subtext1,
+                      style: GoogleFont.ibmPlexSans(
+                        fontSize: 12,
+                        color: AppColor.lowGrey,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: subtext2,
+                          style: GoogleFont.ibmPlexSans(
+                            fontSize: 12,
+                            color: AppColor.grey,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            trailing ??
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    InkWell(
+                      onTap: (){
+                        Clipboard.setData(
+                            ClipboardData(
+                            text: copyUrl,
+                          ),
+                        );
+                         CustomSnackBar.showSuccess('Copied');
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            height: 29,
+                            width: 29,
+                            child: Icon(
+                              Icons.copy,
+                              size: 29,
+                              color: AppColor.blue,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            'Copy Url',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.blue,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    InkWell(
+                      onTap: onTap,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            height: 29,
+                            width: 29,
+                            child: Image.asset(
+                              AppImages.downloadImage,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            'Download',
+                            style: GoogleFont.ibmPlexSans(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.blue,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+          ],
+        ),
+      ),
+    );
+  }
+/*  static myadmissions({
+    required String maintext,
+    required String subtext1,
+    required String subtext2,
+    required String iconText,
     VoidCallback? onTap,
 
     String imagepath = '',
@@ -2488,7 +2652,10 @@ class CustomContainer {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 17,
+                  vertical: 10,
+                ),
                 child: Column(
                   children: [
                     Image.asset(imagepath, height: 29, color: iconColor),
@@ -2507,7 +2674,8 @@ class CustomContainer {
             ),
             const SizedBox(width: 15),
 
-            Expanded( // ✅ avoid overflow
+            Expanded(
+              // ✅ avoid overflow
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -2544,12 +2712,39 @@ class CustomContainer {
             ),
 
             // ✅ Right side: if trailing provided use it else default Download
-            trailing ??
+            trailing?? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 InkWell(
                   onTap: onTap,
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Image.asset(AppImages.downloadImage, height: 29),
+                     Icon(Icons.copy,color: AppColor.blue,),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Copy',
+                        style: GoogleFont.ibmPlexSans(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                          color: AppColor.blue,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                InkWell(
+                  onTap: onTap,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        AppImages.downloadImage,
+                        height: 29,
+                        width: 29,
+                        fit: BoxFit.contain,
+                      ),
                       const SizedBox(height: 5),
                       Text(
                         'Download',
@@ -2562,12 +2757,13 @@ class CustomContainer {
                     ],
                   ),
                 ),
+              ],
+            ),
           ],
         ),
       ),
     );
-  }
-
+  }*/
 
   static horizonalDivider() {
     return Container(

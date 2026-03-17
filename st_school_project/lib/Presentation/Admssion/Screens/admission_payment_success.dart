@@ -73,7 +73,7 @@ class _AdmissionPaymentSuccessState extends State<AdmissionPaymentSuccess> {
                                     Clipboard.setData(
                                       ClipboardData(text: widget.admissionCode),
                                     );
-                                    CustomSnackBar.showSuccess('Copied');
+                                    // CustomSnackBar.showSuccess('Copied');
 
                                     setState(() {
                                       _isCopied = true;

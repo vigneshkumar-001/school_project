@@ -15,10 +15,7 @@ import 'package:st_school_project/Core/Widgets/consents.dart';
 import 'package:st_school_project/Core/Widgets/custom_textfield.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
-import 'package:st_school_project/Core/Utility/snack_bar.dart' as UI;
-import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/admission_1.dart';
-import 'package:st_school_project/Presentation/Admssion/Screens/parents_info_screen.dart';
 
 import '../Controller/admission_controller.dart';
 
@@ -55,6 +52,17 @@ class AadhaarInputFormatter extends TextInputFormatter {
 
 class _StudentInfoScreenState extends State<StudentInfoScreen> {
   late final int admissionId;
+
+  DateTime _fallbackMinDob() {
+    final now = DateTime.now();
+    return DateTime(now.year - 4, now.month, now.day);
+  }
+
+  DateTime _fallbackMaxDob() {
+    final now = DateTime.now();
+    return DateTime(now.year - 3, now.month, now.day);
+  }
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final AdmissionController ctrl = Get.put(AdmissionController());
@@ -63,22 +71,24 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
   );
 
   Map<String, DateTime> getDobRange() {
-    final now = DateTime.now();
+    final admission =
+        admissionController.admissionList.isNotEmpty
+            ? admissionController.admissionList.first
+            : null;
 
-    // student age between 3 and 4
-    final maxDob = DateTime(now.year - 3, now.month, now.day);
-    final minDob = DateTime(now.year - 4, now.month, now.day);
+    final minDob =
+        DateTime.tryParse(admission?.dobFrom ?? '') ?? _fallbackMinDob();
+    final maxDob =
+        DateTime.tryParse(admission?.dobTo ?? '') ?? _fallbackMaxDob();
 
     return {"min": minDob, "max": maxDob};
   }
 
   String dobRangeText() {
     final range = getDobRange();
-
     final min = DateFormat('dd-MM-yyyy').format(range['min']!);
     final max = DateFormat('dd-MM-yyyy').format(range['max']!);
-
-    return "$min to $max";
+    return '$min to $max';
   }
 
   List<String> fatherSuggestions = [];
@@ -106,14 +116,26 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
   //   super.dispose();
   // }
 
+  DateTime _initialDobDate(Map<String, DateTime> range) {
+    final currentDobText = admissionController.dobController.text.trim();
+    for (final format in ['dd-MM-yyyy', 'dd/MM/yyyy', 'yyyy-MM-dd']) {
+      try {
+        final parsed = DateFormat(format).parseStrict(currentDobText);
+        if (!parsed.isBefore(range['min']!) && !parsed.isAfter(range['max']!)) {
+          return parsed;
+        }
+      } catch (_) {}
+    }
+    return range['max']!;
+  }
+
   void _showSnack(String msg, {bool isError = false}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(msg),
-        backgroundColor: isError ? Colors.red : Colors.green,
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    if (isError) {
+      CustomSnackBar.showError(msg);
+      return;
+    }
+
+    CustomSnackBar.showSuccess(msg);
   }
 
   String _formatDobToIso(String dob) {
@@ -343,10 +365,15 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
   @override
   void initState() {
     super.initState();
+    admissionId = widget.admissionId;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      admissionController.studentDropDown();
-      admissionController.getAdmissionDetails(id: admissionId);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (admissionController.admissionList.isEmpty) {
+        await admissionController.getAdmissions();
+      }
+      await admissionController.studentDropDown();
+      await admissionController.getAdmissionDetails(id: admissionId);
+      if (mounted) setState(() {});
     });
   }
 
@@ -468,7 +495,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                               color: AppColor.black,
                             ),
                           );
-                        })
+                        }),
                       ],
                     ),
 
@@ -551,17 +578,17 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                     ),
 
                     // DOB (with range)
-                    buildField(
-                      context: context,
-                      label: 'Date of Birth ',
-                      subLabel: dobRangeText(),
-                      controller: admissionController.dobController,
-                      // subLabel: '01-06-2021 to 31-05-2022',
-                      // controller: admissionController.dobController,
-                      hint: '',
-                      validatorMsg: 'Select Date of Birth',
-                      isDOB: true,
-                    ),
+                    Obx(() {
+                      return buildField(
+                        context: context,
+                        label: 'Date of Birth ',
+                        subLabel: dobRangeText(),
+                        controller: admissionController.dobController,
+                        hint: '',
+                        validatorMsg: 'Select Date of Birth',
+                        isDOB: true,
+                      );
+                    }),
                     buildField(
                       context: context,
                       label: 'Email Id',
@@ -655,14 +682,14 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
                       label: 'Personal Identification 1',
                       controller: admissionController.personalId1Controller,
                       hint: '',
-                      validatorMsg: 'Personal ID 1 is required',
+                      validatorMsg: '',
                       verticalDivider: false,
                     ),
                     buildField(
                       label: 'Personal Identification 2',
                       controller: admissionController.personalId2Controller,
                       hint: '',
-                      validatorMsg: 'Personal ID 2 is required',
+                      validatorMsg: '',
                       verticalDivider: false,
                     ),
 
@@ -821,7 +848,9 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (value) {
             final text = controller.text.trim();
-            if (text.isEmpty) return validatorMsg;
+            if (text.isEmpty) {
+              return validatorMsg.trim().isEmpty ? null : validatorMsg;
+            }
 
             if (isAadhaar == true) {
               final clean = text.replaceAll(' ', '');
@@ -913,7 +942,7 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
 
                       final picked = await showDatePicker(
                         context: context,
-                        initialDate: range['max']!,
+                        initialDate: _initialDobDate(range),
                         firstDate: range['min']!,
                         lastDate: range['max']!,
                         builder: (c, child) {

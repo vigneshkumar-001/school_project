@@ -1094,7 +1094,7 @@ class ApiDataSource extends BaseApiDataSource {
       } else if (response is DioException) {
         return Left(ServerFailure(response.message ?? "Dio Error"));
       } else {
-        return Left(ServerFailure("Unknown error"));
+        return Left(ServerFailure(response.data['message']));
       }
     } catch (e) {
       return Left(ServerFailure(e.toString()));

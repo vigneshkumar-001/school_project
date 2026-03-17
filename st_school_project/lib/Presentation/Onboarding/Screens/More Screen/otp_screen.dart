@@ -173,7 +173,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     activeFillColor: AppColor.lowGery1,
                     inactiveColor: AppColor.lowGery1,
                     selectedFillColor: AppColor.white,
-                    fieldOuterPadding: EdgeInsets.symmetric(horizontal: 9),
+                    fieldOuterPadding: EdgeInsets.symmetric(horizontal: 13),
                     inactiveFillColor: AppColor.lowGery1,
                   ),
                   cursorColor: AppColor.black,

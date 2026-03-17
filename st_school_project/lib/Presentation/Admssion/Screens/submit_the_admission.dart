@@ -10,11 +10,13 @@ import 'package:st_school_project/Core/Utility/app_loader.dart';
 import 'package:st_school_project/Core/Utility/google_font.dart';
 import 'package:st_school_project/Core/Widgets/custom_app_button.dart';
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
+import 'package:st_school_project/Core/Widgets/bottom_navigationbar.dart';
 import 'package:st_school_project/Presentation/Admssion/Controller/admission_controller.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/check_admission_status.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/communication_screen.dart';
 import 'package:st_school_project/Presentation/Admssion/Screens/required_photo_screens.dart';
 import 'admission_payment_success.dart';
+import 'admission_1.dart';
 
 class SubmitTheAdmission extends StatefulWidget {
   final int id;
@@ -41,6 +43,21 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
   @override
   void initState() {
     super.initState();
+    controller.submitErrorMessage.value = '';
+  }
+
+  void _handleSubmitFailureNavigation() {
+    controller.submitErrorMessage.value = '';
+
+    if (widget.pages == 'homeScreen') {
+      Get.offAll(() => const CommonBottomNavigation(initialIndex: 0));
+      return;
+    }
+
+    Get.offAll(
+      () =>
+          Admission1(pages: widget.pages.isEmpty ? 'otpScreen' : widget.pages),
+    );
   }
 
   Future<void> validateAndSubmit() async {
@@ -265,26 +282,118 @@ class _SubmitTheAdmissionState extends State<SubmitTheAdmission> {
 
                 /// Button
                 Obx(
-                  () => AppButton.button(
-                    loader:
-                        controller.isLoading.value
-                            ? const SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: Colors.white,
+                  () => Column(
+                    children: [
+                   
+                        AppButton.button(
+                          loader:
+                              controller.isLoading.value
+                                  ? const SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                  : null,
+                          text: 'Pay for Admission Form',
+                          image: AppImages.rightSaitArrow,
+                          width: 250,
+                          onTap:
+                              controller.isLoading.value
+                                  ? null
+                                  : validateAndSubmit,
+                        ),
+                      if (controller.submitErrorMessage.value.isNotEmpty) ...[
+                        const SizedBox(height: 18),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(18),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFF4F4),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(color: const Color(0xFFFFC9C9)),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x14000000),
+                                blurRadius: 14,
+                                offset: Offset(0, 6),
                               ),
-                            )
-                            : null,
-                    text: 'Pay for Admission Form',
-                    image: AppImages.rightSaitArrow,
-                    width: 250,
-                    // onTap: (){
-                    //   Navigator.push(context, MaterialPageRoute(builder: (context)=>CheckAdmissionStatus()));
-                    // }
-                    onTap:
-                        controller.isLoading.value ? null : validateAndSubmit,
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFFFFE2E2),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.info_outline,
+                                      color: AppColor.lightRed,
+                                      size: 22,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                        controller.submitErrorMessage.value,
+                                      style: GoogleFont.ibmPlexSans(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColor.lightBlack,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 14),
+                              // Text(
+                              //   controller.submitErrorMessage.value,
+                              //   style: GoogleFont.ibmPlexSans(
+                              //     fontSize: 14,
+                              //     height: 1.45,
+                              //     color: AppColor.lightBlack,
+                              //   ),
+                              // ),
+                              // const SizedBox(height: 16),
+                              SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton(
+                                  onPressed: _handleSubmitFailureNavigation,
+                                  style: OutlinedButton.styleFrom(
+                                    side: const BorderSide(
+                                      color: AppColor.blueG2,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    widget.pages == 'homeScreen'
+                                        ? 'Go to Home'
+                                        : 'Go to Admission Page',
+                                    style: GoogleFont.ibmPlexSans(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColor.blueG2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ],

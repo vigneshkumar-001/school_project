@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class Admission1Response {
   final bool status;
   final int code;
@@ -13,20 +11,20 @@ class Admission1Response {
 
   factory Admission1Response.fromJson(Map<String, dynamic> json) =>
       Admission1Response(
-        status: json["status"] ?? false,
-        code: json["code"] ?? 0,
+        status: json['status'] ?? false,
+        code: json['code'] ?? 0,
         data:
-            json["data"] == null
+            json['data'] == null
                 ? []
                 : List<AdmissionData>.from(
-                  json["data"].map((x) => AdmissionData.fromJson(x)),
+                  json['data'].map((x) => AdmissionData.fromJson(x)),
                 ),
       );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-    "code": code,
-    "data": List<dynamic>.from(data.map((x) => x.toJson())),
+    'status': status,
+    'code': code,
+    'data': List<dynamic>.from(data.map((x) => x.toJson())),
   };
 }
 
@@ -37,6 +35,8 @@ class AdmissionData {
   final String academicYear;
   final String startDate;
   final String endDate;
+  final String dobFrom;
+  final String dobTo;
   final String announcementDate;
   final String introText;
   final List<String> instructions;
@@ -57,6 +57,8 @@ class AdmissionData {
     required this.academicYear,
     required this.startDate,
     required this.endDate,
+    required this.dobFrom,
+    required this.dobTo,
     required this.announcementDate,
     required this.introText,
     required this.instructions,
@@ -72,47 +74,51 @@ class AdmissionData {
   });
 
   factory AdmissionData.fromJson(Map<String, dynamic> json) => AdmissionData(
-    id: json["id"] ?? 0,
-    title: json["title"] ?? "",
-    stream: json["stream"] ?? "",
-    academicYear: json["academicYear"] ?? "",
-    startDate: json["startDate"] ?? "",
-    endDate: json["endDate"] ?? "",
-    announcementDate: json["announcementDate"] ?? "",
-    introText: json["introText"] ?? "",
+    id: json['id'] ?? 0,
+    title: json['title'] ?? '',
+    stream: json['stream'] ?? '',
+    academicYear: json['academicYear'] ?? '',
+    startDate: json['startDate'] ?? '',
+    endDate: json['endDate'] ?? '',
+    dobFrom: json['dobFrom'] ?? '',
+    dobTo: json['dobTo'] ?? '',
+    announcementDate: json['announcementDate'] ?? '',
+    introText: json['introText'] ?? '',
     instructions:
-        json["instructions"] == null
+        json['instructions'] == null
             ? []
-            : List<String>.from(json["instructions"].map((x) => x)),
-    bannerUrl: json["bannerUrl"] ?? "",
-    isPublished: json["isPublished"] ?? false,
-    isOpen: json["isOpen"] ?? false,
-    feeMasterId: json["feeMasterId"] ?? 0,
-    feeTypeName: json["feeTypeName"] ?? "",
-    feeAmount: json["feeAmount"] ?? "",
-    ccProfileId: json["ccProfileId"] ?? 0,
-    createdAt: json["createdAt"] ?? "",
-    updatedAt: json["updatedAt"] ?? "",
+            : List<String>.from(json['instructions'].map((x) => x)),
+    bannerUrl: json['bannerUrl'] ?? '',
+    isPublished: json['isPublished'] ?? false,
+    isOpen: json['isOpen'] ?? false,
+    feeMasterId: json['feeMasterId'] ?? 0,
+    feeTypeName: json['feeTypeName'] ?? '',
+    feeAmount: json['feeAmount'] ?? '',
+    ccProfileId: json['ccProfileId'] ?? 0,
+    createdAt: json['createdAt'] ?? '',
+    updatedAt: json['updatedAt'] ?? '',
   );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "title": title,
-    "stream": stream,
-    "academicYear": academicYear,
-    "startDate": startDate,
-    "endDate": endDate,
-    "announcementDate": announcementDate,
-    "introText": introText,
-    "instructions": List<dynamic>.from(instructions.map((x) => x)),
-    "bannerUrl": bannerUrl,
-    "isPublished": isPublished,
-    "isOpen": isOpen,
-    "feeMasterId": feeMasterId,
-    "feeTypeName": feeTypeName,
-    "feeAmount": feeAmount,
-    "ccProfileId": ccProfileId,
-    "createdAt": createdAt,
-    "updatedAt": updatedAt,
+    'id': id,
+    'title': title,
+    'stream': stream,
+    'academicYear': academicYear,
+    'startDate': startDate,
+    'endDate': endDate,
+    'dobFrom': dobFrom,
+    'dobTo': dobTo,
+    'announcementDate': announcementDate,
+    'introText': introText,
+    'instructions': List<dynamic>.from(instructions.map((x) => x)),
+    'bannerUrl': bannerUrl,
+    'isPublished': isPublished,
+    'isOpen': isOpen,
+    'feeMasterId': feeMasterId,
+    'feeTypeName': feeTypeName,
+    'feeAmount': feeAmount,
+    'ccProfileId': ccProfileId,
+    'createdAt': createdAt,
+    'updatedAt': updatedAt,
   };
 }
