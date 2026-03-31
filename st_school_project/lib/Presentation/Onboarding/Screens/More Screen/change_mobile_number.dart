@@ -732,74 +732,74 @@ class _ChangeMobileNumberState extends State<ChangeMobileNumber> {
                             ],
                           )
                           : Container(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 5,
-                          horizontal: 15,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: InkWell(
-                                onTap: _openFenizoWebsite,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Developed by',
-                                      style: GoogleFont.inter(
-                                        fontSize: 11,
-                                        color: AppColor.grey,
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'Fenizo ',
-                                          style: GoogleFont.inter(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.blue,
-                                          ),
-                                        ),
-                                        Image.asset(
-                                          AppImages.rightArrow,
-                                          height: 10,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    'Marketed by',
-                                    textAlign: TextAlign.right,
-                                    style: GoogleFont.inter(
-                                      fontSize: 11,
-                                      color: AppColor.grey,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Suviinfotech',
-                                    textAlign: TextAlign.right,
-                                    style: GoogleFont.inter(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColor.lightBlack,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(
+                      //     vertical: 5,
+                      //     horizontal: 15,
+                      //   ),
+                      //   child: Row(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       Expanded(
+                      //         child: InkWell(
+                      //           onTap: _openFenizoWebsite,
+                      //           child: Column(
+                      //             crossAxisAlignment: CrossAxisAlignment.start,
+                      //             children: [
+                      //               Text(
+                      //                 'Developed by',
+                      //                 style: GoogleFont.inter(
+                      //                   fontSize: 11,
+                      //                   color: AppColor.grey,
+                      //                 ),
+                      //               ),
+                      //               Row(
+                      //                 children: [
+                      //                   Text(
+                      //                     'Fenizo ',
+                      //                     style: GoogleFont.inter(
+                      //                       fontSize: 13,
+                      //                       fontWeight: FontWeight.w700,
+                      //                       color: Colors.blue,
+                      //                     ),
+                      //                   ),
+                      //                   Image.asset(
+                      //                     AppImages.rightArrow,
+                      //                     height: 10,
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ),
+                      //       ),
+                      //       Expanded(
+                      //         child: Column(
+                      //           crossAxisAlignment: CrossAxisAlignment.end,
+                      //           children: [
+                      //             Text(
+                      //               'Marketed by',
+                      //               textAlign: TextAlign.right,
+                      //               style: GoogleFont.inter(
+                      //                 fontSize: 11,
+                      //                 color: AppColor.grey,
+                      //               ),
+                      //             ),
+                      //             Text(
+                      //               'Suviinfotech',
+                      //               textAlign: TextAlign.right,
+                      //               style: GoogleFont.inter(
+                      //                 fontSize: 13,
+                      //                 fontWeight: FontWeight.w700,
+                      //                 color: AppColor.lightBlack,
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

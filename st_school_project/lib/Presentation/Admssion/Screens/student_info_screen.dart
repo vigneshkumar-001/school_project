@@ -142,9 +142,9 @@ class _StudentInfoScreenState extends State<StudentInfoScreen> {
     final cleanDob = dob.trim().replaceAll(RegExp(r'[^0-9\-\/]'), '');
     for (final format in ['dd/MM/yyyy', 'dd-MM-yyyy', 'yyyy-MM-dd']) {
       try {
-        final date = DateFormat(format).parseStrict(cleanDob);
-        // Use strict ISO format for full compatibility
-        return DateFormat("yyyy-MM-dd").format(date.toUtc());
+        final parsed = DateFormat(format).parseStrict(cleanDob);
+        final dateOnly = DateTime(parsed.year, parsed.month, parsed.day);
+        return DateFormat('yyyy-MM-dd').format(dateOnly);
       } catch (_) {}
     }
     debugPrint('DOB format not recognized: $dob');
