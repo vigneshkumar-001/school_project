@@ -4,6 +4,7 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:st_school_project/Core/Utility/app_images.dart';
 
 import 'package:st_school_project/Core/Widgets/custom_container.dart';
@@ -1078,18 +1079,25 @@ class _MoreScreenState extends State<MoreScreen>
               child: ListView(
                 controller: scrollController,
                 padding: const EdgeInsets.all(16),
-                children: [
-                  Center(
-                    child: Container(
-                      height: 4,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: AppColor.grayop,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
+                 children: [
+                   Center(
+                     child: Container(
+                       height: 4,
+                       width: 40,
+                       decoration: BoxDecoration(
+                         color: AppColor.grayop,
+                         borderRadius: BorderRadius.circular(2),
+                       ),
+                     ),
+                   ),
+                   Align(
+                     alignment: Alignment.centerRight,
+                     child: IconButton(
+                       onPressed: () => Navigator.of(context).pop(),
+                       icon: const Icon(Icons.close),
+                     ),
+                   ),
+                   const SizedBox(height: 20),
 
                   Image.asset(AppImages.announcement2),
                   const SizedBox(height: 20),
@@ -1206,20 +1214,24 @@ class _MoreScreenState extends State<MoreScreen>
                                         if (result != null) {
                                           if (result["status"] == "success") {
                                             print(" Payment successful");
+                                            if (mounted) {
+                                              ScaffoldMessenger.of(this.context)
+                                                ..hideCurrentSnackBar()
+                                                ..showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                      "Payment Successful: Your payment has been completed successfully.",
+                                                    ),
+                                                    backgroundColor: Colors.green,
+                                                    duration: Duration(
+                                                      seconds: 2,
+                                                    ),
+                                                  ),
+                                                );
+                                            }
                                             if (context.mounted) {
                                               Navigator.pop(context);
                                             }
-                                            Get.snackbar(
-                                              "Payment Successful",
-                                              "Your payment has been completed successfully.",
-                                              snackPosition:
-                                                  SnackPosition.BOTTOM,
-                                              backgroundColor: Colors.green,
-                                              colorText: Colors.white,
-                                              duration: const Duration(
-                                                seconds: 2,
-                                              ),
-                                            );
 
                                             await feesController
                                                 .feesHistoryList();
@@ -1233,17 +1245,21 @@ class _MoreScreenState extends State<MoreScreen>
                                             print(
                                               "OrderId: ${result['orderId']}, Reason: ${result['reason']}",
                                             );
-                                            Get.snackbar(
-                                              "Payment Failed",
-                                              "Something went wrong. Please try again.",
-                                              snackPosition:
-                                                  SnackPosition.BOTTOM,
-                                              backgroundColor: Colors.red,
-                                              colorText: Colors.white,
-                                              duration: const Duration(
-                                                seconds: 2,
-                                              ),
-                                            );
+                                            if (mounted) {
+                                              ScaffoldMessenger.of(this.context)
+                                                ..hideCurrentSnackBar()
+                                                ..showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                      "Payment Failed: Something went wrong. Please try again.",
+                                                    ),
+                                                    backgroundColor: Colors.red,
+                                                    duration: Duration(
+                                                      seconds: 2,
+                                                    ),
+                                                  ),
+                                                );
+                                            }
                                           }
                                         }
                                       }
@@ -1615,10 +1631,35 @@ class _MoreScreenState extends State<MoreScreen>
       orElse: () => planData.items.first,
     );
 
+    void showTopSnack(
+      BuildContext snackContext,
+      String title,
+      String message, {
+      required bool isError,
+    }) {
+      // Show inside the nearest Scaffold (we add one in the sheet).
+      // This avoids GetX snackbar controller lifecycle issues.
+      final topPadding = MediaQuery.of(snackContext).padding.top;
+      ScaffoldMessenger.of(snackContext)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            dismissDirection: DismissDirection.up,
+            backgroundColor: isError ? Colors.red : AppColor.blue,
+            content: Text('$title: $message'),
+            duration: const Duration(seconds: 2),
+            margin: EdgeInsets.fromLTRB(16, 12 + topPadding, 16, 0),
+          ),
+        );
+    }
+
     //  IMPORTANT: return the Future so callers can await and avoid double-open
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
       useRootNavigator: true, // helps avoid nested navigator dupes
       backgroundColor: Colors.transparent,
       builder: (_) {
@@ -1628,22 +1669,24 @@ class _MoreScreenState extends State<MoreScreen>
           maxChildSize: 0.95,
           expand: false,
           builder: (context, scrollController) {
-            return Container(
-              decoration: BoxDecoration(
-                color: AppColor.white,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
+            return Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Container(
+                decoration: BoxDecoration(
+                  color: AppColor.white,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
                 ),
-              ),
-              child: ListView(
-                controller: scrollController,
-                padding: const EdgeInsets.all(16),
-                children: [
-                  Center(
-                    child: Container(
-                      height: 4,
-                      width: 40,
-                      decoration: BoxDecoration(
+                child: ListView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                   Center(
+                     child: Container(
+                       height: 4,
+                       width: 40,
+                       decoration: BoxDecoration(
                         color: AppColor.grayop,
                         borderRadius: BorderRadius.circular(2),
                       ),
@@ -1907,9 +1950,71 @@ class _MoreScreenState extends State<MoreScreen>
                           ],
                         ),
                       ),
+                      const SizedBox(height: 12),
+
+                      GestureDetector(
+                        onTap: () async {
+                          final url = plan.combinedDownloadUrl;
+                          if (url == null || url.trim().isEmpty) {
+                            HapticFeedback.vibrate();
+                            showTopSnack(
+                              context,
+                              'Copy failed',
+                              'No receipt URL to copy',
+                              isError: true,
+                            );
+                            return;
+                          }
+
+                          await Clipboard.setData(
+                            ClipboardData(text: url.trim()),
+                          );
+                          HapticFeedback.vibrate();
+                          showTopSnack(
+                            context,
+                            'Copied',
+                            'Receipt URL copied',
+                            isError: false,
+                          );
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 27,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: AppColor.blue,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.copy,
+                                    size: 20,
+                                    color: AppColor.blue,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  CustomTextField.textWithSmall(
+                                    text: 'Copy Url',
+                                    color: AppColor.blue,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ],
+                  ],
+                ),
               ),
             );
           },

@@ -360,7 +360,13 @@ class AnnouncementController extends GetxController {
 
   void hidePopupLoader() {
     if (Get.isDialogOpen ?? false) {
-      Get.back();
+      final ctx = Get.overlayContext;
+      if (ctx != null) {
+        Navigator.of(ctx, rootNavigator: true).pop();
+      } else {
+        // Fallback: close one route; may close an overlay in some setups.
+        Get.back();
+      }
     }
   }
 }

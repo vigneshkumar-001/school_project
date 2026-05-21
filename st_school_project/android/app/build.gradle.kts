@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.fenizo.st_school_project.st_school_project"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -32,7 +32,7 @@ android {
 
     defaultConfig {
         applicationId = "com.fenizo.st_school_project.st_school_project"
-        minSdk = 23
+        minSdk = flutter.minSdkVersion
         targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -40,10 +40,30 @@ android {
 
     signingConfigs {
         create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-            storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["storePassword"] as String
+            val keyAliasValue = keystoreProperties.getProperty("keyAlias")
+            val keyPasswordValue = keystoreProperties.getProperty("keyPassword")
+            val storeFileValue = keystoreProperties.getProperty("storeFile")
+            val storePasswordValue = keystoreProperties.getProperty("storePassword")
+
+            require(!keyAliasValue.isNullOrBlank()) {
+                "Missing keyAlias in android/key.properties"
+            }
+            require(!keyPasswordValue.isNullOrBlank()) {
+                "Missing keyPassword in android/key.properties"
+            }
+            require(!storeFileValue.isNullOrBlank()) {
+                "Missing storeFile in android/key.properties"
+            }
+            require(!storePasswordValue.isNullOrBlank()) {
+                "Missing storePassword in android/key.properties"
+            }
+
+            keyAlias = keyAliasValue
+            keyPassword = keyPasswordValue
+            // Resolve relative to the Android root project (android/),
+            // not the app module (android/app/).
+            storeFile = rootProject.file(storeFileValue)
+            storePassword = storePasswordValue
         }
     }
 
